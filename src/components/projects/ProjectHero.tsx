@@ -3,7 +3,7 @@ import Image from "next/image";
 import type { Project } from "@/lib/projects";
 
 const architectureLinks: Record<string, string> = {
-  "monobrain":   "/projects/monobrain/architecture",
+  "monomind":    "/projects/monomind/architecture",
   "mono-agent":  "/projects/mono-agent/architecture",
   "mono-clip":   "/projects/mono-clip/architecture",
   "monotask":    "/projects/monotask/architecture",
@@ -11,7 +11,7 @@ const architectureLinks: Record<string, string> = {
 
 const heroMonkeys: Record<string, string> = {
   "mono-agent": "/images/monkey/coding-laptop.png",
-  "monobrain":  "/images/monkey/meditating-brain.png",
+  "monomind":   "/images/monkey/meditating-brain.png",
   "mono-clip":  "/images/monkey/clipboard-thumbsup.png",
   "monotask":   "/images/monkey/task-board.png",
 };
@@ -22,10 +22,10 @@ const heroStats: Record<string, { label: string; value: string }[]> = {
     { label: "AI Models",      value: "200+" },
     { label: "Binary Size",    value: "~12MB" },
   ],
-  "monobrain": [
-    { label: "Agent Types",    value: "60+" },
+  "monomind": [
+    { label: "Agent Types",    value: "230+" },
     { label: "Vector Search",  value: "150×" },
-    { label: "Response Time",  value: "<0.05ms" },
+    { label: "Memory Tiers",   value: "4" },
   ],
   "mono-clip": [
     { label: "Binary Size",    value: "~8MB" },
@@ -65,7 +65,7 @@ export function ProjectHero({ project }: { project: Project }) {
           {/* Left — text */}
           <div className="flex-1 pb-16">
             <p className="mb-3 text-xs uppercase tracking-label font-semibold" style={{ color: project.accent }}>
-              {project.number} — {project.language}
+              {project.number} · {project.language}
             </p>
             <h1 className="mb-4 text-5xl font-semibold text-espresso tracking-tight md:text-6xl lg:text-7xl leading-none">
               {project.name}

@@ -32,7 +32,7 @@ export function PhilosophySection() {
           </p>
 
           <TextReveal
-            text="Mono — singular focus. Each tool does one thing with obsessive precision."
+            text="Mono: singular focus. Each tool does one thing with obsessive precision."
             tag="h2"
             className="text-3xl md:text-4xl lg:text-5xl font-light leading-tight text-espresso"
             stagger={0.06}

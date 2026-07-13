@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import Link from "next/link";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -223,6 +224,23 @@ export function HeroSection() {
           >
             Four open-source instruments. One philosophy.
           </p>
+
+          <div
+            className="mt-8"
+            style={{ animation: "fadeInUp 0.8s ease 1.2s both" }}
+          >
+            <Link
+              href="/whitepaper"
+              className="group inline-flex items-center gap-2 text-xs uppercase tracking-label font-semibold px-5 py-2.5 rounded-full border text-gold-dark transition-all duration-300 hover:bg-gold-dark hover:text-ivory hover:border-gold-dark"
+              style={{ animation: "whitepaper-blink 3s ease-in-out infinite" }}
+            >
+              <span
+                className="inline-block w-1.5 h-1.5 rounded-full bg-gold-dark group-hover:bg-ivory transition-colors"
+                style={{ animation: "pulse-dot 3s ease-in-out infinite" }}
+              />
+              White Paper: The One-Developer Company
+            </Link>
+          </div>
         </div>
 
         {/* Scroll indicator */}

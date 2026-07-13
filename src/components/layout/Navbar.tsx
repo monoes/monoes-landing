@@ -6,9 +6,10 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 
 const navLinks = [
-  { label: "Projects", href: "/#projects" },
-  { label: "Community", href: "/community" },
-  { label: "GitHub", href: "https://github.com/nokhodian", external: true },
+  { label: "Community", href: "https://github.com/monoes/monomind/discussions", external: true },
+  { label: "Projects", href: "/product#projects" },
+  { label: "Whitepaper", href: "/whitepaper" },
+  { label: "GitHub", href: "https://github.com/monoes", external: true },
 ];
 
 export function Navbar() {
@@ -65,6 +66,14 @@ export function Navbar() {
               <span className="absolute -bottom-1 left-0 h-px w-0 bg-gold transition-all duration-300 ease-out group-hover:w-full" />
             </Link>
           ))}
+          <Link
+            href="https://github.com/monoes/monomind"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="rounded-full border border-gold/40 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-gold-dark transition-all hover:bg-gold-dark hover:text-white"
+          >
+            Get started →
+          </Link>
         </div>
 
         {/* Mobile hamburger */}
