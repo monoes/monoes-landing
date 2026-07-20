@@ -1,18 +1,50 @@
-.superpowers/
+# Dependencies
 node_modules/
+
+# Next.js build output
 .next/
+.next.bak*/
 .open-next/
-.monomind/sessions/
-.monomind/data/
-.monomind/metrics/
-.monomind/knowledge/
-.monomind/*.json
-.monomind/*.jsonl
-**/.monomind/sessions/
-**/.monomind/*.json
+.wrangler/
+
+# Monomind / Claude tooling
+.monomind/
+.superpowers/
+.claude-flow/
+.hive-mind/
+.swarm/
+.agents/
+.playwright-mcp/
+.mcp.json
+
+# Claude Code config (local dev tooling)
+.claude/agents/
+.claude/commands/
+.claude/helpers/
+.claude/skills/
+.claude/statusline.mjs
+.claude/statusline.sh
+
+# Scratch landing pages
+landing*.html
+landing*.css
+landing*.js
+
+# Docs / research drafts
+docs/
+GRAPH_REPORT.md
+
+# macOS
+.DS_Store
+**/.DS_Store
+
+# TypeScript incremental build info
+tsconfig.tsbuildinfo
+
+# Backup files
+*.bak
+
+# Data / sessions
 data/sessions/
 data/mastermind-*.json
 data/mastermind-*.jsonl
-**/.claude-flow/
-.hive-mind/
-.swarm/
