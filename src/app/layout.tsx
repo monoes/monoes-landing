@@ -9,7 +9,7 @@ import "@/styles/globals.css";
 export const metadata: Metadata = {
   title: "monoes — Tools that think with you",
   description:
-    "Four open-source instruments. One philosophy. Mono Agent, Monobrain, MonoClip, MonoTask.",
+    "Four open-source instruments. One philosophy. Mono Agent, monomind, MonoClip, MonoTask.",
   icons: {
     icon: [
       { url: "/favicon-16.png", sizes: "16x16", type: "image/png" },

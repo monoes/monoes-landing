@@ -17,7 +17,7 @@ interface ProjectSectionProps {
 
 const monkeyImages: Record<string, string> = {
   "mono-agent": "/images/monkey/coding-laptop.png",
-  "monobrain": "/images/monkey/meditating-brain.png",
+  "monomind": "/images/monkey/meditating-brain.png",
   "mono-clip": "/images/monkey/clipboard-thumbsup.png",
   "monotask": "/images/monkey/task-board.png",
 };

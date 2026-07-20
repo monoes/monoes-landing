@@ -70,61 +70,80 @@ export const projects: Project[] = [
     ],
   },
   {
-    id: "monobrain",
-    name: "Monobrain",
-    slug: "monobrain",
-    tagline: "Orchestrate AI agent swarms",
+    id: "monomind",
+    name: "monomind",
+    slug: "monomind",
+    tagline: "Coordinate AI agent swarms from the command line",
     description:
-      "60+ agent types. HNSW vector search. Neural learning. A comprehensive framework for spawning and coordinating AI agents with advanced memory and consensus mechanisms.",
-    repo: "nokhodian/monobrain",
+      "v2.5.4. 32 CLI commands, ~130+ subcommands. Fully local memory — SQLite plus local embeddings, no data leaves your machine. Org Runtime v2 adds daemon-controlled autonomous agent orgs with human-in-the-loop approvals and per-agent budgets.",
+    repo: "monoes/monomind",
     language: "TypeScript",
     accent: "#8B6914",
     number: "02",
     features: [
       {
-        icon: "🧠",
-        title: "60+ Agent Types",
+        icon: "🖥️",
+        title: "32 CLI Commands",
         description:
-          "Coders, reviewers, testers, planners, security architects, and more.",
+          "~130+ subcommands total — hooks (29), org runtime (16), memory (12), and more.",
       },
       {
-        icon: "🔍",
-        title: "HNSW Vector Search",
+        icon: "🔒",
+        title: "Fully Local Memory",
         description:
-          "150x–12,500x faster pattern retrieval with semantic routing.",
+          "Local SQLite engine with local HF embeddings for semantic search — no data leaves your machine.",
       },
       {
-        icon: "⚡",
-        title: "Neural Learning",
-        description: "SONA adaptation with <0.05ms response time.",
+        icon: "🧑‍💼",
+        title: "Org Runtime v2",
+        description:
+          "Daemon-controlled autonomous agent orgs — human-in-the-loop questions/answers, per-agent budgets, and cross-run memory via a knowledge graph.",
       },
       {
         icon: "🏗️",
         title: "Swarm Topologies",
         description:
-          "Hierarchical, mesh, hybrid — pick the right coordination pattern.",
+          "Hierarchical, mesh, hierarchical-mesh, ring, star, adaptive — pick the coordination pattern that fits.",
       },
       {
         icon: "🗳️",
-        title: "Byzantine Consensus",
+        title: "Hive-Mind Consensus",
         description:
-          "Raft, BFT, and quorum strategies for fault-tolerant coordination.",
+          "Experimental — byzantine, raft, and quorum vote-counting strategies (single-process, not distributed).",
       },
       {
         icon: "🪝",
-        title: "27 Hooks + 12 Workers",
+        title: "29 Hooks + 15 Workers",
         description:
-          "Self-learning hook system with background worker intelligence.",
+          "Self-learning hook system with 15 background workers — performance, health, security, and more.",
+      },
+      {
+        icon: "🧠",
+        title: "Second Brain",
+        description:
+          "Cross-project memory that persists across projects and survives cleanup — fully local, zero-config.",
+      },
+      {
+        icon: "🕸️",
+        title: "Monograph Knowledge Graph",
+        description:
+          "Tree-sitter across 14 grammars (15 recognized languages — TypeScript grammar also parses JavaScript) into SQLite, 46 MCP tools, PPR/HippoRAG-style graph reranking on by default.",
+      },
+      {
+        icon: "🎨",
+        title: "Frontend Design Intelligence",
+        description:
+          "51 antipattern rules across accessibility, performance, quality, and visual-slop detection, plus design tokens and image-prompt generation (prompts, not images).",
       },
     ],
     install: [
       {
-        command: "npx monobrain init --wizard",
-        output: "✓ Monobrain initialized",
+        command: "claude mcp add monomind -- npx -y monomind@latest mcp start",
+        output: "✓ MCP server registered",
       },
       {
-        command: "npx monobrain swarm init --topology hierarchical",
-        output: "✓ Swarm ready",
+        command: "npx monomind@latest doctor --fix",
+        output: "✓ Environment checked",
       },
     ],
   },

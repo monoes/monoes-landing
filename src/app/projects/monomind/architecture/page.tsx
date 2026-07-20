@@ -4,10 +4,8 @@ const accent = "#8B6914";
 
 const stats = [
   { value: "8", label: "CJS Runtime Modules" },
-  { value: "14", label: "Hook Types" },
-  { value: "138", label: "MCP Tools" },
   { value: "4", label: "Memory Tiers" },
-  { value: "26", label: "CLI Commands" },
+  { value: "32", label: "CLI Commands" },
 ];
 
 const components = [
@@ -16,8 +14,8 @@ const components = [
     subtitle: "Runtime Coordinator",
     name: "hook-handler.cjs",
     description:
-      "Central dispatcher handling all 14 hook types. Wires every sub-system. On session-restore alone, it runs 8 sequential phases to construct the full prompt context Claude receives.",
-    tags: ["~1000 lines", "14 hook types", "runWithTimeout", "safeRequire"],
+      "Central dispatcher handling every hook event Claude Code fires. Wires every sub-system. On session-restore alone, it runs 8 sequential phases to construct the full prompt context Claude receives.",
+    tags: ["~1000 lines", "hook dispatch", "runWithTimeout", "safeRequire"],
     color: "#8B6914",
   },
   {
@@ -44,7 +42,7 @@ const components = [
     name: "router.cjs",
     description:
       "Multi-tier waterfall routing from natural language to optimal agent. Non-dev detection → regex patterns → semantic RouteLayer → keyword fallback. Writes last-route.json for statusline.",
-    tags: ["~275 lines", "4-tier waterfall", "60+ agents", "0.85 confidence"],
+    tags: ["~275 lines", "4-tier waterfall", "32 agent definitions", "0.85 confidence"],
     color: "#B8956A",
   },
   {
@@ -70,7 +68,7 @@ const components = [
     subtitle: "Session State",
     name: "session.cjs",
     description:
-      "Manages .monobrain/sessions/current.json lifecycle. restore(), end(), and metric() calls track task counts and session duration. Archives on end to session-{id}.json.",
+      "Manages .monomind/sessions/current.json lifecycle. restore(), end(), and metric() calls track task counts and session duration. Archives on end to session-{id}.json.",
     tags: ["current.json", "archive", "duration", "task counter"],
     color: "#8B7355",
   },
@@ -79,7 +77,7 @@ const components = [
     subtitle: "Key-Value Store",
     name: "memory.cjs",
     description:
-      "Simple flat-file key-value memory store. Backed by .monobrain/data/memory.json. Used for lightweight cross-session state that doesn't need full Memory Palace indexing.",
+      "Simple flat-file key-value memory store. Backed by .monomind/data/memory.json. Used for lightweight cross-session state that doesn't need full Memory Palace indexing.",
     tags: ["memory.json", "get/set/del", "namespace"],
     color: "#A07840",
   },
@@ -149,7 +147,7 @@ const memoryTiers = [
     badge: "L0",
     color: "#8B6914",
     title: "Identity — Always Loaded",
-    body: "Static .monobrain/palace/identity.md — project name, stack, key packages, working style, git remote. Injected verbatim as [MEMORY_PALACE_L0] on every session. Never auto-overwritten.",
+    body: "Static .monomind/palace/identity.md — project name, stack, key packages, working style, git remote. Injected verbatim as [MEMORY_PALACE_L0] on every session. Never auto-overwritten.",
     cost: "Always injected · ~500 chars",
   },
   {
@@ -240,7 +238,7 @@ const perfRows = [
   { op: "Hook timeout guard", component: "hook-handler.cjs", pct: 100, time: "3s max", note: "runWithTimeout cap" },
 ];
 
-export default function MonobrainArchitecturePage() {
+export default function MonomindArchitecturePage() {
   return (
     <div className="bg-ivory-warm min-h-screen">
       {/* ── Header ── */}
@@ -248,10 +246,10 @@ export default function MonobrainArchitecturePage() {
         <div className="mx-auto max-w-6xl px-8 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Link
-              href="/projects/monobrain"
+              href="/projects/monomind"
               className="text-xs uppercase tracking-label font-medium text-espresso/40 hover:text-espresso transition-colors"
             >
-              ← Monobrain
+              ← monomind
             </Link>
             <span className="text-espresso/20">/</span>
             <span className="text-xs uppercase tracking-label font-medium text-espresso/60">Architecture</span>
@@ -277,10 +275,10 @@ export default function MonobrainArchitecturePage() {
             className="inline-block mb-6 text-xs font-semibold uppercase tracking-label px-3 py-1 rounded-full border"
             style={{ color: accent, borderColor: `${accent}40`, background: `${accent}10` }}
           >
-            v1.4.0 · Technical Architecture
+            LEGACY ARCHITECTURE SNAPSHOT — describes the pre-2.5 .cjs hook-handler/Memory Palace design, not the current SQLite/@monoes-hooks/@monoes-mcp/@monoes-routing stack. See project page for current specs.
           </div>
           <h1 className="text-5xl md:text-6xl lg:text-7xl font-semibold text-espresso tracking-tight leading-none mb-6">
-            How <span style={{ color: accent }}>Monobrain</span>
+            How <span style={{ color: accent }}>monomind</span>
             <br />Thinks
           </h1>
           <p className="text-lg md:text-xl text-espresso/55 font-light leading-relaxed max-w-2xl mb-16">
@@ -389,21 +387,21 @@ export default function MonobrainArchitecturePage() {
 
               {/* Storage boxes */}
               <rect x="60" y="365" width="220" height="50" rx="8" fill="rgba(42,35,24,0.03)" stroke="rgba(42,35,24,0.08)" strokeWidth="1" />
-              <text x="170" y="386" textAnchor="middle" fill="rgba(42,35,24,0.45)" fontSize="11" fontWeight="600">.monobrain/palace/</text>
+              <text x="170" y="386" textAnchor="middle" fill="rgba(42,35,24,0.45)" fontSize="11" fontWeight="600">.monomind/palace/</text>
               <text x="170" y="402" textAnchor="middle" fill="rgba(42,35,24,0.3)" fontSize="10">drawers · closets · kg.json · identity.md</text>
 
               <rect x="305" y="365" width="220" height="50" rx="8" fill="rgba(42,35,24,0.03)" stroke="rgba(42,35,24,0.08)" strokeWidth="1" />
-              <text x="415" y="386" textAnchor="middle" fill="rgba(42,35,24,0.45)" fontSize="11" fontWeight="600">60+ Agent Types · 26 Skills</text>
+              <text x="415" y="386" textAnchor="middle" fill="rgba(42,35,24,0.45)" fontSize="11" fontWeight="600">32 Agent Definitions</text>
               <text x="415" y="402" textAnchor="middle" fill="rgba(42,35,24,0.3)" fontSize="10">Regex · Semantic · Specialist routing</text>
 
               <rect x="545" y="365" width="200" height="50" rx="8" fill="rgba(42,35,24,0.03)" stroke="rgba(42,35,24,0.08)" strokeWidth="1" />
-              <text x="645" y="386" textAnchor="middle" fill="rgba(42,35,24,0.45)" fontSize="11" fontWeight="600">.monobrain/data/</text>
+              <text x="645" y="386" textAnchor="middle" fill="rgba(42,35,24,0.45)" fontSize="11" fontWeight="600">.monomind/data/</text>
               <text x="645" y="402" textAnchor="middle" fill="rgba(42,35,24,0.3)" fontSize="10">auto-memory-store · ranked-context</text>
 
               {/* TS Packages bar */}
               <rect x="60" y="440" width="800" height="55" rx="10" fill="rgba(42,35,24,0.02)" stroke="rgba(42,35,24,0.06)" strokeWidth="1" />
               <text x="450" y="462" textAnchor="middle" fill="rgba(42,35,24,0.35)" fontSize="11" fontWeight="600">TypeScript Packages</text>
-              <text x="450" y="481" textAnchor="middle" fill="rgba(42,35,24,0.25)" fontSize="10">@monobrain/cli · @monobrain/memory · @monobrain/graph · @monobrain/hooks · @monobrain/security · @monobrain/guidance</text>
+              <text x="450" y="481" textAnchor="middle" fill="rgba(42,35,24,0.25)" fontSize="10">@monoes/monomindcli · @monomind/memory · @monoes/monograph · @monoes/hooks · @monoes/mcp · @monoes/routing</text>
 
               {/* Animated dots */}
               <circle r="3" fill="#8B6914" opacity="0.8">
@@ -502,6 +500,9 @@ export default function MonobrainArchitecturePage() {
       {/* ── Memory Palace ── */}
       <section id="memory" className="px-8 py-20 bg-ivory-warm border-b border-ivory-linen">
         <div className="mx-auto max-w-6xl">
+          <div className="mb-6 inline-block rounded-lg border px-3 py-1.5 text-[11px] font-semibold uppercase tracking-label" style={{ color: accent, borderColor: `${accent}40`, background: `${accent}10` }}>
+            Legacy design — this section describes the retired .cjs Memory Palace, not the current SQLite + local-embeddings memory engine.
+          </div>
           <p className="text-xs uppercase tracking-label font-semibold mb-3" style={{ color: accent }}>Memory</p>
           <h2 className="text-3xl md:text-4xl font-semibold text-espresso mb-4">Memory Palace — 4-Tier Hierarchy</h2>
           <p className="text-espresso/55 font-light leading-relaxed max-w-2xl mb-12">
@@ -657,8 +658,11 @@ export default function MonobrainArchitecturePage() {
       {/* ── Hooks ── */}
       <section id="hooks" className="px-8 py-20 bg-ivory-parchment border-b border-ivory-linen">
         <div className="mx-auto max-w-6xl">
+          <div className="mb-6 inline-block rounded-lg border px-3 py-1.5 text-[11px] font-semibold uppercase tracking-label" style={{ color: accent, borderColor: `${accent}40`, background: `${accent}10` }}>
+            Legacy design — this section describes the retired .cjs hook-handler, not the current @monoes/hooks package (29 hooks CLI subcommands).
+          </div>
           <p className="text-xs uppercase tracking-label font-semibold mb-3" style={{ color: accent }}>Hook System</p>
-          <h2 className="text-3xl md:text-4xl font-semibold text-espresso mb-4">14 Hook Types</h2>
+          <h2 className="text-3xl md:text-4xl font-semibold text-espresso mb-4">Hook Types</h2>
           <p className="text-espresso/55 font-light leading-relaxed max-w-2xl mb-12">
             Claude Code fires these events at precise lifecycle moments — hook-handler.cjs handles every one.
           </p>
@@ -745,9 +749,9 @@ export default function MonobrainArchitecturePage() {
       {/* ── Footer ── */}
       <footer className="border-t border-ivory-linen bg-ivory-parchment px-8 py-10 text-center">
         <p className="text-xs text-espresso/35">
-          Monobrain v1.4.0 · Architecture · 2026-04-15 ·{" "}
-          <Link href="/projects/monobrain" className="hover:text-espresso/60 transition-colors">
-            ← Back to Monobrain
+          LEGACY ARCHITECTURE SNAPSHOT — describes the pre-2.5 .cjs hook-handler/Memory Palace design, not the current SQLite/@monoes-hooks/@monoes-mcp/@monoes-routing stack. See project page for current specs. 
+          <Link href="/projects/monomind" className="hover:text-espresso/60 transition-colors">
+            ← Back to monomind
           </Link>
         </p>
       </footer>

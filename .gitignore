@@ -2,3 +2,12 @@
 node_modules/
 .next/
 .open-next/
+
+# monomind tooling bootstrap (this repo doesn't run monomind — keep it out of git)
+.monomind/
+.monograph/
+.understand/
+.mcp.json
+.agents/
+GRAPH_REPORT.md
+._*

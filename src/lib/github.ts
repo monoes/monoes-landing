@@ -7,7 +7,7 @@ interface RepoStats {
 
 const REPOS = [
   "nokhodian/mono-agent",
-  "nokhodian/monobrain",
+  "monoes/monomind",
   "nokhodian/mono-clip",
   "nokhodian/monotask",
 ] as const;

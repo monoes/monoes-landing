@@ -23,7 +23,7 @@ const INITIAL_CLIPS: Clip[] = [
 const RANDOM_CLIPS: Omit<Clip, "id" | "pinned" | "time">[] = [
   { text: "git commit -m 'feat: add swarm demo'", type: "code" },
   { text: "Check the monoes dashboard later", type: "text" },
-  { text: "/usr/local/bin/monobrain", type: "path" },
+  { text: "/usr/local/bin/monomind", type: "path" },
   { text: "export default function App() {}", type: "code" },
   { text: "Meeting at 3pm re: launch", type: "text" },
   { text: "~/Desktop/monoes/landing", type: "path" },
