@@ -15,10 +15,9 @@ const PIPELINE = [
 ];
 
 const MEMORY_TIERS = [
-  { badge: "L0", title: "Identity", detail: "Always loaded. Project name, stack, conventions, security posture. The AI's permanent self-knowledge. Injected on every session start.", time: "Always on", pct: 30 },
-  { badge: "L1", title: "Essential Story", detail: "Top-5 highest-scored memories from the last 30 days. Retrieval frequency promotes memories automatically — no manual curation.", time: "Session start", pct: 55 },
-  { badge: "L2", title: "Focused Recall", detail: "Namespace-scoped retrieval: pull relevant context for a specific domain (auth, database, API) without loading everything.", time: "On demand", pct: 75 },
-  { badge: "L3", title: "Deep Search", detail: "Full corpus BM25 + HNSW vector search. 150x–12,500x faster than naive scan. Used for complex, cross-domain questions about the codebase.", time: "When needed", pct: 100 },
+  { badge: "JSON", title: "Pattern Store", detail: "Hook and trajectory learning — routing outcomes, edit patterns — persisted as JSON files. Independent of the SQLite backend below; not yet consolidated into one system.", time: "Continuous", pct: 35 },
+  { badge: "SQLite", title: "Default Search Path", detail: "Local SQLite (better-sqlite3, sql.js WASM fallback) with local embeddings. Backs memory store/search, the MCP memory tools, and Second Brain retrieval — no cloud vector DB involved.", time: "Default", pct: 100 },
+  { badge: "HNSW", title: "Opt-in Vector Index", detail: "A pure-JS HNSW index exists in the memory package but sits off the default search path — reachable only via memory search --build-hnsw, not used automatically.", time: "Opt-in only", pct: 20 },
 ];
 
 function ArchSVG() {
@@ -116,8 +115,8 @@ function ArchSVG() {
         <rect x="715" y="125" width="165" height="70" rx="8"
           fill="rgba(255,255,240,0.03)" stroke="rgba(255,255,240,0.1)" strokeWidth="1" />
         <text x="797" y="152" textAnchor="middle" fill="rgba(255,255,240,0.65)" fontSize="11" fontWeight="600">Persistent Memory</text>
-        <text x="797" y="170" textAnchor="middle" fill="rgba(255,255,240,0.3)" fontSize="9">L0 identity · L1 story</text>
-        <text x="797" y="184" textAnchor="middle" fill="rgba(255,255,240,0.3)" fontSize="9">L2 recall · L3 BM25+HNSW</text>
+        <text x="797" y="170" textAnchor="middle" fill="rgba(255,255,240,0.3)" fontSize="9">Local SQLite storage</text>
+        <text x="797" y="184" textAnchor="middle" fill="rgba(255,255,240,0.3)" fontSize="9">Local embeddings · opt-in HNSW</text>
       </g>
 
       {/* NODE: Agent Swarm */}
@@ -125,7 +124,7 @@ function ArchSVG() {
         <rect x="120" y="330" width="185" height="70" rx="8"
           fill="rgba(255,255,240,0.03)" stroke="rgba(255,255,240,0.1)" strokeWidth="1" />
         <text x="212" y="357" textAnchor="middle" fill="rgba(255,255,240,0.65)" fontSize="11" fontWeight="600">Agent Swarm</text>
-        <text x="212" y="375" textAnchor="middle" fill="rgba(255,255,240,0.3)" fontSize="9">230+ specialized agents</text>
+        <text x="212" y="375" textAnchor="middle" fill="rgba(255,255,240,0.3)" fontSize="9">Specialized agent roles</text>
         <text x="212" y="389" textAnchor="middle" fill="rgba(255,255,240,0.25)" fontSize="8.5">Coder · Reviewer · Security · Tester</text>
       </g>
 
@@ -135,7 +134,7 @@ function ArchSVG() {
           fill="rgba(255,255,240,0.03)" stroke="rgba(255,255,240,0.1)" strokeWidth="1" />
         <text x="672" y="357" textAnchor="middle" fill="rgba(255,255,240,0.65)" fontSize="11" fontWeight="600">Knowledge Graph</text>
         <text x="672" y="375" textAnchor="middle" fill="rgba(255,255,240,0.3)" fontSize="9">Code knowledge graph</text>
-        <text x="672" y="389" textAnchor="middle" fill="rgba(255,255,240,0.25)" fontSize="8.5">30 MCP tools · SQLite · impact analysis</text>
+        <text x="672" y="389" textAnchor="middle" fill="rgba(255,255,240,0.25)" fontSize="8.5">46 MCP tools · SQLite · impact analysis</text>
       </g>
 
       {/* NODE: Output */}

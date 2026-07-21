@@ -43,13 +43,13 @@ export const projects: Project[] = [
         icon: "🏢",
         title: "Autonomous Orgs",
         description:
-          "Define a goal, assign roles, start the org. A boss agent coordinates specialists on a shared task board across sessions.",
+          "Define a goal, assign roles, start the org. An SDK-backed daemon (Org Runtime v2) runs live per-role agent sessions that coordinate over a shared mailbox across sessions.",
       },
       {
         icon: "🧠",
         title: "Persistent Memory",
         description:
-          "LanceDB vector store + Monograph knowledge graph. Context survives across sessions and agents.",
+          "Local SQLite with local embeddings (no cloud vector DB) plus a separate Monograph knowledge graph for code structure. Context survives across sessions and agents.",
       },
       {
         icon: "⚡",
@@ -61,19 +61,19 @@ export const projects: Project[] = [
         icon: "🏗️",
         title: "Swarm Topologies",
         description:
-          "Hierarchical, mesh, adaptive, star, and hierarchical-mesh coordination out of the box.",
+          "Hierarchical, mesh, hierarchical-mesh, and adaptive coordination out of the box.",
       },
       {
         icon: "🗳️",
-        title: "Byzantine Consensus",
+        title: "Consensus Strategies",
         description:
-          "Raft, Byzantine, Gossip, CRDT, and Quorum algorithms for fault-tolerant multi-agent work.",
+          "Byzantine, Raft, and Quorum vote-counting for multi-agent decisions (single-process, not distributed). Gossip and CRDT are planned, not yet implemented.",
       },
       {
         icon: "🪝",
         title: "Hooks + Workers",
         description:
-          "Self-learning hook system with background workers for security, performance, and git automation.",
+          "29 hook CLI subcommands plus 15 background workers (security, performance, git, and more) for self-learning automation.",
       },
     ],
     install: [

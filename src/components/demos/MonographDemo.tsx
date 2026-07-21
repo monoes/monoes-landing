@@ -71,7 +71,7 @@ const DETECT_STEPS = [
   "Found 3 communities (modularity Q=0.41).",
   "Detected 3 god nodes: API · DB · UI",
   "graphQuality = avgCohesion × ln(1 + avgDegree) = 2.87",
-  "Graph ready — impact paths and 30 MCP tools active.",
+  "Graph ready — impact paths and 46 MCP tools active (19 default + 27 advanced).",
 ];
 
 export function MonographDemo() {

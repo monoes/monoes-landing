@@ -444,7 +444,7 @@ export default function LandingPage() {
 
       var ACHIEVEMENTS: Record<string, {title:string;desc:string;icon:string}> = {
         'slide-hero':     { title: 'INITIALIZED',       desc: 'System boot complete',           icon: '⚡' },
-        'slide-platform': { title: 'PLATFORM UNLOCKED',  desc: '230+ agents deployed',           icon: '🛡' },
+        'slide-platform': { title: 'PLATFORM UNLOCKED',  desc: '30 agent roles ready',           icon: '🛡' },
         'slide-company':  { title: 'ORG ASSEMBLED',      desc: 'Every department loaded',         icon: '🏛' },
         'slide-close':    { title: 'MISSION READY',       desc: 'Your autonomous company awaits', icon: '🚀' },
       };
@@ -722,7 +722,7 @@ export default function LandingPage() {
           { type:'gold',    text:'→ Reviewing 23 files changed since last checkpoint...' },
           { type:'gold',    text:'→ Security: 0 hardcoded secrets · 0 CVEs · 2 suggestions' },
           { type:'gold',    text:'→ Coverage: 94% · 2 untested edge cases flagged' },
-          { type:'gold',    text:'→ Memory: 847 facts indexed to HNSW store' },
+          { type:'gold',    text:'→ Memory: 847 facts indexed to local SQLite store' },
           { type:'out',     text:'✓ Review complete · 4 PRs ready · report saved to docs/' },
           { type:'dim',     text:'' },
           { type:'prompt',  text:'/mastermind:orgs' },
@@ -734,7 +734,7 @@ export default function LandingPage() {
           { type:'gold',    text:'→ spec → pseudocode → tests → implementation → review...' },
           { type:'out',     text:'✓ Feature complete · 12 tests passing · PR #47 opened' },
           { type:'dim',     text:'' },
-          { type:'out',     text:'✓ All systems nominal · 230+ agents · 24/7 · uptime 99.97%' },
+          { type:'out',     text:'✓ All systems nominal · 30 agent roles · 24/7' },
         ];
         var lineIdx = 0, charIdx = 0;
         var termBody = termEl.parentElement;
@@ -884,7 +884,7 @@ export default function LandingPage() {
               <div className="slide-in">
                 <div className="hero-kicker">
                   <span className="hero-kicker-dot"></span>
-                  Open source · MIT License · v1.13.0
+                  Open source · MIT License · v2.5.4
                 </div>
                 <h1 className="hero-headline">
                   Not a copilot.<br />
@@ -928,20 +928,20 @@ export default function LandingPage() {
             <div className="capabilities-grid slide-in">
               <div className="cap-card game-frame">
                 <span className="cap-num">01 · Orchestration</span>
-                <div className="cap-title">230+ specialized agents</div>
-                <p className="cap-body">Domain experts across engineering, security, architecture, marketing, sales, finance, legal, and operations. Hierarchical swarms fan out in parallel, not sequential pipelines that bottleneck.</p>
+                <div className="cap-title">30 specialized agent roles</div>
+                <p className="cap-body">Domain experts across engineering, security, architecture, and more, plus fully custom org roles you define. Hierarchical swarms fan out in parallel, not sequential pipelines that bottleneck.</p>
                 <div className="cap-code">/mastermind:createorg --name ai-intel-pod --auto \<br />  &quot;Track AI competitive landscape weekly&quot;<br /><span style={{color:'rgba(200,220,200,0.7)'}}>✓ 5 profiles · 1 matrix · 89KB report · 2m 14s</span></div>
               </div>
               <div className="cap-card game-frame">
                 <span className="cap-num">02 · Memory</span>
-                <div className="cap-title">Four-tier memory palace</div>
-                <p className="cap-body">BM25 + HNSW vector search. 150× faster retrieval than RAG alone. Every decision, pattern, and correction stored and retrieved. The system gets smarter with every task it runs.</p>
-                <div className="cap-code">/mastermind:memory search &quot;auth patterns&quot;<br /><span style={{color:'rgba(200,220,200,0.7)'}}>↳ 12 results · HNSW hit · top score 0.97 · 3ms</span></div>
+                <div className="cap-title">Local SQLite memory, no cloud vector DB</div>
+                <p className="cap-body">Local embeddings, local SQLite storage — every decision, pattern, and correction stored and retrieved on your own machine. A pure-JS HNSW index is available opt-in for larger corpora.</p>
+                <div className="cap-code">/mastermind:memory search &quot;auth patterns&quot;<br /><span style={{color:'rgba(200,220,200,0.7)'}}>↳ 12 results · top score 0.97 · 3ms</span></div>
               </div>
               <div className="cap-card game-frame">
                 <span className="cap-num">03 · Automation</span>
-                <div className="cap-title">22 hooks · 10 workers</div>
-                <p className="cap-body">Self-learning hook system that fires on every edit, commit, task, and deployment. Background workers handle security scanning, performance monitoring, and git hygiene continuously.</p>
+                <div className="cap-title">29 hooks · 15 workers</div>
+                <p className="cap-body">Self-learning hook system that fires on every edit, commit, task, and session. 15 background workers handle security scanning, performance monitoring, and git hygiene continuously.</p>
                 <div className="cap-code">/mastermind:review --tillend<br /><span style={{color:'rgba(200,220,200,0.7)'}}>→ 23 files · 0 secrets · 94% coverage</span><br /><span style={{color:'rgba(200,220,200,0.7)'}}>✓ spec → tests → impl → PR #47 · 28s</span></div>
               </div>
               <div className="cap-card game-frame">
@@ -1286,7 +1286,7 @@ export default function LandingPage() {
               <div className="org-role"><span className="org-role-icon">⚖️</span><span className="org-role-dept">Legal</span><div className="org-role-title">Compliance Checker</div><p className="org-role-sub">ToS drafts, GDPR review, license audits, compliance monitoring across stack.</p><span className="org-role-badge">legal-compliance · auditor</span></div>
             </div>
             <div className="org-summary slide-in">
-              <div className="org-stat"><span className="org-stat-num" data-count="230">230+</span><span className="org-stat-label">Agent types</span></div>
+              <div className="org-stat"><span className="org-stat-num" data-count="30">30</span><span className="org-stat-label">Agent roles</span></div>
               <div className="org-stat"><span className="org-stat-num" data-count="247">24/7</span><span className="org-stat-label">Autonomous execution</span></div>
               <div className="org-stat"><span className="org-stat-num" data-count="0">$0</span><span className="org-stat-label">Payroll</span></div>
               <div className="org-stat"><span className="org-stat-num" data-count="1">1</span><span className="org-stat-label">Developer needed</span></div>
@@ -1327,7 +1327,7 @@ export default function LandingPage() {
                 <span className="oss-pill">BYOK from zero</span>
                 <span className="oss-pill">No usage caps</span>
                 <span className="oss-pill">TypeScript</span>
-                <span className="oss-pill">v1.13.0</span>
+                <span className="oss-pill">v2.5.4</span>
               </div>
             </div>
           </div>

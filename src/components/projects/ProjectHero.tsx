@@ -23,9 +23,9 @@ const heroStats: Record<string, { label: string; value: string }[]> = {
     { label: "Binary Size",    value: "~12MB" },
   ],
   "monomind": [
-    { label: "Agent Types",    value: "230+" },
-    { label: "Vector Search",  value: "150×" },
-    { label: "Memory Tiers",   value: "4" },
+    { label: "CLI Commands",       value: "32" },
+    { label: "Packages",           value: "8" },
+    { label: "Background Workers", value: "15" },
   ],
   "mono-clip": [
     { label: "Binary Size",    value: "~8MB" },
