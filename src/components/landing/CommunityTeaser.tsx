@@ -52,7 +52,7 @@ export function CommunityTeaser() {
         {/* CTA buttons */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
           <Link
-            href="https://github.com/nokhodian"
+            href="https://github.com/monoes"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 px-8 py-3 border border-espresso text-espresso text-sm uppercase tracking-label font-medium rounded-sm transition-all hover:bg-espresso hover:text-ivory"

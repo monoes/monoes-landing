@@ -2,6 +2,7 @@ import type { Project } from "@/lib/projects";
 import type { ReactNode } from "react";
 import { ProjectHero } from "./ProjectHero";
 import { FeatureGrid } from "./FeatureGrid";
+import { CLISection } from "./CLISection";
 import { CrossLinks } from "./CrossLinks";
 import { TerminalBlock } from "@/components/ui/TerminalBlock";
 
@@ -21,6 +22,8 @@ export function ProjectPageLayout({ project, demo }: { project: Project; demo: R
       </section>
 
       <FeatureGrid project={project} />
+
+      {project.cli && <CLISection data={project.cli} accent={project.accent} />}
 
       {/* Install */}
       <section className="bg-ivory-warm px-8 py-20 border-t border-ivory-linen">

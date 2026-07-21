@@ -52,8 +52,11 @@ export function WorkflowBuilder() {
   // execution path through the DAG
   const RUN_SEQ = ["cron", "chrome", "scrape", "ai", "filter", "post"];
 
+  // Canvas is inset-4 (16px from container left); subtract that offset so
+  // drawn edges align with the absolutely-positioned node divs.
+  const CANVAS_OFFSET_X = 16;
   const getCenter = (node: Node) => ({
-    x: node.x + NODE_W / 2,
+    x: node.x - CANVAS_OFFSET_X + NODE_W / 2,
     y: node.y + NODE_H / 2,
   });
 
@@ -82,12 +85,34 @@ export function WorkflowBuilder() {
       const isLit = running && runIdx >= runningIdx && runIdx > RUN_SEQ.indexOf(edge.to) - 1;
       const isHover = activeNode === edge.from || activeNode === edge.to;
 
+      const dx = tc.x - fc.x;
+      const dy = tc.y - fc.y;
+
+      let sx: number, sy: number, ex: number, ey: number;
+      if (Math.abs(dx) >= Math.abs(dy)) {
+        // primarily horizontal — connect left/right edges
+        sx = fc.x + (dx > 0 ? NODE_W / 2 : -NODE_W / 2);
+        sy = fc.y;
+        ex = tc.x + (dx > 0 ? -NODE_W / 2 : NODE_W / 2);
+        ey = tc.y;
+      } else {
+        // primarily vertical — connect top/bottom edges
+        sx = fc.x;
+        sy = fc.y + (dy > 0 ? NODE_H / 2 : -NODE_H / 2);
+        ex = tc.x;
+        ey = tc.y + (dy > 0 ? -NODE_H / 2 : NODE_H / 2);
+      }
+
       ctx.beginPath();
       ctx.setLineDash(isLit ? [] : [5, 4]);
-      ctx.moveTo(fc.x + (tc.x > fc.x ? NODE_W / 2 : tc.x < fc.x ? -NODE_W / 2 : 0),
-                 fc.y + (tc.y > fc.y ? NODE_H / 2 : tc.y < fc.y ? -NODE_H / 2 : 0));
-      ctx.lineTo(tc.x + (fc.x > tc.x ? NODE_W / 2 : fc.x < tc.x ? -NODE_W / 2 : 0),
-                 tc.y + (fc.y > tc.y ? NODE_H / 2 : fc.y < tc.y ? -NODE_H / 2 : 0));
+      ctx.moveTo(sx, sy);
+      // bezier curve for diagonals, straight line for axis-aligned
+      if (Math.abs(dx) > 10 && Math.abs(dy) > 10) {
+        const cpx = sx + (ex - sx) * 0.5;
+        ctx.bezierCurveTo(cpx, sy, cpx, ey, ex, ey);
+      } else {
+        ctx.lineTo(ex, ey);
+      }
       ctx.strokeStyle = isLit ? "#C8A97E" : isHover ? "#8B7355" : "rgba(255,255,240,0.12)";
       ctx.lineWidth = isLit ? 2 : 1.5;
       ctx.stroke();
@@ -129,7 +154,7 @@ export function WorkflowBuilder() {
             <span className="h-3 w-3 rounded-full bg-ivory/10" />
           </div>
           <p className="text-xs uppercase tracking-label text-ivory/40 font-medium ml-2">
-            Workflow DAG — Content Autopilot
+            Workflow DAG: Content Autopilot
           </p>
         </div>
         <button

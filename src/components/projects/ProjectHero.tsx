@@ -23,9 +23,9 @@ const heroStats: Record<string, { label: string; value: string }[]> = {
     { label: "Binary Size",    value: "~12MB" },
   ],
   "monomind": [
-    { label: "Version",        value: "2.5.4" },
-    { label: "CLI Commands",   value: "32" },
-    { label: "Subcommands",    value: "130+" },
+    { label: "Agent Types",    value: "230+" },
+    { label: "Vector Search",  value: "150×" },
+    { label: "Memory Tiers",   value: "4" },
   ],
   "mono-clip": [
     { label: "Binary Size",    value: "~8MB" },
@@ -65,7 +65,7 @@ export function ProjectHero({ project }: { project: Project }) {
           {/* Left — text */}
           <div className="flex-1 pb-16">
             <p className="mb-3 text-xs uppercase tracking-label font-semibold" style={{ color: project.accent }}>
-              {project.number} — {project.language}
+              {project.number} · {project.language}
             </p>
             <h1 className="mb-4 text-5xl font-semibold text-espresso tracking-tight md:text-6xl lg:text-7xl leading-none">
               {project.name}

@@ -9,14 +9,14 @@ export function Footer() {
           <Image
             src="/images/logo.png"
             alt="Monoes"
-            width={60}
-            height={60}
-            className="mx-auto mb-4 opacity-70"
+            width={72}
+            height={72}
+            className="mx-auto mb-4 rounded-full opacity-80"
           />
         </div>
         <div className="mb-6 flex items-center justify-center gap-8 text-sm text-gold-bronze">
           <Link
-            href="https://github.com/nokhodian"
+            href="https://github.com/monoes"
             className="transition-colors hover:text-espresso"
           >
             GitHub

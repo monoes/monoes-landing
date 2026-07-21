@@ -6,10 +6,10 @@ interface RepoStats {
 }
 
 const REPOS = [
-  "nokhodian/mono-agent",
+  "monoes/mono-agent",
   "monoes/monomind",
-  "nokhodian/mono-clip",
-  "nokhodian/monotask",
+  "monoes/mono-clip",
+  "monoes/monotask",
 ] as const;
 
 export type RepoName = (typeof REPOS)[number];
