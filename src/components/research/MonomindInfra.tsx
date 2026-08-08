@@ -87,7 +87,7 @@ export function MonomindInfra() {
               A day in the life
             </h2>
             <p className="text-espresso/55 max-w-xl font-light leading-relaxed text-sm">
-              The human's workday is specification writing, architectural review, and product judgment. Code generation, testing, security scanning, and integration are handled by the agent pipeline.
+              The human&apos;s workday is specification writing, architectural review, and product judgment. Code generation, testing, security scanning, and integration are handled by the agent pipeline.
             </p>
           </motion.div>
 

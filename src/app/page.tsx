@@ -33,12 +33,12 @@ export default function LandingPage() {
 
     // ── CREATEORG ARCHITECTURE ANIMATION ──
     (function() {
-      var CREATE_CMD = '/mastermind:createorg --name dev-team --auto "Build and ship features end-to-end"';
-      var BOSS_EDGES = ['eg-la','eg-lc','eg-lt','eg-lr','eg-ld'];
-      var PEER_EDGES = ['eg-ac','eg-ct','eg-tr','eg-rd'];
-      var NODES      = ['gn-lead','gn-arch','gn-code','gn-test','gn-rev','gn-devops'];
-      var CARDS      = ['cc-lead','cc-arch','cc-code','cc-test','cc-rev','cc-devops'];
-      var RUN_LINES  = [
+      const CREATE_CMD = '/mastermind:createorg --name dev-team --auto "Build and ship features end-to-end"';
+      const BOSS_EDGES = ['eg-la','eg-lc','eg-lt','eg-lr','eg-ld'];
+      const PEER_EDGES = ['eg-ac','eg-ct','eg-tr','eg-rd'];
+      const NODES      = ['gn-lead','gn-arch','gn-code','gn-test','gn-rev','gn-devops'];
+      const CARDS      = ['cc-lead','cc-arch','cc-code','cc-test','cc-rev','cc-devops'];
+      const RUN_LINES  = [
         { cls:'running', t:'[Engineering Lead] Spawning dev team · 5 specialists online' },
         { cls:'running', t:'[Architect] Reading spec... generating architecture.md' },
         { cls:'done',    t:'[Architect] ✓ architecture.md committed · 847 tokens' },
@@ -55,35 +55,35 @@ export default function LandingPage() {
 
       function setPhase(id: string) {
         document.querySelectorAll('.corg-phase').forEach(function(p){ p.classList.remove('cp-active'); });
-        var el = document.getElementById(id);
+        const el = document.getElementById(id);
         if (el) el.classList.add('cp-active');
       }
 
       function showEl(el: HTMLElement) { el.style.display = el.classList.contains('corg-footer') ? 'flex' : 'block'; }
 
-      var busy = false;
+      let busy = false;
 
       function reset() {
         busy = false;
-        var cmdEl = document.getElementById('corgCmdBody');
-        var runBody = document.getElementById('corgRunBody');
+        const cmdEl = document.getElementById('corgCmdBody');
+        const runBody = document.getElementById('corgRunBody');
         if (cmdEl) cmdEl.textContent = '';
         if (runBody) runBody.innerHTML = '';
         gsap.set('#corgCursor', { opacity: 1 });
         CARDS.forEach(function(id){
-          var el = document.getElementById(id);
+          const el = document.getElementById(id);
           if (el) { el.style.display = 'none'; gsap.set(el, { opacity: 0, x: 22 }); }
         });
         ['#corgRunFeed','#corgEvent','#corgFooter'].forEach(function(sel){
-          var el = document.querySelector(sel);
+          const el = document.querySelector(sel);
           if (el) { (el as HTMLElement).style.display = 'none'; gsap.set(el, { opacity: 0 }); }
         });
         gsap.set('#corgRipple', { opacity: 0 });
         gsap.set(['#cp-r1','#cp-r2'], { opacity: 0, scale: 1 });
         NODES.forEach(function(id){ gsap.set('#' + id, { opacity: 0, y: 6 }); });
-        var edgeData: Record<string, number> = { 'eg-la':220,'eg-lc':220,'eg-lt':200,'eg-lr':220,'eg-ld':220,'eg-ac':80,'eg-ct':65,'eg-tr':65,'eg-rd':80 };
+        const edgeData: Record<string, number> = { 'eg-la':220,'eg-lc':220,'eg-lt':200,'eg-lr':220,'eg-ld':220,'eg-ac':80,'eg-ct':65,'eg-tr':65,'eg-rd':80 };
         Object.keys(edgeData).forEach(function(id){
-          var p = document.getElementById(id);
+          const p = document.getElementById(id);
           if (p) gsap.set(p, { strokeDasharray: edgeData[id], strokeDashoffset: edgeData[id] });
         });
         document.querySelectorAll('.corg-phase').forEach(function(p){ p.classList.remove('cp-active'); });
@@ -93,10 +93,10 @@ export default function LandingPage() {
         if (busy) return;
         busy = true;
         reset();
-        var tl = gsap.timeline({ onComplete: function(){ busy = false; } });
+        const tl = gsap.timeline({ onComplete: function(){ busy = false; } });
         tl.call(function(){ setPhase('cp-01'); });
-        var cmdEl = document.getElementById('corgCmdBody');
-        var n = { v: 0 };
+        const cmdEl = document.getElementById('corgCmdBody');
+        const n = { v: 0 };
         tl.to(n, { v: CREATE_CMD.length, duration: CREATE_CMD.length * 0.026, ease: 'none',
           onUpdate: function(){ if(cmdEl) cmdEl.textContent = CREATE_CMD.slice(0, Math.floor(n.v)); }
         });
@@ -108,26 +108,26 @@ export default function LandingPage() {
         tl.to(BOSS_EDGES.map(function(id){ return '#'+id; }), { strokeDashoffset: 0, duration: 0.5, stagger: 0.1, ease: 'power2.inOut' });
         tl.to(PEER_EDGES.map(function(id){ return '#'+id; }), { strokeDashoffset: 0, duration: 0.38, stagger: 0.1, ease: 'power2.inOut' }, '-=0.15');
         CARDS.forEach(function(id, i){
-          var el = document.getElementById(id);
+          const el = document.getElementById(id);
           if (!el) return;
           tl.call(function(){ showEl(el!); }, undefined, '+=' + (i === 0 ? 0.05 : 0.12));
           tl.to(el, { opacity: 1, x: 0, duration: 0.35, ease: 'power2.out' }, '<');
         });
         tl.call(function(){ setPhase('cp-04'); }, undefined, '+=0.3');
-        var feedEl = document.getElementById('corgRunFeed');
-        var runBodyEl = document.getElementById('corgRunBody');
+        const feedEl = document.getElementById('corgRunFeed');
+        const runBodyEl = document.getElementById('corgRunBody');
         if (feedEl) { tl.call(function(){ showEl(feedEl!); }, undefined, '+=0.05'); tl.to(feedEl, { opacity: 1, duration: 0.4 }, '<'); }
         RUN_LINES.forEach(function(line, i){
           tl.call(function(){
             if (!runBodyEl) return;
-            var div = document.createElement('div');
+            const div = document.createElement('div');
             div.className = 'corg-run-line ' + line.cls;
             div.textContent = line.t;
             runBodyEl.appendChild(div);
             gsap.from(div, { opacity: 0, y: 4, duration: 0.3, ease: 'power2.out' });
           }, undefined, '+=' + (i === 0 ? 0.1 : 0.45));
         });
-        var evtEl = document.getElementById('corgEvent');
+        const evtEl = document.getElementById('corgEvent');
         if (evtEl) { tl.call(function(){ showEl(evtEl!); }, undefined, '+=0.4'); tl.to(evtEl, { opacity: 1, duration: 0.4 }, '<'); }
         tl.to('#corgRipple', { opacity: 1, duration: 0.2 }, '<+0.1');
         tl.to('#corgRipple', { opacity: 0, duration: 0.5 });
@@ -135,29 +135,29 @@ export default function LandingPage() {
         tl.to('#cp-r1', { opacity: 0, scale: 3.4, duration: 0.6, ease: 'power2.out' }, '-=0.05');
         tl.to('#cp-r2', { opacity: 0.8, scale: 2.8, transformOrigin: '240px 46px', duration: 0.2, ease: 'power1.out' }, '-=0.7');
         tl.to('#cp-r2', { opacity: 0, scale: 4, duration: 0.8, ease: 'power2.out' }, '-=0.05');
-        var footerEl = document.getElementById('corgFooter');
+        const footerEl = document.getElementById('corgFooter');
         if (footerEl) { tl.call(function(){ showEl(footerEl!); }, undefined, '+=0.3'); tl.to(footerEl, { opacity: 1, duration: 0.35 }, '<'); }
       }
 
-      var sec = document.getElementById('slide-devteam');
+      const sec = document.getElementById('slide-devteam');
       if (sec) {
-        var snapWr = document.getElementById('snapWrap');
-        var io = new IntersectionObserver(function(entries){
+        const snapWr = document.getElementById('snapWrap');
+        const io = new IntersectionObserver(function(entries){
           entries.forEach(function(e){ if (e.isIntersecting) { io.disconnect(); setTimeout(start, 300); } });
         }, { threshold: 0.05, root: snapWr });
         io.observe(sec);
       }
-      var btn = document.getElementById('corgReplayBtn');
+      const btn = document.getElementById('corgReplayBtn');
       if (btn) btn.addEventListener('click', start);
     })();
 
     // ── SELF-RUNNING PATROL LOOP ANIMATION ──
     (function() {
-      var busy = false;
-      var timerInterval: ReturnType<typeof setInterval> | null = null;
+      let busy = false;
+      let timerInterval: ReturnType<typeof setInterval> | null = null;
 
       function activateBeat(n: number) {
-        var el = document.getElementById('lb' + n);
+        const el = document.getElementById('lb' + n);
         if (el) el.classList.add('lb-on');
       }
 
@@ -166,24 +166,24 @@ export default function LandingPage() {
         busy = true;
         if (timerInterval) clearInterval(timerInterval);
         [1,2,3,4].forEach(function(n){
-          var el = document.getElementById('lb' + n);
+          const el = document.getElementById('lb' + n);
           if (el) { el.classList.remove('lb-on'); gsap.set(el, { opacity: 0, y: 12 }); }
         });
-        ['lbi1','lbi2','lbi3'].forEach(function(id){ var e = document.getElementById(id); if(e) gsap.set(e,{opacity:0,x:-8}); });
-        ['lbw1','lbw2','lbw3','lbw4','lbw5','lbw6'].forEach(function(id){ var e = document.getElementById(id); if(e) gsap.set(e,{opacity:0,x:-6}); });
-        var lbTg = document.getElementById('lbTg');
-        var loopFooter = document.getElementById('loopFooter');
-        var timerEl = document.getElementById('loopTimer');
+        ['lbi1','lbi2','lbi3'].forEach(function(id){ const e = document.getElementById(id); if(e) gsap.set(e,{opacity:0,x:-8}); });
+        ['lbw1','lbw2','lbw3','lbw4','lbw5','lbw6'].forEach(function(id){ const e = document.getElementById(id); if(e) gsap.set(e,{opacity:0,x:-6}); });
+        const lbTg = document.getElementById('lbTg');
+        const loopFooter = document.getElementById('loopFooter');
+        const timerEl = document.getElementById('loopTimer');
         if (lbTg) gsap.set(lbTg, { opacity:0, y:8 });
         if (loopFooter) gsap.set(loopFooter, { opacity:0 });
         if (timerEl) timerEl.textContent = '59:47';
 
-        var tl = gsap.timeline({ onComplete: function(){
+        const tl = gsap.timeline({ onComplete: function(){
           busy = false;
-          var secs = 59*60+47;
+          let secs = 59*60+47;
           timerInterval = setInterval(function(){
             secs = Math.max(0, secs - 1);
-            var m = Math.floor(secs/60), s = secs%60;
+            const m = Math.floor(secs/60), s = secs%60;
             if (timerEl) timerEl.textContent = String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
             if (secs === 0) clearInterval(timerInterval!);
           }, 80);
@@ -191,7 +191,7 @@ export default function LandingPage() {
 
         tl.to('#lb1', { opacity:1, y:0, duration:0.55, ease:'power3.out' });
         tl.call(function(){ activateBeat(1); });
-        var clockEl = document.getElementById('lbClock');
+        const clockEl = document.getElementById('lbClock');
         ['14:00:01','14:00:02','14:00:03'].forEach(function(t, i){
           tl.call(function(){ if(clockEl) clockEl.textContent = t; }, undefined, '+=' + (i===0?0.35:0.22));
         });
@@ -209,26 +209,26 @@ export default function LandingPage() {
         if (loopFooter) tl.to(loopFooter, { opacity:1, duration:0.4 }, '+=0.4');
       }
 
-      var sec = document.getElementById('slide-patrol');
+      const sec = document.getElementById('slide-patrol');
       if (sec) {
-        var snapWr = document.getElementById('snapWrap');
-        var io = new IntersectionObserver(function(entries){
+        const snapWr = document.getElementById('snapWrap');
+        const io = new IntersectionObserver(function(entries){
           entries.forEach(function(e){ if (e.isIntersecting) { io.disconnect(); setTimeout(start, 200); } });
         }, { threshold: 0.05, root: snapWr });
         io.observe(sec);
       }
-      var btn = document.getElementById('loopReplayBtn');
+      const btn = document.getElementById('loopReplayBtn');
       if (btn) btn.addEventListener('click', function(){ busy = false; start(); });
     })();
 
     // ── CONTENT SQUAD ORG ANIMATION ──
     (function() {
-      var busy = false;
-      var CARDS = ['cs1','cs2','cs3','cs4'];
-      var WORK  = ['csw1','csw2','csw3','csw4','csw5','csw6','csw7'];
+      let busy = false;
+      const CARDS = ['cs1','cs2','cs3','cs4'];
+      const WORK  = ['csw1','csw2','csw3','csw4','csw5','csw6','csw7'];
 
       function activate(id: string) {
-        var el = document.getElementById(id);
+        const el = document.getElementById(id);
         if (el) el.classList.add('lb-on');
       }
 
@@ -236,16 +236,16 @@ export default function LandingPage() {
         if (busy) return;
         busy = true;
         CARDS.forEach(function(id){
-          var el = document.getElementById(id);
+          const el = document.getElementById(id);
           if (el) { el.classList.remove('lb-on'); gsap.set(el, { opacity:0, y:12 }); }
         });
-        WORK.forEach(function(id){ var e = document.getElementById(id); if(e) gsap.set(e,{opacity:0,x:-6}); });
-        var csTg = document.getElementById('csTg');
-        var csFooter = document.getElementById('csFooter');
+        WORK.forEach(function(id){ const e = document.getElementById(id); if(e) gsap.set(e,{opacity:0,x:-6}); });
+        const csTg = document.getElementById('csTg');
+        const csFooter = document.getElementById('csFooter');
         if (csTg) gsap.set(csTg, { opacity:0, y:8 });
         if (csFooter) gsap.set(csFooter, { opacity:0 });
 
-        var tl = gsap.timeline({ onComplete: function(){ busy = false; } });
+        const tl = gsap.timeline({ onComplete: function(){ busy = false; } });
         tl.to('#cs1', { opacity:1, y:0, duration:0.5, ease:'power3.out' });
         tl.call(function(){ activate('cs1'); });
         tl.to([document.getElementById('csw1'),document.getElementById('csw2')].filter(Boolean), { opacity:1, x:0, duration:0.3, stagger:0.3, ease:'power2.out' }, '+=0.1');
@@ -261,15 +261,15 @@ export default function LandingPage() {
         if (csFooter) tl.to(csFooter, { opacity:1, duration:0.4 }, '+=0.3');
       }
 
-      var sec = document.getElementById('slide-squad');
+      const sec = document.getElementById('slide-squad');
       if (sec) {
-        var snapWr = document.getElementById('snapWrap');
-        var io = new IntersectionObserver(function(entries){
+        const snapWr = document.getElementById('snapWrap');
+        const io = new IntersectionObserver(function(entries){
           entries.forEach(function(e){ if (e.isIntersecting) { io.disconnect(); setTimeout(start, 200); } });
         }, { threshold: 0.05, root: snapWr });
         io.observe(sec);
       }
-      var btn = document.getElementById('csReplayBtn');
+      const btn = document.getElementById('csReplayBtn');
       if (btn) btn.addEventListener('click', function(){ busy = false; start(); });
     })();
 
@@ -277,7 +277,7 @@ export default function LandingPage() {
     (function () {
       'use strict';
 
-      var C = {
+      const C = {
         gold:   '#C8A97E',
         goldW:  '#D4A84A',
         cyan:   '#4A9BAF',
@@ -287,18 +287,18 @@ export default function LandingPage() {
         dim:    'rgba(250,247,240,0.35)',
       };
 
-      var snapWrap = document.getElementById('snapWrap');
-      var slides   = Array.from(document.querySelectorAll('.slide'));
+      const snapWrap = document.getElementById('snapWrap');
+      const slides   = Array.from(document.querySelectorAll('.slide'));
 
       // ── 1. CANVAS PARTICLE SYSTEM ──
       (function initParticles() {
-        var canvas = document.getElementById('heroCanvas') as HTMLCanvasElement | null;
+        const canvas = document.getElementById('heroCanvas') as HTMLCanvasElement | null;
         if (!canvas) return;
-        var ctx = canvas.getContext('2d')!;
-        var W: number, H: number, particles: Array<{x:number;y:number;vx:number;vy:number;size:number;opacity:number;color:string}>;
-        var running = true;
-        var COUNT = 55, LINK_DIST = 140;
-        var COLORS = [C.gold, C.cyan, C.white, C.goldW];
+        const ctx = canvas.getContext('2d')!;
+        let W: number, H: number, particles: Array<{x:number;y:number;vx:number;vy:number;size:number;opacity:number;color:string}>;
+        let running = true;
+        const COUNT = 55, LINK_DIST = 140;
+        const COLORS = [C.gold, C.cyan, C.white, C.goldW];
 
         function resize() {
           W = canvas!.width  = canvas!.offsetWidth;
@@ -314,16 +314,16 @@ export default function LandingPage() {
         function tick() {
           if (!running) return;
           ctx.clearRect(0, 0, W, H);
-          for (var i = 0; i < COUNT; i++) {
-            var p = particles[i];
+          for (let i = 0; i < COUNT; i++) {
+            const p = particles[i];
             p.x += p.vx; p.y += p.vy;
             if (p.x < 0) p.x = W; if (p.x > W) p.x = 0;
             if (p.y < 0) p.y = H; if (p.y > H) p.y = 0;
             ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
             ctx.fillStyle = p.color; ctx.globalAlpha = p.opacity; ctx.fill();
-            for (var j = i+1; j < COUNT; j++) {
-              var q = particles[j];
-              var dx = p.x-q.x, dy = p.y-q.y, d = Math.sqrt(dx*dx+dy*dy);
+            for (let j = i+1; j < COUNT; j++) {
+              const q = particles[j];
+              const dx = p.x-q.x, dy = p.y-q.y, d = Math.sqrt(dx*dx+dy*dy);
               if (d < LINK_DIST) {
                 ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(q.x,q.y);
                 ctx.strokeStyle = C.gold; ctx.globalAlpha = (1-d/LINK_DIST)*0.18;
@@ -334,7 +334,7 @@ export default function LandingPage() {
           ctx.globalAlpha = 1;
           _rafId = requestAnimationFrame(tick);
         }
-        var heroSlide = document.getElementById('slide-hero');
+        const heroSlide = document.getElementById('slide-hero');
         if (heroSlide) {
           new IntersectionObserver(function(entries){
             running = entries[0].isIntersecting;
@@ -347,21 +347,21 @@ export default function LandingPage() {
 
       // ── 2. READING BAR ──
       snapWrap && snapWrap.addEventListener('scroll', function(){
-        var bar = document.getElementById('rbar');
+        const bar = document.getElementById('rbar');
         if (!bar) return;
-        var pct = (snapWrap!.scrollTop / (snapWrap!.scrollHeight - snapWrap!.clientHeight)) * 100;
+        const pct = (snapWrap!.scrollTop / (snapWrap!.scrollHeight - snapWrap!.clientHeight)) * 100;
         bar.style.width = pct + '%';
       }, { passive: true });
 
       // ── 3. MISSION BAR + LABEL ──
-      var SLIDE_LABELS = [
+      const SLIDE_LABELS = [
         'INITIALIZING', 'PLATFORM', 'ORG MODEL', 'DEV TEAM',
         'PATROL', 'CONTENT', 'COMPANY', 'LAUNCH'
       ];
       (function initMissionBar() {
-        var segments = document.querySelectorAll('.mission-segment');
-        var labelEl  = document.getElementById('missionLabel');
-        var lastIdx  = -1;
+        const segments = document.querySelectorAll('.mission-segment');
+        const labelEl  = document.getElementById('missionLabel');
+        let lastIdx  = -1;
 
         function updateBar(idx: number) {
           if (idx === lastIdx) return;
@@ -374,7 +374,7 @@ export default function LandingPage() {
           if (labelEl) labelEl.textContent = SLIDE_LABELS[idx] || '';
         }
 
-        var io = new IntersectionObserver(function(entries) {
+        const io = new IntersectionObserver(function(entries) {
           entries.forEach(function(e) {
             if (e.isIntersecting && e.intersectionRatio >= 0.5) {
               updateBar(slides.indexOf(e.target as Element));
@@ -386,16 +386,16 @@ export default function LandingPage() {
 
       // ── 4. XP BAR ──
       (function initXP() {
-        var xpBar   = document.getElementById('xpBar');
-        var xpLevel = document.getElementById('xpLevel');
+        const xpBar   = document.getElementById('xpBar');
+        const xpLevel = document.getElementById('xpLevel');
         if (!xpBar || !xpLevel) return;
-        var total = slides.length || 8;
-        var curLevel = 0;
-        var io = new IntersectionObserver(function(entries) {
+        const total = slides.length || 8;
+        let curLevel = 0;
+        const io = new IntersectionObserver(function(entries) {
           entries.forEach(function(e) {
             if (e.isIntersecting && e.intersectionRatio >= 0.5) {
-              var idx = slides.indexOf(e.target as Element);
-              var pct = (idx / (total - 1)) * 100;
+              const idx = slides.indexOf(e.target as Element);
+              const pct = (idx / (total - 1)) * 100;
               xpBar!.style.width = pct + '%';
               if (idx !== curLevel) {
                 curLevel = idx;
@@ -409,8 +409,8 @@ export default function LandingPage() {
       })();
 
       // ── 5. ACHIEVEMENT TOAST ──
-      var achievementQueue: Array<{title:string;desc:string;icon:string}> = [];
-      var toastVisible = false;
+      const achievementQueue: Array<{title:string;desc:string;icon:string}> = [];
+      let toastVisible = false;
 
       function showAchievement(title: string, desc: string, icon: string) {
         achievementQueue.push({ title: title, desc: desc, icon: icon || '★' });
@@ -420,8 +420,8 @@ export default function LandingPage() {
       function drainToastQueue() {
         if (!achievementQueue.length) { toastVisible = false; return; }
         toastVisible = true;
-        var item = achievementQueue.shift()!;
-        var toast = document.createElement('div');
+        const item = achievementQueue.shift()!;
+        const toast = document.createElement('div');
         toast.innerHTML =
           '<span style="font-size:18px;flex-shrink:0">' + item.icon + '</span>' +
           '<div><div style="color:' + C.goldW + ';font-weight:700;letter-spacing:0.1em;margin-bottom:2px;font-family:var(--mono);font-size:9px;">' + item.title + '</div>' +
@@ -442,20 +442,20 @@ export default function LandingPage() {
         }, 3500);
       }
 
-      var ACHIEVEMENTS: Record<string, {title:string;desc:string;icon:string}> = {
+      const ACHIEVEMENTS: Record<string, {title:string;desc:string;icon:string}> = {
         'slide-hero':     { title: 'INITIALIZED',       desc: 'System boot complete',           icon: '⚡' },
         'slide-platform': { title: 'PLATFORM UNLOCKED',  desc: '89 agent roles ready',           icon: '🛡' },
         'slide-company':  { title: 'ORG ASSEMBLED',      desc: 'Every department loaded',         icon: '🏛' },
         'slide-close':    { title: 'MISSION READY',       desc: 'Your autonomous company awaits', icon: '🚀' },
       };
-      var achievedSlides = new Set<string>();
-      var ioAch = new IntersectionObserver(function(entries) {
+      const achievedSlides = new Set<string>();
+      const ioAch = new IntersectionObserver(function(entries) {
         entries.forEach(function(e) {
           if (e.isIntersecting && e.intersectionRatio >= 0.5) {
-            var id = (e.target as Element).id;
+            const id = (e.target as Element).id;
             if (ACHIEVEMENTS[id] && !achievedSlides.has(id)) {
               achievedSlides.add(id);
-              var a = ACHIEVEMENTS[id];
+              const a = ACHIEVEMENTS[id];
               setTimeout(function(){ showAchievement(a.title, a.desc, a.icon); }, 800);
             }
           }
@@ -466,7 +466,7 @@ export default function LandingPage() {
       // ── 6. GLITCH ──
       function applyGlitch(element: Element) {
         if (!element) return;
-        var tl = gsap.timeline();
+        const tl = gsap.timeline();
         tl.to(element, { x: 4, duration: 0.05 })
           .to(element, { x: -4, duration: 0.05 })
           .to(element, { x: 2, duration: 0.05 })
@@ -475,11 +475,11 @@ export default function LandingPage() {
           .to(element, { skewX: -1, duration: 0.04 })
           .to(element, { skewX: 0, duration: 0.04 });
       }
-      var heroH1 = document.querySelector('#slide-hero h1');
+      const heroH1 = document.querySelector('#slide-hero h1');
       if (heroH1) {
-        var heroOn = { v: false };
-        var gioHero = new IntersectionObserver(function(entries){ heroOn.v = entries[0].isIntersecting; }, { threshold: 0.5, root: snapWrap });
-        var heroSlide2 = document.getElementById('slide-hero');
+        const heroOn = { v: false };
+        const gioHero = new IntersectionObserver(function(entries){ heroOn.v = entries[0].isIntersecting; }, { threshold: 0.5, root: snapWrap });
+        const heroSlide2 = document.getElementById('slide-hero');
         if (heroSlide2) gioHero.observe(heroSlide2);
         setInterval(function(){ if (heroOn.v) applyGlitch(heroH1!); }, 6000);
       }
@@ -488,7 +488,7 @@ export default function LandingPage() {
       function animateCounter(el: Element, target: number, suffix: string, duration: number) {
         if (!el) return;
         suffix = suffix || ''; duration = duration || 1.8;
-        var obj = { val: 0 };
+        const obj = { val: 0 };
         gsap.to(obj, { val: target, duration: duration, ease: 'power2.out',
           onUpdate: function(){ el.textContent = Math.floor(obj.val) + suffix; },
           onComplete: function(){ el.textContent = target + suffix; }
@@ -497,8 +497,8 @@ export default function LandingPage() {
       function animateTypewriter(el: Element, text: string, speed: number) {
         if (!el) return;
         speed = speed || 80;
-        var i = 0; el.textContent = '';
-        var iv = setInterval(function(){
+        let i = 0; el.textContent = '';
+        const iv = setInterval(function(){
           el.textContent += text[i]; i++;
           if (i >= text.length) clearInterval(iv);
         }, speed);
@@ -506,7 +506,7 @@ export default function LandingPage() {
       function animateCountdown(el: Element, from: number, to: number, prefix: string, duration: number) {
         if (!el) return;
         prefix = prefix || ''; duration = duration || 1.5;
-        var obj = { val: from };
+        const obj = { val: from };
         gsap.to(obj, { val: to, duration: duration, ease: 'power2.out',
           onUpdate: function(){ el.textContent = prefix + Math.floor(obj.val).toLocaleString(); },
           onComplete: function(){ el.textContent = prefix + to; }
@@ -515,17 +515,17 @@ export default function LandingPage() {
 
       // ── 8. COMPANY COUNTERS ──
       (function initCompanyCounters() {
-        var sec = document.getElementById('slide-company');
+        const sec = document.getElementById('slide-company');
         if (!sec) return;
-        var fired = false;
-        var io = new IntersectionObserver(function(entries) {
+        let fired = false;
+        const io = new IntersectionObserver(function(entries) {
           entries.forEach(function(e) {
             if (e.isIntersecting && !fired) {
               fired = true;
-              var el230 = sec!.querySelector('[data-count="230"]');
-              var el247 = sec!.querySelector('[data-count="247"]');
-              var el0   = sec!.querySelector('[data-count="0"]');
-              var el1   = sec!.querySelector('[data-count="1"]');
+              const el230 = sec!.querySelector('[data-count="230"]');
+              const el247 = sec!.querySelector('[data-count="247"]');
+              const el0   = sec!.querySelector('[data-count="0"]');
+              const el1   = sec!.querySelector('[data-count="1"]');
               if (el230) animateCounter(el230, 230, '+', 1.8);
               if (el247) animateTypewriter(el247, '24/7', 120);
               if (el0)   animateCountdown(el0, 999000, 0, '$', 1.5);
@@ -540,10 +540,10 @@ export default function LandingPage() {
       function scanReveal(el: HTMLElement, delay: number) {
         if (!el) return;
         delay = delay || 0;
-        var W2 = el.offsetWidth || 400;
+        const W2 = el.offsetWidth || 400;
         el.style.position = 'relative';
         el.style.clipPath  = 'inset(0 100% 0 0)';
-        var line = document.createElement('div');
+        const line = document.createElement('div');
         Object.assign(line.style, {
           position:'absolute', top:'0', left:'0',
           width:'2px', height:'100%',
@@ -552,8 +552,8 @@ export default function LandingPage() {
           zIndex:'10', opacity:'0',
         });
         el.appendChild(line);
-        var dur = Math.max(W2/400, 0.4);
-        var tl = gsap.timeline({ delay: delay });
+        const dur = Math.max(W2/400, 0.4);
+        const tl = gsap.timeline({ delay: delay });
         tl.set(line, { opacity: 1 })
           .to(line, { x: W2, duration: dur, ease: 'none' })
           .to(el, { clipPath: 'inset(0 0% 0 0)', duration: dur, ease: 'none' }, '<')
@@ -563,19 +563,19 @@ export default function LandingPage() {
 
       // ── 10. SLIDE DOTS ──
       (function initDots() {
-        var dotsContainer = document.getElementById('slideDots');
+        const dotsContainer = document.getElementById('slideDots');
         if (!dotsContainer) return;
         slides.forEach(function(slide, i) {
-          var dot = document.createElement('button');
+          const dot = document.createElement('button');
           dot.className = 'slide-dot' + (i === 0 ? ' active' : '');
           dot.setAttribute('aria-label', 'Go to slide ' + (i + 1));
           dot.onclick = function(){ snapWrap!.scrollTo({ top: (slide as HTMLElement).offsetTop, behavior: 'smooth' }); };
           dotsContainer!.appendChild(dot);
         });
-        var io = new IntersectionObserver(function(entries) {
+        const io = new IntersectionObserver(function(entries) {
           entries.forEach(function(e) {
             if (e.isIntersecting && e.intersectionRatio >= 0.5) {
-              var idx = slides.indexOf(e.target as Element);
+              const idx = slides.indexOf(e.target as Element);
               document.querySelectorAll('.slide-dot').forEach(function(d, i){ d.classList.toggle('active', i === idx); });
             }
           });
@@ -585,10 +585,10 @@ export default function LandingPage() {
 
       // ── 11. SLIDE-IN REVEAL ──
       (function initSlideIn() {
-        var io = new IntersectionObserver(function(entries) {
+        const io = new IntersectionObserver(function(entries) {
           entries.forEach(function(e) {
             if (e.isIntersecting) {
-              var els = (e.target as Element).querySelectorAll('.slide-in');
+              const els = (e.target as Element).querySelectorAll('.slide-in');
               if (els.length) {
                 gsap.set(els, { y: 32, autoAlpha: 0 });
                 gsap.to(els, { y: 0, autoAlpha: 1, duration: 0.7, stagger: 0.08, ease: 'expo.out' });
@@ -602,14 +602,14 @@ export default function LandingPage() {
       // ── 12. SMOOTH NAV LINKS ──
       document.querySelectorAll('a[href^="#"]').forEach(function(a) {
         a.addEventListener('click', function(e) {
-          var target = document.querySelector((a as HTMLAnchorElement).getAttribute('href')!);
+          const target = document.querySelector((a as HTMLAnchorElement).getAttribute('href')!);
           if (target) { e.preventDefault(); snapWrap!.scrollTo({ top: (target as HTMLElement).offsetTop, behavior: 'smooth' }); }
         });
       });
 
       // ── 13. STATUS PULSE ──
       (function initStatusPulse() {
-        var badge = document.getElementById('sysBadge');
+        const badge = document.getElementById('sysBadge');
         if (!badge) return;
         function pulseNormal() {
           gsap.to(badge, { opacity: 1, duration: 1, ease: 'sine.inOut',
@@ -621,25 +621,25 @@ export default function LandingPage() {
 
       // ── 15. PLATFORM CARDS (flip deploy) ──
       (function initPlatformCards() {
-        var sec = document.getElementById('slide-platform');
+        const sec = document.getElementById('slide-platform');
         if (!sec) return;
-        var fired = false;
-        var io = new IntersectionObserver(function(entries) {
+        let fired = false;
+        const io = new IntersectionObserver(function(entries) {
           entries.forEach(function(e) {
             if (e.isIntersecting && !fired) {
               fired = true;
-              var cards = sec!.querySelectorAll('.cap-card');
+              const cards = sec!.querySelectorAll('.cap-card');
               cards.forEach(function(card, i) {
                 gsap.set(card, { rotateY: 90, opacity: 0, transformPerspective: 800 });
                 gsap.to(card, {
                   rotateY: 0, opacity: 1, duration: 0.55, ease: 'power3.out', delay: i * 0.12,
                   onComplete: function() {
-                    var stamp = document.createElement('div');
+                    const stamp = document.createElement('div');
                     stamp.textContent = 'ASSET ONLINE';
                     Object.assign(stamp.style, { position:'absolute', top:'8px', left:'10px', fontFamily:'var(--mono)', fontSize:'9px', letterSpacing:'0.12em', color:C.green, fontWeight:'700', opacity:'0' });
                     (card as HTMLElement).style.position = 'relative'; card.appendChild(stamp);
                     gsap.to(stamp, { opacity: 1, duration: 0.3 });
-                    var ping = document.createElement('div');
+                    const ping = document.createElement('div');
                     Object.assign(ping.style, { position:'absolute', inset:'-1px', border:'2px solid '+C.green, borderRadius:getComputedStyle(card as Element).borderRadius, pointerEvents:'none', opacity:'0' });
                     card.appendChild(ping);
                     gsap.fromTo(ping, { opacity:0.6 }, { opacity:0, duration:0.8, ease:'power2.out', onComplete:function(){ ping.remove(); } });
@@ -654,21 +654,21 @@ export default function LandingPage() {
 
       // ── 16. COMPANY ROSTER ──
       (function initCompanyRoster() {
-        var sec = document.getElementById('slide-company');
+        const sec = document.getElementById('slide-company');
         if (!sec) return;
-        var fired = false;
-        var io = new IntersectionObserver(function(entries) {
+        let fired = false;
+        const io = new IntersectionObserver(function(entries) {
           entries.forEach(function(e) {
             if (e.isIntersecting && !fired) {
               fired = true;
-              var h2 = sec!.querySelector('h2');
+              const h2 = sec!.querySelector('h2');
               if (h2) scanReveal(h2 as HTMLElement, 0);
-              var roleCards = sec!.querySelectorAll('.org-role');
+              const roleCards = sec!.querySelectorAll('.org-role');
               roleCards.forEach(function(card, i) {
                 gsap.set(card, { filter:'blur(4px)', opacity:0.3 });
                 gsap.to(card, { filter:'blur(0px)', opacity:1, duration:0.25, ease:'power2.out', delay:0.3 + i*0.1,
                   onComplete: function() {
-                    var flash = document.createElement('div');
+                    const flash = document.createElement('div');
                     flash.textContent = 'ONLINE';
                     Object.assign(flash.style, { position:'absolute', top:'6px', right:'8px', fontFamily:'var(--mono)', fontSize:'9px', color:C.green, fontWeight:'700', letterSpacing:'0.1em' });
                     (card as HTMLElement).style.position = 'relative'; card.appendChild(flash);
@@ -684,11 +684,11 @@ export default function LandingPage() {
 
       // ── 17. MISSION LAUNCH (close slide) ──
       (function initMissionLaunch() {
-        var sec = document.getElementById('slide-close');
+        const sec = document.getElementById('slide-close');
         if (!sec) return;
-        var statusFired = false;
-        var statusEl = document.getElementById('cmdStatus');
-        var io = new IntersectionObserver(function(entries) {
+        let statusFired = false;
+        const statusEl = document.getElementById('cmdStatus');
+        const io = new IntersectionObserver(function(entries) {
           entries.forEach(function(e) {
             if (e.isIntersecting && !statusFired) {
               statusFired = true;
@@ -701,9 +701,9 @@ export default function LandingPage() {
 
       // ── 18. TERMINAL (hero terminal typewriter) ──
       (function initTerminal() {
-        var termEl = document.getElementById('term-output');
+        const termEl = document.getElementById('term-output');
         if (!termEl) return;
-        var lines = [
+        const lines = [
           { type:'prompt',  text:'/mastermind:createorg --name ai-intel-pod --auto \\' },
           { type:'prompt2', text:'  "Track the AI competitive landscape weekly"' },
           { type:'out',     text:'✓ Org created · 5 roles defined · cycle: per-run' },
@@ -736,8 +736,8 @@ export default function LandingPage() {
           { type:'dim',     text:'' },
           { type:'out',     text:'✓ All systems nominal · 89 agent roles · 24/7' },
         ];
-        var lineIdx = 0, charIdx = 0;
-        var termBody = termEl.parentElement;
+        let lineIdx = 0, charIdx = 0;
+        const termBody = termEl.parentElement;
 
         function getClass(type: string) {
           if (type === 'prompt' || type === 'prompt2') return 't-prompt';
@@ -746,24 +746,24 @@ export default function LandingPage() {
           return 't-dim';
         }
         function buildOutput() {
-          var html = '';
-          for (var i = 0; i < lineIdx; i++) {
-            var l = lines[i];
-            var pre = l.type==='prompt'?'$ ':l.type==='prompt2'?'  ':'';
+          let html = '';
+          for (let i = 0; i < lineIdx; i++) {
+            const l = lines[i];
+            const pre = l.type==='prompt'?'$ ':l.type==='prompt2'?'  ':'';
             html += '<span class="' + getClass(l.type) + '">' + (pre + l.text) + '</span>\n';
           }
           if (lineIdx < lines.length) {
-            var l2 = lines[lineIdx];
-            var pre2 = l2.type==='prompt'?'$ ':l2.type==='prompt2'?'  ':'';
+            const l2 = lines[lineIdx];
+            const pre2 = l2.type==='prompt'?'$ ':l2.type==='prompt2'?'  ':'';
             html += '<span class="' + getClass(l2.type) + '">' + (pre2 + l2.text).slice(0, charIdx) + '</span>';
           }
           return html;
         }
         function typeChar() {
           if (lineIdx >= lines.length) return;
-          var line = lines[lineIdx];
-          var pre  = line.type==='prompt'?'$ ':line.type==='prompt2'?'  ':'';
-          var text = pre + line.text;
+          const line = lines[lineIdx];
+          const pre  = line.type==='prompt'?'$ ':line.type==='prompt2'?'  ':'';
+          const text = pre + line.text;
           if (charIdx < text.length) {
             termEl!.innerHTML = buildOutput() + '<span class="t-cursor"></span>';
             if (termBody) termBody.scrollTop = termBody.scrollHeight;
@@ -780,18 +780,18 @@ export default function LandingPage() {
 
       // ── 19. AGENT COUNTER ROLL ──
       (function initAgentCounter() {
-        var counterEl = document.getElementById('agentCounter');
+        const counterEl = document.getElementById('agentCounter');
         if (!counterEl) return;
-        var current = 0;
-        var targets  = [0, 45, 87, 120, 168, 195, 218, 230];
-        var io = new IntersectionObserver(function(entries) {
+        let current = 0;
+        const targets  = [0, 45, 87, 120, 168, 195, 218, 230];
+        const io = new IntersectionObserver(function(entries) {
           entries.forEach(function(e) {
             if (e.isIntersecting && e.intersectionRatio >= 0.5) {
-              var idx = slides.indexOf(e.target as Element);
-              var target = targets[Math.min(idx, targets.length-1)] || 0;
+              const idx = slides.indexOf(e.target as Element);
+              const target = targets[Math.min(idx, targets.length-1)] || 0;
               if (target !== current) {
                 current = target;
-                var obj = { v: parseFloat(counterEl!.textContent || '0') || 0 };
+                const obj = { v: parseFloat(counterEl!.textContent || '0') || 0 };
                 gsap.to(obj, { v: target, duration: 0.8, ease: 'power2.out',
                   onUpdate: function(){ counterEl!.textContent = String(Math.floor(obj.v)); },
                   onComplete: function(){ counterEl!.textContent = String(target); }
@@ -809,7 +809,7 @@ export default function LandingPage() {
       // ── INJECT STYLES ──
       (function(){
         if (document.getElementById('mm6-styles')) return;
-        var style = document.createElement('style');
+        const style = document.createElement('style');
         style.id = 'mm6-styles';
         style.textContent = '@keyframes blink {0%,100%{opacity:1}50%{opacity:0.2}} .glitch-active{color-scheme:dark}';
         document.head.appendChild(style);

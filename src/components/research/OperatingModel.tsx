@@ -131,7 +131,7 @@ claude mcp add notion -- npx @notionhq/mcp-server`}</pre>
         content: (
           <div className="space-y-3">
             <p className="text-sm text-espresso/65 leading-relaxed">
-              This file is injected into every session as the AI's permanent self-knowledge about your project. Write it once; update it when the project changes significantly.
+              This file is injected into every session as the AI&apos;s permanent self-knowledge about your project. Write it once; update it when the project changes significantly.
             </p>
             <pre className="bg-espresso text-gold text-xs font-mono rounded-xl p-5 overflow-x-auto leading-relaxed whitespace-pre">{`# .ai-context/identity.md
 
@@ -200,7 +200,7 @@ status. Missed deliveries must retry automatically.
           <div className="space-y-4">
             <div className="bg-red-50 border border-red-100 rounded-xl p-5">
               <p className="text-[10px] uppercase tracking-label font-semibold text-red-400 mb-2">Vague prompt — produces inconsistent results</p>
-              <p className="text-sm font-mono text-espresso/60 italic">"Add webhooks so users can get notified about order changes"</p>
+              <p className="text-sm font-mono text-espresso/60 italic">&quot;Add webhooks so users can get notified about order changes&quot;</p>
             </div>
             <div className="space-y-2 text-sm text-espresso/60 leading-relaxed">
               <p>The vague version leaves every decision to the AI: retry logic or not? Signature verification or not? Sync or async? Each agent in each session will answer these differently. The spec version makes every decision explicit — the AI implements, not interprets.</p>
@@ -423,7 +423,7 @@ Waiting on [1,2,3] before: task 4`}</pre>
         content: (
           <div className="space-y-4">
             <p className="text-sm text-espresso/65 leading-relaxed">
-              Three weeks later, a new ticket asks for "email delivery with retry." The orchestrator finds the webhook memory entry via semantic search and injects it as context before any agent runs:
+              Three weeks later, a new ticket asks for &quot;email delivery with retry.&quot; The orchestrator finds the webhook memory entry via semantic search and injects it as context before any agent runs:
             </p>
             <div className="bg-ivory-parchment border border-ivory-linen rounded-xl p-4">
               <p className="text-[10px] uppercase tracking-label text-gold-dark font-semibold mb-2">Memory injected into agent context</p>
@@ -716,7 +716,7 @@ export function OperatingModel() {
             What Makes It Work
           </h2>
           <p className="text-espresso/55 max-w-2xl font-light leading-relaxed">
-            The pattern across successful one-developer companies is not "use AI tools." It is a specific operating model where the human genuinely relinquishes syntax authorship.
+            The pattern across successful one-developer companies is not &quot;use AI tools.&quot; It is a specific operating model where the human genuinely relinquishes syntax authorship.
           </p>
         </motion.div>
 

@@ -221,6 +221,7 @@ export function MonographDemo() {
       });
     }
 
+    // eslint-disable-next-line react-hooks/immutability -- self-recursive rAF loop
     animRef.current = requestAnimationFrame(draw);
   }, []);
 

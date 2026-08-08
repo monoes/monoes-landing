@@ -268,6 +268,7 @@ export function SwarmSimulation() {
       }
     });
 
+    // eslint-disable-next-line react-hooks/immutability -- self-recursive rAF loop
     animRef.current = requestAnimationFrame(draw);
   }, []);
 

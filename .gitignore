@@ -48,3 +48,6 @@ tsconfig.tsbuildinfo
 data/sessions/
 data/mastermind-*.json
 data/mastermind-*.jsonl
+
+# macOS AppleDouble files
+._*

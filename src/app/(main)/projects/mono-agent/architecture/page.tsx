@@ -232,7 +232,7 @@ export default function MonoAgentArchitecturePage() {
               <rect x="110" y="95" width="270" height="65" rx="12" fill="rgba(200,169,126,0.12)" stroke="#C8A97E" strokeWidth="2"/>
               <text x="245" y="120" textAnchor="middle" fill="#2A2318" fontSize="13" fontWeight="700">WorkflowEngine</text>
               <text x="245" y="138" textAnchor="middle" fill="#C8A97E" fontSize="10" fontWeight="600">DAG Builder · ExecutionQueue · Worker Pool</text>
-              <text x="245" y="152" textAnchor="middle" fill="rgba(42,35,24,0.4)" fontSize="9">Kahn's topological sort · BFS execution stack</text>
+              <text x="245" y="152" textAnchor="middle" fill="rgba(42,35,24,0.4)" fontSize="9">Kahn&apos;s topological sort · BFS execution stack</text>
 
               {/* ActionExecutor */}
               <rect x="420" y="95" width="200" height="65" rx="10" fill="rgba(184,149,106,0.1)" stroke="#B8956A" strokeWidth="1.5"/>
@@ -457,7 +457,7 @@ export default function MonoAgentArchitecturePage() {
           <div className="rounded-2xl border border-espresso/10 bg-white p-6 shadow-soft">
             <p className="text-[10px] uppercase tracking-label font-semibold text-espresso/40 mb-4">Key Architectural Decision</p>
             <p className="text-sm text-espresso/65 leading-relaxed">
-              <strong className="text-espresso">Go text/template instead of Lua or JavaScript</strong> — no eval sandboxing required. Expressions are limited by the FuncMap (no arbitrary Go access). Simple enough for non-technical users, composable for power users. Go's template engine is battle-tested with zero external runtime overhead.
+              <strong className="text-espresso">Go text/template instead of Lua or JavaScript</strong> — no eval sandboxing required. Expressions are limited by the FuncMap (no arbitrary Go access). Simple enough for non-technical users, composable for power users. Go&apos;s template engine is battle-tested with zero external runtime overhead.
             </p>
           </div>
         </div>

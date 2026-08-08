@@ -185,6 +185,7 @@ export function OrgSimulation() {
     ctx.textBaseline = "middle";
     ctx.fillText("Boss", BX, BY);
 
+    // eslint-disable-next-line react-hooks/immutability -- self-recursive rAF loop
     animRef.current = requestAnimationFrame(draw);
   }, []);
 

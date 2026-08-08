@@ -171,7 +171,7 @@ export function CentralizedArch() {
               <br />not just the code.
             </h2>
             <p className="text-ivory/45 max-w-2xl font-light leading-relaxed">
-              In distributed AI development, each developer's assistant operates with a narrow, session-scoped view. The one-machine model routes all generation through a single system with a unified view of the entire repository, its history, its dependency graph, and what every other agent has already built.
+              In distributed AI development, each developer&apos;s assistant operates with a narrow, session-scoped view. The one-machine model routes all generation through a single system with a unified view of the entire repository, its history, its dependency graph, and what every other agent has already built.
             </p>
           </motion.div>
 

@@ -12,6 +12,10 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Generated OpenNext build output (Cloudflare adapter):
+    ".open-next/**",
+    // Local agent tooling, not app code:
+    ".claude/**",
   ]),
 ]);
 
