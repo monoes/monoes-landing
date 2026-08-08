@@ -79,7 +79,7 @@ export const projects: Project[] = [
     install: [
       {
         command: "npm install -g monomind",
-        output: "✓ Monomind installed (@monoes/monomindcli v2.8.3)",
+        output: "✓ Monomind installed (@monoes/monomindcli v2.8.4)",
       },
       {
         command: "npm install -g @monoes/monomindcli",

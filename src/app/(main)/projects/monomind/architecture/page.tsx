@@ -177,7 +177,7 @@ const hookGroups = [
 
 const orgFacts = [
   { label: "Runtime", value: "SDK-backed daemon", desc: "monomind org run/serve — each role is a live, in-process Claude Agent SDK session, not a subprocess." },
-  { label: "Subcommands", value: "16", desc: "run [--dry-run], stop, status, serve, test-loop, logs, report, memory, questions, answer, create, validate, migrate, list, delete, mark-complete." },
+  { label: "Subcommands", value: "31", desc: "run [--dry-run], stop, pause, resume, reload, status, serve, supervisor, test-loop, logs, report, memory, costs, flow, questions, answer, approve, deny, gates, gate-approve, gate-reject, replay, resume-from, branch, decisions, create, validate, migrate, list, delete, mark-complete." },
   { label: "Inter-agent channel", value: "org_send / Mailbox", desc: "The only way roles communicate — plus ask_human for human-in-the-loop and org_recall/org_remember/org_learn for cross-run memory." },
   { label: "Config", value: ".monomind/orgs/<name>.json", desc: "Parsed against a zod schema: goal, schedule, run_config (budget, concurrency), and a role list with per-role tool/file/web policy." },
 ];
@@ -227,7 +227,7 @@ export default function MonomindArchitecturePage() {
             className="inline-block mb-6 text-xs font-semibold uppercase tracking-label px-3 py-1 rounded-full border"
             style={{ color: accent, borderColor: `${accent}40`, background: `${accent}10` }}
           >
-            v2.8.3 · Technical Architecture
+            v2.8.4 · Technical Architecture
           </div>
           <h1 className="text-5xl md:text-6xl lg:text-7xl font-semibold text-espresso tracking-tight leading-none mb-6">
             How <span style={{ color: accent }}>Monomind</span>
@@ -471,7 +471,7 @@ export default function MonomindArchitecturePage() {
           <p className="text-espresso/55 font-light leading-relaxed max-w-2xl mb-12">
             monomind org run/serve replaces the older prompt-orchestrated runorg path — each role is a live agent session, not a scripted prompt loop.
           </p>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 items-start">
             {orgFacts.map((f) => (
               <div key={f.label} className="rounded-2xl border border-espresso/10 bg-white p-5 shadow-soft">
                 <p className="text-[10px] uppercase tracking-label font-bold mb-2" style={{ color: accent }}>{f.label}</p>
@@ -507,7 +507,7 @@ export default function MonomindArchitecturePage() {
       {/* ── Footer ── */}
       <footer className="border-t border-ivory-linen bg-ivory-parchment px-8 py-10 text-center">
         <p className="text-xs text-espresso/35">
-          Monomind v2.8.3 · Architecture · 2026-08-02 ·{" "}
+          Monomind v2.8.4 · Architecture · 2026-08-02 ·{" "}
           <Link href="/projects/monomind" className="hover:text-espresso/60 transition-colors">
             ← Back to Monomind
           </Link>
