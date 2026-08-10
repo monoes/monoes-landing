@@ -891,7 +891,7 @@ export default function LandingPage() {
                   <em>A company.</em>
                 </h1>
                 <p className="hero-sub">
-                  Monomind is the open-source autonomous agent platform that turns a single engineer into a complete organization — engineering, marketing, operations, and sales, all running without a team.
+                  Monomind is the open-source autonomous agent platform that turns a single engineer into a complete organization: engineering, marketing, operations, and sales, all running without a team.
                 </p>
                 <div className="hero-actions">
                   <a href="https://github.com/monoes/monomind" className="btn-primary" target="_blank" rel="noopener noreferrer">★ Star on GitHub</a>
@@ -935,7 +935,7 @@ export default function LandingPage() {
               <div className="cap-card game-frame">
                 <span className="cap-num">02 · Memory</span>
                 <div className="cap-title">Local SQLite memory, no cloud vector DB</div>
-                <p className="cap-body">Local embeddings, local SQLite storage — every decision, pattern, and correction stored and retrieved on your own machine. A pure-JS HNSW index is available opt-in for larger corpora.</p>
+                <p className="cap-body">Local embeddings, local SQLite storage: every decision, pattern, and correction stored and retrieved on your own machine. A pure-JS HNSW index is available opt-in for larger corpora.</p>
                 <div className="cap-code">/mastermind:memory search &quot;auth patterns&quot;<br /><span style={{color:'rgba(200,220,200,0.7)'}}>↳ 12 results · top score 0.97 · 3ms</span></div>
               </div>
               <div className="cap-card game-frame">
@@ -947,7 +947,7 @@ export default function LandingPage() {
               <div className="cap-card game-frame">
                 <span className="cap-num">04 · Browser &amp; Social</span>
                 <div className="cap-title">Real Chrome automation</div>
-                <p className="cap-body">70+ workflow nodes including real CDP-powered browser automation. Post to LinkedIn, generate images, scrape competitors, fill CRMs — all orchestrated from a single workflow definition.</p>
+                <p className="cap-body">70+ workflow nodes including real CDP-powered browser automation. Post to LinkedIn, generate images, scrape competitors, fill CRMs; all orchestrated from a single workflow definition.</p>
                 <div className="cap-code">/monobrowse &quot;scrape competitor pricing page&quot;<br />/mastermind:marketing &quot;publish Q3 launch post&quot;<br /><span style={{color:'rgba(200,220,200,0.7)'}}>✓ Scraped · drafted · scheduled · published</span></div>
               </div>
             </div>
@@ -979,7 +979,7 @@ export default function LandingPage() {
               <div className="step-col">
                 <span className="step-eyebrow">Step 02</span>
                 <div className="step-title">Monomind generates the team</div>
-                <div className="step-body">Roles, memory, topology — all defined.</div>
+                <div className="step-body">Roles, memory, topology: all defined.</div>
                 <div className="step-code">roles: [director, scout,<br />  analyst, comparator,<br />  reporter]</div>
               </div>
               <div className="step-col">

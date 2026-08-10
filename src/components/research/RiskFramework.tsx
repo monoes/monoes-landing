@@ -59,7 +59,7 @@ export function RiskFramework() {
           transition={{ duration: 0.6, ease: expo }}
           className="mb-16"
         >
-          <p className="text-[10px] uppercase tracking-label font-semibold text-gold-dark mb-4">Risk Framework</p>
+          <p className="text-[10px] uppercase tracking-label font-semibold text-gold-dark mb-4">Risk Framework: Case Study A (Engineering)</p>
           <h2 className="text-3xl md:text-5xl font-semibold text-espresso tracking-tight mb-5">
             The gains are real.
             <br />So are the failure modes.

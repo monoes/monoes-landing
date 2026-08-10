@@ -25,17 +25,17 @@ interface GNode {
 }
 
 const NODES: GNode[] = [
-  // Community 0 — Backend / API
+  // Community 0: Backend / API
   { id: 0,  label: "API",    sublabel: "REST endpoints",   x: 118, y: 52,  comm: 0, god: true },
   { id: 1,  label: "Auth",   sublabel: "authentication",   x: 52,  y: 118, comm: 0 },
   { id: 2,  label: "Server", sublabel: "HTTP server",      x: 184, y: 118, comm: 0 },
   { id: 3,  label: "Config", sublabel: "env & secrets",    x: 88,  y: 178, comm: 0 },
-  // Community 1 — Data & Docs
+  // Community 1: Data & Docs
   { id: 4,  label: "DB",     sublabel: "database layer",   x: 280, y: 40,  comm: 1, god: true },
   { id: 5,  label: "Users",  sublabel: "user model",       x: 228, y: 108, comm: 1 },
   { id: 6,  label: "Schema", sublabel: "data schema",      x: 334, y: 108, comm: 1 },
   { id: 7,  label: "Docs",   sublabel: "README & specs",   x: 280, y: 172, comm: 1 },
-  // Community 2 — UI & Features
+  // Community 2: UI & Features
   { id: 8,  label: "UI",     sublabel: "components",       x: 442, y: 52,  comm: 2, god: true },
   { id: 9,  label: "Forms",  sublabel: "form logic",       x: 386, y: 120, comm: 2 },
   { id: 10, label: "Search", sublabel: "full-text search", x: 502, y: 120, comm: 2 },
@@ -71,7 +71,7 @@ const DETECT_STEPS = [
   "Found 3 communities (modularity Q=0.41).",
   "Detected 3 god nodes: API · DB · UI",
   "graphQuality = avgCohesion × ln(1 + avgDegree) = 2.87",
-  "Graph ready — impact paths and 46 MCP tools active (19 default + 27 advanced).",
+  "Graph ready: impact paths and 46 MCP tools active (19 default + 27 advanced).",
 ];
 
 export function MonographDemo() {
@@ -239,7 +239,7 @@ export function MonographDemo() {
     setLog([]);
     setHPath([]);
 
-    addLog("◆ monograph_build — scanning codebase…");
+    addLog("◆ monograph_build: scanning codebase…");
 
     // Phase 1: scan → nodes appear
     SCAN_STEPS.forEach((msg, i) => {
@@ -284,7 +284,7 @@ export function MonographDemo() {
     const doneAt = detectStart + DETECT_STEPS.length * 380 + 600;
     setTimeout(() => {
       setPhase("done");
-      addLog("◆ Graph ready — impact paths and MCP tools active.");
+      addLog("◆ Graph ready: impact paths and MCP tools active.");
       // Highlight example impact path: API → DB → Users → Docs
       setHPath([0, 4, 5, 7]);
       addLog("  Impact path: API → DB → Users → Docs");
@@ -360,7 +360,7 @@ export function MonographDemo() {
       {/* Description lines */}
       <div className="flex flex-col gap-0.5 px-0.5">
         <p className="text-[10px] font-mono text-espresso/40 leading-snug">
-          AST-parsed dependency graph of any codebase. Louvain clustering groups files into logical communities. God nodes (API, DB, UI) are highly-connected hubs — changing them has the widest blast radius.
+          AST-parsed dependency graph of any codebase. Louvain clustering groups files into logical communities. God nodes (API, DB, UI) are highly-connected hubs. Changing them has the widest blast radius.
         </p>
         <p className="text-[10px] font-mono leading-snug">
           <span style={{ color: GOLD }} className="opacity-70">Good for:</span>{" "}

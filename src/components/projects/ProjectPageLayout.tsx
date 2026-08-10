@@ -11,7 +11,7 @@ export function ProjectPageLayout({ project, demo }: { project: Project; demo: R
     <main className="pt-0">
       <ProjectHero project={project} />
 
-      {/* Demo — dark so canvas/widget stands out naturally */}
+      {/* Demo, dark so canvas/widget stands out naturally */}
       <section className="bg-espresso px-8 py-16">
         <div className="mx-auto max-w-6xl">
           <p className="mb-6 text-xs uppercase tracking-label font-medium" style={{ color: project.accent }}>

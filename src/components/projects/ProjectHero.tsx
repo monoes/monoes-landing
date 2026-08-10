@@ -62,7 +62,7 @@ export function ProjectHero({ project }: { project: Project }) {
         </Link>
 
         <div className="flex items-end gap-12">
-          {/* Left — text */}
+          {/* Left - text */}
           <div className="flex-1 pb-16">
             <p className="mb-3 text-xs uppercase tracking-label font-semibold" style={{ color: project.accent }}>
               {project.number} · {project.language}
@@ -124,7 +124,7 @@ export function ProjectHero({ project }: { project: Project }) {
             )}
           </div>
 
-          {/* Right — monkey image centered vertically */}
+          {/* Right - monkey image centered vertically */}
           <div className="hidden md:flex items-center justify-center flex-shrink-0 self-center">
             <Image
               src={monkey}

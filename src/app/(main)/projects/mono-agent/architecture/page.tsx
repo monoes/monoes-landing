@@ -16,7 +16,7 @@ const modules = [
     icon: "⚡",
     subtitle: "Workflow Engine",
     name: "internal/workflow/",
-    description: "DAG-based execution orchestrator. Kahn's algorithm for topological sort and cycle detection. BFS stack execution — branches run sequentially in a single goroutine, not parallel goroutines. Manages execution queue (default depth 1,000), worker pool (default 3, max 20), and trigger registry (manual, cron, webhook).",
+    description: "DAG-based execution orchestrator. Kahn's algorithm for topological sort and cycle detection. BFS stack execution: branches run sequentially in a single goroutine, not parallel goroutines. Manages execution queue (default depth 1,000), worker pool (default 3, max 20), and trigger registry (manual, cron, webhook).",
     tags: ["5,269 LOC", "DAG", "Kahn's algo", "BFS stack", "worker pool", "webhook"],
     color: "#C8A97E",
   },
@@ -40,7 +40,7 @@ const modules = [
     icon: "🌐",
     subtitle: "Browser Layer",
     name: "internal/browser/",
-    description: "Rod (Chrome DevTools Protocol via WebSocket). Stealth evasion via go-rod/stealth plugin. Humanized input: per-keystroke delays 20–150ms, 5% typo rate with auto-correct. 12+ Chromium flags for anti-detection. Page pool — one page per platform+session, reused to preserve login state.",
+    description: "Rod (Chrome DevTools Protocol via WebSocket). Stealth evasion via go-rod/stealth plugin. Humanized input: per-keystroke delays 20–150ms, 5% typo rate with auto-correct. 12+ Chromium flags for anti-detection. Page pool: one page per platform+session, reused to preserve login state.",
     tags: ["~1,500 LOC", "Rod/CDP", "stealth", "humanized", "page pool"],
     color: "#8B7355",
   },
@@ -232,7 +232,7 @@ export default function MonoAgentArchitecturePage() {
               <rect x="110" y="95" width="270" height="65" rx="12" fill="rgba(200,169,126,0.12)" stroke="#C8A97E" strokeWidth="2"/>
               <text x="245" y="120" textAnchor="middle" fill="#2A2318" fontSize="13" fontWeight="700">WorkflowEngine</text>
               <text x="245" y="138" textAnchor="middle" fill="#C8A97E" fontSize="10" fontWeight="600">DAG Builder · ExecutionQueue · Worker Pool</text>
-              <text x="245" y="152" textAnchor="middle" fill="rgba(42,35,24,0.4)" fontSize="9">Kahn&apos;s topological sort · BFS execution stack</text>
+              <text x="245" y="152" textAnchor="middle" fill="rgba(42,35,24,0.4)" fontSize="9">Kahn's topological sort · BFS execution stack</text>
 
               {/* ActionExecutor */}
               <rect x="420" y="95" width="200" height="65" rx="10" fill="rgba(184,149,106,0.1)" stroke="#B8956A" strokeWidth="1.5"/>
@@ -360,7 +360,7 @@ export default function MonoAgentArchitecturePage() {
           <p className="text-xs uppercase tracking-label font-semibold mb-3" style={{ color: accent }}>Execution</p>
           <h2 className="text-3xl md:text-4xl font-semibold text-espresso mb-4">Workflow Execution Flow</h2>
           <p className="text-espresso/55 font-light leading-relaxed max-w-2xl mb-12">
-            From trigger to result — 8 steps through the DAG executor, expression engine, and node registry.
+            From trigger to result: 8 steps through the DAG executor, expression engine, and node registry.
           </p>
           <div className="flex flex-col gap-4">
             {executionFlow.map((step) => (
@@ -411,15 +411,15 @@ export default function MonoAgentArchitecturePage() {
             <p className="text-[10px] uppercase tracking-label font-semibold text-espresso/40 mb-4">3-Tier DOM Fallback (Browser Nodes)</p>
             <div className="flex flex-col gap-3">
               {[
-                { tier: "Tier 1", label: "call_bot_method", desc: "Go code in bot layer — reliable, version-locked, fastest", conf: "~100% reliable" },
-                { tier: "Tier 2", label: "XPath alternatives", desc: "Human-written selectors — faster than AI but brittle if platform changes UI", conf: "~85% reliable" },
-                { tier: "Tier 3", label: "AI-generated CSS", desc: "Config manager asks LLM for selector — adaptive but slow (~500ms extra)", conf: "~70% reliable" },
+                { tier: "Tier 1", label: "call_bot_method", desc: "Go code in bot layer: reliable, version-locked, fastest", conf: "~100% reliable" },
+                { tier: "Tier 2", label: "XPath alternatives", desc: "Human-written selectors, faster than AI but brittle if platform changes UI", conf: "~85% reliable" },
+                { tier: "Tier 3", label: "AI-generated CSS", desc: "Config manager asks LLM for selector, adaptive but slow (~500ms extra)", conf: "~70% reliable" },
               ].map((t) => (
                 <div key={t.tier} className="grid grid-cols-[auto_1fr_auto] items-center gap-4">
                   <span className="text-[10px] font-bold px-2 py-1 rounded border" style={{ color: accent, borderColor: `${accent}40`, background: `${accent}0d` }}>{t.tier}</span>
                   <div>
                     <span className="text-xs font-mono font-semibold text-espresso">{t.label}</span>
-                    <span className="text-xs text-espresso/50 ml-2">— {t.desc}</span>
+                    <span className="text-xs text-espresso/50 ml-2">- {t.desc}</span>
                   </div>
                   <span className="text-xs text-espresso/40">{t.conf}</span>
                 </div>
@@ -435,7 +435,7 @@ export default function MonoAgentArchitecturePage() {
           <p className="text-xs uppercase tracking-label font-semibold mb-3" style={{ color: accent }}>Expression Engine</p>
           <h2 className="text-3xl md:text-4xl font-semibold text-espresso mb-4">Go text/template + FuncMap</h2>
           <p className="text-espresso/55 font-light leading-relaxed max-w-2xl mb-12">
-            All string config fields in every node are resolved through ExpressionEngine before execution. No JavaScript sandbox — pure Go templates with a controlled FuncMap.
+            All string config fields in every node are resolved through ExpressionEngine before execution. No JavaScript sandbox: pure Go templates with a controlled FuncMap.
           </p>
           <div className="grid gap-3 sm:grid-cols-2 mb-8">
             {[
@@ -444,7 +444,7 @@ export default function MonoAgentArchitecturePage() {
               { expr: "{{$workflow.id}}", desc: "Workflow metadata (id, name, created_at)" },
               { expr: "{{$execution.id}}", desc: "Current execution runtime info" },
               { expr: '{{env "OPENAI_KEY"}}', desc: "OS environment variable (secure, not stored in workflow)" },
-              { expr: "{{len $json.items}}", desc: "Array length — built-in template function" },
+              { expr: "{{len $json.items}}", desc: "Array length: built-in template function" },
               { expr: "{{now}}", desc: "Current timestamp as Go time.Time" },
               { expr: "{{index $json.tags 0}}", desc: "Array index access via Go template built-in" },
             ].map((e) => (
@@ -457,7 +457,7 @@ export default function MonoAgentArchitecturePage() {
           <div className="rounded-2xl border border-espresso/10 bg-white p-6 shadow-soft">
             <p className="text-[10px] uppercase tracking-label font-semibold text-espresso/40 mb-4">Key Architectural Decision</p>
             <p className="text-sm text-espresso/65 leading-relaxed">
-              <strong className="text-espresso">Go text/template instead of Lua or JavaScript</strong> — no eval sandboxing required. Expressions are limited by the FuncMap (no arbitrary Go access). Simple enough for non-technical users, composable for power users. Go&apos;s template engine is battle-tested with zero external runtime overhead.
+              <strong className="text-espresso">Go text/template instead of Lua or JavaScript</strong>: no eval sandboxing required. Expressions are limited by the FuncMap (no arbitrary Go access). Simple enough for non-technical users, composable for power users. Go's template engine is battle-tested with zero external runtime overhead.
             </p>
           </div>
         </div>
@@ -501,9 +501,9 @@ export default function MonoAgentArchitecturePage() {
 
           <div className="grid sm:grid-cols-3 gap-4">
             {[
-              { title: "Why BFS, Not Goroutines?", body: "Browser actions are seconds-to-minutes. Spawning goroutines per branch adds overhead without benefit. Parallel execution uses the worker pool instead — multiple workflows run concurrently, not multiple branches within one." },
+              { title: "Why BFS, Not Goroutines?", body: "Browser actions are seconds-to-minutes. Spawning goroutines per branch adds overhead without benefit. Parallel execution uses the worker pool instead. Multiple workflows run concurrently, not multiple branches within one." },
               { title: "Pure Go SQLite", body: "modernc.org/sqlite is a CGO-free port of SQLite. Zero C compilation, single static binary, no system SQLite dependency. Slightly slower than CGO builds (~10%) but enables cross-compilation and Docker-free deployment." },
-              { title: "Single Binary", body: "go:embed packages all 29 action JSONs and 78 workflow schemas. No external config files needed. Wails embeds the React UI. The entire system — CLI, Wails app, action engine — ships as one ~50MB executable." },
+              { title: "Single Binary", body: "go:embed packages all 29 action JSONs and 78 workflow schemas. No external config files needed. Wails embeds the React UI. The entire system (CLI, Wails app, action engine) ships as one ~50MB executable." },
             ].map((c) => (
               <div key={c.title} className="rounded-2xl border border-espresso/10 bg-white p-5 shadow-soft">
                 <h4 className="text-sm font-semibold text-espresso mb-2">{c.title}</h4>

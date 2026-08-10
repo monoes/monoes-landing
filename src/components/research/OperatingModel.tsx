@@ -28,7 +28,7 @@ const STEP_DETAILS: StepDetail[] = [
         content: (
           <div className="space-y-4">
             <p className="text-sm text-espresso/65 leading-relaxed">
-              Deploy an AI orchestration layer as a shared, project-wide system — not a per-developer local tool. Any layer that provides persistent memory, codebase-aware retrieval, MCP integrations, and lifecycle hooks can enable this model.
+              Deploy an AI orchestration layer as a shared, project-wide system, not a per-developer local tool. Any layer that provides persistent memory, codebase-aware retrieval, MCP integrations, and lifecycle hooks can enable this model.
             </p>
             <p className="text-sm text-espresso/65 leading-relaxed">
               The key requirement: it must be initialized once at the project level, shared across all sessions, and capable of accumulating context over time. A local install that resets each session does not qualify.
@@ -110,7 +110,7 @@ api:
         content: (
           <div className="space-y-3">
             <p className="text-sm text-espresso/65 leading-relaxed">
-              Connect whichever tool your team uses for tickets. The AI will pull specs directly from here — no copy-pasting from ticket to prompt.
+              Connect whichever tool your team uses for tickets. The AI will pull specs directly from here: no copy-pasting from ticket to prompt.
             </p>
             <pre className="bg-espresso text-gold text-xs font-mono rounded-xl p-5 overflow-x-auto leading-relaxed whitespace-pre">{`# Linear
 claude mcp add linear -- npx @linear/mcp-server
@@ -131,7 +131,7 @@ claude mcp add notion -- npx @notionhq/mcp-server`}</pre>
         content: (
           <div className="space-y-3">
             <p className="text-sm text-espresso/65 leading-relaxed">
-              This file is injected into every session as the AI&apos;s permanent self-knowledge about your project. Write it once; update it when the project changes significantly.
+              This file is injected into every session as the AI's permanent self-knowledge about your project. Write it once; update it when the project changes significantly.
             </p>
             <pre className="bg-espresso text-gold text-xs font-mono rounded-xl p-5 overflow-x-auto leading-relaxed whitespace-pre">{`# .ai-context/identity.md
 
@@ -145,7 +145,7 @@ Stack: Node 20, TypeScript, Prisma, PostgreSQL, BullMQ
 - date-fns for date math (not moment)
 
 ## Security posture
-- SOC 2 Type II in progress — no PII in logs
+- SOC 2 Type II in progress: no PII in logs
 - All secrets via environment variables, never committed
 - Auth: JWT with 15-minute access tokens, 7-day refresh
 
@@ -199,11 +199,11 @@ status. Missed deliveries must retry automatically.
         content: (
           <div className="space-y-4">
             <div className="bg-red-50 border border-red-100 rounded-xl p-5">
-              <p className="text-[10px] uppercase tracking-label font-semibold text-red-400 mb-2">Vague prompt — produces inconsistent results</p>
-              <p className="text-sm font-mono text-espresso/60 italic">&quot;Add webhooks so users can get notified about order changes&quot;</p>
+              <p className="text-[10px] uppercase tracking-label font-semibold text-red-400 mb-2">Vague prompt: produces inconsistent results</p>
+              <p className="text-sm font-mono text-espresso/60 italic">"Add webhooks so users can get notified about order changes"</p>
             </div>
             <div className="space-y-2 text-sm text-espresso/60 leading-relaxed">
-              <p>The vague version leaves every decision to the AI: retry logic or not? Signature verification or not? Sync or async? Each agent in each session will answer these differently. The spec version makes every decision explicit — the AI implements, not interprets.</p>
+              <p>The vague version leaves every decision to the AI: retry logic or not? Signature verification or not? Sync or async? Each agent in each session will answer these differently. The spec version makes every decision explicit. The AI implements, not interprets.</p>
             </div>
           </div>
         ),
@@ -245,10 +245,10 @@ Relevant files: src/orders/service.ts, src/queue/worker.ts,
                 prisma/schema.prisma, tests/orders.test.ts
 
 Decomposed into 4 subtasks:
-  [1] backend-dev     — webhook dispatcher + HMAC signing
-  [2] backend-dev     — retry worker with exponential backoff
-  [3] Database Opt.   — dead-letter queue schema migration
-  [4] tester          — integration tests for all 5 retry cases
+  [1] backend-dev     - webhook dispatcher + HMAC signing
+  [2] backend-dev     - retry worker with exponential backoff
+  [3] Database Opt.   - dead-letter queue schema migration
+  [4] tester          - integration tests for all 5 retry cases
 
 Running in parallel: tasks 1, 2, 3
 Waiting on [1,2,3] before: task 4`}</pre>
@@ -262,7 +262,7 @@ Waiting on [1,2,3] before: task 4`}</pre>
             <p>Before any agent generates code, the orchestrator runs semantic search across the full codebase graph. Each agent receives:</p>
             <ul className="space-y-2">
               {[
-                "The relevant existing files (not the whole repo — only what affects this task)",
+                "The relevant existing files (not the whole repo, only what affects this task)",
                 "Prior architectural decisions stored in memory (e.g. 'we use BullMQ for queues, not raw Redis')",
                 "The security constraints from the Foundation layer",
                 "The acceptance criteria from your spec, verbatim",
@@ -320,10 +320,10 @@ Waiting on [1,2,3] before: task 4`}</pre>
               Automated tests verify the code. The human verifies the intent. These are different jobs. Here is what human verification looks like in practice:
             </p>
             {[
-              { action: "Run the feature end to end", detail: "Not in a test harness — in the actual environment. Click through it. Trigger the edge cases. Try to break it in ways the spec did not anticipate." },
+              { action: "Run the feature end to end", detail: "Not in a test harness: in the actual environment. Click through it. Trigger the edge cases. Try to break it in ways the spec did not anticipate." },
               { action: "Check the acceptance criteria one by one", detail: "Read the original spec. Confirm each criterion is actually satisfied, not just that a test for it passes. Tests can be wrong too." },
               { action: "Look for missing requirements", detail: "The spec captured what you knew at writing time. You know more now. Did you forget an error state? A loading state? A mobile layout? A permission edge case?" },
-              { action: "Give feedback on the ticket", detail: "Approve with a note, annotate specific lines in the diff, or open a revision request. This feedback is the input to the next agent run — it becomes the next spec." },
+              { action: "Give feedback on the ticket", detail: "Approve with a note, annotate specific lines in the diff, or open a revision request. This feedback is the input to the next agent run. It becomes the next spec." },
             ].map((item) => (
               <div key={item.action} className="flex gap-4 items-start py-3 border-b border-ivory-linen last:border-0">
                 <span className="flex-shrink-0 mt-0.5 text-[10px] font-bold px-1.5 py-0.5 rounded bg-gold-dark/10 text-gold-dark">YOU</span>
@@ -345,7 +345,7 @@ Waiting on [1,2,3] before: task 4`}</pre>
             </p>
             <div className="grid grid-cols-1 gap-3">
               {[
-                { bad: "The retry logic retries 5 times as specced", good: "The retry delay feels right in production — 16 seconds on the last retry is too long for your users' use case" },
+                { bad: "The retry logic retries 5 times as specced", good: "The retry delay feels right in production. 16 seconds on the last retry is too long for your users' use case" },
                 { bad: "The HMAC signature validates correctly", good: "The error message when validation fails is clear enough for a developer to debug" },
                 { bad: "All tests pass in CI", good: "The feature actually works in the staging environment with real data" },
               ].map((row, i) => (
@@ -369,7 +369,7 @@ Waiting on [1,2,3] before: task 4`}</pre>
         content: (
           <div className="space-y-4">
             <p className="text-sm text-espresso/65 leading-relaxed">
-              Human feedback on a ticket is not just a review comment. In the one-developer model it is the next spec. The cycle is:
+              Human feedback on a ticket is not just a review comment. In the one-person model it is the next spec. The cycle is:
             </p>
             <div className="flex flex-col gap-2">
               {[
@@ -387,7 +387,7 @@ Waiting on [1,2,3] before: task 4`}</pre>
             <div className="bg-ivory-parchment border border-ivory-linen rounded-xl p-4 mt-2">
               <p className="text-[10px] uppercase tracking-label text-gold-dark font-semibold mb-2">Key insight</p>
               <p className="text-xs text-espresso/65 leading-relaxed">
-                The human is never reviewing syntax. They are reviewing whether the system did the right thing. That is the only review that requires a human — and it is the only one a human should be doing.
+                The human is never reviewing syntax. They are reviewing whether the system did the right thing. That is the only review that requires a human. And it is the only one a human should be doing.
               </p>
             </div>
           </div>
@@ -423,7 +423,7 @@ Waiting on [1,2,3] before: task 4`}</pre>
         content: (
           <div className="space-y-4">
             <p className="text-sm text-espresso/65 leading-relaxed">
-              Three weeks later, a new ticket asks for &quot;email delivery with retry.&quot; The orchestrator finds the webhook memory entry via semantic search and injects it as context before any agent runs:
+              Three weeks later, a new ticket asks for "email delivery with retry." The orchestrator finds the webhook memory entry via semantic search and injects it as context before any agent runs:
             </p>
             <div className="bg-ivory-parchment border border-ivory-linen rounded-xl p-4">
               <p className="text-[10px] uppercase tracking-label text-gold-dark font-semibold mb-2">Memory injected into agent context</p>
@@ -452,13 +452,13 @@ const STEPS = [
   {
     num: "01",
     title: "Write what to build, not how to build it",
-    body: "Write a markdown file — a Linear ticket, a GitHub Issue, a Notion page — describing the business problem, acceptance criteria, and what must not happen. The architectural constraints and contract tests are already in place from project setup. Your job per task is the intent document.",
+    body: "Write a markdown file (a Linear ticket, a GitHub Issue, a Notion page) describing the business problem, acceptance criteria, and what must not happen. The architectural constraints and contract tests are already in place from project setup. Your job per task is the intent document.",
     tag: "Judgment + specification",
   },
   {
     num: "02",
     title: "AI generates implementation with full codebase context",
-    body: "The orchestrator reads the spec, pulls relevant code and prior decisions via semantic search, and delegates to specialized agents. No agent works blind — the entire dependency graph, past architectural choices, and security requirements are in context before a single line is written.",
+    body: "The orchestrator reads the spec, pulls relevant code and prior decisions via semantic search, and delegates to specialized agents. No agent works blind: the entire dependency graph, past architectural choices, and security requirements are in context before a single line is written.",
     tag: "Generation layer",
   },
   {
@@ -470,13 +470,13 @@ const STEPS = [
   {
     num: "04",
     title: "Human tests the feature and closes the loop on the ticket",
-    body: "Tests passing is not the same as the feature working. The human runs it, uses it, and tries the edge cases that were never written down. This is where intent drift gets caught before production — not 'does the code match the spec' but 'does the spec match what we actually needed.' Feedback goes directly back to the ticket: approve, annotate, or request revision. That feedback becomes the next iteration's spec.",
+    body: "Tests passing is not the same as the feature working. The human runs it, uses it, and tries the edge cases that were never written down. This is where intent drift gets caught before production, not 'does the code match the spec' but 'does the spec match what we actually needed.' Feedback goes directly back to the ticket: approve, annotate, or request revision. That feedback becomes the next iteration's spec.",
     tag: "Human verification",
   },
   {
     num: "05",
     title: "The system gets smarter with each task",
-    body: "Patterns from this work are stored in organizational memory. The next task starts with that context already loaded. Over weeks, the AI accumulates domain knowledge — your conventions, your past decisions, your known debt — that no session-scoped tool can develop.",
+    body: "Patterns from this work are stored in organizational memory. The next task starts with that context already loaded. Over weeks, the AI accumulates domain knowledge (your conventions, your past decisions, your known debt) that no session-scoped tool can develop.",
     tag: "Learning layer",
   },
 ];
@@ -485,7 +485,7 @@ const SPEC_LEVELS = [
   {
     level: "Foundation",
     title: "Architectural Constraints",
-    desc: "YAML/TOML rules: banned dependencies, file size limits, auth requirements. Enforced automatically by CI linters — never reviewed by a human.",
+    desc: "YAML/TOML rules: banned dependencies, file size limits, auth requirements. Enforced automatically by CI linters, never reviewed by a human.",
     w: "100%",
     color: "bg-gold",
     modalLabel: "Example: .constraints.yaml",
@@ -524,7 +524,7 @@ security:
   ban_eval: true
   ban_exec: true`}</pre>
         <p className="text-xs text-espresso/45 leading-relaxed">
-          The AI reads this before generating any code. Violations are caught by CI automatically — no human needs to check.
+          The AI reads this before generating any code. Violations are caught by CI automatically. No human needs to check.
         </p>
       </div>
     ),
@@ -711,12 +711,12 @@ export function OperatingModel() {
           transition={{ duration: 0.6, ease: expo }}
           className="mb-20"
         >
-          <p className="text-[10px] uppercase tracking-label font-semibold text-gold-dark mb-4">The Operating Model</p>
+          <p className="text-[10px] uppercase tracking-label font-semibold text-gold-dark mb-4">Case Study A: Engineering</p>
           <h2 className="text-3xl md:text-5xl font-semibold text-espresso tracking-tight mb-5">
             What Makes It Work
           </h2>
           <p className="text-espresso/55 max-w-2xl font-light leading-relaxed">
-            The pattern across successful one-developer companies is not &quot;use AI tools.&quot; It is a specific operating model where the human genuinely relinquishes syntax authorship.
+            The pattern across successful one-person companies is not "use AI tools." It is a specific operating model where the human genuinely relinquishes syntax authorship. This section covers Engine A, Monomind, applied to code. Case Study B covers the same pattern applied to everything else.
           </p>
         </motion.div>
 

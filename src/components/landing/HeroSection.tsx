@@ -238,7 +238,7 @@ export function HeroSection() {
                 className="inline-block w-1.5 h-1.5 rounded-full bg-gold-dark group-hover:bg-ivory transition-colors"
                 style={{ animation: "pulse-dot 3s ease-in-out infinite" }}
               />
-              White Paper: The One-Developer Company
+              White Paper: The One-Person Company
             </Link>
           </div>
         </div>

@@ -8,7 +8,6 @@ node_modules/
 .wrangler/
 
 # Monomind / Claude tooling
-.monomind/
 .superpowers/
 .claude-flow/
 .hive-mind/
@@ -37,6 +36,9 @@ GRAPH_REPORT.md
 # macOS
 .DS_Store
 **/.DS_Store
+._*
+/**/._*
+.understand/
 
 # TypeScript incremental build info
 tsconfig.tsbuildinfo
@@ -48,6 +50,9 @@ tsconfig.tsbuildinfo
 data/sessions/
 data/mastermind-*.json
 data/mastermind-*.jsonl
-
 # macOS AppleDouble files
 ._*
+
+# monomind runtime
+.monomind/
+

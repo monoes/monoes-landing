@@ -90,13 +90,13 @@ export function WorkflowBuilder() {
 
       let sx: number, sy: number, ex: number, ey: number;
       if (Math.abs(dx) >= Math.abs(dy)) {
-        // primarily horizontal — connect left/right edges
+        // primarily horizontal: connect left/right edges
         sx = fc.x + (dx > 0 ? NODE_W / 2 : -NODE_W / 2);
         sy = fc.y;
         ex = tc.x + (dx > 0 ? -NODE_W / 2 : NODE_W / 2);
         ey = tc.y;
       } else {
-        // primarily vertical — connect top/bottom edges
+        // primarily vertical: connect top/bottom edges
         sx = fc.x;
         sy = fc.y + (dy > 0 ? NODE_H / 2 : -NODE_H / 2);
         ex = tc.x;

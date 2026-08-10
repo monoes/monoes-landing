@@ -98,7 +98,7 @@ export function ProjectSection({ project }: ProjectSectionProps) {
       </div>
 
       <div ref={contentRef} className="flex h-full">
-        {/* Left side — 60% */}
+        {/* Left side - 60% */}
         <div className="flex flex-col justify-center px-10 md:px-16 lg:px-20 py-20 w-full md:w-[60%] space-y-8">
           {/* Project number */}
           <div className="space-y-1">
@@ -151,7 +151,7 @@ export function ProjectSection({ project }: ProjectSectionProps) {
           </Link>
         </div>
 
-        {/* Right side — 40% */}
+        {/* Right side - 40% */}
         <div className="hidden md:flex items-center justify-center w-[40%] px-10">
           <div
             className="relative w-56 h-56 lg:w-72 lg:h-72 rounded-full flex items-center justify-center border"

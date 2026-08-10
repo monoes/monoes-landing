@@ -73,7 +73,7 @@ const TOPOS: Record<TopoKey, TopoDef> = {
   mesh: {
     label: "Mesh",
     badge: "p2p",
-    note: "Peer-to-peer — no single leader. Any node reaches any other in at most 2 hops. Resilient to individual failure.",
+    note: "Peer-to-peer: no single leader. Any node reaches any other in at most 2 hops. Resilient to individual failure.",
     goodFor: "Research and discovery tasks where any agent may surface relevant context.",
     nodes: ring(8, CX, CY, 82),
     edges: dedup(
@@ -106,7 +106,7 @@ const TOPOS: Record<TopoKey, TopoDef> = {
     label: "Ring",
     badge: "sequential",
     note: "Token passes node-to-node around the ring. Predictable delivery order; any single break can be rerouted.",
-    goodFor: "Ordered pipelines where each stage depends on the previous — reviews, approvals, sequential transforms.",
+    goodFor: "Ordered pipelines where each stage depends on the previous: reviews, approvals, sequential transforms.",
     nodes: ring(8, CX, CY, 82),
     edges: Array.from({ length: 8 }, (_, i) => [i, (i+1)%8] as [number,number]),
     waves: [[0],[1],[2],[3],[4],[5],[6],[7]],
@@ -116,7 +116,7 @@ const TOPOS: Record<TopoKey, TopoDef> = {
     label: "Star",
     badge: "hub-spoke",
     note: "Hub broadcasts to all spokes simultaneously. Lowest fan-out latency; hub is the single point of failure.",
-    goodFor: "Fan-out broadcast tasks — distributing identical subtasks to many workers at once.",
+    goodFor: "Fan-out broadcast tasks: distributing identical subtasks to many workers at once.",
     bossIdx: 6,
     nodes: [...ring(6, CX, CY, 84), { x: CX, y: CY }],
     edges: Array.from({ length: 6 }, (_, i) => [6, i] as [number,number]),

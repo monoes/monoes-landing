@@ -16,7 +16,7 @@ const packages = [
     icon: "🔐",
     subtitle: "Cryptography",
     name: "@monoes/crypto",
-    description: "Ed25519 identities, Noise XX handshake protocol (X25519 ECDH + ChaCha20-Poly1305), and Double Ratchet algorithm (X25519 DH ratcheting with per-message key derivation). Built on @noble libraries — audited, zero-dependency cryptography.",
+    description: "Ed25519 identities, Noise XX handshake protocol (X25519 ECDH + ChaCha20-Poly1305), and Double Ratchet algorithm (X25519 DH ratcheting with per-message key derivation). Built on @noble libraries: audited, zero-dependency cryptography.",
     tags: ["@noble/curves", "@noble/hashes", "@noble/ciphers", "Noise XX", "Double Ratchet", "Ed25519"],
     color: "#8B7355",
   },
@@ -48,7 +48,7 @@ const packages = [
     icon: "🎨",
     subtitle: "Design System",
     name: "@monoes/ui",
-    description: "Design token library — colors, typography, spacing scales. Reusable components: Avatar (MonoID-derived visual), MessageBubble (status indicators, ephemeral flag, timestamp). Tailwind-compatible token exports.",
+    description: "Design token library: colors, typography, spacing scales. Reusable components: Avatar (MonoID-derived visual), MessageBubble (status indicators, ephemeral flag, timestamp). Tailwind-compatible token exports.",
     tags: ["design tokens", "Avatar", "MessageBubble", "typography", "spacing"],
     color: "#8B7355",
   },
@@ -65,7 +65,7 @@ const messageFlow = [
   {
     num: "1", color: "#8B7355",
     title: "Identity Exchange (Out-of-Band)",
-    body: "Two users exchange Ed25519 public keys via QR code scan or deep link. No account required — the public key IS the identity. MonoIDs are displayed as human-readable base58 strings. Contacts stored in @monoes/storage ContactRepository.",
+    body: "Two users exchange Ed25519 public keys via QR code scan or deep link. No account required. The public key IS the identity. MonoIDs are displayed as human-readable base58 strings. Contacts stored in @monoes/storage ContactRepository.",
     code: "Ed25519 pubkey → QR code → deep link → contact stored",
   },
   {
@@ -125,7 +125,7 @@ const cryptoStack = [
   { layer: "Message Encryption", algo: "ChaCha20-Poly1305", lib: "@noble/ciphers", purpose: "Per-message authenticated encryption" },
   { layer: "Key Derivation", algo: "HKDF-SHA256", lib: "@noble/hashes", purpose: "KDF_CK in Double Ratchet chain" },
   { layer: "Body Integrity", algo: "BLAKE3", lib: "@noble/hashes", purpose: "WireMessage body hash for integrity verification" },
-  { layer: "Serialization", algo: "CBOR", lib: "cbor-x", purpose: "WireMessage binary encoding (vs JSON — 40% smaller)" },
+  { layer: "Serialization", algo: "CBOR", lib: "cbor-x", purpose: "WireMessage binary encoding (vs JSON, 40% smaller)" },
   { layer: "Key Storage", algo: "OS Keychain", lib: "react-native-keychain", purpose: "iOS Keychain / Android Keystore for private keys" },
 ];
 
@@ -133,7 +133,7 @@ const wireMessageFields = [
   { field: "version", type: "u8", desc: "Protocol version (current: 1)" },
   { field: "sender_pubkey", type: "[u8; 32]", desc: "Ed25519 public key of sender" },
   { field: "recipient_pubkey", type: "[u8; 32]", desc: "Ed25519 public key of recipient" },
-  { field: "nonce", type: "[u8; 12]", desc: "Unique nonce — used as deduplication ID" },
+  { field: "nonce", type: "[u8; 12]", desc: "Unique nonce, used as deduplication ID" },
   { field: "body", type: "Vec<u8>", desc: "Encrypted ciphertext (ChaCha20-Poly1305)" },
   { field: "body_hash", type: "[u8; 32]", desc: "BLAKE3 hash of body for integrity" },
   { field: "timestamp", type: "i64", desc: "Unix milliseconds (UTC)" },
@@ -256,7 +256,7 @@ export default function MonoChatArchitecturePage() {
               <rect x="350" y="305" width="200" height="55" rx="10" fill="rgba(42,35,24,0.03)" stroke="rgba(42,35,24,0.10)" strokeWidth="1.2" strokeDasharray="5,3"/>
               <text x="450" y="325" textAnchor="middle" fill="rgba(42,35,24,0.45)" fontSize="11" fontWeight="700">Remote Peer (Peer B)</text>
               <text x="450" y="342" textAnchor="middle" fill="rgba(42,35,24,0.35)" fontSize="9">@monoes/crypto · @monoes/p2p-core</text>
-              <text x="450" y="355" textAnchor="middle" fill="rgba(42,35,24,0.25)" fontSize="8.5">same crypto stack — symmetric protocol</text>
+              <text x="450" y="355" textAnchor="middle" fill="rgba(42,35,24,0.25)" fontSize="8.5">same crypto stack, symmetric protocol</text>
 
               {/* Arrows */}
               {[120, 315, 510, 690].map((x, i) => (
@@ -311,7 +311,7 @@ export default function MonoChatArchitecturePage() {
           <p className="text-xs uppercase tracking-label font-semibold mb-3" style={{ color: accent }}>Data Flow</p>
           <h2 className="text-3xl md:text-4xl font-semibold text-espresso mb-4">End-to-End Message Flow</h2>
           <p className="text-espresso/55 font-light leading-relaxed max-w-2xl mb-12">
-            From identity exchange to encrypted delivery — every step, from QR code scan to decrypted message on screen.
+            From identity exchange to encrypted delivery (every step, from QR code scan to decrypted message on screen).
           </p>
           <div className="flex flex-col gap-4">
             {messageFlow.map((step) => (
@@ -362,12 +362,12 @@ export default function MonoChatArchitecturePage() {
               <p className="text-[10px] uppercase tracking-label font-semibold text-espresso/40 mb-5">Double Ratchet (Per-Message Keys)</p>
               <div className="flex flex-col gap-3">
                 {[
-                  { k: "DH Ratchet", v: "X25519 — new ephemeral keypair each send/receive direction flip" },
-                  { k: "Chain Key (CK)", v: "HKDF-SHA256 derived — advances with each message in a direction" },
-                  { k: "Message Key (MK)", v: "KDF_CK(chain_key) — unique per message, discarded after use" },
+                  { k: "DH Ratchet", v: "X25519, new ephemeral keypair each send/receive direction flip" },
+                  { k: "Chain Key (CK)", v: "HKDF-SHA256 derived, advances with each message in a direction" },
+                  { k: "Message Key (MK)", v: "KDF_CK(chain_key): unique per message, discarded after use" },
                   { k: "Forward Secrecy", v: "Compromising msg N doesn't expose msgs 1..N-1" },
-                  { k: "Out-of-Order", v: "Skip key cache — missing messages handled without blocking" },
-                  { k: "Cipher", v: "ChaCha20-Poly1305 AEAD — authenticated encryption with additional data" },
+                  { k: "Out-of-Order", v: "Skip key cache, missing messages handled without blocking" },
+                  { k: "Cipher", v: "ChaCha20-Poly1305 AEAD, authenticated encryption with additional data" },
                 ].map((r) => (
                   <div key={r.k} className="flex gap-3 text-xs">
                     <span className="flex-shrink-0 font-semibold w-32" style={{ color: accent }}>{r.k}</span>
@@ -445,7 +445,7 @@ export default function MonoChatArchitecturePage() {
           <p className="text-xs uppercase tracking-label font-semibold mb-3" style={{ color: accent }}>Storage</p>
           <h2 className="text-3xl md:text-4xl font-semibold text-espresso mb-4">Local-First SQLite</h2>
           <p className="text-espresso/55 font-light leading-relaxed max-w-2xl mb-12">
-            op-sqlite with optional SQLCipher encryption. Every message persisted locally first — the app works fully offline.
+            op-sqlite with optional SQLCipher encryption. Every message persisted locally first. The app works fully offline.
           </p>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             {[
@@ -459,7 +459,7 @@ export default function MonoChatArchitecturePage() {
                 <ul className="flex flex-col gap-1.5">
                   {s.fields.map((f) => (
                     <li key={f} className="text-xs text-espresso/60 font-mono flex items-start gap-2">
-                      <span style={{ color: s.color }} className="mt-0.5">—</span> {f}
+                      <span style={{ color: s.color }} className="mt-0.5">-</span> {f}
                     </li>
                   ))}
                 </ul>
@@ -468,7 +468,7 @@ export default function MonoChatArchitecturePage() {
           </div>
           <div className="grid sm:grid-cols-3 gap-4">
             {[
-              { title: "op-sqlite executeSync", body: "React Native SQLite with synchronous API — avoids async callback chains in message handling. op-sqlite is 2–10× faster than expo-sqlite for write-heavy workloads." },
+              { title: "op-sqlite executeSync", body: "React Native SQLite with synchronous API: avoids async callback chains in message handling. op-sqlite is 2–10× faster than expo-sqlite for write-heavy workloads." },
               { title: "Offline-First Outbox", body: "Sent messages queued in outbox before transmission. Retried exponentially on reconnect. Guarantees delivery even if the peer is offline at send time." },
               { title: "No Cloud, No Telemetry", body: "All data stays on device. SQLite file is the only persistence. Delete the app → delete all messages. Optional SQLCipher encryption for at-rest protection." },
             ].map((c) => (

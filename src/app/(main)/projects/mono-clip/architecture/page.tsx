@@ -48,7 +48,7 @@ const backendModules = [
     icon: "🖥",
     subtitle: "Window Manager",
     name: "window/manager.rs",
-    description: "Controls the frameless always-on-top floating panel. ActivationPolicy::Accessory hides from Dock and Cmd+Tab. Window is pre-rendered and shown/hidden instantly via visibility toggle — no reload cost.",
+    description: "Controls the frameless always-on-top floating panel. ActivationPolicy::Accessory hides from Dock and Cmd+Tab. Window is pre-rendered and shown/hidden instantly via visibility toggle. No reload cost.",
     tags: ["frameless", "always-on-top", "Accessory policy", "spring anim"],
     color: "#B8956A",
   },
@@ -80,7 +80,7 @@ const backendModules = [
 
 const frontendModules = [
   { name: "lib/api/tauri.ts", desc: "Typed wrappers around Tauri invoke() for all backend commands. Type definitions for Folder, ClipItem, Settings, AppStats." },
-  { name: "lib/stores/clips.svelte.ts", desc: "Svelte 5 rune-based store — items, isLoading, searchQuery, activeFolder, flashingId. Methods: load(), prependItem(), removeItem(), updateItem()." },
+  { name: "lib/stores/clips.svelte.ts", desc: "Svelte 5 rune-based store: items, isLoading, searchQuery, activeFolder, flashingId. Methods: load(), prependItem(), removeItem(), updateItem()." },
   { name: "lib/stores/folders.svelte.ts", desc: "Folder list and active folder tracking with $state runes. Synced with backend via Tauri events." },
   { name: "App.svelte", desc: "Root shell. Registers Tauri event listeners (clip:new, folder:saved, cleanup:done, update:progress). Handles search debounce and window focus/blur logic." },
   { name: "ClipCard.svelte", desc: "Individual clip: preview text, type icon, timestamp, source app, pin badge. Hover reveals copy/pin/delete actions. Click triggers 150ms accent flash + copy command." },
@@ -105,7 +105,7 @@ const dataFlow = [
   {
     num: "3", color: "#8B7355",
     title: "Frontend Receives Clip",
-    body: "App.svelte listener fires on clip:new. If no search active and viewing Inbox: clipsStore.prependItem(item) with spring entrance animation. No full reload — single prepend keeps scroll position.",
+    body: "App.svelte listener fires on clip:new. If no search active and viewing Inbox: clipsStore.prependItem(item) with spring entrance animation. No full reload. Single prepend keeps scroll position.",
     code: null,
   },
   {
@@ -168,11 +168,11 @@ const mcpTools = [
   { name: "add_clip", desc: "Insert new text clip into specified folder" },
   { name: "get_clip", desc: "Fetch full raw content by clip ID" },
   { name: "remove_clip", desc: "Delete clip by ID (soft delete)" },
-  { name: "pin_clip", desc: "Mark clip as pinned — skips auto-cleanup" },
+  { name: "pin_clip", desc: "Mark clip as pinned: skips auto-cleanup" },
   { name: "unpin_clip", desc: "Remove pin status from clip" },
   { name: "list_folders", desc: "Get all folders with emoji, color, shortcut" },
   { name: "create_folder", desc: "Create new folder with emoji and hex color" },
-  { name: "delete_folder", desc: "Delete folder — clips moved to Inbox" },
+  { name: "delete_folder", desc: "Delete folder: clips moved to Inbox" },
 ];
 
 const perfRows = [
@@ -344,7 +344,7 @@ export default function MonoClipArchitecturePage() {
           <p className="text-xs uppercase tracking-label font-semibold mb-3" style={{ color: accent }}>Rust Backend</p>
           <h2 className="text-3xl md:text-4xl font-semibold text-espresso mb-4">8 Backend Modules</h2>
           <p className="text-espresso/55 font-light leading-relaxed max-w-2xl mb-12">
-            Pure Rust — no npm deps. Each module owns a single responsibility.
+            Pure Rust: no npm deps. Each module owns a single responsibility.
           </p>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {backendModules.map((m) => (
@@ -394,7 +394,7 @@ export default function MonoClipArchitecturePage() {
           <p className="text-xs uppercase tracking-label font-semibold mb-3" style={{ color: accent }}>Data Flow</p>
           <h2 className="text-3xl md:text-4xl font-semibold text-espresso mb-4">End-to-End System Flow</h2>
           <p className="text-espresso/55 font-light leading-relaxed max-w-2xl mb-12">
-            From startup to clipboard copy — every step in sequence.
+            From startup to clipboard copy: every step in sequence.
           </p>
           <div className="flex flex-col gap-4">
             {dataFlow.map((step) => (
@@ -430,7 +430,7 @@ export default function MonoClipArchitecturePage() {
                 <ul className="flex flex-col gap-1.5">
                   {s.fields.map((f) => (
                     <li key={f} className="text-xs text-espresso/60 font-mono flex items-start gap-2">
-                      <span style={{ color: s.color }} className="mt-0.5">—</span> {f}
+                      <span style={{ color: s.color }} className="mt-0.5">-</span> {f}
                     </li>
                   ))}
                 </ul>

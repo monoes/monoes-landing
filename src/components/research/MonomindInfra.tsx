@@ -8,7 +8,7 @@ const CAPABILITIES = [
   { req: "Codebase-aware retrieval", cap: "Agents query the dependency graph before generating. No agent works blind on a codebase it has never indexed." },
   { req: "Multi-agent coordination", cap: "An orchestrator decomposes specs and delegates to specialized agents. Parallel execution with structured handoffs." },
   { req: "Project management integration", cap: "Tickets flow directly to the agent pipeline. No human translates requirements from one tool to another." },
-  { req: "Lifecycle hook system", cap: "Every session event — start, prompt submission, task completion, file edit — can trigger context injection or constraint enforcement." },
+  { req: "Lifecycle hook system", cap: "Every session event (start, prompt submission, task completion, file edit) can trigger context injection or constraint enforcement." },
   { req: "Background intelligence workers", cap: "Security audit, performance analysis, pattern detection run continuously without blocking the main workflow." },
   { req: "Organizational learning", cap: "Patterns extracted from completed work are stored and retrieved. The system improves with use rather than resetting each session." },
   { req: "Specialized agent types", cap: "Domain experts for engineering, security, architecture, DevOps, and product rather than one general-purpose model for all tasks." },
@@ -47,7 +47,7 @@ export function MonomindInfra() {
               <br />between intelligence and reliability.
             </h2>
             <p className="text-ivory/45 max-w-2xl font-light leading-relaxed">
-              The gap in current AI coding assistants is not generation capability. LLMs can write good code. The gap is organizational continuity: the system of memory, coordination, lifecycle management, and integration that turns a capable but stateless AI into a reliable engineering system. Any orchestration layer that enables the one-developer model must provide these capabilities.
+              The gap in current AI coding assistants is not generation capability. LLMs can write good code. The gap is organizational continuity: the system of memory, coordination, lifecycle management, and integration that turns a capable but stateless AI into a reliable engineering system. Any orchestration layer that enables Engine A of the one-person model must provide these capabilities.
             </p>
           </motion.div>
 

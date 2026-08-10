@@ -13,7 +13,7 @@ const PHASES = [
       "Choose and deploy an AI orchestration layer as a shared, project-wide system",
       "Write the project identity file: stack, conventions, architecture decisions, security posture",
       "Connect project management tools via MCP (Linear, Jira, GitHub Issues)",
-      "Define the specification ticket template — the standard format agents can parse unambiguously",
+      "Define the specification ticket template, the standard format agents can parse unambiguously",
       "Enable security constraints: pre-execution validation, credential injection prevention",
     ],
   },
@@ -34,12 +34,12 @@ const PHASES = [
     num: "03",
     weeks: "Weeks 11–20",
     title: "Organizational Scale",
-    objective: "Reach the one-developer company operating model.",
+    objective: "Reach the one-person company operating model, Engine A.",
     actions: [
       "Reduce synchronous code review: human review time below 20% of the total development cycle",
       "Implement cognitive debt mitigation: scheduled deep-read cycles of AI-generated code",
       "Enable parallel agent experiments: copy-on-write branching for architectural decisions",
-      "Measure output quality objectively via DORA metrics — not self-reported perception",
+      "Measure output quality objectively via DORA metrics, not self-reported perception",
       "Calibrate escalation thresholds: tune when agents hand off to humans based on observed failure rates",
     ],
   },
@@ -126,7 +126,7 @@ export function RoadmapSection() {
             className="mt-16"
           >
             <p className="text-[10px] uppercase tracking-label font-semibold text-gold-dark mb-8">
-              Key metrics: distinguishing the one-developer model from high-productivity-assistant
+              Key metrics: distinguishing the one-person model from high-productivity-assistant, Engine A (engineering)
             </p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
               {METRICS.map((m) => (
@@ -158,10 +158,10 @@ export function RoadmapSection() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20 mb-16">
               <p className="text-ivory/50 font-light leading-relaxed">
-                The transition to centralized agentic software engineering commoditizes code syntax. By repositioning engineers as spec writers and intent orchestrators, teams achieve unprecedented developmental velocity. But the velocity only compounds when the harness is right — the architecture, the memory, the verification pipeline, the trust calibration.
+                The transition to centralized agentic operation commoditizes execution, whether that execution is code syntax or a workflow's individual steps. By repositioning the human as spec writer and intent orchestrator, a one-person company achieves throughput that used to require a team. But the throughput only compounds when the harness is right: the architecture, the memory, the verification pipeline, the trust calibration.
               </p>
               <p className="text-ivory/50 font-light leading-relaxed">
-                The organizations that make this transformation first will not merely be more efficient. They will operate in a different competitive environment: one where the cost of software production has dropped far enough that the constraint is no longer how fast you can build, but how clearly you can think about what to build.
+                The people and organizations that make this transformation first will not merely be more efficient. They will operate in a different competitive environment: one where the cost of production, software or otherwise, has dropped far enough that the constraint is no longer how fast you can execute, but how clearly you can think about what to execute.
               </p>
             </div>
 
@@ -176,13 +176,16 @@ export function RoadmapSection() {
                 That is a different problem. It is a better problem to have.
               </p>
 
-              {/* Neutral tool mention */}
+              {/* Two implementations + the managed option */}
               <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-8 max-w-2xl">
                 <p className="text-[10px] uppercase tracking-label font-semibold text-gold mb-4">
-                  One implementation of this model
+                  Two implementations, and a third option
                 </p>
                 <p className="text-sm text-ivory/55 leading-relaxed mb-5">
-                  The architecture described in this paper — persistent organizational memory, codebase-aware retrieval, MCP project management integration, lifecycle hooks, specialized agents, and security harness — is implemented as a ready-made layer for Claude Code in <strong className="text-ivory/80 font-semibold">Monomind</strong>. It is one way to put this model into practice without building the infrastructure from scratch.
+                  The architecture described in this paper is implemented as two open-source, self-hostable engines: <strong className="text-ivory/80 font-semibold">Monomind</strong> for engineering work, and <strong className="text-ivory/80 font-semibold">Mono Agent</strong> for everything else. Both are free, MIT-licensed, and yours to run without building the infrastructure from scratch.
+                </p>
+                <p className="text-sm text-ivory/55 leading-relaxed mb-5">
+                  Not every company wants to operate this infrastructure itself. <strong className="text-ivory/80 font-semibold">Monoes Workforce</strong> applies the same model to a company's business processes as a managed service: we configure and run the workers, you set the strategy.
                 </p>
                 <div className="flex flex-wrap items-center gap-4">
                   <a
@@ -191,13 +194,21 @@ export function RoadmapSection() {
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 bg-gold-dark text-ivory text-xs font-medium px-5 py-2.5 rounded-lg transition-opacity hover:opacity-80"
                   >
-                    View on GitHub →
+                    View Monomind →
                   </a>
                   <a
-                    href="/projects/monomind"
-                    className="text-xs text-ivory/35 hover:text-ivory/60 transition-colors"
+                    href="https://github.com/monoes/mono-agent"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 border border-white/15 text-ivory text-xs font-medium px-5 py-2.5 rounded-lg transition-colors hover:border-white/30"
                   >
-                    Learn more about Monomind
+                    View Mono Agent →
+                  </a>
+                  <a
+                    href="/workforce"
+                    className="text-xs text-ivory/50 hover:text-ivory/80 transition-colors underline underline-offset-2"
+                  >
+                    Talk to Monoes Workforce →
                   </a>
                 </div>
               </div>
@@ -208,16 +219,16 @@ export function RoadmapSection() {
               <p className="text-[10px] uppercase tracking-label text-ivory/20 mb-4">References</p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-1">
                 {[
-                  "[1] CACM 2024 — GitHub Copilot Productivity Study (n=35, p=0.0017)",
-                  "[2] arXiv 2501.13282 — ZoomInfo Enterprise Deployment (400+ engineers)",
-                  "[3] BlueOptima 2024 — Independent Objective Productivity Measurement",
-                  "[4] Pieter Levels — Nomad List, Remote OK, Photo AI ($3.5M ARR)",
-                  "[7] arXiv 2510.03463 — ALMAS: Meta-RAG for Large-Scale SE (ASE 2025)",
-                  "[8] Thoughtworks 2025 — Spec-Driven Development Engineering Practice",
-                  "[12] arXiv 2404.04834 — LLM Multi-Agent SE Review (ACM TOSEM, 71 studies)",
-                  "[13] arXiv 2511.00872 — LLM-SmartAudit Benchmark, below 90% ceiling",
-                  "[16] arXiv 2604.13277 — Automation Bias in AI-Assisted Code Review",
-                  "[17] arXiv 2604.03501 — TRACE Framework: Artifact Trust Calibration",
+                  "[1] CACM 2024: GitHub Copilot Productivity Study (n=35, p=0.0017)",
+                  "[2] arXiv 2501.13282: ZoomInfo Enterprise Deployment (400+ engineers)",
+                  "[3] BlueOptima 2024: Independent Objective Productivity Measurement",
+                  "[4] Pieter Levels: Nomad List, Remote OK, Photo AI ($3.5M ARR)",
+                  "[7] arXiv 2510.03463: ALMAS: Meta-RAG for Large-Scale SE (ASE 2025)",
+                  "[8] Thoughtworks 2025: Spec-Driven Development Engineering Practice",
+                  "[12] arXiv 2404.04834: LLM Multi-Agent SE Review (ACM TOSEM, 71 studies)",
+                  "[13] arXiv 2511.00872: LLM-SmartAudit Benchmark, below 90% ceiling",
+                  "[16] arXiv 2604.13277: Automation Bias in AI-Assisted Code Review",
+                  "[17] arXiv 2604.03501: TRACE Framework: Artifact Trust Calibration",
                 ].map((ref) => (
                   <p key={ref} className="text-[10px] text-ivory/20 font-mono leading-relaxed">{ref}</p>
                 ))}

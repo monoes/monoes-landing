@@ -73,7 +73,7 @@ export function ScrollMonkey() {
         }}
       />
 
-      {/* Door overlay — clips doors at container edges */}
+      {/* Door overlay: clips doors at container edges */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
 
         {/* Left door */}

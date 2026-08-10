@@ -16,7 +16,7 @@ const components = [
     name: "@monoes/monomindcli",
     path: "packages/@monomind/cli/",
     description:
-      "The published CLI package (installed as the `monomind` umbrella from repo root). 32 top-level commands, in-process agent/swarm lifecycle, and a hand-rolled stdio JSON-RPC MCP server — no separate MCP process required for the default transport.",
+      "The published CLI package (installed as the `monomind` umbrella from repo root). 32 top-level commands, in-process agent/swarm lifecycle, and a hand-rolled stdio JSON-RPC MCP server: no separate MCP process required for the default transport.",
     tags: ["32 commands", "stdio JSON-RPC", "in-process agents"],
     color: "#8B6914",
   },
@@ -36,7 +36,7 @@ const components = [
     name: "@monoes/mcp",
     path: "packages/@monomind/mcp/",
     description:
-      "MCP server framework powering `mcp start -t http`/`-t websocket` and stdio/in-process transports, with session, connection, resource, prompt, and rate-limiting support. The default stdio setup Claude Code connects to does not import this package — it uses the CLI's own hand-rolled loop.",
+      "MCP server framework powering `mcp start -t http`/`-t websocket` and stdio/in-process transports, with session, connection, resource, prompt, and rate-limiting support. The default stdio setup Claude Code connects to does not import this package. It uses the CLI's own hand-rolled loop.",
     tags: ["http/websocket", "OAuth", "rate limiting"],
     color: "#B8956A",
   },
@@ -46,7 +46,7 @@ const components = [
     name: "@monoes/memory",
     path: "packages/@monomind/memory/",
     description:
-      "Lower-level memory backend library — SQLite (better-sqlite3, sql.js WASM fallback) and a pure-JS HNSW index. The live bridge that CLI memory commands and MCP memory tools actually call lives in the CLI package, dynamically importing this one. LanceDB was fully removed in v2.3.1.",
+      "Lower-level memory backend library: SQLite (better-sqlite3, sql.js WASM fallback) and a pure-JS HNSW index. The live bridge that CLI memory commands and MCP memory tools actually call lives in the CLI package, dynamically importing this one. LanceDB was fully removed in v2.3.1.",
     tags: ["SQLite", "local embeddings", "HNSW (opt-in)"],
     color: "#A07840",
   },
@@ -56,7 +56,7 @@ const components = [
     name: "@monoes/monograph",
     path: "packages/@monomind/monograph/",
     description:
-      "Tree-sitter + SQLite code dependency graph. 14 full tree-sitter grammars (TypeScript's covers JS/JSX/MJS/CJS) plus 5 lightweight regex-based symbol extractors. 19 default MCP tools, 27 more behind MONOGRAPH_MCP_ADVANCED=1 — 46 total.",
+      "Tree-sitter + SQLite code dependency graph. 14 full tree-sitter grammars (TypeScript's covers JS/JSX/MJS/CJS) plus 5 lightweight regex-based symbol extractors. 19 default MCP tools, 27 more behind MONOGRAPH_MCP_ADVANCED=1, 46 total.",
     tags: ["14 grammars", "46 MCP tools", "PPR rerank on by default"],
     color: "#C8A97E",
   },
@@ -66,7 +66,7 @@ const components = [
     name: "@monoes/routing",
     path: "packages/@monomind/routing/",
     description:
-      "Opt-in RouteLayer algorithm: keyword pre-filter, then real embeddings via an isolated worker process, then cosine similarity, then a Haiku LLM fallback below threshold. Reached via `route semantic`, `agent --task`, or MCP hooks_route_semantic — bare `monomind route` uses a separate keyword-only stub instead.",
+      "Opt-in RouteLayer algorithm: keyword pre-filter, then real embeddings via an isolated worker process, then cosine similarity, then a Haiku LLM fallback below threshold. Reached via `route semantic`, `agent --task`, or MCP hooks_route_semantic. Bare `monomind route` uses a separate keyword-only stub instead.",
     tags: ["keyword pre-filter", "out-of-process embeddings", "LLM fallback"],
     color: "#8B6914",
   },
@@ -76,7 +76,7 @@ const components = [
     name: "@monoes/monobrowse",
     path: "packages/@monoes/monobrowse/",
     description:
-      "Standalone Chrome DevTools Protocol (CDP) client for browser automation — no Playwright, Puppeteer, or Selenium dependency. Powers `monomind browse` and the agent-browser-testing workflow.",
+      "Standalone Chrome DevTools Protocol (CDP) client for browser automation (no Playwright, Puppeteer, or Selenium dependency). Powers `monomind browse` and the agent-browser-testing workflow.",
     tags: ["native CDP", "no external binary"],
     color: "#8B7355",
   },
@@ -86,7 +86,7 @@ const components = [
     name: "@monoes/monodesign",
     path: "packages/@monoes/monodesign/",
     description:
-      "Independent frontend design intelligence package — design tokens, antipattern detection, and the monodesign skill. Replaced the earlier set of separate design-agent roles (UI Designer, UX Architect, Brand Guardian, etc.) with one unified system.",
+      "Independent frontend design intelligence package: design tokens, antipattern detection, and the monodesign skill. Replaced the earlier set of separate design-agent roles (UI Designer, UX Architect, Brand Guardian, etc.) with one unified system.",
     tags: ["design tokens", "antipattern detection"],
     color: "#B8956A",
   },
@@ -97,13 +97,13 @@ const memoryFacts = [
     badge: "01",
     color: "#8B6914",
     title: "Local SQLite, not a cloud vector DB",
-    body: "The default memory engine is local SQLite with embedded vectors — better-sqlite3 primary, sql.js WASM as fallback. Embeddings are computed locally with Xenova/all-MiniLM-L6-v2 (384 dimensions). This backs CLI memory store/search, the MCP memory tools, and the Second Brain.",
+    body: "The default memory engine is local SQLite with embedded vectors: better-sqlite3 primary, sql.js WASM as fallback. Embeddings are computed locally with Xenova/all-MiniLM-L6-v2 (384 dimensions). This backs CLI memory store/search, the MCP memory tools, and the Second Brain.",
   },
   {
     badge: "02",
     color: "#8B7355",
     title: "LanceDB removed, not replaced-in-place",
-    body: "LanceDB (~600MB of native dependencies) was fully removed in v2.3.1 (2026-07-18) once the local SQLite engine was measured to work for Second Brain retrieval. Some internal comments and a health-check label still say \"lancedb\" as a stale string literal — cosmetic, not a live dependency.",
+    body: "LanceDB (~600MB of native dependencies) was fully removed in v2.3.1 (2026-07-18) once the local SQLite engine was measured to work for Second Brain retrieval. Some internal comments and a health-check label still say \"lancedb\" as a stale string literal; cosmetic, not a live dependency.",
   },
   {
     badge: "03",
@@ -115,7 +115,7 @@ const memoryFacts = [
     badge: "04",
     color: "#A07840",
     title: "A separate JSON pattern store powers hooks/intelligence",
-    body: "Hook and trajectory learning (routing outcomes, edit patterns) is stored in JSON files (patterns.json, auto-memory-store.json), independent of the SQLite backend above. These are three genuinely separate mechanisms that happen to all be called \"memory\" — not yet consolidated into one system.",
+    body: "Hook and trajectory learning (routing outcomes, edit patterns) is stored in JSON files (patterns.json, auto-memory-store.json), independent of the SQLite backend above. These are three genuinely separate mechanisms that happen to all be called \"memory,\" not yet consolidated into one system.",
   },
 ];
 
@@ -123,13 +123,13 @@ const routingSteps = [
   {
     num: "1",
     color: "#8B6914",
-    title: "Bare `monomind route \"task\"` — keyword stub",
+    title: "Bare `monomind route \"task\"`: keyword stub",
     body: "The default, zero-config path is a lightweight keyword-only router (createKeywordRouter): a fixed if/else chain over ~8 hardcoded categories, always returns confidence 0.75, no embeddings, no learning. It lives in the CLI package, not in @monoes/routing.",
   },
   {
     num: "2",
     color: "#B8956A",
-    title: "`route semantic`, `agent --task`, or MCP hooks_route_semantic — real routing",
+    title: "`route semantic`, `agent --task`, or MCP hooks_route_semantic: real routing",
     body: "These entry points use @monoes/routing's RouteLayer: a keyword pre-filter first (first match wins, deterministic), then a real embedding model run in an isolated worker process (kept out-of-process because loading onnxruntime in-process causes SIGSEGVs), scored by cosine similarity against each route's centroid.",
   },
   {
@@ -161,8 +161,8 @@ const hookGroups = [
   {
     title: "20 typed HookEvent registry/executor values",
     items: [
-      "A separate, lower-level mechanism in @monoes/hooks — PreToolUse, PostToolUse, PreEdit, PostEdit, PreRead, PostRead, PreCommand, PostCommand, PreTask, PostTask, TaskProgress, SessionStart, SessionEnd, SessionRestore, AgentSpawn, AgentTerminate, PreRoute, PostRoute, PatternLearned, PatternConsolidated.",
-      "These are not CLI subcommand names — they're the registry's in-memory event types, dispatched by the live .claude/helpers path, which bridges into this package's WorkerManager.",
+      "A separate, lower-level mechanism in @monoes/hooks: PreToolUse, PostToolUse, PreEdit, PostEdit, PreRead, PostRead, PreCommand, PostCommand, PreTask, PostTask, TaskProgress, SessionStart, SessionEnd, SessionRestore, AgentSpawn, AgentTerminate, PreRoute, PostRoute, PatternLearned, PatternConsolidated.",
+      "These are not CLI subcommand names. They're the registry's in-memory event types, dispatched by the live .claude/helpers path, which bridges into this package's WorkerManager.",
     ],
   },
   {
@@ -176,18 +176,18 @@ const hookGroups = [
 ];
 
 const orgFacts = [
-  { label: "Runtime", value: "SDK-backed daemon", desc: "monomind org run/serve — each role is a live, in-process Claude Agent SDK session, not a subprocess." },
-  { label: "Subcommands", value: "31", desc: "run [--dry-run], stop, pause, resume, reload, status, serve, supervisor, test-loop, logs, report, memory, costs, flow, questions, answer, approve, deny, gates, gate-approve, gate-reject, replay, resume-from, branch, decisions, create, validate, migrate, list, delete, mark-complete." },
-  { label: "Inter-agent channel", value: "org_send / Mailbox", desc: "The only way roles communicate — plus ask_human for human-in-the-loop and org_recall/org_remember/org_learn for cross-run memory." },
+  { label: "Runtime", value: "SDK-backed daemon", desc: "monomind org run/serve: each role is a live, in-process Claude Agent SDK session, not a subprocess." },
+  { label: "Subcommands", value: "16", desc: "run [--dry-run], stop, status, serve, test-loop, logs, report, memory, questions, answer, create, validate, migrate, list, delete, mark-complete." },
+  { label: "Inter-agent channel", value: "org_send / Mailbox", desc: "The only way roles communicate, plus ask_human for human-in-the-loop and org_recall/org_remember/org_learn for cross-run memory." },
   { label: "Config", value: ".monomind/orgs/<name>.json", desc: "Parsed against a zod schema: goal, schedule, run_config (budget, concurrency), and a role list with per-role tool/file/web policy." },
 ];
 
 const honestNotes = [
-  "Swarm/hive-mind consensus (Byzantine, Raft, Quorum) is single-process vote counting today, not distributed consensus — Gossip and CRDT are planned but not implemented.",
-  "The default `monomind route` command is a keyword-only stub, not the semantic RouteLayer — don't confuse the two when reading routing output.",
-  "HNSW vector search exists but is opt-in only (`memory search --build-hnsw`) — it is not part of the default memory search path.",
-  "The former @monomind/security package was deleted; input validation now lives inline at packages/@monomind/cli/src/utils/input-guards.ts — there is no standalone security package.",
-  "Exact secret-scanner / injection-detector rule counts are not published here — we'd rather say \"built-in secret and injection scanning\" than cite a number we haven't verified against the current source.",
+  "Swarm/hive-mind consensus (Byzantine, Raft, Quorum) is single-process vote counting today, not distributed consensus. Gossip and CRDT are planned but not implemented.",
+  "The default `monomind route` command is a keyword-only stub, not the semantic RouteLayer. Don't confuse the two when reading routing output.",
+  "HNSW vector search exists but is opt-in only (`memory search --build-hnsw`); it is not part of the default memory search path.",
+  "The former @monomind/security package was deleted; input validation now lives inline at packages/@monomind/cli/src/utils/input-guards.ts; there is no standalone security package.",
+  "Exact secret-scanner / injection-detector rule counts are not published here. We'd rather say \"built-in secret and injection scanning\" than cite a number we haven't verified against the current source.",
 ];
 
 export default function MonomindArchitecturePage() {
@@ -227,7 +227,7 @@ export default function MonomindArchitecturePage() {
             className="inline-block mb-6 text-xs font-semibold uppercase tracking-label px-3 py-1 rounded-full border"
             style={{ color: accent, borderColor: `${accent}40`, background: `${accent}10` }}
           >
-            v2.8.4 · Technical Architecture
+            v2.5.4 · Technical Architecture
           </div>
           <h1 className="text-5xl md:text-6xl lg:text-7xl font-semibold text-espresso tracking-tight leading-none mb-6">
             How <span style={{ color: accent }}>Monomind</span>
@@ -256,7 +256,7 @@ export default function MonomindArchitecturePage() {
           <p className="text-xs uppercase tracking-label font-semibold mb-3" style={{ color: accent }}>Architecture</p>
           <h2 className="text-3xl md:text-4xl font-semibold text-espresso mb-4">System Overview</h2>
           <p className="text-espresso/55 font-light leading-relaxed max-w-2xl mb-12">
-            Claude Code talks to the CLI package over a hand-rolled stdio JSON-RPC loop. The CLI dynamically imports the other 7 packages as needed — most are libraries, not always-running services.
+            Claude Code talks to the CLI package over a hand-rolled stdio JSON-RPC loop. The CLI dynamically imports the other 7 packages as needed. Most are libraries, not always-running services.
           </p>
 
           {/* SVG Diagram */}
@@ -333,7 +333,7 @@ export default function MonomindArchitecturePage() {
               {/* Standalone packages bar */}
               <rect x="60" y="400" width="780" height="45" rx="10" fill="rgba(42,35,24,0.02)" stroke="rgba(42,35,24,0.06)" strokeWidth="1" />
               <text x="450" y="420" textAnchor="middle" fill="rgba(42,35,24,0.35)" fontSize="11" fontWeight="600">Standalone: @monoes/monobrowse (CDP browser automation) · @monoes/monodesign (design intelligence)</text>
-              <text x="450" y="436" textAnchor="middle" fill="rgba(42,35,24,0.25)" fontSize="9">packages/@monoes/ — path scope matches published npm scope for these two only</text>
+              <text x="450" y="436" textAnchor="middle" fill="rgba(42,35,24,0.25)" fontSize="9">packages/@monoes/: path scope matches published npm scope for these two only</text>
             </svg>
           </div>
         </div>
@@ -345,7 +345,7 @@ export default function MonomindArchitecturePage() {
           <p className="text-xs uppercase tracking-label font-semibold mb-3" style={{ color: accent }}>Modules</p>
           <h2 className="text-3xl md:text-4xl font-semibold text-espresso mb-4">8 Packages</h2>
           <p className="text-espresso/55 font-light leading-relaxed max-w-2xl mb-12">
-            6 live under packages/@monomind/ (cli, hooks, mcp, memory, monograph, routing) — all but cli publish under the @monoes/ npm scope despite the @monomind/ directory name. 2 live under packages/@monoes/ (monobrowse, monodesign), where path and publish scope match.
+            6 live under packages/@monomind/ (cli, hooks, mcp, memory, monograph, routing); all but cli publish under the @monoes/ npm scope despite the @monomind/ directory name. 2 live under packages/@monoes/ (monobrowse, monodesign), where path and publish scope match.
           </p>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {components.map((c) => (
@@ -384,7 +384,7 @@ export default function MonomindArchitecturePage() {
           <p className="text-xs uppercase tracking-label font-semibold mb-3" style={{ color: accent }}>Memory</p>
           <h2 className="text-3xl md:text-4xl font-semibold text-espresso mb-4">Local SQLite, Not a Vector Cloud Service</h2>
           <p className="text-espresso/55 font-light leading-relaxed max-w-2xl mb-12">
-            Three genuinely separate mechanisms share the word &quot;memory&quot; in this codebase. Here&apos;s what each one actually is.
+            Three genuinely separate mechanisms share the word "memory" in this codebase. Here's what each one actually is.
           </p>
           <div className="flex flex-col gap-4">
             {memoryFacts.map((f) => (
@@ -412,7 +412,7 @@ export default function MonomindArchitecturePage() {
           <p className="text-xs uppercase tracking-label font-semibold mb-3" style={{ color: accent }}>Routing</p>
           <h2 className="text-3xl md:text-4xl font-semibold text-espresso mb-4">Keyword by Default, Semantic on Request</h2>
           <p className="text-espresso/55 font-light leading-relaxed max-w-2xl mb-12">
-            The routing story has two distinct paths — don&apos;t mistake the default for the semantic one.
+            The routing story has two distinct paths. Don't mistake the default for the semantic one.
           </p>
           <div className="flex flex-col gap-3">
             {routingSteps.map((step, i) => (
@@ -444,7 +444,7 @@ export default function MonomindArchitecturePage() {
           <p className="text-xs uppercase tracking-label font-semibold mb-3" style={{ color: accent }}>Hook System</p>
           <h2 className="text-3xl md:text-4xl font-semibold text-espresso mb-4">Two Different Things Called &quot;Hooks&quot;</h2>
           <p className="text-espresso/55 font-light leading-relaxed max-w-2xl mb-12">
-            29 CLI subcommands and 20 typed registry events are different mechanisms that happen to share a name — plus 15 background workers underneath both.
+            29 CLI subcommands and 20 typed registry events are different mechanisms that happen to share a name, plus 15 background workers underneath both.
           </p>
           <div className="grid gap-6 sm:grid-cols-1 lg:grid-cols-3">
             {hookGroups.map((g) => (
@@ -469,9 +469,9 @@ export default function MonomindArchitecturePage() {
           <p className="text-xs uppercase tracking-label font-semibold mb-3" style={{ color: accent }}>Org Runtime v2</p>
           <h2 className="text-3xl md:text-4xl font-semibold text-espresso mb-4">SDK-Backed Agent Orgs</h2>
           <p className="text-espresso/55 font-light leading-relaxed max-w-2xl mb-12">
-            monomind org run/serve replaces the older prompt-orchestrated runorg path — each role is a live agent session, not a scripted prompt loop.
+            monomind org run/serve replaces the older prompt-orchestrated runorg path. Each role is a live agent session, not a scripted prompt loop.
           </p>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 items-start">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {orgFacts.map((f) => (
               <div key={f.label} className="rounded-2xl border border-espresso/10 bg-white p-5 shadow-soft">
                 <p className="text-[10px] uppercase tracking-label font-bold mb-2" style={{ color: accent }}>{f.label}</p>
@@ -495,7 +495,7 @@ export default function MonomindArchitecturePage() {
             <ul className="flex flex-col gap-4">
               {honestNotes.map((note) => (
                 <li key={note} className="text-sm text-espresso/65 leading-relaxed flex gap-3">
-                  <span style={{ color: accent }}>—</span>
+                  <span style={{ color: accent }}>-</span>
                   <span>{note}</span>
                 </li>
               ))}
@@ -507,7 +507,7 @@ export default function MonomindArchitecturePage() {
       {/* ── Footer ── */}
       <footer className="border-t border-ivory-linen bg-ivory-parchment px-8 py-10 text-center">
         <p className="text-xs text-espresso/35">
-          Monomind v2.8.4 · Architecture · 2026-08-02 ·{" "}
+          Monomind v2.5.4 · Architecture · 2026-07-21 ·{" "}
           <Link href="/projects/monomind" className="hover:text-espresso/60 transition-colors">
             ← Back to Monomind
           </Link>

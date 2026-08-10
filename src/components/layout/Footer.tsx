@@ -21,6 +21,9 @@ export function Footer() {
           >
             GitHub
           </Link>
+          <Link href="/blog" className="transition-colors hover:text-espresso">
+            Blog
+          </Link>
           <Link href="/community" className="transition-colors hover:text-espresso">
             Community
           </Link>

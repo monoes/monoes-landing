@@ -1,7 +1,7 @@
 "use client";
 import { motion, useReducedMotion } from "framer-motion";
 
-const QUOTE_WORDS = "The question is no longer whether AI can write code. The question is whether your organization is structured to let it.".split(" ");
+const QUOTE_WORDS = "The question is no longer whether AI can execute the work. The question is whether one person can decide fast enough to keep up with it.".split(" ");
 
 const expo = [0.16, 1, 0.3, 1] as const;
 
@@ -21,7 +21,7 @@ export function ResearchHero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: expo }}
           >
-            Monoes Research &nbsp;·&nbsp; May 2026 &nbsp;·&nbsp; Whitepaper
+            Monoes Research &nbsp;·&nbsp; June 2026 &nbsp;·&nbsp; Whitepaper
           </motion.p>
 
           <motion.h1
@@ -30,7 +30,7 @@ export function ResearchHero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.1, ease: expo }}
           >
-            The One-Developer
+            The One-Person
             <br />
             <span className="text-gold-dark">Company</span>
           </motion.h1>
@@ -41,7 +41,7 @@ export function ResearchHero() {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.25, ease: expo }}
           >
-            A Framework for Centralized Agentic Software Engineering
+            A Framework for Centralized Agentic Operation
           </motion.p>
 
           {/* Animated quote */}

@@ -199,7 +199,7 @@ export function OrgSimulation() {
 
     setRunStatus("running");
     setBossPulse(true);
-    setLog(["◆ Boss is online — distributing tasks to the org…"]);
+    setLog(["◆ Boss is online, distributing tasks to the org…"]);
     setSpecialists(SPECIALISTS.map((s) => ({ ...s, status: "idle" })));
 
     SPECIALISTS.forEach((sp, i) => {
@@ -225,7 +225,7 @@ export function OrgSimulation() {
     setTimeout(() => {
       setBossPulse(false);
       setRunStatus("done");
-      setLog((prev) => [...prev, "◆ All specialists done — goal delivered to Boss"]);
+      setLog((prev) => [...prev, "◆ All specialists done, goal delivered to Boss"]);
     }, last);
   }, [runStatus]);
 
@@ -242,7 +242,7 @@ export function OrgSimulation() {
       </p>
 
       <div className="flex flex-col gap-3">
-        {/* Canvas — scrollable on narrow screens */}
+        {/* Canvas, scrollable on narrow screens */}
         <div className="overflow-x-auto rounded-xl" style={{ background: IVORY }}>
           <canvas
             ref={canvasRef}

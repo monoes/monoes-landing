@@ -8,7 +8,9 @@ import { motion } from "framer-motion";
 const navLinks = [
   { label: "Community", href: "https://github.com/monoes/monomind/discussions", external: true },
   { label: "Projects", href: "/product#projects" },
+  { label: "Workforce", href: "/workforce" },
   { label: "Whitepaper", href: "/whitepaper" },
+  { label: "Blog", href: "/blog" },
   { label: "GitHub", href: "https://github.com/monoes", external: true },
 ];
 

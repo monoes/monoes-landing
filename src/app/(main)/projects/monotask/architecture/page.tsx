@@ -16,7 +16,7 @@ const crates = [
     icon: "🃏",
     subtitle: "Domain Model",
     name: "monotask-core",
-    description: "Automerge CRDT document logic. Owns board/column/card/checklist/chat data structures, all mutations, and migrations. init_doc() creates the root Automerge structure. Every mutation is a CRDT operation — concurrent edits from multiple peers merge automatically.",
+    description: "Automerge CRDT document logic. Owns board/column/card/checklist/chat data structures, all mutations, and migrations. init_doc() creates the root Automerge structure. Every mutation is a CRDT operation. Concurrent edits from multiple peers merge automatically.",
     tags: ["automerge", "board.rs", "card.rs", "column.rs", "chat.rs", "space.rs"],
     color: "#A07840",
   },
@@ -56,7 +56,7 @@ const crates = [
     icon: "🖥",
     subtitle: "Desktop App",
     name: "monotask-tauri",
-    description: "Tauri v2 desktop app (drag-and-drop kanban UI). Calls the same core crates via Rust backend. Supports column sorting, card covers, labels, due dates, assignees, checklists, and QR code invite generation. No separate UI binary — one executable for both CLI and GUI.",
+    description: "Tauri v2 desktop app (drag-and-drop kanban UI). Calls the same core crates via Rust backend. Supports column sorting, card covers, labels, due dates, assignees, checklists, and QR code invite generation. No separate UI binary: one executable for both CLI and GUI.",
     tags: ["Tauri v2", "drag-and-drop", "QR invites", "labels", "due dates", "covers"],
     color: "#8B7355",
   },
@@ -78,7 +78,7 @@ const dataFlow = [
   {
     num: "3", color: "#B8956A",
     title: "Card Operations (CRDT Mutations)",
-    body: "card::add_card() appends to the columns List and cards Map as Automerge transactions. Each card gets a UUIDv7 ID and an actor-scoped card number (actor_card_seq). Concurrent edits from different peers — add card, move card, edit title — merge without conflict via Automerge's CRDT semantics.",
+    body: "card::add_card() appends to the columns List and cards Map as Automerge transactions. Each card gets a UUIDv7 ID and an actor-scoped card number (actor_card_seq). Concurrent edits from different peers (add card, move card, edit title) merge without conflict via Automerge's CRDT semantics.",
     code: "doc.put_object(&cards_map, card_id, ObjType::Map) → doc.commit()",
   },
   {
@@ -96,13 +96,13 @@ const dataFlow = [
   {
     num: "6", color: "#8B7355",
     title: "Automerge Sync Exchange",
-    body: "On board sync: both peers run the Automerge sync protocol — exchange sync messages (binary diffs) until convergent. Peer A sends SyncMessage; Peer B applies generate_sync_message → receive_sync_message loop. When sync is complete, the merged document is saved back to SQLite. Both peers now have identical board state.",
+    body: "On board sync: both peers run the Automerge sync protocol, exchanging sync messages (binary diffs) until convergent. Peer A sends SyncMessage; Peer B applies generate_sync_message → receive_sync_message loop. When sync is complete, the merged document is saved back to SQLite. Both peers now have identical board state.",
     code: "doc.generate_sync_message() ↔ doc.receive_sync_message() → storage.save_board()",
   },
   {
     num: "7", color: "#C8A97E",
     title: "CLI Output (--json)",
-    body: "Every command supports --json for structured output: boards list returns [{id, name, columns_count, cards_count}]. ai-help prints a full JSON schema of all commands and their arguments — AI agents (Claude, Cursor) can read this to learn the API without documentation.",
+    body: "Every command supports --json for structured output: boards list returns [{id, name, columns_count, cards_count}]. ai-help prints a full JSON schema of all commands and their arguments. AI agents (Claude, Cursor) can read this to learn the API without documentation.",
     code: "monotask board list --json | jq '.[] | .name'",
   },
 ];
@@ -110,7 +110,7 @@ const dataFlow = [
 const crdtDetails = [
   { title: "Document Root Structure", detail: "Automerge AutoCommit with 5 top-level keys: columns (List), cards (Map), members (Map), actor_card_seq (Map), label_definitions (Map)" },
   { title: "Card ID Format", detail: "UUIDv7 (time-ordered) ensures consistent sort order across peers without coordination" },
-  { title: "Card Number Format", detail: "actor_card_seq[actor_id]++ — each actor maintains its own counter, preventing collisions: ALICE-1, BOB-1 can coexist" },
+  { title: "Card Number Format", detail: "actor_card_seq[actor_id]++: each actor maintains its own counter, preventing collisions: ALICE-1, BOB-1 can coexist" },
   { title: "Merge Semantics", detail: "Concurrent column reorders → Last-Write-Wins on List. Concurrent card edits → field-level merge. Concurrent deletes + edits → delete wins (is_deleted flag)" },
   { title: "Sync Protocol", detail: "Automerge's built-in sync protocol: exchange sync messages in a loop until both sides agree. No custom merge logic required." },
   { title: "Storage Format", detail: "doc.save() returns the full Automerge binary. Stored as BLOB in SQLite boards.doc column. On load: AutoCommit::load(&blob)" },
@@ -121,9 +121,9 @@ const cryptoDetails = [
   { key: "Key Source", value: "OsRng (OS random, not user entropy)" },
   { key: "Node ID Format", value: "pk_ + base32(pubkey, RFC4648 no-padding)" },
   { key: "Invite Payload", value: "CBOR-encoded InviteMetadata (ciborium)" },
-  { key: "Invite Encoding", value: "bs58 (Base58Check) — human-copyable" },
+  { key: "Invite Encoding", value: "bs58 (Base58Check): human-copyable" },
   { key: "Signature", value: "Ed25519 over CBOR payload SHA-256 hash" },
-  { key: "SSH Import", value: "ssh-key crate — parse OpenSSH Ed25519 privkey" },
+  { key: "SSH Import", value: "ssh-key crate: parse OpenSSH Ed25519 privkey" },
   { key: "Key Storage", value: "~/.monotask/identity (caller-encrypted)" },
 ];
 
@@ -188,7 +188,7 @@ export default function MonoTaskArchitecturePage() {
           <p className="text-xs uppercase tracking-label font-semibold mb-3" style={{ color: accent }}>Architecture</p>
           <h2 className="text-3xl md:text-4xl font-semibold text-espresso mb-4">System Overview</h2>
           <p className="text-espresso/55 font-light leading-relaxed max-w-2xl mb-12">
-            6-crate Rust workspace. Core CRDT logic is UI-agnostic — shared by CLI and Tauri desktop. Sync is purely peer-to-peer via libp2p.
+            6-crate Rust workspace. Core CRDT logic is UI-agnostic, shared by CLI and Tauri desktop. Sync is purely peer-to-peer via libp2p.
           </p>
           <div className="rounded-2xl border border-espresso/10 bg-white shadow-soft overflow-hidden p-6">
             <svg viewBox="0 0 900 400" xmlns="http://www.w3.org/2000/svg" className="w-full" style={{ fontFamily: "Satoshi, -apple-system, sans-serif" }}>
@@ -295,7 +295,7 @@ export default function MonoTaskArchitecturePage() {
           <p className="text-xs uppercase tracking-label font-semibold mb-3" style={{ color: accent }}>Workspace</p>
           <h2 className="text-3xl md:text-4xl font-semibold text-espresso mb-4">6 Rust Crates</h2>
           <p className="text-espresso/55 font-light leading-relaxed max-w-2xl mb-12">
-            Each crate owns a single layer. Core CRDT logic is independent of UI — the CLI and desktop app share identical behavior.
+            Each crate owns a single layer. Core CRDT logic is independent of UI. The CLI and desktop app share identical behavior.
           </p>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {crates.map((c) => (
@@ -323,7 +323,7 @@ export default function MonoTaskArchitecturePage() {
           <p className="text-xs uppercase tracking-label font-semibold mb-3" style={{ color: accent }}>Data Flow</p>
           <h2 className="text-3xl md:text-4xl font-semibold text-espresso mb-4">End-to-End System Flow</h2>
           <p className="text-espresso/55 font-light leading-relaxed max-w-2xl mb-12">
-            From key generation to peer sync — every step, from identity creation to CRDT convergence.
+            From key generation to peer sync: every step, from identity creation to CRDT convergence.
           </p>
           <div className="flex flex-col gap-4">
             {dataFlow.map((step) => (
@@ -349,7 +349,7 @@ export default function MonoTaskArchitecturePage() {
           <p className="text-xs uppercase tracking-label font-semibold mb-3" style={{ color: accent }}>CRDT</p>
           <h2 className="text-3xl md:text-4xl font-semibold text-espresso mb-4">Automerge Document Model</h2>
           <p className="text-espresso/55 font-light leading-relaxed max-w-2xl mb-12">
-            Every board is one Automerge AutoCommit document. Concurrent mutations from any peer merge deterministically — no conflict resolution logic required.
+            Every board is one Automerge AutoCommit document. Concurrent mutations from any peer merge deterministically: no conflict resolution logic required.
           </p>
           <div className="grid gap-3 sm:grid-cols-2">
             {crdtDetails.map((d) => (
@@ -386,7 +386,7 @@ export default function MonoTaskArchitecturePage() {
           <p className="text-xs uppercase tracking-label font-semibold mb-3" style={{ color: accent }}>Cryptography</p>
           <h2 className="text-3xl md:text-4xl font-semibold text-espresso mb-4">Ed25519 Identity System</h2>
           <p className="text-espresso/55 font-light leading-relaxed max-w-2xl mb-12">
-            No accounts. No servers. Identity is an Ed25519 keypair. Invite tokens are signed payloads — verifiable offline by any peer.
+            No accounts. No servers. Identity is an Ed25519 keypair. Invite tokens are signed payloads, verifiable offline by any peer.
           </p>
           <div className="grid gap-4 sm:grid-cols-2 mb-8">
             <div className="rounded-2xl border border-espresso/10 bg-white p-6 shadow-soft">

@@ -15,9 +15,9 @@ const PIPELINE = [
 ];
 
 const MEMORY_TIERS = [
-  { badge: "JSON", title: "Pattern Store", detail: "Hook and trajectory learning — routing outcomes, edit patterns — persisted as JSON files. Independent of the SQLite backend below; not yet consolidated into one system.", time: "Continuous", pct: 35 },
-  { badge: "SQLite", title: "Default Search Path", detail: "Local SQLite (better-sqlite3, sql.js WASM fallback) with local embeddings. Backs memory store/search, the MCP memory tools, and Second Brain retrieval — no cloud vector DB involved.", time: "Default", pct: 100 },
-  { badge: "HNSW", title: "Opt-in Vector Index", detail: "A pure-JS HNSW index exists in the memory package but sits off the default search path — reachable only via memory search --build-hnsw, not used automatically.", time: "Opt-in only", pct: 20 },
+  { badge: "JSON", title: "Pattern Store", detail: "Hook and trajectory learning (routing outcomes, edit patterns) persisted as JSON files. Independent of the SQLite backend below; not yet consolidated into one system.", time: "Continuous", pct: 35 },
+  { badge: "SQLite", title: "Default Search Path", detail: "Local SQLite (better-sqlite3, sql.js WASM fallback) with local embeddings. Backs memory store/search, the MCP memory tools, and Second Brain retrieval: no cloud vector DB involved.", time: "Default", pct: 100 },
+  { badge: "HNSW", title: "Opt-in Vector Index", detail: "A pure-JS HNSW index exists in the memory package but sits off the default search path: reachable only via memory search --build-hnsw, not used automatically.", time: "Opt-in only", pct: 20 },
 ];
 
 function ArchSVG() {
@@ -207,7 +207,7 @@ export function CentralizedArch() {
             </p>
           </motion.div>
 
-          {/* Pipeline steps — vertical on mobile, horizontal on desktop */}
+          {/* Pipeline steps: vertical on mobile, horizontal on desktop */}
           <div className="flex flex-col md:hidden gap-3">
             {PIPELINE.map((step, i) => (
               <motion.div

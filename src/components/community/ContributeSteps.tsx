@@ -1,7 +1,7 @@
 const steps = [
-  { icon: "◎", title: "Pick a project", description: "Find one that matches your skills — Go, Rust, or TypeScript." },
+  { icon: "◎", title: "Pick a project", description: "Find one that matches your skills: Go, Rust, or TypeScript." },
   { icon: "◈", title: "Find an issue", description: "Look for \"good first issue\" labels or open a discussion." },
-  { icon: "◉", title: "Ship it", description: "Fork, branch, PR — we review fast and merge faster." },
+  { icon: "◉", title: "Ship it", description: "Fork, branch, PR: we review fast and merge faster." },
 ];
 
 export function ContributeSteps() {
