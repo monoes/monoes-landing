@@ -66,8 +66,8 @@ export const BLOG_POSTS: BlogPost[] = [
       avatar: "/images/monkey/welcoming-arms.png",
     },
     coverImage: {
-      src: "/images/blog/v28-workforce-hero.jpg",
-      alt: "Monomind v2.8 Digital Workforce Hero Photo",
+      src: "/images/blog/gemini_1786353668_0.png",
+      alt: "Monomind v2.8 Digital Workforce Hero Photo (Generated via monoagentcli)",
       caption: "Monomind v2.8 24/7 Digital Workforce operating at 100% system efficiency across enterprise back-office workloads.",
     },
     content: {
@@ -86,7 +86,7 @@ export const BLOG_POSTS: BlogPost[] = [
             "Developers can instantiate a complete Accounts Payable department in a single command, assigning specialized sub-agents to raw invoice OCR parsing, PO matching, tax verification, and ledger posting while maintaining least-privilege security bounds."
           ],
           image: {
-            src: "/images/blog/v28-roles-catalog.png",
+            src: "/images/blog/gemini_1786353698_0.png",
             alt: "Monomind v2.8 Digital Worker Roles Dashboard",
             caption: "Figure 1: Monomind v2.8 Digital Worker Catalog displaying role specializations across AP, AR, HR, and compliance.",
           },
@@ -113,12 +113,12 @@ monomind org status --format=json`
           heading: "2. 31 Org Management Subcommands & Task Board",
           subheading: "Command-line control over multi-agent task queues, thread allocations, and live execution states",
           paragraphs: [
-            "Managing multi-agent operations requires robust observability and control tooling. Monomind v2.8 introduces 31 new org subcommands in the `@monoes/monomindcli` package, giving operations leads complete CLI control over active worker threads.",
+            "Managing multi-agent operations requires robust observability and control tooling. Monomind v2.8 introduces 31 new org subcommands in the \`@monoes/monomindcli\` package, giving operations leads complete CLI control over active worker threads.",
             "As shown in the Task Board interface in Figure 2, managers can inspect real-time job execution queues, monitor active thread allocations, pause specific workflow branches, or adjust node concurrency limits dynamically without restarting backend services.",
             "Whether inspecting intermediate agent memory snapshots or inspecting worker execution logs, the v2.8 CLI suite brings standard Unix-style composability and transparency to autonomous multi-agent execution."
           ],
           image: {
-            src: "/images/blog/v28-org-subcommands.png",
+            src: "/images/blog/gemini_1786353729_0.png",
             alt: "Monomind v2.8 Task Board & Org CLI Dashboard",
             caption: "Figure 2: Monomind Task Board & Org CLI showing active task queues and node thread management.",
           },
@@ -138,7 +138,7 @@ monomind org status --format=json`
             "Reviewers can approve or reject items with a single click, automatically feeding supervisory decisions back into zero-shot guardrail benchmarks to continuously refine system precision."
           ],
           image: {
-            src: "/images/blog/v28-audit-queue.jpg",
+            src: "/images/blog/gemini_1786353762_0.png",
             alt: "Enterprise Audit Queue Photo",
             caption: "Figure 3: Enterprise Audit Queue displaying automated 98.4% confidence checks and supervisory approval workflows.",
           },
@@ -154,7 +154,7 @@ monomind org status --format=json`
         }
       ],
       conclusion: [
-        "Monomind v2.8 is available immediately on npm (`@monoes/monomindcli`) and GitHub. Upgrade your local installation today or contact Monoes Workforce to explore managed digital worker deployment for your organization.",
+        "Monomind v2.8 is available immediately on npm (\`@monoes/monomindcli\`) and GitHub. Upgrade your local installation today or contact Monoes Workforce to explore managed digital worker deployment for your organization.",
         "Explore the v2.8 release notes on GitHub or read our detailed architecture guides."
       ]
     }
@@ -174,8 +174,8 @@ monomind org status --format=json`
       avatar: "/images/monkey/welcoming-arms.png",
     },
     coverImage: {
-      src: "/images/blog/v25-brain-hero.png",
-      alt: "Monomind v2.5 Local Second Brain Illustration",
+      src: "/images/blog/gemini_1786353807_0.png",
+      alt: "Monomind v2.5 Local Second Brain Illustration (Generated via monoagentcli)",
       caption: "Monomind v2.5 Local Second Brain Core Engine providing sovereign vector memory.",
     },
     content: {
@@ -194,7 +194,7 @@ monomind org status --format=json`
             "Whether indexing technical documentation, customer support tickets, or internal codebase repositories, v2.5 guarantees that raw text and vector embeddings never leave physical hardware controlled by your security team."
           ],
           image: {
-            src: "/images/blog/v25-sovereign-server.jpg",
+            src: "/images/blog/gemini_1786353879_0.png",
             alt: "Sovereign Server Hardware Photo",
             caption: "Figure 1: Local VPC Server Mode — running embedded Second Brain memory on internal hardware with zero external data egress.",
           },
@@ -232,7 +232,7 @@ console.log("✓ Local Second Brain initialized with zero external dependencies.
             "Agents querying the Second Brain retrieve relevant context snippets in under 0.8ms, allowing multi-step reasoning loops to run at maximum speed without memory retrieval latency bottlenecks."
           ],
           image: {
-            src: "/images/blog/v25-vector-engine.jpg",
+            src: "/images/blog/gemini_1786353917_0.png",
             alt: "Hybrid HNSW Vector Memory Topology Artwork",
             caption: "Figure 2: Hybrid HNSW Vector Retrieval Topology — luminous memory nodes providing sub-millisecond semantic search.",
           },
@@ -248,11 +248,11 @@ console.log("✓ Local Second Brain initialized with zero external dependencies.
           subheading: "Processing heavy enterprise files locally with zero per-token cloud costs",
           paragraphs: [
             "Scaling RAG context retrieval across large enterprise document libraries can quickly generate massive cloud API bills if every document chunk is sent to remote embedding endpoints.",
-            "As demonstrated in the document ingestion photo in Figure 3, Monomind v2.5 pairs with local embedding models (such as `bge-small-en-v1.5` or `nomic-embed-text`) running on local ONNX or Ollama runtimes. A stack of paper documents or PDF files is converted into verified, searchable vector memory locally without incurring a single dollar in API charges.",
+            "As demonstrated in the document ingestion photo in Figure 3, Monomind v2.5 pairs with local embedding models (such as \`bge-small-en-v1.5\` or \`nomic-embed-text\`) running on local ONNX or Ollama runtimes. A stack of paper documents or PDF files is converted into verified, searchable vector memory locally without incurring a single dollar in API charges.",
             "Operations teams can ingest thousands of internal technical manuals, policy PDFs, and API specs, making them instantly accessible to Monomind agents with total financial predictability."
           ],
           image: {
-            src: "/images/blog/v25-document-ingestion.jpg",
+            src: "/images/blog/gemini_1786353959_0.png",
             alt: "Sovereign Document Ingestion Photo",
             caption: "Figure 3: Sovereign Document Ingestion — processing heavy enterprise paper files locally with zero per-token cloud API charges.",
           },
@@ -263,13 +263,13 @@ console.log("✓ Local Second Brain initialized with zero external dependencies.
           keyTakeaways: [
             "Local embedding inference prevents per-token API charges during document ingestion.",
             "Automatic chunking and metadata tagging for technical PDFs, markdown, and source code.",
-            "Instant developer setup with standard npm installation (`npm install @monoes/memory`)."
+            "Instant developer setup with standard npm installation (\`npm install @monoes/memory\`)."
           ]
         }
       ],
       conclusion: [
-        "Monomind v2.5 is a major leap forward for local-first AI memory. Try the `@monoes/memory` package today or upgrade your Monomind CLI installation.",
-        "Check out the `@monoes/memory` repository on GitHub for full documentation and code examples."
+        "Monomind v2.5 is a major leap forward for local-first AI memory. Try the \`@monoes/memory\` package today or upgrade your Monomind CLI installation.",
+        "Check out the \`@monoes/memory\` repository on GitHub for full documentation and code examples."
       ]
     }
   },
@@ -288,8 +288,8 @@ console.log("✓ Local Second Brain initialized with zero external dependencies.
       avatar: "/images/monkey/welcoming-arms.png",
     },
     coverImage: {
-      src: "/images/blog/v20-dag-hero.jpg",
-      alt: "Monomind v2.0 DAG Workflow Hero Photo",
+      src: "/images/blog/gemini_1786353986_0.png",
+      alt: "Monomind v2.0 DAG Workflow Hero Photo (Generated via monoagentcli)",
       caption: "Monomind v2.0 Master Orchestrator executing active DAG workflow nodes on workstation.",
     },
     content: {
@@ -308,7 +308,7 @@ console.log("✓ Local Second Brain initialized with zero external dependencies.
             "When an Execution Agent completes its atomic subtask, its output is validated against strict JSON Schema definitions before the Orchestrator advances state to the next graph node. If an output fails validation, the step is retried or escalated automatically without corrupting the broader workflow."
           ],
           image: {
-            src: "/images/blog/v20-decoupled-topology.jpg",
+            src: "/images/blog/gemini_1786354047_0.png",
             alt: "Monomind v2.0 Decoupled Node Topology Diagram",
             caption: "Figure 1: Decoupled Node Topology — isolating central planning from ephemeral execution workers.",
           },
@@ -355,7 +355,7 @@ console.log("✓ Local Second Brain initialized with zero external dependencies.
             "The system captures a high-fidelity state snapshot and places an item in the human supervisor's review queue, ensuring zero unauthorized mutations occur on enterprise systems."
           ],
           image: {
-            src: "/images/blog/v20-zero-trust-gate.jpg",
+            src: "/images/blog/gemini_1786354127_0.png",
             alt: "Zero-Trust Approval Queue UI Photo",
             caption: "Figure 2: Zero-Trust Audit Gate — dynamic confidence scoring gating ERP side effects before execution.",
           },
@@ -375,7 +375,7 @@ console.log("✓ Local Second Brain initialized with zero external dependencies.
             "By replacing manual spreadsheet matching with deterministic DAG steps, enterprise financial teams eliminate double payments and billing errors while accelerating invoice processing throughput by over 300%."
           ],
           image: {
-            src: "/images/blog/v20-invoice-match.jpg",
+            src: "/images/blog/gemini_1786354270_0.png",
             alt: "Financial Invoice Match Verification Photo",
             caption: "Figure 3: 100% Match Verification — automated invoice line-item matching against NetSuite and SAP ledgers.",
           },
@@ -410,8 +410,8 @@ console.log("✓ Local Second Brain initialized with zero external dependencies.
       avatar: "/images/monkey/welcoming-arms.png",
     },
     coverImage: {
-      src: "/images/blog/v15-cli-hero.png",
-      alt: "Monomind v1.5 Developer Terminal CLI Photo",
+      src: "/images/blog/gemini_1786354303_0.png",
+      alt: "Monomind v1.5 Developer Terminal CLI Photo (Generated via monoagentcli)",
       caption: "Monomind v1.5 Developer Terminal CLI & Agentic Workflow Environment.",
     },
     content: {
@@ -424,12 +424,12 @@ console.log("✓ Local Second Brain initialized with zero external dependencies.
           heading: "1. Unified Command-Line Orchestration",
           subheading: "Running, inspecting, and managing autonomous agent background tasks directly from terminal",
           paragraphs: [
-            "With Monomind v1.5, developers can launch autonomous background agent tasks with simple terminal commands. The `@monoes/monomindcli` package provides real-time progress indicators, background job daemonization, and UNIX pipe stdout formatting.",
+            "With Monomind v1.5, developers can launch autonomous background agent tasks with simple terminal commands. The \`@monoes/monomindcli\` package provides real-time progress indicators, background job daemonization, and UNIX pipe stdout formatting.",
             "As shown in the engineering office monitor in Figure 1, developers gain live visibility into active agent sessions ('Real-Time Agent Observability — 0 State Errors'), tracking request handling times and execution SLAs in real time.",
             "Commands can be composed inside shell scripts or CI/CD pipelines, making agentic automation a seamless extension of standard developer workflows."
           ],
           image: {
-            src: "/images/blog/v15-live-telemetry.jpg",
+            src: "/images/blog/gemini_1786354375_0.png",
             alt: "Real-Time Agent Observability Monitor Photo",
             caption: "Figure 1: Real-Time Agent Observability — monitoring live CLI task execution and zero error rates.",
           },
@@ -443,7 +443,7 @@ monomind run --goal "Audit src/ security vulnerabilities" --bg --json > audit_re
 monomind task status --id task-8841`
           },
           keyTakeaways: [
-            "Unified `@monoes/monomindcli` npm package for terminal orchestration.",
+            "Unified \`@monoes/monomindcli\` npm package for terminal orchestration.",
             "Background daemonization allows agents to execute long-running tasks without blocking the shell.",
             "JSON output flags enable easy integration with jq, grep, and CI/CD pipelines."
           ]
@@ -458,7 +458,7 @@ monomind task status --id task-8841`
             "If an external model API experiences rate limits or elevated latency, Monomind automatically fails over to local vLLM or Ollama model endpoints with zero task interruption."
           ],
           image: {
-            src: "/images/blog/v15-system-dashboard.jpg",
+            src: "/images/blog/gemini_1786354406_0.png",
             alt: "System Performance Telemetry Dashboard Photo",
             caption: "Figure 2: System Performance Dashboard — tracking latency, throughput, and memory consumption across model backends.",
           },
@@ -478,7 +478,7 @@ monomind task status --id task-8841`
             "Developers writing custom tool extensions enjoy sub-second roundtrip execution speeds, accelerating overall task completion velocity."
           ],
           image: {
-            src: "/images/blog/v15-velocity-flow.jpg",
+            src: "/images/blog/gemini_1786354450_0.png",
             alt: "Execution Velocity Flow Artwork",
             caption: "Figure 3: Execution Velocity Curves — smooth momentum graphics representing sub-second tool execution.",
           },
@@ -490,7 +490,7 @@ monomind task status --id task-8841`
         }
       ],
       conclusion: [
-        "Monomind v1.5 laid the groundwork for our developer CLI tooling. Try `npm install -g @monoes/monomindcli` today."
+        "Monomind v1.5 laid the groundwork for our developer CLI tooling. Try \`npm install -g @monoes/monomindcli\` today."
       ]
     }
   },
@@ -509,8 +509,8 @@ monomind task status --id task-8841`
       avatar: "/images/monkey/welcoming-arms.png",
     },
     coverImage: {
-      src: "/images/blog/v10-foundation-hero.jpg",
-      alt: "Monomind v1.0 Open Source Engine Launch Artwork",
+      src: "/images/blog/gemini_1786354479_0.png",
+      alt: "Monomind v1.0 Open Source Engine Launch Artwork (Generated via monoagentcli)",
       caption: "Monomind v1.0 Open-Source Autonomous Agent Engine Launch.",
     },
     content: {
@@ -529,7 +529,7 @@ monomind task status --id task-8841`
             "Developers can inspect every line of orchestration logic, customize tool drivers, and deploy autonomous agents with absolute confidence."
           ],
           image: {
-            src: "/images/blog/v10-mit-license.png",
+            src: "/images/blog/gemini_1786354511_0.png",
             alt: "Verified Quality MIT License Banner",
             caption: "Figure 1: Verified Quality & MIT Open-Source Freedom — zero vendor lock-in forever.",
           },
@@ -560,7 +560,7 @@ in the Software without restriction...`
             "By taking over tedious, repetitive data extraction and file formatting tasks, Monomind frees human engineers and managers to focus on strategic, creative problem-solving."
           ],
           image: {
-            src: "/images/blog/v10-human-partnership.jpg",
+            src: "/images/blog/gemini_1786354554_0.png",
             alt: "Human and AI Partnership Workspace Photo",
             caption: "Figure 2: Human & AI Partnership — serene, trustworthy collaboration in modern work environments.",
           },
@@ -580,13 +580,13 @@ in the Software without restriction...`
             "This multimodal capability enables digital workers to navigate web portals, parse visual invoices, and execute end-to-end tasks across any software interface."
           ],
           image: {
-            src: "/images/blog/v10-monoclip-banner.png",
+            src: "/images/blog/gemini_1786354303_0.png",
             alt: "Mono Clip Multimodal Integration Banner",
             caption: "Figure 3: Multimodal Vision & Clip Integration Banner — connecting visual parsers to agent logic.",
           },
           keyTakeaways: [
             "Native support for visual UI screenshots, scanned PDFs, and image payloads.",
-            "Seamless integration with `@monoes/monoclip` for visual parsing.",
+            "Seamless integration with \`@monoes/monoclip\` for visual parsing.",
             "Establishes the foundation for multimodal enterprise digital workers."
           ]
         }
