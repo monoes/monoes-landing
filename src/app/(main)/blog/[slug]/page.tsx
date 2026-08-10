@@ -3,6 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { getAllBlogPosts, getBlogPostBySlug } from "@/lib/blog";
+import { ReleaseDiagram } from "@/components/blog/ReleaseDiagrams";
 
 interface PageProps {
   params: Promise<{
@@ -141,6 +142,9 @@ export default async function BlogPostPage({ params }: PageProps) {
             <p key={idx}>{paragraph}</p>
           ))}
         </div>
+
+        {/* Customized Interactive Release Architecture Diagram */}
+        <ReleaseDiagram slug={post.slug} />
 
         {/* Sections */}
         {post.content.sections.map((section) => (
