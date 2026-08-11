@@ -132,7 +132,13 @@ export const discoveryPackages: DiscoveryPackage[] = [
   },
 ];
 
-export const discoveryContactEmail = "nokhodian@gmail.com";
+export const discoveryContactEmail = "hello@monoes.me";
+
+export const pilotBracketNote =
+  "Typical pilots start at $15,000 and scale with the number of processes and systems connected. You will get a fixed, itemized quote inside your Discovery report — no open-ended billing.";
+
+export const discoveryEmailBody =
+  "Tell us a little about your business and the process you'd like to automate:\n\n- Company name:\n- Team size:\n- Systems you run (ERP / CRM / email):\n- The process that eats the most time:\n- Preferred Discovery package (1-Day $3,000 / 5-Day $12,000):\n";
 
 export interface HumanInLoopLevel {
   level: number;

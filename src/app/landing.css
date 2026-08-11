@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════
-   LANDING9.CSS — Autonomous Operations Command
+   LANDING9.CSS: Autonomous Operations Command
    Monomind OS · Gamified HUD Edition
    Base: espresso / ivory / gold palette
    Additions: signal-green / alert-cyan / warning-amber / ghost-panel
@@ -232,6 +232,50 @@ nav {
   transition: all 0.2s;
 }
 .nav-cta-link:hover { background: var(--gold-dark); color: white; }
+.nav-hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+.nav-hamburger span {
+  display: block;
+  width: 100%;
+  height: 1.5px;
+  background: var(--espresso);
+  transition: transform 0.2s, opacity 0.2s;
+}
+.nav-mobile-menu {
+  position: fixed;
+  top: calc(var(--nav-h) + var(--hud-bar-h, 0px));
+  left: 0;
+  right: 0;
+  z-index: 299;
+  display: flex;
+  flex-direction: column;
+  background: rgba(250,247,240,0.98);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(200,169,126,0.18);
+  padding: 8px 16px 16px;
+}
+.nav-mobile-link {
+  font-family: var(--sans);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--espresso-light);
+  text-decoration: none;
+  padding: 12px 4px;
+  border-bottom: 1px solid rgba(200,169,126,0.12);
+}
+.nav-mobile-link:last-child { border-bottom: none; }
+.nav-mobile-link:hover { color: var(--gold-dark); }
 
 /* ═══════════════════════════════════════════════════
    SYSTEM STATUS BADGE (fixed top-right below nav)
@@ -622,7 +666,7 @@ nav {
 }
 
 /* ═══════════════════════════════════════════════════
-   PLATFORM SLIDE — ASSET UNLOCK CARDS
+   PLATFORM SLIDE: ASSET UNLOCK CARDS
 ═══════════════════════════════════════════════════ */
 .capabilities-grid {
   display: grid;
@@ -918,9 +962,10 @@ nav {
 ═══════════════════════════════════════════════════ */
 @media (max-width:768px) {
   nav { padding: 0 16px; }
-  .nav-links { gap: 12px; }
+  .nav-links { gap: 10px; }
   .nav-link { display: none; }
   .nav-cta-link { font-size: 9px; padding: 6px 12px; }
+  .nav-hamburger { display: flex; }
   .system-status { top: calc(var(--nav-h) + 8px); right: 8px; padding: 3px 8px 3px 6px; }
   .status-text { font-size: 8px; }
   .slide-dots { display: none; }

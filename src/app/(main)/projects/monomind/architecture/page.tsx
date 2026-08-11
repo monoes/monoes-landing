@@ -384,7 +384,7 @@ export default function MonomindArchitecturePage() {
           <p className="text-xs uppercase tracking-label font-semibold mb-3" style={{ color: accent }}>Memory</p>
           <h2 className="text-3xl md:text-4xl font-semibold text-espresso mb-4">Local SQLite, Not a Vector Cloud Service</h2>
           <p className="text-espresso/55 font-light leading-relaxed max-w-2xl mb-12">
-            Three genuinely separate mechanisms share the word "memory" in this codebase. Here's what each one actually is.
+            Three genuinely separate mechanisms share the word &ldquo;memory&rdquo; in this codebase. Here&apos;s what each one actually is.
           </p>
           <div className="flex flex-col gap-4">
             {memoryFacts.map((f) => (
@@ -412,7 +412,7 @@ export default function MonomindArchitecturePage() {
           <p className="text-xs uppercase tracking-label font-semibold mb-3" style={{ color: accent }}>Routing</p>
           <h2 className="text-3xl md:text-4xl font-semibold text-espresso mb-4">Keyword by Default, Semantic on Request</h2>
           <p className="text-espresso/55 font-light leading-relaxed max-w-2xl mb-12">
-            The routing story has two distinct paths. Don't mistake the default for the semantic one.
+            The routing story has two distinct paths. Don&apos;t mistake the default for the semantic one.
           </p>
           <div className="flex flex-col gap-3">
             {routingSteps.map((step, i) => (

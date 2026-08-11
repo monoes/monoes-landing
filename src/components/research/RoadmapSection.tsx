@@ -158,7 +158,7 @@ export function RoadmapSection() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20 mb-16">
               <p className="text-ivory/50 font-light leading-relaxed">
-                The transition to centralized agentic operation commoditizes execution, whether that execution is code syntax or a workflow's individual steps. By repositioning the human as spec writer and intent orchestrator, a one-person company achieves throughput that used to require a team. But the throughput only compounds when the harness is right: the architecture, the memory, the verification pipeline, the trust calibration.
+                The transition to centralized agentic operation commoditizes execution, whether that execution is code syntax or a workflow&apos;s individual steps. By repositioning the human as spec writer and intent orchestrator, a one-person company achieves throughput that used to require a team. But the throughput only compounds when the harness is right: the architecture, the memory, the verification pipeline, the trust calibration.
               </p>
               <p className="text-ivory/50 font-light leading-relaxed">
                 The people and organizations that make this transformation first will not merely be more efficient. They will operate in a different competitive environment: one where the cost of production, software or otherwise, has dropped far enough that the constraint is no longer how fast you can execute, but how clearly you can think about what to execute.
@@ -185,7 +185,7 @@ export function RoadmapSection() {
                   The architecture described in this paper is implemented as two open-source, self-hostable engines: <strong className="text-ivory/80 font-semibold">Monomind</strong> for engineering work, and <strong className="text-ivory/80 font-semibold">Mono Agent</strong> for everything else. Both are free, MIT-licensed, and yours to run without building the infrastructure from scratch.
                 </p>
                 <p className="text-sm text-ivory/55 leading-relaxed mb-5">
-                  Not every company wants to operate this infrastructure itself. <strong className="text-ivory/80 font-semibold">Monoes Workforce</strong> applies the same model to a company's business processes as a managed service: we configure and run the workers, you set the strategy.
+                  Not every company wants to operate this infrastructure itself. <strong className="text-ivory/80 font-semibold">Monoes Workforce</strong> applies the same model to a company&apos;s business processes as a managed service: we configure and run the workers, you set the strategy.
                 </p>
                 <div className="flex flex-wrap items-center gap-4">
                   <a

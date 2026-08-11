@@ -1,11 +1,16 @@
 "use client";
 import { motion, useReducedMotion } from "framer-motion";
-import { discoveryPackages, discoveryContactEmail } from "@/lib/workforce";
+import {
+  discoveryPackages,
+  discoveryContactEmail,
+  discoveryEmailBody,
+  pilotBracketNote,
+} from "@/lib/workforce";
 
 const expo = [0.16, 1, 0.3, 1] as const;
 
 function mailtoHref(subject: string) {
-  return `mailto:${discoveryContactEmail}?subject=${encodeURIComponent(subject)}`;
+  return `mailto:${discoveryContactEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(discoveryEmailBody)}`;
 }
 
 export function DiscoveryPackages() {
@@ -79,11 +84,10 @@ export function DiscoveryPackages() {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="mt-16 pt-8 border-t border-ivory/10 text-xs text-ivory/35 max-w-2xl"
+          className="mt-16 pt-8 border-t border-ivory/10 text-xs text-ivory/45 max-w-2xl leading-relaxed"
         >
-          Pilot and rollout pricing is scoped per engagement after Discovery.
-          It depends on which processes, which systems, and how many workers
-          you decide to run. Not ready to commit yet?{" "}
+          <span className="block mb-3 text-ivory/55">{pilotBracketNote}</span>
+          Not ready to commit yet?{" "}
           <a href="#book-a-call" className="text-gold underline underline-offset-2 hover:text-ivory">
             Book a 30-minute call instead
           </a>

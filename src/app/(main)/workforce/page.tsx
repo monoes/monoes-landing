@@ -12,6 +12,7 @@ export const metadata: Metadata = {
   title: "Monoes Workforce: AI digital workers for your business processes",
   description:
     "Digital workers that execute your business processes end-to-end, on the ERP, CRM, and email you already run. Start with a priced Discovery audit.",
+  alternates: { canonical: "/workforce" },
 };
 
 export default function WorkforcePage() {

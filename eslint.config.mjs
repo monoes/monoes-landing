@@ -16,6 +16,13 @@ const eslintConfig = defineConfig([
     ".open-next/**",
     // Local agent tooling, not app code:
     ".claude/**",
+    ".monomind/**",
+    ".swarm/**",
+    ".agents/**",
+    ".understand/**",
+    // macOS AppleDouble files (regenerate on non-HFS+ volumes):
+    "._*",
+    "**/._*",
   ]),
 ]);
 

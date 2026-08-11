@@ -12,7 +12,6 @@ export const metadata: Metadata = {
 export default function BlogIndexPage() {
   const posts = getAllBlogPosts();
   const featuredPost = posts.find((p) => p.featured) || posts[0];
-  const regularPosts = posts.filter((p) => p.slug !== featuredPost.slug);
 
   return (
     <main className="min-h-screen bg-ivory pt-24 pb-20">

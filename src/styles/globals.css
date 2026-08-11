@@ -54,12 +54,28 @@ html {
   scroll-behavior: smooth;
 }
 
-/* Normal cursor always */
-*, *::before, *::after {
-  cursor: inherit;
+/* Restore pointer cursor on interactive elements (links, buttons) */
+a, button, [role="button"], summary, [tabindex]:not([tabindex="-1"]) {
+  cursor: pointer;
 }
-body {
-  cursor: default;
+
+/* Visible focus indicator for keyboard navigation (WCAG 2.4.7) */
+:focus-visible {
+  outline: 2px solid var(--color-gold-dark);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Respect reduced motion site-wide (WCAG 2.3.3) */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 /* Selection color */

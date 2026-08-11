@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { gsap } from 'gsap';
 import './landing.css';
 
@@ -12,6 +13,8 @@ declare global {
 }
 
 export default function LandingPage() {
+  const [mobileOpen, setMobileOpen] = useState(false);
+
   useEffect(() => {
     // Clear any stale GSAP state from a previous mount
     gsap.killTweensOf('*');
@@ -27,6 +30,17 @@ export default function LandingPage() {
     document.body.style.fontFamily = "Georgia, 'Times New Roman', serif";
     document.body.style.background = '#2A2318';
     document.body.style.color = '#2A2318';
+
+    // Respect prefers-reduced-motion: show all content immediately and skip
+    // every GSAP entrance animation. The CSS scroll-snap deck still works.
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) {
+      document.querySelectorAll('.slide-in').forEach((el) => {
+        (el as HTMLElement).style.opacity = '1';
+        (el as HTMLElement).style.visibility = 'visible';
+      });
+      return;
+    }
 
     // Track RAF for cleanup
     let _rafId = 0;
@@ -863,13 +877,34 @@ export default function LandingPage() {
       <nav>
         <span className="nav-logo">Monoes</span>
         <div className="nav-links">
-          <a href="https://github.com/monoes/monomind/discussions" className="nav-link" target="_blank" rel="noopener noreferrer">Community</a>
-          <a href="/product#projects" className="nav-link">Projects</a>
-          <a href="/whitepaper" className="nav-link">Whitepaper</a>
+          <Link href="/product#projects" className="nav-link">Projects</Link>
+          <Link href="/workforce" className="nav-link">Workforce</Link>
+          <Link href="/whitepaper" className="nav-link">Whitepaper</Link>
+          <Link href="/blog" className="nav-link">Blog</Link>
           <a href="https://github.com/monoes/monomind" className="nav-link" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
-          <a href="https://github.com/monoes/monomind" className="nav-cta-link" target="_blank" rel="noopener noreferrer">Get started →</a>
+          <Link href="/workforce" className="nav-cta-link">Hire us →</Link>
+          <button
+            className="nav-hamburger"
+            aria-label="Toggle menu"
+            aria-expanded={mobileOpen}
+            onClick={() => setMobileOpen((v) => !v)}
+          >
+            <span />
+            <span />
+            <span />
+          </button>
         </div>
       </nav>
+
+      {mobileOpen && (
+        <div className="nav-mobile-menu">
+          <Link href="/product#projects" className="nav-mobile-link" onClick={() => setMobileOpen(false)}>Projects</Link>
+          <Link href="/workforce" className="nav-mobile-link" onClick={() => setMobileOpen(false)}>Workforce</Link>
+          <Link href="/whitepaper" className="nav-mobile-link" onClick={() => setMobileOpen(false)}>Whitepaper</Link>
+          <Link href="/blog" className="nav-mobile-link" onClick={() => setMobileOpen(false)}>Blog</Link>
+          <a href="https://github.com/monoes/monomind" className="nav-mobile-link" target="_blank" rel="noopener noreferrer" onClick={() => setMobileOpen(false)}>GitHub ↗</a>
+        </div>
+      )}
 
       <div id="snapWrap">
 
@@ -884,7 +919,7 @@ export default function LandingPage() {
               <div className="slide-in">
                 <div className="hero-kicker">
                   <span className="hero-kicker-dot"></span>
-                  Open source · MIT License · v2.8.4
+                  Open source · Apache-2.0 License · v2.9.2
                 </div>
                 <h1 className="hero-headline">
                   Not a copilot.<br />
@@ -898,7 +933,7 @@ export default function LandingPage() {
                   <a href="#slide-close" className="btn-ghost">Need it deployed? →</a>
                 </div>
                 <div className="github-badge">
-                  <span className="star-count">MIT licensed. Forever free.</span>
+                  <span className="star-count">Apache-2.0 licensed. Forever free.</span>
                 </div>
               </div>
               <div className="slide-in">
@@ -940,8 +975,8 @@ export default function LandingPage() {
               </div>
               <div className="cap-card game-frame">
                 <span className="cap-num">03 · Automation</span>
-                <div className="cap-title">29 hooks · 15 workers</div>
-                <p className="cap-body">Self-learning hook system that fires on every edit, commit, task, and session. 15 background workers handle security scanning, performance monitoring, and git hygiene continuously.</p>
+                <div className="cap-title">29 hooks · 7 workers</div>
+                <p className="cap-body">Self-learning hook system that fires on every edit, commit, task, and session. 7 background workers handle health checks, security scanning, code mapping, and audit consolidation continuously.</p>
                 <div className="cap-code">/mastermind:review --tillend<br /><span style={{color:'rgba(200,220,200,0.7)'}}>→ 23 files · 0 secrets · 94% coverage</span><br /><span style={{color:'rgba(200,220,200,0.7)'}}>✓ spec → tests → impl → PR #47 · 28s</span></div>
               </div>
               <div className="cap-card game-frame">
@@ -1307,27 +1342,27 @@ export default function LandingPage() {
                 <span className="close-mission-tag">MISSION ALPHA</span>
                 <span className="close-option-label">Self-hosted · Free forever</span>
                 <div className="close-option-title">Deploy it yourself</div>
-                <p className="close-option-body">MIT licensed. Full source code. Install in minutes. BYOK from zero. No usage caps, no monthly billing, no vendor relationship.</p>
+                <p className="close-option-body">Apache-2.0 licensed. Full source code. Install in minutes. BYOK from zero. No usage caps, no monthly billing, no vendor relationship.</p>
                 <a href="https://github.com/monoes/monomind" className="close-option-cta" target="_blank" rel="noopener noreferrer">View on GitHub →</a>
               </div>
               <div className="close-divider"></div>
               <div className="close-option team" data-mission="BRAVO">
                 <span className="close-mission-tag">MISSION BRAVO</span>
-                <span className="close-option-label">Managed setup · By the core team</span>
-                <div className="close-option-title">Have us deploy it</div>
-                <p className="close-option-body">The contributors who built Monomind configure it for your specific workflows. You own the deployment. We hand over the keys.</p>
-                <a href="mailto:nokhodian@gmail.com?subject=Monomind team deployment" className="close-option-cta">Talk to the team →</a>
+                <span className="close-option-label">Managed workforce · By the core team</span>
+                <div className="close-option-title">Hire us to run it</div>
+                <p className="close-option-body">We deploy AI digital workers that execute your real business processes end-to-end on the systems you already run. Book a priced Discovery audit and we&apos;ll map your highest-ROI opportunities.</p>
+                <a href="/workforce" className="close-option-cta">Explore Workforce →</a>
               </div>
             </div>
             <div className="oss-row slide-in">
               <span className="oss-label">Open source &amp; owned outright</span>
               <div className="oss-pills">
-                <span className="oss-pill">MIT License</span>
+                <span className="oss-pill">Apache-2.0 License</span>
                 <span className="oss-pill">Self-hostable</span>
                 <span className="oss-pill">BYOK from zero</span>
                 <span className="oss-pill">No usage caps</span>
                 <span className="oss-pill">TypeScript</span>
-                <span className="oss-pill">v2.8.4</span>
+                <span className="oss-pill">v2.9.2</span>
               </div>
             </div>
           </div>

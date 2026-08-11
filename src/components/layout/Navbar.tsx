@@ -41,7 +41,7 @@ export function Navbar() {
         <Link href="/" className="flex items-center gap-3">
           <Image
             src="/images/monkey/welcoming-arms.png"
-            alt="Monoes"
+            alt="Monoes open-source AI agent platform logo"
             width={36}
             height={36}
             className="h-9 w-9 rounded-full object-cover object-top shadow-soft"

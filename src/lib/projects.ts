@@ -73,13 +73,13 @@ export const projects: Project[] = [
         icon: "🪝",
         title: "Hooks + Workers",
         description:
-          "29 hook CLI subcommands plus 15 background workers (security, performance, git, and more) for self-learning automation.",
+          "29 hook CLI subcommands plus 7 background workers (health, security, code mapping, audit consolidation) for self-learning automation.",
       },
     ],
     install: [
       {
         command: "npm install -g monomind",
-        output: "✓ Monomind installed (@monoes/monomindcli v2.8.4)",
+        output: "✓ Monomind installed (@monoes/monomindcli v2.9.2)",
       },
       {
         command: "npm install -g @monoes/monomindcli",
@@ -142,45 +142,49 @@ export const projects: Project[] = [
     ],
     install: [
       {
-        command: "go install github.com/monoes/mono-agent@latest",
-        output: "✓ Installed mono-agent",
+        command: "git clone https://github.com/monoes/mono-agent.git",
+        output: "✓ Cloned mono-agent",
       },
-      { command: "mono-agent init", output: "✓ Workspace initialized" },
+      {
+        command: "go build -o monoagentcli ./cmd/monoagentcli",
+        output: "✓ Built monoagentcli",
+      },
+      { command: "./monoagentcli init", output: "✓ Workspace initialized" },
     ],
     cli: {
-      binary: "monoes",
+      binary: "monoagentcli",
       intro:
         "70+ commands for scripting social actions, browser automation, workflow execution, and AI-powered content generation. Every command accepts --profile <name> to scope all data to a fully isolated workspace.",
       aiNote:
-        "Wire monoes into any AI pipeline: define a workflow in JSON, import it, schedule it with cron, and pipe structured output to the next step. The --profile flag lets multiple AI agents operate in parallel without touching each other's data.",
+        "Wire mono-agent into any AI pipeline: define a workflow in JSON, import it, schedule it with cron, and pipe structured output to the next step. The --profile flag lets multiple AI agents operate in parallel without touching each other's data.",
       groups: [
         {
           title: "Profiles",
           description: "All data is scoped per profile. Switch without stopping running workflows.",
           commands: [
-            "monoes --profile work workflow list",
-            "monoes --profile client-a login instagram",
-            "monoes --profile work workflow run --id <id>",
+            "monoagentcli --profile work workflow list",
+            "monoagentcli --profile client-a login instagram",
+            "monoagentcli --profile work workflow run --id <id>",
           ],
         },
         {
           title: "Workflows",
           description: "Create, import, run, and schedule DAG workflows.",
           commands: [
-            "monoes workflow list",
-            "monoes workflow create --name \"Daily Post\"",
-            "monoes workflow import --file flow.json",
-            "monoes workflow run --id <id>",
-            "monoes workflow executions --id <id>",
-            "monoes workflow activate --id <id>",
+            "monoagentcli workflow list",
+            "monoagentcli workflow create --name \"Daily Post\"",
+            "monoagentcli workflow import --file flow.json",
+            "monoagentcli workflow run --id <id>",
+            "monoagentcli workflow executions --id <id>",
+            "monoagentcli workflow activate --id <id>",
           ],
         },
         {
           title: "Node Execution",
           description: "Run any of the 70+ node types directly from the CLI.",
           commands: [
-            "monoes node list",
-            "monoes node run \\",
+            "monoagentcli node list",
+            "monoagentcli node run \\",
             "  --type action.instagram.publish_post \\",
             "  --config '{\"text\":\"Hello world!\"}'",
           ],
@@ -189,31 +193,31 @@ export const projects: Project[] = [
           title: "Auth & Connections",
           description: "Browser-session login for social platforms; API keys for services.",
           commands: [
-            "monoes login instagram",
-            "monoes login linkedin",
-            "monoes login status",
-            "monoes connect list",
-            "monoes connect test --id <cred-id>",
+            "monoagentcli login instagram",
+            "monoagentcli login linkedin",
+            "monoagentcli login status",
+            "monoagentcli connect list",
+            "monoagentcli connect test --id <cred-id>",
           ],
         },
         {
           title: "People & Data",
           description: "Search platforms, import contacts, export results.",
           commands: [
-            "monoes search --platform instagram --keyword \"leads\"",
-            "monoes people list",
-            "monoes people import --file contacts.csv",
-            "monoes list create --name \"Leads Q1\"",
-            "monoes export --platform instagram --format csv",
+            "monoagentcli search --platform instagram --keyword \"leads\"",
+            "monoagentcli people list",
+            "monoagentcli people import --file contacts.csv",
+            "monoagentcli list create --name \"Leads Q1\"",
+            "monoagentcli export --platform instagram --format csv",
           ],
         },
         {
           title: "Scheduling",
           description: "Attach cron triggers to any workflow.",
           commands: [
-            "monoes schedule add --action <id> --cron \"0 9 * * *\"",
-            "monoes schedule list",
-            "monoes schedule remove --id <id>",
+            "monoagentcli schedule add --action <id> --cron \"0 9 * * *\"",
+            "monoagentcli schedule list",
+            "monoagentcli schedule remove --id <id>",
           ],
         },
       ],

@@ -6,7 +6,9 @@ const expo = [0.16, 1, 0.3, 1] as const;
 
 export function FoundingClientProgram() {
   const reduce = useReducedMotion();
-  const mailHref = `mailto:${discoveryContactEmail}?subject=${encodeURIComponent(foundingClientProgram.mailSubject)}`;
+  const mailBody =
+    "I'm interested in a founding client slot.\n\n- Company name:\n- The process I'd automate first:\n- Preferred Discovery package (1-Day $3,000 / 5-Day $12,000):\n";
+  const mailHref = `mailto:${discoveryContactEmail}?subject=${encodeURIComponent(foundingClientProgram.mailSubject)}&body=${encodeURIComponent(mailBody)}`;
 
   return (
     <section className="bg-ivory-parchment px-8 md:px-16 lg:px-24 py-24 md:py-28 border-b border-ivory-linen">

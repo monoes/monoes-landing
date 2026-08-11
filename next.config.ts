@@ -18,6 +18,16 @@ const nextConfig: NextConfig = {
         destination: "/projects/monomind/architecture",
         permanent: true,
       },
+      {
+        source: "/research",
+        destination: "/whitepaper",
+        permanent: true,
+      },
+      {
+        source: "/projects/monochat/architecture",
+        destination: "/projects/monomind/architecture",
+        permanent: true,
+      },
     ];
   },
 };
