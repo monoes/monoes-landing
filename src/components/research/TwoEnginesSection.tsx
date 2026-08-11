@@ -42,12 +42,7 @@ export function TwoEnginesSection() {
             Unlimited task volume.
           </h2>
           <p className="text-espresso/55 max-w-2xl font-light leading-relaxed">
-            A person&apos;s throughput used to be capped by how much they could
-            personally do. Once execution, not judgment, is the thing being
-            scaled, that cap stops applying. The question for any given task
-            is no longer &quot;can this person do it,&quot; it&apos;s &quot;is there
-            an engine that turns a spec into execution for this category of
-            work.&quot; There are two.
+            {`A person's throughput used to be capped by how much they could personally do. Once execution, not judgment, is the thing being scaled, that cap stops applying. The question for any given task is no longer "can this person do it," it's "is there an engine that turns a spec into execution for this category of work." There are two.`}
           </p>
         </motion.div>
 

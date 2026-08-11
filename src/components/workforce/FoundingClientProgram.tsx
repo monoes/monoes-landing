@@ -66,8 +66,7 @@ export function FoundingClientProgram() {
             Ask about a founding slot →
           </a>
           <p className="text-xs text-espresso/40">
-            Once {foundingClientProgram.slotsTotal} are filled, this offer is gone. No fixed
-            countdown, we&apos;re just being straight about the terms.
+            {`Once ${foundingClientProgram.slotsTotal} are filled, this offer is gone. No fixed countdown, we're just being straight about the terms.`}
           </p>
         </motion.div>
       </div>
