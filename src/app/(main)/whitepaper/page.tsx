@@ -12,7 +12,7 @@ import { RoadmapSection } from "@/components/research/RoadmapSection";
 export const metadata: Metadata = {
   title: "White Paper: The One-Person Company (Monoes)",
   description:
-    "A framework for centralized agentic operation. One person, two execution engines, unlimited task volume. Run it yourself, or hire Monoes Workforce to run it for you.",
+    "A framework for centralized agentic operation. One person, two execution engines, no fixed task ceiling. Run it yourself, or hire Monoes Workforce to run it for you.",
 };
 
 export default function WhitepaperPage() {

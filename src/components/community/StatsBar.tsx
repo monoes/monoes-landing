@@ -17,7 +17,7 @@ export function StatsBar({ totalStars }: { totalStars: number }) {
           <p className="mt-1 text-[10px] uppercase tracking-label text-gold">GitHub Stars</p>
         </div>
         <div className="text-center">
-          <span className="block text-3xl font-extralight text-espresso">MIT</span>
+          <span className="block text-2xl font-extralight text-espresso md:text-3xl">Apache-2.0</span>
           <p className="mt-1 text-[10px] uppercase tracking-label text-gold">License</p>
         </div>
       </div>

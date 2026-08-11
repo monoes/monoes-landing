@@ -458,7 +458,7 @@ export default function LandingPage() {
 
       const ACHIEVEMENTS: Record<string, {title:string;desc:string;icon:string}> = {
         'slide-hero':     { title: 'INITIALIZED',       desc: 'System boot complete',           icon: '⚡' },
-        'slide-platform': { title: 'PLATFORM UNLOCKED',  desc: '89 agent roles ready',           icon: '🛡' },
+        'slide-platform': { title: 'PLATFORM UNLOCKED',  desc: '90+ agent roles ready',          icon: '🛡' },
         'slide-company':  { title: 'ORG ASSEMBLED',      desc: 'Every department loaded',         icon: '🏛' },
         'slide-close':    { title: 'MISSION READY',       desc: 'Your autonomous company awaits', icon: '🚀' },
       };
@@ -727,10 +727,9 @@ export default function LandingPage() {
           { type:'prompt2', text:'  "target AI consultancies undercutting at $250K+"' },
           { type:'gold',    text:'→ Director: assigning 5 competitors to research queue...' },
           { type:'gold',    text:'→ Spawning: 5 research agents in parallel...' },
-          { type:'gold',    text:'→ Profiles: Markovate · Lumenalta · Turing · Albert.ai · Conversica' },
           { type:'gold',    text:'→ Comparator: generating positioning matrix...' },
           { type:'gold',    text:'→ Reporter: building HTML landscape report...' },
-          { type:'out',     text:'✓ Round 3 complete · 5 profiles · 1 matrix · 89KB report' },
+          { type:'out',     text:'✓ Round 3 complete · 5 profiles · 1 matrix · 90KB report' },
           { type:'dim',     text:'' },
           { type:'prompt',  text:'/mastermind:review --tillend' },
           { type:'gold',    text:'→ Reviewing 23 files changed since last checkpoint...' },
@@ -748,7 +747,7 @@ export default function LandingPage() {
           { type:'gold',    text:'→ spec → pseudocode → tests → implementation → review...' },
           { type:'out',     text:'✓ Feature complete · 12 tests passing · PR #47 opened' },
           { type:'dim',     text:'' },
-          { type:'out',     text:'✓ All systems nominal · 89 agent roles · 24/7' },
+          { type:'out',     text:'✓ All systems nominal · 90+ agent roles · 24/7' },
         ];
         let lineIdx = 0, charIdx = 0;
         const termBody = termEl.parentElement;
@@ -790,31 +789,6 @@ export default function LandingPage() {
           }
         }
         setTimeout(typeChar, 800);
-      })();
-
-      // ── 19. AGENT COUNTER ROLL ──
-      (function initAgentCounter() {
-        const counterEl = document.getElementById('agentCounter');
-        if (!counterEl) return;
-        let current = 0;
-        const targets  = [0, 45, 87, 120, 168, 195, 218, 230];
-        const io = new IntersectionObserver(function(entries) {
-          entries.forEach(function(e) {
-            if (e.isIntersecting && e.intersectionRatio >= 0.5) {
-              const idx = slides.indexOf(e.target as Element);
-              const target = targets[Math.min(idx, targets.length-1)] || 0;
-              if (target !== current) {
-                current = target;
-                const obj = { v: parseFloat(counterEl!.textContent || '0') || 0 };
-                gsap.to(obj, { v: target, duration: 0.8, ease: 'power2.out',
-                  onUpdate: function(){ counterEl!.textContent = String(Math.floor(obj.v)); },
-                  onComplete: function(){ counterEl!.textContent = String(target); }
-                });
-              }
-            }
-          });
-        }, { threshold: 0.5, root: snapWrap });
-        slides.forEach(function(s){ io.observe(s); });
       })();
 
       // ── EXPOSE ──
@@ -963,26 +937,26 @@ export default function LandingPage() {
             <div className="capabilities-grid slide-in">
               <div className="cap-card game-frame">
                 <span className="cap-num">01 · Orchestration</span>
-                <div className="cap-title">89 specialized agent roles</div>
+                <div className="cap-title">90+ specialized agent roles</div>
                 <p className="cap-body">Domain experts across engineering, security, architecture, and more, plus fully custom org roles you define. Hierarchical swarms fan out in parallel, not sequential pipelines that bottleneck.</p>
-                <div className="cap-code">/mastermind:createorg --name ai-intel-pod --auto \<br />  &quot;Track AI competitive landscape weekly&quot;<br /><span style={{color:'rgba(200,220,200,0.7)'}}>✓ 5 profiles · 1 matrix · 89KB report · 2m 14s</span></div>
+                <div className="cap-code">/mastermind:createorg --name ai-intel-pod --auto \<br />  &quot;Track AI competitive landscape weekly&quot;<br /><span style={{color:'rgba(200,220,200,0.7)'}}>✓ 5 profiles · 1 matrix · 90KB report · 2m 14s</span></div>
               </div>
               <div className="cap-card game-frame">
                 <span className="cap-num">02 · Memory</span>
                 <div className="cap-title">Local SQLite memory, no cloud vector DB</div>
-                <p className="cap-body">Local embeddings, local SQLite storage: every decision, pattern, and correction stored and retrieved on your own machine. A pure-JS HNSW index is available opt-in for larger corpora.</p>
+                <p className="cap-body">Local embeddings, local SQLite storage: every decision, pattern, and correction stored and retrieved on your own machine. A pure-JS HNSW index runs as an automatic fallback if native SQLite can&apos;t load.</p>
                 <div className="cap-code">/mastermind:memory search &quot;auth patterns&quot;<br /><span style={{color:'rgba(200,220,200,0.7)'}}>↳ 12 results · top score 0.97 · 3ms</span></div>
               </div>
               <div className="cap-card game-frame">
                 <span className="cap-num">03 · Automation</span>
-                <div className="cap-title">29 hooks · 7 workers</div>
-                <p className="cap-body">Self-learning hook system that fires on every edit, commit, task, and session. 7 background workers handle health checks, security scanning, code mapping, and audit consolidation continuously.</p>
+                <div className="cap-title">29 hooks · 8 workers</div>
+                <p className="cap-body">Self-learning hook system that fires on every edit, commit, task, and session. 8 background workers handle health checks, security scanning, code mapping, and audit consolidation continuously.</p>
                 <div className="cap-code">/mastermind:review --tillend<br /><span style={{color:'rgba(200,220,200,0.7)'}}>→ 23 files · 0 secrets · 94% coverage</span><br /><span style={{color:'rgba(200,220,200,0.7)'}}>✓ spec → tests → impl → PR #47 · 28s</span></div>
               </div>
               <div className="cap-card game-frame">
                 <span className="cap-num">04 · Browser &amp; Social</span>
                 <div className="cap-title">Real Chrome automation</div>
-                <p className="cap-body">70+ workflow nodes including real CDP-powered browser automation. Post to LinkedIn, generate images, scrape competitors, fill CRMs; all orchestrated from a single workflow definition.</p>
+                <p className="cap-body">Real CDP-powered browser automation. Post to LinkedIn, generate images, scrape competitors, fill CRMs; all orchestrated from a single workflow definition.</p>
                 <div className="cap-code">/monobrowse &quot;scrape competitor pricing page&quot;<br />/mastermind:marketing &quot;publish Q3 launch post&quot;<br /><span style={{color:'rgba(200,220,200,0.7)'}}>✓ Scraped · drafted · scheduled · published</span></div>
               </div>
             </div>
@@ -1321,7 +1295,7 @@ export default function LandingPage() {
               <div className="org-role"><span className="org-role-icon">⚖️</span><span className="org-role-dept">Legal</span><div className="org-role-title">Compliance Checker</div><p className="org-role-sub">ToS drafts, GDPR review, license audits, compliance monitoring across stack.</p><span className="org-role-badge">legal-compliance · auditor</span></div>
             </div>
             <div className="org-summary slide-in">
-              <div className="org-stat"><span className="org-stat-num" data-count="89">89</span><span className="org-stat-label">Agent roles</span></div>
+              <div className="org-stat"><span className="org-stat-num" data-count="90">90+</span><span className="org-stat-label">Agent roles</span></div>
               <div className="org-stat"><span className="org-stat-num" data-count="247">24/7</span><span className="org-stat-label">Autonomous execution</span></div>
               <div className="org-stat"><span className="org-stat-num" data-count="0">$0</span><span className="org-stat-label">Payroll</span></div>
               <div className="org-stat"><span className="org-stat-num" data-count="1">1</span><span className="org-stat-label">Developer needed</span></div>

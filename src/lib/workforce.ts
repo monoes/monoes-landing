@@ -210,12 +210,12 @@ export const processDefinitionExample = `{
 
 export const evaluationMetricsExample = `AP Agent
 
-Extraction Accuracy: 99.2%
-Vendor Matching:     98.7%
-PO Matching:         99.1%
-Auto-processing:     82%
-Exception Rate:      4.3%
-Human Override:      3.1%`;
+Extraction Accuracy: [measured per engagement]
+Vendor Matching:     [measured per engagement]
+PO Matching:         [measured per engagement]
+Auto-processing:     [measured per engagement]
+Exception Rate:      [measured per engagement]
+Human Override:      [measured per engagement]`;
 
 export const connectors = ["ERP", "CRM", "Email", "Excel / CSV", "Accounting", "Ticketing"];
 export interface CapabilityCategory {

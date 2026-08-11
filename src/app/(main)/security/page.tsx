@@ -19,19 +19,19 @@ const principles = [
   },
   {
     title: "Human-in-the-loop on what matters",
-    body: "Every worker runs inside a policy layer that defines what it can do autonomously and what requires approval. High-risk actions — like an invoice over a threshold you set — pause for a human decision before they execute. A reasoning model is never the thing that decides what's allowed.",
+    body: "Monomind's org runtime includes a real policy engine that governs what each agent role can do autonomously — tool allow/deny lists, file scope restrictions, and audit trails are part of the open-source engine. During an engagement, we configure that layer with the approval rules specific to your business — like pausing on an invoice over a threshold you set — so a reasoning model is never the thing that decides what's allowed.",
   },
   {
     title: "Full audit trail",
-    body: "Every worker action — extraction, validation, decision, approval, ERP post — is logged with inputs, outputs, timestamps, and the policy version in effect. You can replay any decision after the fact.",
+    body: "Every worker action is logged with inputs, outputs, timestamps, and the policy version in effect. When we build ERP, CRM, or email actions into a worker during an engagement, those actions are logged the same way, so you can replay any decision after the fact.",
   },
   {
     title: "Connectors are bridges, not data stores",
-    body: "The connectors to your ERP, CRM, and email are standard bridges that read and write through your existing APIs. They hold no data of their own and can be swapped without touching process logic. We never copy your system of record into ours.",
+    body: "When we build connectors to your ERP, CRM, and email during an engagement, they are standard bridges that read and write through your existing APIs. They hold no data of their own and can be swapped without touching process logic. We never copy your system of record into ours.",
   },
   {
     title: "Versioned, testable policies",
-    body: "The rules governing worker behavior — approval thresholds, vendor matching logic, exception routing — are versioned and auditable. You can see exactly which policy version governed any past action and roll back if needed.",
+    body: "The policy engine underneath every worker is versioned and auditable at the engine level. The specific rules — approval thresholds, vendor matching logic, exception routing — are configured per engagement, and you can see exactly which policy version governed any past action and roll back if needed.",
   },
 ];
 
@@ -46,8 +46,8 @@ export default function SecurityPage() {
       </h1>
       <p className="text-lg text-gold-bronze leading-relaxed font-light mb-12">
         Workforce touches your ERP, CRM, and email — systems that hold the financial and personal
-        data your business runs on. Here is exactly how that works, and the safeguards built in at
-        the engine level.
+        data your business runs on. Here is exactly how that works: what's built into monomind's
+        open-source engine, and what we configure per engagement on top of it.
       </p>
 
       <div className="space-y-8">

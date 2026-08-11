@@ -8,7 +8,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Four open-source AI tools you can self-host",
   description:
-    "Monomind (agent orchestration), Mono Agent (browser automation), MonoClip (clipboard), MonoTask (P2P kanban). Apache-2.0 and MIT licensed, self-hostable, BYOK from zero.",
+    "Monomind (agent orchestration), Mono Agent (browser automation), MonoClip (clipboard), MonoTask (P2P kanban). Apache-2.0 licensed, self-hostable, BYOK from zero.",
   alternates: { canonical: "/product" },
 };
 

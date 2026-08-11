@@ -65,11 +65,12 @@ export default function AboutPage() {
         <h2 className="text-2xl font-semibold text-espresso mt-12 mb-4">The thesis</h2>
         <p>
           Most AI tools sell you a model and call it a worker. We don&apos;t think that&apos;s
-          enough. A worker finishes the job: it reads the invoice, matches it to the PO, decides
-          whether it needs approval, posts it to your ERP, and tells you what it did — with an
-          audit trail behind every step. That requires an orchestration engine with a separate
-          policy layer, real connectors, and a human in the loop on the decisions that matter.
-          Monomind is that engine.
+          enough. Take a Workforce engagement that automates AP: a worker finishes the job, it
+          reads the invoice, matches it to the PO, decides whether it needs approval, posts it to
+          the client&apos;s ERP, and tells you what it did — with an audit trail behind every
+          step. Building that requires an orchestration engine with a separate policy layer —
+          tool and file scoping, budgets, an audit trail — and a human in the loop on the
+          decisions that matter. Monomind is the orchestration engine underneath it.
         </p>
 
         <h2 className="text-2xl font-semibold text-espresso mt-12 mb-4">Two ways in</h2>

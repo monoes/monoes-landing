@@ -6,68 +6,60 @@ interface ReleaseDiagramProps {
 
 export function ReleaseDiagram({ slug }: ReleaseDiagramProps) {
   switch (slug) {
-    case "monomind-v28-workforce-orchestration-release":
-      return <V28WorkforceDiagram />;
-    case "monomind-v25-local-second-brain-release":
-      return <V25VectorMemoryDiagram />;
-    case "monomind-v20-deterministic-dag-engine-release":
-      return <V20DagEngineDiagram />;
-    case "monomind-v15-universal-cli-protocol-release":
-      return <V15CliProtocolDiagram />;
-    case "monomind-v10-open-source-foundation-release":
-      return <V10FoundationDiagram />;
+    case "monomind-v22-org-runtime-v2":
+      return <V22OrgRuntimeDiagram />;
+    case "monomind-v23-local-memory-engine":
+      return <V23LocalMemoryDiagram />;
+    case "monomind-v25-second-brain":
+      return <V25SecondBrainDiagram />;
+    case "monomind-v28-antigravity-multiplatform":
+      return <V28AntigravityDiagram />;
+    case "monomind-v29-hardening-review-swarm":
+      return <V29HardeningDiagram />;
     default:
       return null;
   }
 }
 
-function V28WorkforceDiagram() {
+function V22OrgRuntimeDiagram() {
   return (
     <div className="my-8 rounded-2xl bg-espresso-deep border border-gold/30 p-6 sm:p-8 text-ivory shadow-soft-lg">
       <div className="flex items-center justify-between border-b border-gold/20 pb-4 mb-6">
         <div>
           <span className="text-xs font-mono text-gold uppercase tracking-wider">
-            Monomind v2.8 Release Architecture
+            Monomind v2.2 Release Architecture
           </span>
           <h4 className="text-lg font-bold text-ivory">
-            Autonomous Workforce Matrix & 89 Worker Roles
+            Org Runtime v2 — OrgDaemon, OrgBus, PolicyEngine
           </h4>
         </div>
         <span className="px-2.5 py-1 rounded bg-gold/20 text-xs font-mono text-gold border border-gold/30">
-          31 Org Subcommands
+          Real Provider-Backed Sessions
         </span>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         <div className="p-4 rounded-xl bg-espresso border border-gold/20 space-y-2">
-          <div className="text-xs font-mono text-gold/70">ACCOUNTS PAYABLE</div>
-          <div className="text-2xl font-bold text-ivory">24 Roles</div>
+          <div className="text-xs font-mono text-gold/70">ORGDAEMON</div>
+          <div className="text-sm font-bold text-ivory">One process, many orgs</div>
           <div className="text-[11px] font-mono text-gold/60">
-            Invoice OCR, PO Match, Ledger Entry
+            Each role gets its own real agent session
           </div>
         </div>
 
         <div className="p-4 rounded-xl bg-espresso border border-gold/20 space-y-2">
-          <div className="text-xs font-mono text-gold/70">ACCOUNTS RECEIVABLE</div>
-          <div className="text-2xl font-bold text-ivory">18 Roles</div>
+          <div className="text-xs font-mono text-gold/70">ORGBUS</div>
+          <div className="text-sm font-bold text-ivory">Append-only JSONL log</div>
           <div className="text-[11px] font-mono text-gold/60">
-            Billing Audits, Dunning, Reconciliation
+            In-process fanout to dashboard &amp; history
           </div>
         </div>
 
         <div className="p-4 rounded-xl bg-espresso border border-gold/20 space-y-2">
-          <div className="text-xs font-mono text-gold/70">HR ONBOARDING</div>
-          <div className="text-2xl font-bold text-ivory">22 Roles</div>
+          <div className="text-xs font-mono text-gold/70">POLICYENGINE</div>
+          <div className="text-sm font-bold text-ivory">Per-role governance</div>
           <div className="text-[11px] font-mono text-gold/60">
-            Document Verify, System Provisioning
-          </div>
-        </div>
-
-        <div className="p-4 rounded-xl bg-espresso border border-gold/20 space-y-2">
-          <div className="text-xs font-mono text-gold/70">ISO & SOC2 AUDIT</div>
-          <div className="text-2xl font-bold text-ivory">25 Roles</div>
-          <div className="text-[11px] font-mono text-gold/60">
-            Risk Gates, Compliance Checks
+            Tool allow/deny, file scope, token budget, audit trail
           </div>
         </div>
       </div>
@@ -75,84 +67,84 @@ function V28WorkforceDiagram() {
       <div className="p-4 rounded-xl bg-espresso/60 border border-gold/20 flex flex-wrap items-center justify-between gap-4 text-xs font-mono">
         <div className="flex items-center gap-2">
           <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-          <span>Active Worker Capacity: 128 Threads</span>
+          <span>Dashboard: 127.0.0.1:4242, auto-launched by SessionStart hook</span>
         </div>
         <div className="text-gold/80">
-          CLI Command: <code className="text-gold font-bold">monomind org init --roles=all</code>
+          Config: <code className="text-gold font-bold">.monomind/orgs/&lt;name&gt;.json</code>
         </div>
       </div>
     </div>
   );
 }
 
-function V25VectorMemoryDiagram() {
+function V23LocalMemoryDiagram() {
   return (
     <div className="my-8 rounded-2xl bg-espresso-deep border border-gold/30 p-6 sm:p-8 text-ivory shadow-soft-lg">
       <div className="flex items-center justify-between border-b border-gold/20 pb-4 mb-6">
         <div>
           <span className="text-xs font-mono text-gold uppercase tracking-wider">
-            Monomind v2.5 Engine Architecture
+            Monomind v2.3.1 Engine Architecture
           </span>
           <h4 className="text-lg font-bold text-ivory">
-            Embedded SQLite + Pure-JS HNSW Vector Index
+            LanceDB Removed — Local SQLite + Local Embeddings
           </h4>
         </div>
         <span className="px-2.5 py-1 rounded bg-emerald-500/20 text-xs font-mono text-emerald-400 border border-emerald-500/30">
-          &lt; 0.8ms Latency
+          ~600MB Native Deps Removed
         </span>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
         <div className="p-5 rounded-xl bg-espresso border border-gold/20 space-y-3">
           <div className="text-xs font-mono text-gold font-semibold uppercase">
-            1. Document Ingestion
+            1. Storage
           </div>
           <p className="text-xs text-ivory/80 leading-relaxed">
-            Local ONNX/Ollama models chunk & embed PDF/code files locally with zero third-party API transmission.
+            better-sqlite3 as the primary driver, with a sql.js WASM fallback when the native binary can&apos;t load.
           </p>
         </div>
 
         <div className="p-5 rounded-xl bg-espresso border border-gold/20 space-y-3">
           <div className="text-xs font-mono text-gold font-semibold uppercase">
-            2. RAM Graph Memory
+            2. Embeddings
           </div>
           <p className="text-xs text-ivory/80 leading-relaxed">
-            Pure-JS HNSW index constructs multi-layer graph structures in RAM, eliminating ~600MB native C++ binaries.
+            Local MiniLM/HuggingFace models run in-process via transformers.js — no API key, no cloud call.
           </p>
         </div>
 
         <div className="p-5 rounded-xl bg-espresso border border-gold/20 space-y-3">
           <div className="text-xs font-mono text-gold font-semibold uppercase">
-            3. SQLite Storage
+            3. Fallback Index
           </div>
           <p className="text-xs text-ivory/80 leading-relaxed">
-            Relational metadata and raw embeddings persist to local SQLite (`second_brain.sqlite`) with WASM fallback.
+            A pure-JS HNSW index exists only as a dormant fallback for native SQLite load failures — not the active path.
           </p>
         </div>
       </div>
 
       <div className="p-4 rounded-xl bg-espresso/60 border border-gold/20 flex items-center justify-between text-xs font-mono text-gold/80">
-        <span>Zero External Dependencies</span>
-        <span>Package: @monoes/memory</span>
+        <span>LanceDB + apache-arrow: fully removed</span>
+        <span>Package: @monoes/memory (npm)</span>
       </div>
     </div>
   );
 }
 
-function V20DagEngineDiagram() {
+function V25SecondBrainDiagram() {
   return (
     <div className="my-8 rounded-2xl bg-espresso-deep border border-gold/30 p-6 sm:p-8 text-ivory shadow-soft-lg">
       <div className="flex items-center justify-between border-b border-gold/20 pb-4 mb-6">
         <div>
           <span className="text-xs font-mono text-gold uppercase tracking-wider">
-            Monomind v2.0 Core Paradigm
+            Monomind v2.5 Feature Architecture
           </span>
           <h4 className="text-lg font-bold text-ivory">
-            Deterministic DAG Workflow Engine & Risk Gates
+            Second Brain — Local Document Knowledge Base
           </h4>
         </div>
         <span className="px-2.5 py-1 rounded bg-gold/20 text-xs font-mono text-gold border border-gold/30">
-          Zero Context Drift
+          80% Recall Bar (CI-enforced)
         </span>
       </div>
 
@@ -160,109 +152,109 @@ function V20DagEngineDiagram() {
         <div className="p-4 rounded-xl bg-espresso border border-gold/30 flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <span className="px-2 py-0.5 rounded bg-amber-500/20 text-amber-400 font-bold">
-              NODE 01
+              PROJECT BRAIN
             </span>
-            <span>Master Orchestrator — Intent Planning & DAG Emission</span>
+            <span>Per-project index, heading-aware chunking</span>
           </div>
-          <span className="text-emerald-400">STATUS: COMPLETED</span>
+          <span className="text-emerald-400">~22 file types</span>
         </div>
 
         <div className="p-4 rounded-xl bg-espresso border border-gold/30 flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <span className="px-2 py-0.5 rounded bg-blue-500/20 text-blue-400 font-bold">
-              NODE 02
+              GLOBAL BRAIN
             </span>
-            <span>Execution Agent — Ephemeral Sandboxed Tool Parsing</span>
+            <span>~/.monomind/global-brain, merged at query time</span>
           </div>
-          <span className="text-emerald-400">STATUS: COMPLETED (JSON Schema Valid)</span>
+          <span className="text-emerald-400">project wins ties</span>
         </div>
 
         <div className="p-4 rounded-xl bg-espresso border border-gold/30 flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <span className="px-2 py-0.5 rounded bg-purple-500/20 text-purple-400 font-bold">
-              NODE 03
+              INJECTION
             </span>
-            <span>Zero-Trust Risk Gate — Probabilistic Audit Check ($10K+)</span>
+            <span>Per-prompt [SECOND_BRAIN] context, ~60ms warm</span>
           </div>
-          <span className="text-amber-400">STATUS: ESCALATED TO HUMAN QUEUE (98.4%)</span>
+          <span className="text-amber-400">MCP: knowledge_search</span>
         </div>
       </div>
     </div>
   );
 }
 
-function V15CliProtocolDiagram() {
+function V28AntigravityDiagram() {
   return (
     <div className="my-8 rounded-2xl bg-espresso-deep border border-gold/30 p-6 sm:p-8 text-ivory shadow-soft-lg">
       <div className="flex items-center justify-between border-b border-gold/20 pb-4 mb-6">
         <div>
           <span className="text-xs font-mono text-gold uppercase tracking-wider">
-            Monomind v1.5 Protocol Architecture
+            Monomind v2.8 Platform Architecture
           </span>
           <h4 className="text-lg font-bold text-ivory">
-            Multi-Provider Model Router & IPC Socket Proxies
+            Google Antigravity Support &amp; Multi-Platform Init
           </h4>
         </div>
         <span className="px-2.5 py-1 rounded bg-gold/20 text-xs font-mono text-gold border border-gold/30">
-          Sub-2ms Dispatch
+          Default Output
         </span>
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center text-xs font-mono">
         <div className="p-4 rounded-xl bg-espresso border border-gold/20 space-y-2">
-          <div className="text-gold/60">LOCAL MODEL</div>
-          <div className="font-bold text-ivory">vLLM / Ollama</div>
-          <div className="text-[10px] text-emerald-400">Primary (0ms API cost)</div>
+          <div className="text-gold/60">DEFAULT</div>
+          <div className="font-bold text-ivory">Claude Code</div>
+          <div className="text-[10px] text-emerald-400">Primary target</div>
         </div>
 
         <div className="p-4 rounded-xl bg-espresso border border-gold/20 space-y-2">
-          <div className="text-gold/60">CLOUD ROUTER</div>
-          <div className="font-bold text-ivory">Anthropic Claude</div>
-          <div className="text-[10px] text-gold/80">Complex Reasoning</div>
+          <div className="text-gold/60">DEFAULT (NEW)</div>
+          <div className="font-bold text-ivory">Antigravity</div>
+          <div className="text-[10px] text-emerald-400">GEMINI.md, .gemini/rules/</div>
         </div>
 
         <div className="p-4 rounded-xl bg-espresso border border-gold/20 space-y-2">
-          <div className="text-gold/60">FAILOVER</div>
-          <div className="font-bold text-ivory">OpenAI / Groq</div>
-          <div className="text-[10px] text-gold/80">Automated Retry</div>
+          <div className="text-gold/60">OPT-IN</div>
+          <div className="font-bold text-ivory">opencode</div>
+          <div className="text-[10px] text-gold/80">--opencode flag</div>
         </div>
 
         <div className="p-4 rounded-xl bg-espresso border border-gold/20 space-y-2">
-          <div className="text-gold/60">IPC SOCKET</div>
-          <div className="font-bold text-ivory">Local Proxy</div>
-          <div className="text-[10px] text-emerald-400">Sub-2ms IPC Latency</div>
+          <div className="text-gold/60">OPT-IN</div>
+          <div className="font-bold text-ivory">Kimi Code</div>
+          <div className="text-[10px] text-gold/80">--kimicode flag</div>
         </div>
       </div>
     </div>
   );
 }
 
-function V10FoundationDiagram() {
+function V29HardeningDiagram() {
   return (
     <div className="my-8 rounded-2xl bg-espresso-deep border border-gold/30 p-6 sm:p-8 text-ivory shadow-soft-lg">
       <div className="flex items-center justify-between border-b border-gold/20 pb-4 mb-6">
         <div>
           <span className="text-xs font-mono text-gold uppercase tracking-wider">
-            Monomind v1.0 Foundational Engine
+            Monomind v2.9.0 Review Release
           </span>
           <h4 className="text-lg font-bold text-ivory">
-            100% Open-Source MIT Architecture & Multimodal Vision
+            233 Files Audited, 28 Issues Fixed, 0 Test Failures
           </h4>
         </div>
         <span className="px-2.5 py-1 rounded bg-emerald-500/20 text-xs font-mono text-emerald-400 border border-emerald-500/30">
-          MIT License
+          884 / 884 Tests Passing
         </span>
       </div>
 
       <div className="p-6 rounded-xl bg-espresso border border-gold/20 space-y-4 text-xs font-mono text-ivory/90 leading-relaxed">
         <p>
-          Monomind v1.0 established the foundational open-source architecture for local-first agent teams, pairing multimodal vision parsers (<code className="text-gold">@monoes/monoclip</code>) with typed tool drivers.
+          A 7-agent, in-process review swarm (no cross-machine networking, vote-count &quot;consensus&quot;) audited ~92,000 lines across the codebase.
         </p>
         <div className="flex flex-wrap gap-4 text-gold">
-          <span>✓ 100% MIT Licensed</span>
-          <span>✓ Local IPC Sockets</span>
-          <span>✓ Multimodal Vision Parsing</span>
-          <span>✓ Zero Vendor Lock-In</span>
+          <span>✓ Command-injection fix (cap-documents.ts)</span>
+          <span>✓ Dashboard/server bind to 127.0.0.1</span>
+          <span>✓ Atomic state writes</span>
+          <span>✓ 5000ms SQLite busy_timeout</span>
         </div>
       </div>
     </div>

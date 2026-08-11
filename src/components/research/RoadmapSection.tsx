@@ -182,7 +182,7 @@ export function RoadmapSection() {
                   Two implementations, and a third option
                 </p>
                 <p className="text-sm text-ivory/55 leading-relaxed mb-5">
-                  The architecture described in this paper is implemented as two open-source, self-hostable engines: <strong className="text-ivory/80 font-semibold">Monomind</strong> for engineering work, and <strong className="text-ivory/80 font-semibold">Mono Agent</strong> for everything else. Both are free, MIT-licensed, and yours to run without building the infrastructure from scratch.
+                  The architecture described in this paper is implemented as two open-source, self-hostable engines: <strong className="text-ivory/80 font-semibold">Monomind</strong> for engineering work, and <strong className="text-ivory/80 font-semibold">Mono Agent</strong> for everything else. Both are free, Apache-2.0 licensed, and yours to run without building the infrastructure from scratch.
                 </p>
                 <p className="text-sm text-ivory/55 leading-relaxed mb-5">
                   Not every company wants to operate this infrastructure itself. <strong className="text-ivory/80 font-semibold">Monoes Workforce</strong> applies the same model to a company&apos;s business processes as a managed service: we configure and run the workers, you set the strategy.
