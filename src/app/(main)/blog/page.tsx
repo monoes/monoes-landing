@@ -4,7 +4,7 @@ import Image from "next/image";
 import { getAllBlogPosts } from "@/lib/blog";
 
 export const metadata: Metadata = {
-  title: "Blog & Research — Monoes Autonomous Operations",
+  title: "Blog & Research - Monoes Autonomous Operations",
   description:
     "Technical articles, agentic architecture deep-dives, and research insights on autonomous workforce orchestration and local-first AI systems.",
 };

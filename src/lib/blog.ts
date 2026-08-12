@@ -55,7 +55,7 @@ export const BLOG_POSTS: BlogPost[] = [
   {
     slug: "graph-engineering-multi-agent-systems",
     title: "Graph Engineering for Multi-Agent Systems: How Monomind Makes Agent Organizations Programmable",
-    subtitle: "Andrew Ng's July 2026 playbook reframes multi-agent AI as graph engineering — nodes, edges, and graphs that restructure themselves as work unfolds. Here is how Monomind's org runtime implements it, with the honest gaps called out.",
+    subtitle: "Andrew Ng's July 2026 playbook reframes multi-agent AI as graph engineering - nodes, edges, and graphs that restructure themselves as work unfolds. Here is how Monomind's org runtime implements it, with the honest gaps called out.",
     excerpt: "Loops make agent behavior programmable; graphs make agent organizations programmable. A close look at how Monomind adapted Andrew Ng's graph engineering playbook into a dynamic work graph with split, merge, cancel, structured handoffs, and cost-efficient planner-and-workers patterns.",
     date: "August 12, 2026",
     readTime: "12 min read",
@@ -68,13 +68,13 @@ export const BLOG_POSTS: BlogPost[] = [
     },
     coverImage: {
       src: "/images/blog/gemini_1786531382_0.png",
-      alt: "Two overlapping graphs — a stable org-graph of named agent roles in gold, and a dynamic work-graph of tasks that split and merge as dashed lines, on an ivory editorial canvas",
+      alt: "Two overlapping graphs - a stable org-graph of named agent roles in gold, and a dynamic work-graph of tasks that split and merge as dashed lines, on an ivory editorial canvas",
       caption: "Graph engineering runs two graphs at once: a stable org-graph (who) and a dynamic work-graph (what, right now). Monomind hosts both inside a single OrgDaemon process.",
     },
     content: {
       introduction: [
-        "For most of the last two years, the conversation around AI agents has been about prompts — getting a single model to do one thing well. Then it became about loops — trigger, act, verify, retry — turning one agent's behavior into a repeatable cycle. In July 2026, Andrew Ng's team published a short playbook called \"Graph Engineering for Multi-Agentic Systems\" that argues the next stage is already here, and it is not about either of those things. It is about graphs.",
-        "The thesis is compact enough to fit in one sentence: loops make agent behavior programmable, but graphs make agent organizations programmable. A loop is a subroutine. A graph is a program. Once you are running more than one agent, the interesting engineering is no longer what any single agent does on its turn — it is how the agents are wired together, what flows along the wires, and how the wiring itself changes while the work is happening.",
+        "For most of the last two years, the conversation around AI agents has been about prompts - getting a single model to do one thing well. Then it became about loops - trigger, act, verify, retry - turning one agent's behavior into a repeatable cycle. In July 2026, Andrew Ng's team published a short playbook called \"Graph Engineering for Multi-Agentic Systems\" that argues the next stage is already here, and it is not about either of those things. It is about graphs.",
+        "The thesis is compact enough to fit in one sentence: loops make agent behavior programmable, but graphs make agent organizations programmable. A loop is a subroutine. A graph is a program. Once you are running more than one agent, the interesting engineering is no longer what any single agent does on its turn - it is how the agents are wired together, what flows along the wires, and how the wiring itself changes while the work is happening.",
         "Monomind's org runtime was already built around that intuition: real, provider-backed agent sessions coordinated through an append-only event bus and gated by per-role policy. A few commits ago we took the playbook's seven concepts and turned them into concrete machinery inside that runtime. This article is an honest walk through what that adaptation looks like in code, where it lands cleanly, and where the playbook's ambitions are still scaffolding rather than working behavior.",
       ],
       sections: [
@@ -83,9 +83,9 @@ export const BLOG_POSTS: BlogPost[] = [
           heading: "1. The Three-Stage Progression: Prompts, Loops, Graphs",
           subheading: "Why the unit of engineering moved from a string to a cycle to a graph",
           paragraphs: [
-            "The playbook lays out a progression, and it is worth restating because it explains why the abstractions in Monomind's org runtime look the way they do. Prompt engineering controls one model response; its primitive is a string. Loop engineering controls one agent's behavior cycle — trigger, act, verify, retry — and its primitive is the loop. Graph engineering controls the organization of multiple agents; its primitive is a graph of nodes (agents) and edges (dependencies and handoffs).",
-            "Each stage does not replace the previous one — it contains it. A graph node still runs a loop, and that loop still issues prompts. What changes is the unit a developer reasons about. When you have one agent, you tune its loop. When you have eight, tuning eight loops in isolation is the wrong scale of problem — you need to engineer the topology that connects them, the contracts that cross the edges, and the rules that govern what happens when a node fails or the work itself changes shape.",
-            "That last point is the important one. Most production multi-agent systems are described as graphs, but under the hood they are frozen graphs: a fixed pipeline defined before the run starts, executed top to bottom. The playbook's argument is that a real work graph is not frozen. It restructures itself while work is happening — branches split when scope expands, parallel paths merge when they converge early, nodes disappear when evidence makes them moot. Engineering that restructuring, not just the initial topology, is what graph engineering actually means.",
+            "The playbook lays out a progression, and it is worth restating because it explains why the abstractions in Monomind's org runtime look the way they do. Prompt engineering controls one model response; its primitive is a string. Loop engineering controls one agent's behavior cycle - trigger, act, verify, retry - and its primitive is the loop. Graph engineering controls the organization of multiple agents; its primitive is a graph of nodes (agents) and edges (dependencies and handoffs).",
+            "Each stage does not replace the previous one - it contains it. A graph node still runs a loop, and that loop still issues prompts. What changes is the unit a developer reasons about. When you have one agent, you tune its loop. When you have eight, tuning eight loops in isolation is the wrong scale of problem - you need to engineer the topology that connects them, the contracts that cross the edges, and the rules that govern what happens when a node fails or the work itself changes shape.",
+            "That last point is the important one. Most production multi-agent systems are described as graphs, but under the hood they are frozen graphs: a fixed pipeline defined before the run starts, executed top to bottom. The playbook's argument is that a real work graph is not frozen. It restructures itself while work is happening - branches split when scope expands, parallel paths merge when they converge early, nodes disappear when evidence makes them moot. Engineering that restructuring, not just the initial topology, is what graph engineering actually means.",
           ],
           quote: {
             text: "Loops make agent behavior programmable. Graphs make agent organizations programmable.",
@@ -93,7 +93,7 @@ export const BLOG_POSTS: BlogPost[] = [
           },
           keyTakeaways: [
             "Prompt → loop → graph is a progression of scale, not replacement: a graph node still runs a loop that issues prompts.",
-            "The hard part of multi-agent engineering is not the initial topology — it is engineering how the topology changes mid-run.",
+            "The hard part of multi-agent engineering is not the initial topology - it is engineering how the topology changes mid-run.",
             "A frozen pipeline calling itself a graph is the common anti-pattern the playbook is arguing against.",
           ],
         },
@@ -103,7 +103,7 @@ export const BLOG_POSTS: BlogPost[] = [
           subheading: "The org-graph is stable and answers who; the work-graph is ephemeral and answers what, right now",
           paragraphs: [
             "The single most useful idea in the playbook is that a production multi-agent system runs two distinct graphs at the same time, and confusing them is the source of a lot of brittle designs. The org-graph is structural and stable: long-lived agents with named roles, defined reporting lines, zone ownership, and preserved memory. The work-graph is dynamic and ephemeral: task nodes that exist only as long as the work exists, with edges that split, merge, and dissolve as runtime evidence arrives.",
-            "Monomind's org runtime has always been split exactly along this line, even before the playbook landed. The org-graph lives in the OrgDef — a config file at .monomind/orgs/<name>.json that declares roles (id, title, type, reports_to), their per-role policy, and the provider each role runs on. That file changes between runs, not during them: redeployment changes the org-graph, runtime does not. The work-graph lives in TaskDag, an in-memory directed-acyclic-graph of tasks that is born empty at the start of each run and is mutated continuously as the run unfolds.",
+            "Monomind's org runtime has always been split exactly along this line, even before the playbook landed. The org-graph lives in the OrgDef - a config file at .monomind/orgs/<name>.json that declares roles (id, title, type, reports_to), their per-role policy, and the provider each role runs on. That file changes between runs, not during them: redeployment changes the org-graph, runtime does not. The work-graph lives in TaskDag, an in-memory directed-acyclic-graph of tasks that is born empty at the start of each run and is mutated continuously as the run unfolds.",
             "Before the playbook adaptation, TaskDag was honest but limited: it could add a task, complete one, or fail one. That is enough to express a static plan, which is exactly the frozen-pipeline shape the playbook pushes back against. The adaptation graduates TaskDag into a genuine dynamic work graph by giving it three new operations that match how real work restructures itself: split, merge, and cancel.",
           ],
           codeBlock: {
@@ -132,27 +132,27 @@ export const BLOG_POSTS: BlogPost[] = [
           keyTakeaways: [
             "The org-graph (roles, reporting lines, policy) is stable across a run; the work-graph (tasks, dependencies) is ephemeral and mutable.",
             "Monomind separates them cleanly: OrgDef is the org-graph, TaskDag is the work-graph, and neither is stored in the other.",
-            "Pre-adaptation TaskDag could only add, complete, or fail — the static-pipeline shape the playbook argues against.",
+            "Pre-adaptation TaskDag could only add, complete, or fail - the static-pipeline shape the playbook argues against.",
           ],
         },
         {
           id: "dynamic-work-graph",
           heading: "3. The Dynamic Work Graph: Split, Merge, Cancel",
-          subheading: "Three operations that restructure the DAG while it is running — with dependency rewiring and cycle detection",
+          subheading: "Three operations that restructure the DAG while it is running - with dependency rewiring and cycle detection",
           paragraphs: [
-            "The centerpiece of the adaptation is three new operations on TaskDag, each mapping to a concrete runtime trigger. split(parentId, children) handles scope expansion: when a task turns out to be bigger than expected, a role splits it into parallel children. The parent moves to a terminal 'split' status, every child inherits the parent's dependencies, and — critically — every downstream task that depended on the parent is automatically rewired to depend on all of the children. The children carry a splitFrom field pointing back to the parent, so the lineage is auditable even after the parent is gone.",
+            "The centerpiece of the adaptation is three new operations on TaskDag, each mapping to a concrete runtime trigger. split(parentId, children) handles scope expansion: when a task turns out to be bigger than expected, a role splits it into parallel children. The parent moves to a terminal 'split' status, every child inherits the parent's dependencies, and - critically - every downstream task that depended on the parent is automatically rewired to depend on all of the children. The children carry a splitFrom field pointing back to the parent, so the lineage is auditable even after the parent is gone.",
             "merge(sourceId, targetId) is the symmetric operation for early convergence: when two parallel branches produce overlapping work, a role merges one into the other. The source moves to 'merged' with a mergedInto pointer, its dependencies are unioned into the target's, and downstream tasks are rewired from the source to the target. cancel(taskId, reason) handles the case where new evidence makes a planned task moot: the task moves to 'cancelled' and, because cancelled is a satisfied state, anything that was waiting on it is immediately unblocked and dispatched.",
-            "What makes these safe to call mid-run, rather than a way to corrupt a DAG, is that each one does an honest cycle check after rewiring. If a split or merge would introduce a cycle, the operation is rolled back and throws — the parent's status is restored, the new children are deleted, and the run continues as if the call never happened. The DAG never enters an inconsistent state, even when an agent proposes a restructuring that would have created a loop.",
+            "What makes these safe to call mid-run, rather than a way to corrupt a DAG, is that each one does an honest cycle check after rewiring. If a split or merge would introduce a cycle, the operation is rolled back and throws - the parent's status is restored, the new children are deleted, and the run continues as if the call never happened. The DAG never enters an inconsistent state, even when an agent proposes a restructuring that would have created a loop.",
           ],
           image: {
             src: "/images/blog/gemini_1786531423_0.png",
-            alt: "An isometric directed acyclic graph reorganizing itself — a parent node splitting into three children, two branches merging into one, and one node dissolving to show cancellation, with dependency arrows rewiring",
+            alt: "An isometric directed acyclic graph reorganizing itself - a parent node splitting into three children, two branches merging into one, and one node dissolving to show cancellation, with dependency arrows rewiring",
             caption: "split, merge, and cancel restructure the work graph at runtime. Children inherit the parent's deps; downstream tasks are rewired to all children; cancelled tasks satisfy their dependents so downstream is unblocked.",
           },
           codeBlock: {
             filename: "agent tool calls (session.ts)",
             language: "json",
-            code: `// Scope expands — split into parallel children
+            code: `// Scope expands - split into parallel children
 { "tool": "org_task_split",
   "args": { "parentId": "task-3",
             "children": [
@@ -160,11 +160,11 @@ export const BLOG_POSTS: BlogPost[] = [
               { "title": "Extract relationships", "assignee": "relationship-resolver" }
             ] } }
 
-// Parallel branches converge early — fold one into the other
+// Parallel branches converge early - fold one into the other
 { "tool": "org_task_merge",
   "args": { "sourceId": "task-5", "targetId": "task-6" } }
 
-// Evidence made a planned task moot — cancel and unblock downstream
+// Evidence made a planned task moot - cancel and unblock downstream
 { "tool": "org_task_cancel",
   "args": { "taskId": "task-2", "reason": "source doc already covered this" } }`,
           },
@@ -180,9 +180,9 @@ export const BLOG_POSTS: BlogPost[] = [
           heading: "4. Structured Handoffs: Typed Envelopes Across Node Boundaries",
           subheading: "Replacing freeform messages with a schema for context, artifacts, decisions, and next action",
           paragraphs: [
-            "An edge in a work graph is only as good as what crosses it. The playbook's handoff-protocol concept is that the package a downstream agent receives should be a typed structure — context, artifacts produced, decisions made, and the next action expected — rather than a blob of freeform text the upstream agent happened to write. Miss a field on a freeform message and the downstream agent acts without information it needed; miss a field on a typed envelope and the schema rejects it before delivery.",
-            "Monomind encodes this as OrgHandoffSchema, a Zod-validated envelope with four compartments. contextPackage is an array of {source, summary} slices that give the receiver the background without forcing it to re-read everything. artifacts is an array of {path, description} references to the files or outputs the handoff is about. decisions is an array of {text, rationale} records so the reasoning behind a choice travels with it, not just the outcome. nextAction is the one required field — a concrete statement of what the receiver is expected to do next.",
-            "It is worth being precise about how far this goes. The schema exists, validates, and is the documented shape for org_send payloads; the agents in the advisor-orchestrator template are explicitly instructed to report results with a structured handoff. The envelope makes a handoff machine-checkable and far less lossy than prose. But Monomind does not yet force every inter-role message through this schema at the transport level — a role can still send a plain message. The typed handoff is the recommended, schema-backed shape, not a hard runtime gate.",
+            "An edge in a work graph is only as good as what crosses it. The playbook's handoff-protocol concept is that the package a downstream agent receives should be a typed structure - context, artifacts produced, decisions made, and the next action expected - rather than a blob of freeform text the upstream agent happened to write. Miss a field on a freeform message and the downstream agent acts without information it needed; miss a field on a typed envelope and the schema rejects it before delivery.",
+            "Monomind encodes this as OrgHandoffSchema, a Zod-validated envelope with four compartments. contextPackage is an array of {source, summary} slices that give the receiver the background without forcing it to re-read everything. artifacts is an array of {path, description} references to the files or outputs the handoff is about. decisions is an array of {text, rationale} records so the reasoning behind a choice travels with it, not just the outcome. nextAction is the one required field - a concrete statement of what the receiver is expected to do next.",
+            "It is worth being precise about how far this goes. The schema exists, validates, and is the documented shape for org_send payloads; the agents in the advisor-orchestrator template are explicitly instructed to report results with a structured handoff. The envelope makes a handoff machine-checkable and far less lossy than prose. But Monomind does not yet force every inter-role message through this schema at the transport level - a role can still send a plain message. The typed handoff is the recommended, schema-backed shape, not a hard runtime gate.",
           ],
           image: {
             src: "/images/blog/gemini_1786531460_0.png",
@@ -209,7 +209,7 @@ export const BLOG_POSTS: BlogPost[] = [
           keyTakeaways: [
             "OrgHandoffSchema has four compartments: contextPackage, artifacts, decisions, and the required nextAction.",
             "Each slice/artifact/decision carries its own source/path/rationale so provenance travels with the handoff.",
-            "The schema validates and is the documented org_send shape, but plain messages are still allowed — it is a recommended envelope, not yet a transport-level gate.",
+            "The schema validates and is the documented org_send shape, but plain messages are still allowed - it is a recommended envelope, not yet a transport-level gate.",
           ],
         },
         {
@@ -217,12 +217,12 @@ export const BLOG_POSTS: BlogPost[] = [
           heading: "5. Work Graph Generators: org_plan_graph",
           subheading: "Proposing a full work graph in one call, with cross-reference resolution between named tasks",
           paragraphs: [
-            "The playbook's fourth concept is the work-graph generator: logic that takes an incoming task and produces the graph — deciding which nodes to spawn, what order to run them in, and where parallelism is safe. Without it, a coordinator role has to create tasks one at a time and figure out dependencies as it goes, which is slow and token-expensive. With it, a planner can declare the whole shape of the work in a single tool call and let the runtime materialize it.",
+            "The playbook's fourth concept is the work-graph generator: logic that takes an incoming task and produces the graph - deciding which nodes to spawn, what order to run them in, and where parallelism is safe. Without it, a coordinator role has to create tasks one at a time and figure out dependencies as it goes, which is slow and token-expensive. With it, a planner can declare the whole shape of the work in a single tool call and let the runtime materialize it.",
             "Monomind implements this as org_plan_graph. A role submits an array of task specs, each with a local name, a title, an assignee, and an after array referencing other specs by name. The runtime runs a fixed-point resolution loop: it walks the pending specs repeatedly, creating each one only once every name in its after array has either been created in this same plan or already exists in the DAG. The after field accepts either a local plan name or a pre-existing task id, so a plan can build on work that is already in flight rather than only on itself.",
-            "If the loop exhausts itself with specs still pending — meaning the plan contained a forward reference it could not resolve — org_plan_graph returns a structured error naming the unresolved specs, alongside the tasks it did manage to create. Because each individual add runs TaskDag's built-in cycle detection, a plan whose after-edges form a cycle is rejected mid-build rather than producing a corrupt graph. It is the same dynamic work graph, just populated in one batch instead of node by node.",
+            "If the loop exhausts itself with specs still pending - meaning the plan contained a forward reference it could not resolve - org_plan_graph returns a structured error naming the unresolved specs, alongside the tasks it did manage to create. Because each individual add runs TaskDag's built-in cycle detection, a plan whose after-edges form a cycle is rejected mid-build rather than producing a corrupt graph. It is the same dynamic work graph, just populated in one batch instead of node by node.",
           ],
           codeBlock: {
-            filename: "org_plan_graph — propose a full graph in one call",
+            filename: "org_plan_graph - propose a full graph in one call",
             language: "json",
             code: `{
   "tool": "org_plan_graph",
@@ -243,25 +243,25 @@ export const BLOG_POSTS: BlogPost[] = [
           keyTakeaways: [
             "org_plan_graph takes named task specs with after-edges and resolves them in a fixed-point loop.",
             "after accepts a local plan name OR an existing task id, so plans can extend a graph already in flight.",
-            "Unresolved references return a structured error plus the tasks that did create successfully — the plan is not all-or-nothing.",
+            "Unresolved references return a structured error plus the tasks that did create successfully - the plan is not all-or-nothing.",
           ],
         },
         {
           id: "observability-and-failure-routing",
-          heading: "6. Observability and Failure Routing — and an Honest Gap",
+          heading: "6. Observability and Failure Routing - and an Honest Gap",
           subheading: "Per-node tracing and per-node failure rules: what shipped, and what is still scaffolding",
           paragraphs: [
-            "Two of the playbook's concepts — graph observability (per-node traces: which nodes ran, in what order, at what latency and token cost) and per-node failure routing (retry, fallback, escalate rules per node, not just per role) — are the ones where the adaptation is most partial, and it would be dishonest to pretend otherwise. We added the shape of both, and we want to be explicit about how far each one actually goes.",
-            "On observability, the BusEvent type union now includes a 'trace' event kind, and the event interface carries traceNodeId, traceDurationMs, traceTokensIn, and traceTokensOut fields for per-node execution traces. The OrgBus itself is type-agnostic — it is an append-only JSONL log with in-process fanout, and it will faithfully persist and fan out any trace event it is handed. What is not there yet is an emitter: no code in the org runtime currently produces a 'trace' event. The pathway is an open extension point for future OpenTelemetry and cost-tracking work, not a live feature you can read off a dashboard today.",
-            "Failure routing is in the same state, one layer down. FailureRoutingSchema — retry (maxAttempts, backoffMs), fallbackAssignee, escalate — is attached to the org's run_config and validates cleanly, so you can write a config that declares a per-role fallback. But no runtime code reads run_config.failure_routing yet to actually retry, fall back, or escalate. What does work end-to-end is the older, coarser-grained circuit_breaker: after a configurable number of consecutive non-success session results from a role (default five), the circuit trips, the role's mailbox is closed, and an audit event records it. That is enforced today; per-node failure routing is the documented next step on top of it.",
+            "Two of the playbook's concepts - graph observability (per-node traces: which nodes ran, in what order, at what latency and token cost) and per-node failure routing (retry, fallback, escalate rules per node, not just per role) - are the ones where the adaptation is most partial, and it would be dishonest to pretend otherwise. We added the shape of both, and we want to be explicit about how far each one actually goes.",
+            "On observability, the BusEvent type union now includes a 'trace' event kind, and the event interface carries traceNodeId, traceDurationMs, traceTokensIn, and traceTokensOut fields for per-node execution traces. The OrgBus itself is type-agnostic - it is an append-only JSONL log with in-process fanout, and it will faithfully persist and fan out any trace event it is handed. What is not there yet is an emitter: no code in the org runtime currently produces a 'trace' event. The pathway is an open extension point for future OpenTelemetry and cost-tracking work, not a live feature you can read off a dashboard today.",
+            "Failure routing is in the same state, one layer down. FailureRoutingSchema - retry (maxAttempts, backoffMs), fallbackAssignee, escalate - is attached to the org's run_config and validates cleanly, so you can write a config that declares a per-role fallback. But no runtime code reads run_config.failure_routing yet to actually retry, fall back, or escalate. What does work end-to-end is the older, coarser-grained circuit_breaker: after a configurable number of consecutive non-success session results from a role (default five), the circuit trips, the role's mailbox is closed, and an audit event records it. That is enforced today; per-node failure routing is the documented next step on top of it.",
           ],
           quote: {
             text: "If a blog post intends to describe retry, fallback, escalate, or trace emission as functioning behavior, those statements would not match the source as of this commit. We would rather say that clearly than have you find out otherwise.",
             author: "Monomind Core Team",
           },
           keyTakeaways: [
-            "BusEvent has a 'trace' type and four trace* fields, and OrgBus will carry them — but no code emits trace events yet. It is a forward-compatible extension point, not a live feature.",
-            "FailureRoutingSchema (retry / fallbackAssignee / escalate) validates and is accepted by run_config, but no runtime code reads it yet — it is configured-but-not-enforced.",
+            "BusEvent has a 'trace' type and four trace* fields, and OrgBus will carry them - but no code emits trace events yet. It is a forward-compatible extension point, not a live feature.",
+            "FailureRoutingSchema (retry / fallbackAssignee / escalate) validates and is accepted by run_config, but no runtime code reads it yet - it is configured-but-not-enforced.",
             "circuit_breaker IS fully wired: after N consecutive failures (default 5) the role's mailbox closes and an audit event fires.",
           ],
         },
@@ -270,14 +270,14 @@ export const BLOG_POSTS: BlogPost[] = [
           heading: "7. Patterns: Advisor-Orchestrator, Zone Defense, and a Multi-Agent KG Pipeline",
           subheading: "First-class org templates that encode the playbook's recurring graph shapes",
           paragraphs: [
-            "The playbook closes with three named patterns. Advisor-orchestrator puts one expensive planner node in front of several cheap worker nodes — the planner decomposes and synthesizes, the workers execute — and reports roughly ninety-two percent of single-agent quality at about sixty-three percent of the cost. Zone defense gives long-lived specialists stable domain ownership so they accumulate context over time. Multi-LLM council fixes the topology and adds anti-groupthink deliberation gates. The adaptation ships two of these as first-class org templates you can create with a single command.",
-            "The advisor-orchestrator template is a three-role org: an advisor (boss, default frontier model) that reads the full task context, calls org_plan_graph to propose the work graph in one shot, and synthesizes worker outputs; and two workers (on claude-haiku-4-5, the fast model) that execute assigned tasks, report results via a structured handoff, and flag scope expansion for org_task_split. The model split is not decorative — it is the economics. Verification and mechanical work spend roughly a third of the tokens of a frontier model for checklist-shaped work, so the template routes accordingly.",
-            "The kg-extraction template is a four-role multi-agent pipeline for pulling a validated knowledge graph out of source documents: a kg-lead boss decomposes the work and calls org_learn with the final validated graph, an entity-extractor reads chunks and pulls entities, a relationship-resolver resolves coreferences and emits typed source-relation-target edges, and an ontology-validator (on the fast model) checks edges against the existing glossary and rejects malformed triples before they reach org_learn. It is the playbook's zone-defense idea applied to a concrete extraction problem — each specialist owns one well-bounded step and hands off a typed package to the next.",
+            "The playbook closes with three named patterns. Advisor-orchestrator puts one expensive planner node in front of several cheap worker nodes - the planner decomposes and synthesizes, the workers execute - and reports roughly ninety-two percent of single-agent quality at about sixty-three percent of the cost. Zone defense gives long-lived specialists stable domain ownership so they accumulate context over time. Multi-LLM council fixes the topology and adds anti-groupthink deliberation gates. The adaptation ships two of these as first-class org templates you can create with a single command.",
+            "The advisor-orchestrator template is a three-role org: an advisor (boss, default frontier model) that reads the full task context, calls org_plan_graph to propose the work graph in one shot, and synthesizes worker outputs; and two workers (on claude-haiku-4-5, the fast model) that execute assigned tasks, report results via a structured handoff, and flag scope expansion for org_task_split. The model split is not decorative - it is the economics. Verification and mechanical work spend roughly a third of the tokens of a frontier model for checklist-shaped work, so the template routes accordingly.",
+            "The kg-extraction template is a four-role multi-agent pipeline for pulling a validated knowledge graph out of source documents: a kg-lead boss decomposes the work and calls org_learn with the final validated graph, an entity-extractor reads chunks and pulls entities, a relationship-resolver resolves coreferences and emits typed source-relation-target edges, and an ontology-validator (on the fast model) checks edges against the existing glossary and rejects malformed triples before they reach org_learn. It is the playbook's zone-defense idea applied to a concrete extraction problem - each specialist owns one well-bounded step and hands off a typed package to the next.",
           ],
           image: {
             src: "/images/blog/gemini_1786531501_0.png",
-            alt: "An advisor-orchestrator pattern — one large central gold planner node radiating thin espresso lines to several smaller fast worker nodes arranged around it, each worker returning results to the planner",
-            caption: "The advisor-orchestrator template: one frontier-model planner decomposes and synthesizes; cheap fast-model workers execute. The model split is the economics — mechanical work spends a third of the tokens.",
+            alt: "An advisor-orchestrator pattern - one large central gold planner node radiating thin espresso lines to several smaller fast worker nodes arranged around it, each worker returning results to the planner",
+            caption: "The advisor-orchestrator template: one frontier-model planner decomposes and synthesizes; cheap fast-model workers execute. The model split is the economics - mechanical work spends a third of the tokens.",
           },
           codeBlock: {
             filename: "terminal",
@@ -286,7 +286,7 @@ export const BLOG_POSTS: BlogPost[] = [
 npx monomind@latest org create my-planner --template advisor-orchestrator
 npx monomind@latest org create my-kg      --template kg-extraction
 
-# Then run it — the advisor will call org_plan_graph to propose the work graph
+# Then run it - the advisor will call org_plan_graph to propose the work graph
 npx monomind@latest org run my-planner --goal "<your objective>"`,
           },
           keyTakeaways: [
@@ -297,8 +297,8 @@ npx monomind@latest org run my-planner --goal "<your objective>"`,
         },
       ],
       conclusion: [
-        "Graph engineering is a useful frame because it names the thing that was already hard about multi-agent systems — not the agents, but the wiring, and especially the wiring that changes while the work is happening. Monomind's adaptation takes the playbook's seven concepts and lands five of them as fully-wired machinery: the two-graphs split (OrgDef and TaskDag), the dynamic work graph (split, merge, cancel with rewiring and cycle detection), the work-graph generator (org_plan_graph), structured handoffs (OrgHandoffSchema), and two first-class org templates (advisor-orchestrator and kg-extraction). Sixty-one tests in tests/orgrt cover the new behavior, and a live four-agent release-pipeline run exercised org_plan_graph, auto-dispatch, and structured handoffs end to end.",
-        "The remaining two concepts — per-node trace emission and per-node failure routing — are present as schema and validated extension points but are not enforced at runtime yet, and this article says so plainly rather than dressing them up as shipped features. The circuit breaker, which is enforced, does the coarser-grained version of the job today. If you want to see the working parts in code, everything lives under packages/@monomind/cli/src/orgrt/, the source-of-truth doc is docs/graph-engineering-playbook.md, and Monomind is Apache-2.0 licensed and open source.",
+        "Graph engineering is a useful frame because it names the thing that was already hard about multi-agent systems - not the agents, but the wiring, and especially the wiring that changes while the work is happening. Monomind's adaptation takes the playbook's seven concepts and lands five of them as fully-wired machinery: the two-graphs split (OrgDef and TaskDag), the dynamic work graph (split, merge, cancel with rewiring and cycle detection), the work-graph generator (org_plan_graph), structured handoffs (OrgHandoffSchema), and two first-class org templates (advisor-orchestrator and kg-extraction). Sixty-one tests in tests/orgrt cover the new behavior, and a live four-agent release-pipeline run exercised org_plan_graph, auto-dispatch, and structured handoffs end to end.",
+        "The remaining two concepts - per-node trace emission and per-node failure routing - are present as schema and validated extension points but are not enforced at runtime yet, and this article says so plainly rather than dressing them up as shipped features. The circuit breaker, which is enforced, does the coarser-grained version of the job today. If you want to see the working parts in code, everything lives under packages/@monomind/cli/src/orgrt/, the source-of-truth doc is docs/graph-engineering-playbook.md, and Monomind is Apache-2.0 licensed and open source.",
       ],
     },
   },
@@ -306,7 +306,7 @@ npx monomind@latest org run my-planner --goal "<your objective>"`,
   // --- 5 REAL RELEASE ARTICLES (chronological) ---
   {
     slug: "monomind-v22-org-runtime-v2",
-    title: "Monomind v2.2: Org Runtime v2 — Real Agent Sessions, Not Scripted Prompts",
+    title: "Monomind v2.2: Org Runtime v2 - Real Agent Sessions, Not Scripted Prompts",
     subtitle: "A daemon-hosted architecture where every role in an org is a live, provider-backed agent session, governed by an in-process policy engine and streamed over an append-only event bus.",
     excerpt: "Monomind v2.2 replaces the old prompt-orchestrated org flow with Org Runtime v2: a persistent OrgDaemon that hosts real agent sessions per role, connected by an append-only OrgBus event log and gated by a per-role PolicyEngine.",
     date: "July 17, 2026",
@@ -334,14 +334,14 @@ npx monomind@latest org run my-planner --goal "<your objective>"`,
           heading: "1. OrgDaemon: One Process, Many Orgs, Real Sessions",
           subheading: "Every role is a live agent session, not a scripted turn in a shared prompt",
           paragraphs: [
-            "At the center of Org Runtime v2 is OrgDaemon, a process that can host multiple orgs concurrently. Each org is defined by a config file at .monomind/orgs/<name>.json, and each role within that config gets its own agent session — a real, provider-backed session, not a simulated or scripted stand-in inside a shared conversation.",
+            "At the center of Org Runtime v2 is OrgDaemon, a process that can host multiple orgs concurrently. Each org is defined by a config file at .monomind/orgs/<name>.json, and each role within that config gets its own agent session - a real, provider-backed session, not a simulated or scripted stand-in inside a shared conversation.",
             "The execution path for a role is straightforward: runAgentSession() sets up the session, hands off to runOneSession() to run a single turn, which in turn calls into the underlying runner's run() method to actually talk to the provider. Because each role's session is a distinct object with its own state, one role's context window, tool calls, and conversation history never bleed into another's.",
-            "This matters because it's what makes the rest of the system — the event bus, the mailbox, the policy engine — possible in the first place. You can't govern or audit a role's behavior if that role doesn't have a clean, separately addressable execution context.",
+            "This matters because it's what makes the rest of the system - the event bus, the mailbox, the policy engine - possible in the first place. You can't govern or audit a role's behavior if that role doesn't have a clean, separately addressable execution context.",
           ],
           image: {
             src: "/images/blog/art1-multi-agent-dag.jpg",
             alt: "Diagram showing a central daemon process branching into several independent agent session nodes, each labeled with a distinct role",
-            caption: "Each role defined in an org config becomes its own provider-backed agent session inside the OrgDaemon process — no shared prompt context between roles.",
+            caption: "Each role defined in an org config becomes its own provider-backed agent session inside the OrgDaemon process - no shared prompt context between roles.",
           },
           codeBlock: {
             filename: ".monomind/orgs/sample-team.json",
@@ -368,7 +368,7 @@ npx monomind@latest org run my-planner --goal "<your objective>"`,
           },
           keyTakeaways: [
             "OrgDaemon hosts multiple orgs in a single long-lived process.",
-            "Each role gets its own real, provider-backed agent session — not a scripted turn inside a shared prompt.",
+            "Each role gets its own real, provider-backed agent session - not a scripted turn inside a shared prompt.",
             "Session execution flows through runAgentSession() → runOneSession() → runner.run().",
           ],
         },
@@ -377,14 +377,14 @@ npx monomind@latest org run my-planner --goal "<your objective>"`,
           heading: "2. OrgBus and Mailbox: How Roles Actually Communicate",
           subheading: "An append-only event log replaces the old dashboard curl posts",
           paragraphs: [
-            "In the v1 flow, keeping a dashboard in sync meant the boss agent manually curl-posting status updates as it went. Org Runtime v2 removes that entirely. Every meaningful event in an org's lifecycle — a role starting, a message being sent, a tool call happening — is written to OrgBus, an append-only JSONL event log with in-process fanout.",
+            "In the v1 flow, keeping a dashboard in sync meant the boss agent manually curl-posting status updates as it went. Org Runtime v2 removes that entirely. Every meaningful event in an org's lifecycle - a role starting, a message being sent, a tool call happening - is written to OrgBus, an append-only JSONL event log with in-process fanout.",
             "Because OrgBus is append-only, both the dashboard and any historical view of the org are reading from the same source of truth: nothing is summarized or re-derived after the fact. Messages between roles are delivered through a per-role Mailbox, so a role only ever sees the messages actually addressed to it, rather than the full firehose of the org's activity.",
-            "The dashboard itself runs on port 4242 and is auto-launched by a Claude Code SessionStart hook — there's no separate CLI command to start it. It discovers running daemons through .monomind/control.json, which is how it finds the right OrgBus stream to tail.",
+            "The dashboard itself runs on port 4242 and is auto-launched by a Claude Code SessionStart hook - there's no separate CLI command to start it. It discovers running daemons through .monomind/control.json, which is how it finds the right OrgBus stream to tail.",
           ],
           image: {
             src: "/images/blog/art1-live-telemetry.jpg",
             alt: "Live telemetry-style visualization of an append-only event stream feeding multiple downstream consumers",
-            caption: "OrgBus writes every org event to an append-only JSONL log with in-process fanout — the dashboard and history views both read from this single stream.",
+            caption: "OrgBus writes every org event to an append-only JSONL log with in-process fanout - the dashboard and history views both read from this single stream.",
           },
           codeBlock: {
             filename: "orgbus-event.jsonl",
@@ -393,7 +393,7 @@ npx monomind@latest org run my-planner --goal "<your objective>"`,
 {"ts":"2026-07-17T14:02:33Z","org":"sample-team","role":"reviewer","type":"session.started"}`,
           },
           keyTakeaways: [
-            "OrgBus is an append-only JSONL event log with in-process fanout — the single source of truth for org activity.",
+            "OrgBus is an append-only JSONL event log with in-process fanout - the single source of truth for org activity.",
             "Per-role Mailbox delivers only the messages addressed to that role.",
             "The dashboard on :4242 is auto-launched by a SessionStart hook and discovers daemons via .monomind/control.json.",
           ],
@@ -401,19 +401,19 @@ npx monomind@latest org run my-planner --goal "<your objective>"`,
         {
           id: "policy-engine-and-migration",
           heading: "3. PolicyEngine: In-Process Governance, and Migrating from v1",
-          subheading: "Tool limits, file scope, web access, and token budgets — enforced per role, with an audit trail",
+          subheading: "Tool limits, file scope, web access, and token budgets - enforced per role, with an audit trail",
           paragraphs: [
             "Each role session in Org Runtime v2 runs behind its own PolicyEngine. This is real, in-process enforcement, not documentation of intended behavior: tool allow/deny lists, file scope restrictions, web access control, and token budget caps are all checked before a role's session is permitted to act, and every decision is written to an audit trail.",
-            "This is a direct consequence of the OrgDaemon architecture — because each role is a distinct session rather than a turn inside one shared prompt, the policy engine has a clean boundary to attach to. A role restricted to Read-only tools genuinely cannot invoke Edit or Bash; there's no shared context for it to reach around the restriction through.",
-            "The old v1 flow — the Task-tool boss agent driving everything through prompts and manual dashboard posts — is now legacy. It's still reachable via /mastermind:runorgv1 for org configs that haven't been migrated yet, and the org migrate command converts v1 configs into the v2 shape shown earlier in this post.",
+            "This is a direct consequence of the OrgDaemon architecture - because each role is a distinct session rather than a turn inside one shared prompt, the policy engine has a clean boundary to attach to. A role restricted to Read-only tools genuinely cannot invoke Edit or Bash; there's no shared context for it to reach around the restriction through.",
+            "The old v1 flow - the Task-tool boss agent driving everything through prompts and manual dashboard posts - is now legacy. It's still reachable via /mastermind:runorgv1 for org configs that haven't been migrated yet, and the org migrate command converts v1 configs into the v2 shape shown earlier in this post.",
           ],
           image: {
             src: "/images/blog/art1-audit-queue.jpg",
             alt: "Queue-style visualization of policy decisions being logged in sequence, each tagged with a role and an allow or deny outcome",
-            caption: "Every PolicyEngine decision — tool call, file access, web request, budget check — is written to a per-role audit trail.",
+            caption: "Every PolicyEngine decision - tool call, file access, web request, budget check - is written to a per-role audit trail.",
           },
           quote: {
-            text: "Governance has to live inside the session boundary, not around it — otherwise it's just a label on a config file.",
+            text: "Governance has to live inside the session boundary, not around it - otherwise it's just a label on a config file.",
             author: "Monomind Core Team",
           },
           keyTakeaways: [
@@ -424,7 +424,7 @@ npx monomind@latest org run my-planner --goal "<your objective>"`,
         },
       ],
       conclusion: [
-        "Org Runtime v2 didn't add new prompts or new marketing surface area to Monomind's org feature — it replaced the execution model underneath it. Real per-role sessions, an append-only event bus, and in-process policy enforcement are the foundation every org run has been built on since v2.2. Monomind is Apache-2.0 licensed and available on GitHub.",
+        "Org Runtime v2 didn't add new prompts or new marketing surface area to Monomind's org feature - it replaced the execution model underneath it. Real per-role sessions, an append-only event bus, and in-process policy enforcement are the foundation every org run has been built on since v2.2. Monomind is Apache-2.0 licensed and available on GitHub.",
       ],
     },
   },
@@ -432,7 +432,7 @@ npx monomind@latest org run my-planner --goal "<your objective>"`,
     slug: "monomind-v23-local-memory-engine",
     title: "Monomind 2.3.1: Removing LanceDB, Going Local-First for Memory",
     subtitle: "600MB of native vector-DB dependencies out, local SQLite and in-process embeddings in",
-    excerpt: "In the 2.3.1 release, monomind fully removed its LanceDB vector backend in favor of local SQLite storage and local MiniLM embeddings via transformers.js — no cloud vector database, no API key, no native binary bloat.",
+    excerpt: "In the 2.3.1 release, monomind fully removed its LanceDB vector backend in favor of local SQLite storage and local MiniLM embeddings via transformers.js - no cloud vector database, no API key, no native binary bloat.",
     date: "July 18, 2026",
     readTime: "5 min read",
     author: {
@@ -449,8 +449,8 @@ npx monomind@latest org run my-planner --goal "<your objective>"`,
     },
     content: {
       introduction: [
-        "Monomind's memory system used to depend on LanceDB — an embedded vector database shipped via @lancedb/lancedb and apache-arrow. It worked, but it carried roughly 600MB of native dependencies, which made installs heavier and cross-platform builds more fragile than they needed to be.",
-        "In the 2.3.1 release (July 18, 2026), we removed LanceDB entirely. Memory storage now runs on local SQLite, with local embeddings computed in-process. Nothing about how memory is used changed — what changed is what's running underneath it.",
+        "Monomind's memory system used to depend on LanceDB - an embedded vector database shipped via @lancedb/lancedb and apache-arrow. It worked, but it carried roughly 600MB of native dependencies, which made installs heavier and cross-platform builds more fragile than they needed to be.",
+        "In the 2.3.1 release (July 18, 2026), we removed LanceDB entirely. Memory storage now runs on local SQLite, with local embeddings computed in-process. Nothing about how memory is used changed - what changed is what's running underneath it.",
       ],
       sections: [
         {
@@ -458,13 +458,13 @@ npx monomind@latest org run my-planner --goal "<your objective>"`,
           heading: "Why LanceDB had to go",
           subheading: "Native dependency weight without a matching payoff for a local-first tool",
           paragraphs: [
-            "LanceDB gave monomind a working vector store early on, but it came bundled with apache-arrow and native binaries that added significant install weight — around 600MB — for a tool meant to run comfortably on a developer's own machine.",
+            "LanceDB gave monomind a working vector store early on, but it came bundled with apache-arrow and native binaries that added significant install weight - around 600MB - for a tool meant to run comfortably on a developer's own machine.",
             "For a project whose whole premise is local-first operation, a heavy native dependency chain is friction: slower installs, more platform-specific failure modes, and a bigger attack surface to keep updated. 2.3.1 removes that dependency chain outright rather than trying to slim it down.",
           ],
           image: {
             src: "/images/blog/gemini_1786439694_0.png",
             alt: "A stack of heavy native library blocks (labeled vector DB, Arrow) being lifted away from a lightweight local application core",
-            caption: "LanceDB and apache-arrow are gone — no native vector-DB dependency chain remains in the memory backend.",
+            caption: "LanceDB and apache-arrow are gone - no native vector-DB dependency chain remains in the memory backend.",
           },
           keyTakeaways: [
             "LanceDB (@lancedb/lancedb + apache-arrow) is fully removed as of 2.3.1",
@@ -476,13 +476,13 @@ npx monomind@latest org run my-planner --goal "<your objective>"`,
           heading: "SQLite storage, local embeddings",
           subheading: "Text and vectors live in one local database file",
           paragraphs: [
-            "In place of LanceDB, monomind now stores memory text and embedding vectors in local SQLite, using better-sqlite3 as the primary driver. Where native SQLite binaries can't load — certain platform or environment combinations — monomind falls back to sql.js, a WASM build of SQLite, to keep memory working without a native compile step.",
-            "Embeddings themselves are computed locally too: monomind runs MiniLM/HuggingFace models in-process via transformers.js. There's no call out to a hosted embeddings API and no API key required to generate them — the model runs on your own hardware, on your own data.",
-            "There's also a pure-JS HNSW vector index in the codebase, but it's worth being precise about what it is: a dormant fallback path, used only if native SQLite binary loading fails on a given system. It is not the active index and not a co-equal part of the standard retrieval path — SQLite is.",
+            "In place of LanceDB, monomind now stores memory text and embedding vectors in local SQLite, using better-sqlite3 as the primary driver. Where native SQLite binaries can't load - certain platform or environment combinations - monomind falls back to sql.js, a WASM build of SQLite, to keep memory working without a native compile step.",
+            "Embeddings themselves are computed locally too: monomind runs MiniLM/HuggingFace models in-process via transformers.js. There's no call out to a hosted embeddings API and no API key required to generate them - the model runs on your own hardware, on your own data.",
+            "There's also a pure-JS HNSW vector index in the codebase, but it's worth being precise about what it is: a dormant fallback path, used only if native SQLite binary loading fails on a given system. It is not the active index and not a co-equal part of the standard retrieval path - SQLite is.",
           ],
           codeBlock: {
             language: "bash",
-            code: `# store and retrieve memory using local SQLite + local embeddings — no external services
+            code: `# store and retrieve memory using local SQLite + local embeddings - no external services
 npx monomind@latest memory store --key "pattern-auth" --value "JWT with refresh tokens" --namespace patterns
 npx monomind@latest memory search --query "authentication patterns" --namespace patterns
 npx monomind@latest memory stats`,
@@ -495,7 +495,7 @@ npx monomind@latest memory stats`,
           },
           keyTakeaways: [
             "Primary backend: local SQLite (better-sqlite3), with sql.js WASM as a cross-platform fallback",
-            "Embeddings run locally via MiniLM/HuggingFace models through transformers.js — no API key needed",
+            "Embeddings run locally via MiniLM/HuggingFace models through transformers.js - no API key needed",
             "The pure-JS HNSW index exists only as a dormant fallback for native SQLite load failures, not the active index",
           ],
         },
@@ -506,15 +506,15 @@ npx monomind@latest memory stats`,
           paragraphs: [
             "Retrieval in monomind combines dense embedding similarity with lexical BM25 search, fusing the two so memory search can match on both semantic meaning and exact keywords. This logic sits on top of the SQLite-backed storage described above.",
             "The underlying memory engine is also published independently as @monoes/memory on npm (currently at v1.0.14), for anyone who wants the storage and embedding layer outside of the full monomind CLI.",
-            "Monomind itself is Apache-2.0 licensed. That hasn't changed with this release — only the memory backend has.",
+            "Monomind itself is Apache-2.0 licensed. That hasn't changed with this release - only the memory backend has.",
           ],
           image: {
             src: "/images/blog/gemini_1786439785_0.png",
-            alt: "Two search paths — a semantic embedding path and a keyword/lexical search path — converging into one local result set",
+            alt: "Two search paths - a semantic embedding path and a keyword/lexical search path - converging into one local result set",
             caption: "Memory search fuses dense embedding similarity with lexical BM25 matching over the same local SQLite store.",
           },
           quote: {
-            text: "Removing LanceDB wasn't about chasing a benchmark — it was about matching the dependency footprint to what a local-first tool should actually require.",
+            text: "Removing LanceDB wasn't about chasing a benchmark - it was about matching the dependency footprint to what a local-first tool should actually require.",
             author: "Monomind Core Team",
           },
           keyTakeaways: [
@@ -525,8 +525,8 @@ npx monomind@latest memory stats`,
         },
       ],
       conclusion: [
-        "2.3.1 is a backend migration, not a new feature — LanceDB is out, local SQLite and in-process embeddings are in. The result is a lighter, more portable memory system with no cloud vector database and no API key in the loop.",
-        "This release is also the foundation for what comes next: later 2.3.x and 2.4/2.5 releases build the Second Brain document-knowledge features on top of this same local storage layer — that's a story for the next post.",
+        "2.3.1 is a backend migration, not a new feature - LanceDB is out, local SQLite and in-process embeddings are in. The result is a lighter, more portable memory system with no cloud vector database and no API key in the loop.",
+        "This release is also the foundation for what comes next: later 2.3.x and 2.4/2.5 releases build the Second Brain document-knowledge features on top of this same local storage layer - that's a story for the next post.",
       ],
     },
   },
@@ -534,7 +534,7 @@ npx monomind@latest memory stats`,
     slug: "monomind-v25-second-brain",
     title: "Second Brain: A Local Knowledge Base That Reads Your Docs So You Don't Have To",
     subtitle: "How monomind v2.5 turns your project's Markdown, PDFs, and Office files into semantic search results the model can actually use",
-    excerpt: "monomind's Second Brain indexes your project's documents into a local, semantic search engine and injects the most relevant excerpts into every prompt — no manual retrieval, no cloud calls beyond a one-time model download, and a CI-enforced 80% recall bar to keep it honest.",
+    excerpt: "monomind's Second Brain indexes your project's documents into a local, semantic search engine and injects the most relevant excerpts into every prompt - no manual retrieval, no cloud calls beyond a one-time model download, and a CI-enforced 80% recall bar to keep it honest.",
     date: "July 18, 2026",
     readTime: "6 min read",
     featured: false,
@@ -547,7 +547,7 @@ npx monomind@latest memory stats`,
     },
     content: {
       introduction: [
-        "Most of what a coding agent needs to know isn't in the code — it's in the README nobody reread, the PDF spec someone attached to a ticket, the design doc buried three folders deep. monomind v2.5 ships Second Brain, a local document knowledge base that indexes those files and retrieves the relevant pieces automatically, on every prompt.",
+        "Most of what a coding agent needs to know isn't in the code - it's in the README nobody reread, the PDF spec someone attached to a ticket, the design doc buried three folders deep. monomind v2.5 ships Second Brain, a local document knowledge base that indexes those files and retrieves the relevant pieces automatically, on every prompt.",
         "It's not a new UI to learn or a workflow to remember. If your project has documents in it, Second Brain activates on `monomind init` and starts working in the background.",
       ],
       sections: [
@@ -556,7 +556,7 @@ npx monomind@latest memory stats`,
           heading: "Ingest once, retrieve automatically",
           subheading: "From raw files to heading-aware chunks",
           paragraphs: [
-            "Second Brain reads across roughly 19 file extensions — Markdown, TXT, PDF, DOCX, EPUB, and other common formats. Google Drive files are exported to Office formats before ingestion so they go through the same pipeline as everything else.",
+            "Second Brain reads across roughly 19 file extensions - Markdown, TXT, PDF, DOCX, EPUB, and other common formats. Google Drive files are exported to Office formats before ingestion so they go through the same pipeline as everything else.",
             "As of 2.3.2, chunking is heading-aware: instead of slicing documents into arbitrary fixed-length blocks, it splits along document structure, which keeps related content together and makes individual chunks more meaningful as retrieval units.",
             "You can drive ingestion directly with the CLI, or let a hook do it per-prompt: a retrieval step pulls the top relevant excerpts and injects them as `[SECOND_BRAIN]` context before the model responds. The always-on dashboard keeps that retrieval path warm, with lookups landing around 60ms.",
           ],
@@ -578,7 +578,7 @@ monomind doc list`,
             filename: "terminal",
           },
           keyTakeaways: [
-            "Second Brain activates automatically on `monomind init` when documents are present — no manual setup",
+            "Second Brain activates automatically on `monomind init` when documents are present - no manual setup",
             "Roughly 22 supported file extensions, including Markdown, TXT, PDF, DOCX, and EPUB",
             "Heading-aware chunking (since 2.3.2) keeps document structure intact in each retrieved chunk",
             "A per-prompt hook injects top-matching excerpts as `[SECOND_BRAIN]` context automatically",
@@ -590,8 +590,8 @@ monomind doc list`,
           subheading: "Project and global knowledge, merged at query time",
           paragraphs: [
             "Every project gets its own local index, but monomind also maintains a global, cross-project brain at `~/.monomind/global-brain` (the location is configurable via `MONOMIND_GLOBAL_BRAIN_DIR`). It's deliberately kept as a sibling of the per-project store, so it's never accidentally swept up by `cleanup --data`.",
-            "Ingesting a path outside the current project routes to the global brain automatically — there's no separate command to remember. At query time, retrieval merges results from both stores: when a project result and a global result tie, the project result wins, and global hits are labeled `[global]` so you always know where an excerpt came from.",
-            "For programmatic access, the MCP server exposes `knowledge_search` (which accepts a `store: \"project\" | \"global\"` filter when you want to search just one), plus `knowledge_ingest` and `knowledge_remove` for adding and retracting documents. `knowledge_remove` hides a document from search immediately and is reversible by re-ingesting it. Telemetry about queries — never prompt text — is logged locally to `.monomind/metrics/second-brain.jsonl`.",
+            "Ingesting a path outside the current project routes to the global brain automatically - there's no separate command to remember. At query time, retrieval merges results from both stores: when a project result and a global result tie, the project result wins, and global hits are labeled `[global]` so you always know where an excerpt came from.",
+            "For programmatic access, the MCP server exposes `knowledge_search` (which accepts a `store: \"project\" | \"global\"` filter when you want to search just one), plus `knowledge_ingest` and `knowledge_remove` for adding and retracting documents. `knowledge_remove` hides a document from search immediately and is reversible by re-ingesting it. Telemetry about queries - never prompt text - is logged locally to `.monomind/metrics/second-brain.jsonl`.",
           ],
           image: {
             src: "/images/blog/gemini_1786353959_0.png",
@@ -599,7 +599,7 @@ monomind doc list`,
             caption: "Project and global knowledge stores are queried together, with project results winning ties and global hits clearly labeled.",
           },
           quote: {
-            text: "Retrieval merges project and global stores automatically — project wins ties, global hits are labeled [global] — so you never have to remember which brain you're searching.",
+            text: "Retrieval merges project and global stores automatically - project wins ties, global hits are labeled [global] - so you never have to remember which brain you're searching.",
             author: "Monomind Core Team",
           },
           keyTakeaways: [
@@ -614,9 +614,9 @@ monomind doc list`,
           heading: "Measured, not just marketed",
           subheading: "A CI-enforced recall bar and a single outbound call",
           paragraphs: [
-            "It's easy to ship a search feature and never check whether it actually finds the right thing. monomind maintains a paraphrase golden-set eval — a fixed set of query/document pairs phrased differently than the source text — and enforces an 80% recall bar in CI. If retrieval quality regresses below that bar, the build fails.",
+            "It's easy to ship a search feature and never check whether it actually finds the right thing. monomind maintains a paraphrase golden-set eval - a fixed set of query/document pairs phrased differently than the source text - and enforces an 80% recall bar in CI. If retrieval quality regresses below that bar, the build fails.",
             "On the network side, Second Brain's only outbound call is a one-time fetch of the embedding model (roughly 90MB) from HuggingFace the first time you index a document. After that, indexing and retrieval run locally.",
-            "The full CLI surface is under `monomind doc`, with subcommands for ingest, search, list, export, remove, reconcile, and eval — so you can inspect, audit, and re-run quality checks against your own indexed documents at any time.",
+            "The full CLI surface is under `monomind doc`, with subcommands for ingest, search, list, export, remove, reconcile, and eval - so you can inspect, audit, and re-run quality checks against your own indexed documents at any time.",
           ],
           image: {
             src: "/images/blog/gemini_1786439974_0.png",
@@ -636,14 +636,14 @@ monomind doc list`,
           },
           keyTakeaways: [
             "80% recall bar on a paraphrase golden-set eval is enforced in CI",
-            "The embedding model (~90MB) is fetched once from HuggingFace on first index — the feature's only outbound call",
+            "The embedding model (~90MB) is fetched once from HuggingFace on first index - the feature's only outbound call",
             "monomind doc supports ingest, search, list, export, remove, reconcile, and eval",
             "monomind is Apache-2.0 licensed",
           ],
         },
       ],
       conclusion: [
-        "Second Brain doesn't ask you to change how you work — it activates when documents show up in your project and stays out of the way otherwise. Local indexing, a merged project/global search, a CI-enforced recall bar, and one clearly-scoped outbound network call: that's the whole feature.",
+        "Second Brain doesn't ask you to change how you work - it activates when documents show up in your project and stays out of the way otherwise. Local indexing, a merged project/global search, a CI-enforced recall bar, and one clearly-scoped outbound network call: that's the whole feature.",
         "If you're running monomind v2.5 or later, run monomind doc list to see what's already indexed, or monomind doc ingest a file and try a search.",
       ],
     },
@@ -652,7 +652,7 @@ monomind doc list`,
     slug: "monomind-v28-antigravity-multiplatform",
     title: "monomind 2.8.0: Google Antigravity Support Arrives",
     subtitle: "monomind grows up into a genuinely multi-platform agent CLI",
-    excerpt: "monomind 2.8.0 adds native Google Antigravity support — GEMINI.md, .gemini rules, helper scripts, and a status bar integration — generated by default from monomind init, alongside opt-in opencode and Kimi Code support.",
+    excerpt: "monomind 2.8.0 adds native Google Antigravity support - GEMINI.md, .gemini rules, helper scripts, and a status bar integration - generated by default from monomind init, alongside opt-in opencode and Kimi Code support.",
     date: "July 31, 2026",
     readTime: "4 min read",
     featured: false,
@@ -670,7 +670,7 @@ monomind doc list`,
     content: {
       introduction: [
         "monomind started as a CLI and MCP server built around Claude Code. With 2.8.0, that changes in a meaningful way: monomind now generates native, working configuration for Google Antigravity out of the box, and the underlying provider system took its first real step toward supporting non-Anthropic model backends.",
-        "This release isn't about adding a flag behind a feature gate — Antigravity is now the default output of monomind init. If you're on Claude Code, opencode, or Kimi Code, nothing changes for you. If you're on Antigravity, monomind now understands your editor natively.",
+        "This release isn't about adding a flag behind a feature gate - Antigravity is now the default output of monomind init. If you're on Claude Code, opencode, or Kimi Code, nothing changes for you. If you're on Antigravity, monomind now understands your editor natively.",
       ],
       sections: [
         {
@@ -678,13 +678,13 @@ monomind doc list`,
           heading: "Why Antigravity, and why default",
           subheading: "Multi-platform is a first-class goal, not an afterthought",
           paragraphs: [
-            "monomind is fundamentally a CLI plus an MCP server — the same core plugs into any editor or agent platform that speaks MCP. Claude Code has always been the primary, best-supported target, but the project has steadily added others: opencode, Kimi Code, and now Google Antigravity.",
+            "monomind is fundamentally a CLI plus an MCP server - the same core plugs into any editor or agent platform that speaks MCP. Claude Code has always been the primary, best-supported target, but the project has steadily added others: opencode, Kimi Code, and now Google Antigravity.",
             "Antigravity gets first-class treatment in 2.8.0 rather than an opt-in flag like opencode (--opencode) or Kimi Code (--kimicode). Running monomind init with no platform flags now produces Antigravity-native files automatically: a GEMINI.md project brief, a .gemini/rules/ directory, helper scripts under .gemini/helpers/statusline.*, and a .gemini/settings.json that wires it all together.",
           ],
           image: {
             src: "/images/blog/gemini_1786440020_0.png",
             alt: "Split view of configuration files generated for different AI coding editors from a single CLI command",
-            caption: "One init command, editor-native output — GEMINI.md, .gemini/rules/, and settings.json for Antigravity.",
+            caption: "One init command, editor-native output - GEMINI.md, .gemini/rules/, and settings.json for Antigravity.",
           },
           keyTakeaways: [
             "Antigravity config generation is monomind init's default behavior, not a flag",
@@ -696,8 +696,8 @@ monomind doc list`,
           id: "status-bar-and-providers",
           heading: "A status bar, and new provider kinds under the hood",
           paragraphs: [
-            "Beyond config files, Antigravity users get a status bar integration through the generated helper scripts — a small but concrete piece of editor-native tooling that reflects what monomind is doing as you work.",
-            "On the org runtime side, 2.8.0 introduces gemini and openai as provider kinds. It's worth being precise about what that means: these are authentication and environment kinds — for example, wiring up a GEMINI_API_KEY — not a dedicated Gemini execution runner. There is no GeminiAgentRunner in this release. What did land alongside the provider kinds is the Antigravity execution runner itself. monomind's set of execution runners (Claude, opencode, Kimi Code, Vercel AI SDK, Codex, and Antigravity) has been built up incrementally across releases; 2.8.0 is the release where Antigravity's runner and the gemini/openai provider kinds arrived, not the release where all of them shipped at once.",
+            "Beyond config files, Antigravity users get a status bar integration through the generated helper scripts - a small but concrete piece of editor-native tooling that reflects what monomind is doing as you work.",
+            "On the org runtime side, 2.8.0 introduces gemini and openai as provider kinds. It's worth being precise about what that means: these are authentication and environment kinds - for example, wiring up a GEMINI_API_KEY - not a dedicated Gemini execution runner. There is no GeminiAgentRunner in this release. What did land alongside the provider kinds is the Antigravity execution runner itself. monomind's set of execution runners (Claude, opencode, Kimi Code, Vercel AI SDK, Codex, and Antigravity) has been built up incrementally across releases; 2.8.0 is the release where Antigravity's runner and the gemini/openai provider kinds arrived, not the release where all of them shipped at once.",
           ],
           codeBlock: {
             language: "bash",
@@ -717,7 +717,7 @@ monomind init --kimicode`,
             caption: "The Antigravity status bar integration, generated from .gemini/helpers/statusline.*.",
           },
           quote: {
-            text: "Antigravity's runner and the new gemini/openai provider kinds are the concrete pieces that shipped in 2.8.0 — everything else on the multi-platform roadmap keeps building from here.",
+            text: "Antigravity's runner and the new gemini/openai provider kinds are the concrete pieces that shipped in 2.8.0 - everything else on the multi-platform roadmap keeps building from here.",
             author: "Monomind Core Team",
           },
         },
@@ -725,7 +725,7 @@ monomind init --kimicode`,
           id: "whats-next",
           heading: "What this means if you're not on Antigravity",
           paragraphs: [
-            "If you're using Claude Code, opencode, or Kimi Code, this release changes nothing about your workflow — monomind init still produces the same output it always has for you, gated behind the same flags.",
+            "If you're using Claude Code, opencode, or Kimi Code, this release changes nothing about your workflow - monomind init still produces the same output it always has for you, gated behind the same flags.",
             "For teams standardizing on Google's editor, 2.8.0 is the first release where monomind treats Antigravity as a peer to Claude Code rather than an edge case, and it sets up the provider layer for further non-Anthropic backend work down the line.",
           ],
           image: {
@@ -741,7 +741,7 @@ monomind init --kimicode`,
         },
       ],
       conclusion: [
-        "2.8.0 is a focused release: real Antigravity support, generated by default, plus the provider groundwork for more backends to come. Nothing here is speculative — it's the config files, helper scripts, and runner code monomind actually ships.",
+        "2.8.0 is a focused release: real Antigravity support, generated by default, plus the provider groundwork for more backends to come. Nothing here is speculative - it's the config files, helper scripts, and runner code monomind actually ships.",
         "If you install monomind fresh today, run monomind init and you'll see the Antigravity files land automatically. Add --opencode or --kimicode if you need those platforms too.",
       ],
     },
@@ -767,7 +767,7 @@ monomind init --kimicode`,
     },
     content: {
       introduction: [
-        "Monomind 2.9.0 isn't a feature release in the usual sense. It's a hardening release: we pointed a 7-agent review swarm at the entire CLI package — 233 files, approximately 92,000 lines — and had it look for bugs, security gaps, and reliability holes rather than new capabilities.",
+        "Monomind 2.9.0 isn't a feature release in the usual sense. It's a hardening release: we pointed a 7-agent review swarm at the entire CLI package - 233 files, approximately 92,000 lines - and had it look for bugs, security gaps, and reliability holes rather than new capabilities.",
         "That process turned up 39 issues total. We fixed 28 of them in this release, each with a regression test so they can't silently come back. The remaining 11 were lower-priority or needed more design work, so they're filed as GitHub issues #62 through #73 for future releases.",
         "The test suite tells the same story in numbers: before this work it was 820 passing and 13 failing. It's now 884 passing and 0 failing.",
       ],
@@ -778,17 +778,17 @@ monomind init --kimicode`,
           subheading: "In-process coordination, not a distributed system",
           paragraphs: [
             "It's worth being precise about what \"7-agent review swarm\" means here, because the term invites the wrong mental model. Monomind's swarm and hive-mind coordination system is explicitly experimental and in-process: it runs multiple Claude Code agents inside one process on one machine, coordinated by CLI-tracked state. There's no networking between separate machines, and no real distributed system underneath it.",
-            "The \"consensus\" strategies — including the one labeled raft — are in-process vote-count thresholds among those agents, not real Raft leader election or log replication. That's a meaningful distinction: it means the review swarm is a structured way of running several focused audit passes over the same codebase and reconciling their findings by majority vote, not a fault-tolerant distributed review network.",
-            "For this release, that in-process coordination pattern was pointed at the codebase itself — each agent auditing different files and classes of issue, with findings reconciled and then fixed with accompanying regression tests.",
+            "The \"consensus\" strategies - including the one labeled raft - are in-process vote-count thresholds among those agents, not real Raft leader election or log replication. That's a meaningful distinction: it means the review swarm is a structured way of running several focused audit passes over the same codebase and reconciling their findings by majority vote, not a fault-tolerant distributed review network.",
+            "For this release, that in-process coordination pattern was pointed at the codebase itself - each agent auditing different files and classes of issue, with findings reconciled and then fixed with accompanying regression tests.",
           ],
           image: {
             src: "/images/blog/gemini_1786439887_0.png",
             alt: "Multiple parallel review threads converging on a single shared codebase diagram",
-            caption: "Several in-process review passes over the same codebase, reconciled by majority vote — not a distributed consensus protocol.",
+            caption: "Several in-process review passes over the same codebase, reconciled by majority vote - not a distributed consensus protocol.",
           },
           keyTakeaways: [
             "7 agents audited 233 files (~92,000 lines) in one coordinated in-process pass",
-            "Swarm/hive-mind coordination is in-process only — no cross-machine networking",
+            "Swarm/hive-mind coordination is in-process only - no cross-machine networking",
             "\"Consensus\" here means vote-count thresholds, not leader election or log replication",
           ],
         },
@@ -815,7 +815,7 @@ monomind init --kimicode`,
 }`,
           },
           quote: {
-            text: "The goal wasn't new features. It was making sure the code we already shipped does what we said it does — and fixing it, with a test, when it didn't.",
+            text: "The goal wasn't new features. It was making sure the code we already shipped does what we said it does - and fixing it, with a test, when it didn't.",
             author: "Monomind Core Team",
           },
           keyTakeaways: [
@@ -830,7 +830,7 @@ monomind init --kimicode`,
           subheading: "28 fixed, 11 filed, 0 failing tests",
           paragraphs: [
             "The net result: 28 of the 39 issues found were fixed in 2.9.0, each backed by a regression test. The other 11 were judged lower-priority or needing further design and are tracked as GitHub issues #62 through #73, so they're visible and won't get lost.",
-            "The test suite moved from 820 passing / 13 failing to 884 passing / 0 failing — 64 new tests added along the way, mostly covering the 28 fixes directly.",
+            "The test suite moved from 820 passing / 13 failing to 884 passing / 0 failing - 64 new tests added along the way, mostly covering the 28 fixes directly.",
             "Monomind remains Apache-2.0 licensed. One more thing worth knowing if you haven't looked at it before: crash reporting is on by default, not opt-in. If a tool hard-crashes, monomind can file a GitHub issue on that tool's repository with the relevant diagnostic output, redacting secrets and PII first. If you'd rather not have that, it's a single command: monomind crash-reporting disable.",
           ],
           image: {
@@ -856,8 +856,8 @@ monomind init --kimicode`,
   {
     slug: "deterministic-multi-agent-orchestration",
     title: "Inside Org Runtime v2: How Monomind Coordinates Real Agent Sessions",
-    subtitle: "An event-bus backbone, per-role policy gates, and a human-in-the-loop that actually pauses execution — the real architecture behind Monomind's multi-agent orchestration.",
-    excerpt: "Monomind's org runtime doesn't simulate a team of agents with a scripted DAG — it runs real, provider-backed AI sessions coordinated through an append-only event log and gated by per-role policy engines. Here's how OrgDaemon, OrgBus, and PolicyEngine actually work.",
+    subtitle: "An event-bus backbone, per-role policy gates, and a human-in-the-loop that actually pauses execution - the real architecture behind Monomind's multi-agent orchestration.",
+    excerpt: "Monomind's org runtime doesn't simulate a team of agents with a scripted DAG - it runs real, provider-backed AI sessions coordinated through an append-only event log and gated by per-role policy engines. Here's how OrgDaemon, OrgBus, and PolicyEngine actually work.",
     date: "August 8, 2026",
     readTime: "10 min read",
     featured: false,
@@ -874,8 +874,8 @@ monomind init --kimicode`,
     },
     content: {
       introduction: [
-        "Most descriptions of 'multi-agent orchestration' either mean a single prompt pretending to be several personas, or a rigid pipeline scheduler that treats agents as steps in a graph. Monomind's org runtime v2 is neither. Every role you define in an org config is a real, provider-backed agent session — it calls an actual model through an actual SDK, has its own tools, and can be paused, gated, or handed off to a human mid-task.",
-        "The core of this system is OrgDaemon, which hosts multiple named orgs inside a single process. Underneath each org sits an append-only event log, a mailbox per role, and a policy engine per role. None of this is a DAG scheduler enforcing a pre-planned execution graph — it's an event-driven runtime where roles act, message each other, and get gated by policy in real time.",
+        "Most descriptions of 'multi-agent orchestration' either mean a single prompt pretending to be several personas, or a rigid pipeline scheduler that treats agents as steps in a graph. Monomind's org runtime v2 is neither. Every role you define in an org config is a real, provider-backed agent session - it calls an actual model through an actual SDK, has its own tools, and can be paused, gated, or handed off to a human mid-task.",
+        "The core of this system is OrgDaemon, which hosts multiple named orgs inside a single process. Underneath each org sits an append-only event log, a mailbox per role, and a policy engine per role. None of this is a DAG scheduler enforcing a pre-planned execution graph - it's an event-driven runtime where roles act, message each other, and get gated by policy in real time.",
       ],
       sections: [
         {
@@ -883,9 +883,9 @@ monomind init --kimicode`,
           heading: "1. OrgBus and PolicyEngine: The Real Isolation Boundary",
           subheading: "An append-only event log for coordination, and a per-role policy engine for governance",
           paragraphs: [
-            "Every org runs on top of OrgBus, an append-only JSONL event log with in-process fanout. It's the backbone for everything that happens inside an org: messages between roles, dashboard sync over SSE, and the durable history a run leaves behind. Conceptually it behaves like an event-sourced log rather than a database — every event that happens during a run is appended, never mutated, and anything subscribed to the bus (the dashboard, other roles, the daemon itself) gets it as it happens.",
-            "Messages between roles are delivered through a per-role Mailbox, an async queue that each role's agent session reads from between turns. This is how a coordinator role hands off work to a worker role, or how a worker reports back — org_send on one end, a mailbox delivery on the other.",
-            "Governance doesn't come from sandboxed containers or schema-validated node transitions — it comes from a PolicyEngine instantiated per role. Each role's PolicyEngine enforces tool allow/deny lists, file scope restrictions, web access control, and a per-role token budget cap. Every decision the PolicyEngine makes — what it allowed, what it denied, and why — is written to an audit trail, so after a run you can see exactly which tool calls a role attempted and which ones the policy blocked.",
+            "Every org runs on top of OrgBus, an append-only JSONL event log with in-process fanout. It's the backbone for everything that happens inside an org: messages between roles, dashboard sync over SSE, and the durable history a run leaves behind. Conceptually it behaves like an event-sourced log rather than a database - every event that happens during a run is appended, never mutated, and anything subscribed to the bus (the dashboard, other roles, the daemon itself) gets it as it happens.",
+            "Messages between roles are delivered through a per-role Mailbox, an async queue that each role's agent session reads from between turns. This is how a coordinator role hands off work to a worker role, or how a worker reports back - org_send on one end, a mailbox delivery on the other.",
+            "Governance doesn't come from sandboxed containers or schema-validated node transitions - it comes from a PolicyEngine instantiated per role. Each role's PolicyEngine enforces tool allow/deny lists, file scope restrictions, web access control, and a per-role token budget cap. Every decision the PolicyEngine makes - what it allowed, what it denied, and why - is written to an audit trail, so after a run you can see exactly which tool calls a role attempted and which ones the policy blocked.",
           ],
           image: {
             src: "/images/blog/art1-multi-agent-dag.jpg",
@@ -923,9 +923,9 @@ monomind init --kimicode`,
 }`,
           },
           keyTakeaways: [
-            "OrgBus is an append-only JSONL event log with in-process fanout, not a database — it's the coordination and history backbone for the whole org.",
+            "OrgBus is an append-only JSONL event log with in-process fanout, not a database - it's the coordination and history backbone for the whole org.",
             "Each role gets its own PolicyEngine enforcing tool allow/deny lists, file scope, web access, and a token budget cap, with a full audit trail of every allow/deny decision.",
-            "Every role is a real agent session, not a scripted node — six pluggable AgentRunner backends (Claude Agent SDK, opencode, Kimi Code, Vercel AI SDK, Codex CLI, Google Antigravity) implement the same interface, so the underlying model is swappable without touching org config structure.",
+            "Every role is a real agent session, not a scripted node - six pluggable AgentRunner backends (Claude Agent SDK, opencode, Kimi Code, Vercel AI SDK, Codex CLI, Google Antigravity) implement the same interface, so the underlying model is swappable without touching org config structure.",
           ],
         },
         {
@@ -933,23 +933,23 @@ monomind init --kimicode`,
           heading: "2. Human-in-the-Loop: Approvals, Gates, and Questions",
           subheading: "Concrete CLI mechanisms for pausing a role until a human decides",
           paragraphs: [
-            "Human oversight in the org runtime isn't a conceptual 'audit queue' — it's a set of specific, CLI-visible mechanisms that actually block execution. When a role needs a decision it can't make on its own, it has a real tool for that: ask_human. Calling it appends a question to the org's pending-questions state and fires a question event on the bus, which the dashboard picks up immediately over SSE.",
-            "From there, a human runs monomind org questions <name> to see what's pending and monomind org answer <name> <question-id> \"<text>\" to deliver an answer back into the role's session — the role genuinely waits for that reply before continuing.",
-            "For irreversible or high-stakes actions, roles use decision gates instead: org_gate creates a hard-blocking checkpoint, and a human resolves it with monomind org gates to list pending gates and monomind org gate-approve or monomind org gate-reject to decide. There's a separate, more general approval flow too — monomind org approve and monomind org deny act on pending approvals raised during a run. All three mechanisms (questions, gates, approvals) pause real execution; none of them are simulated.",
+            "Human oversight in the org runtime isn't a conceptual 'audit queue' - it's a set of specific, CLI-visible mechanisms that actually block execution. When a role needs a decision it can't make on its own, it has a real tool for that: ask_human. Calling it appends a question to the org's pending-questions state and fires a question event on the bus, which the dashboard picks up immediately over SSE.",
+            "From there, a human runs monomind org questions <name> to see what's pending and monomind org answer <name> <question-id> \"<text>\" to deliver an answer back into the role's session - the role genuinely waits for that reply before continuing.",
+            "For irreversible or high-stakes actions, roles use decision gates instead: org_gate creates a hard-blocking checkpoint, and a human resolves it with monomind org gates to list pending gates and monomind org gate-approve or monomind org gate-reject to decide. There's a separate, more general approval flow too - monomind org approve and monomind org deny act on pending approvals raised during a run. All three mechanisms (questions, gates, approvals) pause real execution; none of them are simulated.",
           ],
           image: {
             src: "/images/blog/art1-audit-queue.jpg",
             alt: "Human-in-the-loop approval flow in the org dashboard",
-            caption: "A role's ask_human call surfaces as a pending question in monomind org questions — the session genuinely blocks until monomind org answer delivers a reply.",
+            caption: "A role's ask_human call surfaces as a pending question in monomind org questions - the session genuinely blocks until monomind org answer delivers a reply.",
           },
           quote: {
-            text: "A gate that doesn't block execution isn't a gate — it's a suggestion. org_gate stops the role's session until a human runs org gate-approve or org gate-reject.",
+            text: "A gate that doesn't block execution isn't a gate - it's a suggestion. org_gate stops the role's session until a human runs org gate-approve or org gate-reject.",
             author: "Monomind Core Team",
           },
           keyTakeaways: [
             "ask_human plus monomind org questions / org answer is a real pause-and-resume mechanism for a role that needs a human decision.",
             "org_gate plus monomind org gates / org gate-approve / org gate-reject hard-blocks execution on irreversible actions until a human resolves the gate.",
-            "monomind org approve / org deny handle the general approval queue — three distinct, composable mechanisms, not one invented audit threshold.",
+            "monomind org approve / org deny handle the general approval queue - three distinct, composable mechanisms, not one invented audit threshold.",
           ],
         },
         {
@@ -957,9 +957,9 @@ monomind init --kimicode`,
           heading: "3. Cross-Run Memory and Network Defaults",
           subheading: "Learning from past runs, and a runtime that doesn't listen on every interface by default",
           paragraphs: [
-            "An org's improvement over time doesn't come from a benchmark score — it comes from org_complete and org_recall. When a boss role calls org_complete, the outcome of that run is recorded; the next time the same org runs, its roles are briefed on what happened last time. org_recall lets any role query that cross-run history directly, so an org can avoid repeating a mistake or reuse a decision it already made in a previous run. That's the project's real self-improvement loop.",
-            "On the operational side, since 2.9.0 both the dashboard and the org server bind to 127.0.0.1 only, not all network interfaces — a role's session, the event bus, and the approval UI aren't exposed to the network by default. It's a small detail, but it's the kind of default that matters if you're running orgs on a shared machine.",
-            "It's worth separating this from Monomind's swarm/hive-mind layer, which is a related but distinct coordination mode used for things like code review swarms. The project labels it experimental: it runs in-process only with no cross-machine networking, and 'consensus' there means a vote-count threshold, not real distributed consensus — no leader election, no log replication. Org runtime's PolicyEngine and OrgBus are the production mechanism; swarm consensus is a separate, explicitly experimental one.",
+            "An org's improvement over time doesn't come from a benchmark score - it comes from org_complete and org_recall. When a boss role calls org_complete, the outcome of that run is recorded; the next time the same org runs, its roles are briefed on what happened last time. org_recall lets any role query that cross-run history directly, so an org can avoid repeating a mistake or reuse a decision it already made in a previous run. That's the project's real self-improvement loop.",
+            "On the operational side, since 2.9.0 both the dashboard and the org server bind to 127.0.0.1 only, not all network interfaces - a role's session, the event bus, and the approval UI aren't exposed to the network by default. It's a small detail, but it's the kind of default that matters if you're running orgs on a shared machine.",
+            "It's worth separating this from Monomind's swarm/hive-mind layer, which is a related but distinct coordination mode used for things like code review swarms. The project labels it experimental: it runs in-process only with no cross-machine networking, and 'consensus' there means a vote-count threshold, not real distributed consensus - no leader election, no log replication. Org runtime's PolicyEngine and OrgBus are the production mechanism; swarm consensus is a separate, explicitly experimental one.",
           ],
           image: {
             src: "/images/blog/art1-live-telemetry.jpg",
@@ -967,14 +967,14 @@ monomind init --kimicode`,
             caption: "org_complete records a run's outcome for org_recall to query later; since 2.9.0 the dashboard and org server bind to 127.0.0.1 only.",
           },
           keyTakeaways: [
-            "org_complete records what happened in a run; org_recall lets future runs of the same org query that history — the real cross-run learning mechanism.",
+            "org_complete records what happened in a run; org_recall lets future runs of the same org query that history - the real cross-run learning mechanism.",
             "Since 2.9.0, the dashboard and org server bind to 127.0.0.1 only, not all interfaces.",
-            "Swarm/hive-mind consensus is a separate, explicitly experimental in-process vote-count mechanism — don't confuse it with the org runtime's production PolicyEngine.",
+            "Swarm/hive-mind consensus is a separate, explicitly experimental in-process vote-count mechanism - don't confuse it with the org runtime's production PolicyEngine.",
           ],
         },
       ],
       conclusion: [
-        "Org runtime v2 isn't a DAG scheduler with a confidence score bolted on — it's an event-bus-backed runtime where every role is a live agent session, governed by a per-role PolicyEngine, and interruptible by a human through three concrete mechanisms: questions, gates, and approvals. Six pluggable agent runners mean the model behind any role is swappable without changing how the org is structured.",
+        "Org runtime v2 isn't a DAG scheduler with a confidence score bolted on - it's an event-bus-backed runtime where every role is a live agent session, governed by a per-role PolicyEngine, and interruptible by a human through three concrete mechanisms: questions, gates, and approvals. Six pluggable agent runners mean the model behind any role is swappable without changing how the org is structured.",
         "Monomind is Apache-2.0 licensed and open source. Explore the org runtime source under packages/@monomind/cli/src/orgrt/, or read the full architecture doc in the repository.",
       ],
     },
@@ -1001,7 +1001,7 @@ monomind init --kimicode`,
     content: {
       introduction: [
         "Over the past few years, developers experimenting with AI coding agents have run into the same wall: prototypes look great, but putting proprietary code, internal docs, or customer data through a third-party API stops being an easy call the moment legal, security, or a cautious engineer asks where that data actually goes.",
-        "At the same time, every long-running agent loop — the kind that reads files, calls tools, and iterates — burns tokens against a metered API, and it's hard to predict what a given session will cost until the bill arrives. At Monoes, we built Monomind to take a different path: a local-first, open-source CLI and MCP server that keeps orchestration, memory, and tooling on your machine, and connects to whichever AI provider you choose to bring.",
+        "At the same time, every long-running agent loop - the kind that reads files, calls tools, and iterates - burns tokens against a metered API, and it's hard to predict what a given session will cost until the bill arrives. At Monoes, we built Monomind to take a different path: a local-first, open-source CLI and MCP server that keeps orchestration, memory, and tooling on your machine, and connects to whichever AI provider you choose to bring.",
       ],
       sections: [
         {
@@ -1009,8 +1009,8 @@ monomind init --kimicode`,
           heading: "1. Data Sovereignty: Local by Default",
           subheading: "Orchestration and memory run on your machine, not ours",
           paragraphs: [
-            "Monomind is a CLI plus an MCP server. Instead of routing your project through a hosted platform, it runs as a local process that plugs into whichever coding agent you're already using — Claude Code by default, and also opencode, Google Antigravity, and Kimi Code, all through the standard Model Context Protocol. There's no Monoes-hosted platform in between your code and your editor.",
-            "The memory layer that gives agents context — your project's history, embeddings, and search index — is stored locally too: SQLite (via better-sqlite3, with a sql.js WebAssembly fallback if the native binary can't load) plus local MiniLM embeddings for semantic search. None of that indexing or retrieval work requires a network call.",
+            "Monomind is a CLI plus an MCP server. Instead of routing your project through a hosted platform, it runs as a local process that plugs into whichever coding agent you're already using - Claude Code by default, and also opencode, Google Antigravity, and Kimi Code, all through the standard Model Context Protocol. There's no Monoes-hosted platform in between your code and your editor.",
+            "The memory layer that gives agents context - your project's history, embeddings, and search index - is stored locally too: SQLite (via better-sqlite3, with a sql.js WebAssembly fallback if the native binary can't load) plus local MiniLM embeddings for semantic search. None of that indexing or retrieval work requires a network call.",
             "Because Monomind isn't tied to a single hosted backend, you're also not locked into one AI vendor. It's bring-your-own-key: you use whatever subscription or API access you already have for the model calls it does make, and you can swap the underlying coding agent without re-architecting your setup.",
           ],
           image: {
@@ -1021,14 +1021,14 @@ monomind init --kimicode`,
           codeBlock: {
             filename: "memory-search-example.sh",
             language: "bash",
-            code: `# Local semantic search over your project's memory store — no network call
+            code: `# Local semantic search over your project's memory store - no network call
 npx monomind@latest memory search --query "authentication patterns" --namespace patterns
 
 # Inspect what's actually being stored
 npx monomind@latest memory list --namespace patterns --limit 10`,
           },
           keyTakeaways: [
-            "Monomind's orchestration and memory search run as a local process — no hosted platform sits between your code and your agent.",
+            "Monomind's orchestration and memory search run as a local process - no hosted platform sits between your code and your agent.",
             "The memory backend is local SQLite plus local embeddings; a pure-JS HNSW index exists purely as a dormant fallback if native SQLite fails to load, not a primary search path.",
             "MCP support for Claude Code, opencode, Google Antigravity, and Kimi Code means no lock-in to a single AI provider.",
           ],
@@ -1036,16 +1036,16 @@ npx monomind@latest memory list --namespace patterns --limit 10`,
         {
           id: "cost-predictability-and-economics",
           heading: "2. The Economics of Running Locally",
-          subheading: "You already pay for your model access — Monomind doesn't add a second toll",
+          subheading: "You already pay for your model access - Monomind doesn't add a second toll",
           paragraphs: [
-            "Metered AI platforms charge for more than model inference — they often meter the orchestration layer around it too: every intermediate tool call, every retry, every piece of context an agent re-reads. That's a second bill stacked on top of whatever you're already paying your model provider.",
-            "Because Monomind's orchestration, indexing, and memory retrieval run locally instead of through a hosted service, they don't add their own per-call metering on top of your model provider's bill. Your marginal cost is whatever your BYOK model access already costs — Monomind itself doesn't tax the loop.",
-            "That's a meaningfully lower and more predictable marginal cost for iterative, tool-heavy agent work, even without a specific dollar figure attached to it — the honest version of the claim doesn't need a fabricated benchmark to hold up.",
+            "Metered AI platforms charge for more than model inference - they often meter the orchestration layer around it too: every intermediate tool call, every retry, every piece of context an agent re-reads. That's a second bill stacked on top of whatever you're already paying your model provider.",
+            "Because Monomind's orchestration, indexing, and memory retrieval run locally instead of through a hosted service, they don't add their own per-call metering on top of your model provider's bill. Your marginal cost is whatever your BYOK model access already costs - Monomind itself doesn't tax the loop.",
+            "That's a meaningfully lower and more predictable marginal cost for iterative, tool-heavy agent work, even without a specific dollar figure attached to it - the honest version of the claim doesn't need a fabricated benchmark to hold up.",
           ],
           image: {
             src: "/images/blog/automated-paperwork-value.jpg",
             alt: "Local document ingestion running on a workstation",
-            caption: "Figure 2: Local indexing and retrieval — no per-call metering layered on top of your existing model subscription.",
+            caption: "Figure 2: Local indexing and retrieval - no per-call metering layered on top of your existing model subscription.",
           },
           quote: {
             text: "If the orchestration layer around your agent is itself a metered SaaS product, you're paying twice for the same loop. We built Monomind so that layer runs on your own hardware instead.",
@@ -1053,33 +1053,33 @@ npx monomind@latest memory list --namespace patterns --limit 10`,
           },
           keyTakeaways: [
             "Monomind doesn't meter orchestration, indexing, or memory retrieval on top of your model provider's bill.",
-            "It's BYOK — you bring the API key or subscription for the model calls it makes.",
+            "It's BYOK - you bring the API key or subscription for the model calls it makes.",
             "No fabricated cost or benchmark figures here: the honest claim is 'lower marginal cost,' not a specific dollar amount.",
           ],
         },
         {
           id: "open-source-extensibility",
           heading: "3. An Extensible, Apache-2.0 Open-Source Ecosystem",
-          subheading: "Inspect it, extend it, self-host it — without a restrictive license",
+          subheading: "Inspect it, extend it, self-host it - without a restrictive license",
           paragraphs: [
-            "Monomind is released under the Apache-2.0 license, which gives you the freedom to read, modify, self-host, and build on the code, along with an explicit patent grant — a meaningfully different, and for many teams more comfortable, guarantee than a closed platform's terms of service.",
+            "Monomind is released under the Apache-2.0 license, which gives you the freedom to read, modify, self-host, and build on the code, along with an explicit patent grant - a meaningfully different, and for many teams more comfortable, guarantee than a closed platform's terms of service.",
             "The CLI and MCP tool surface are built to be extended: new tool integrations, custom agent roles, and workflow automation can be layered on top of the existing TypeScript codebase without waiting on a vendor roadmap.",
-            "One honest caveat worth stating plainly: Monomind ships with crash reporting enabled by default. If a tool hits a hard crash, it can file a GitHub issue on that tool's own repository via the GitHub API, with secrets and PII redacted before anything is sent — it never phones a Monoes-controlled server. You can turn it off entirely with monomind crash-reporting disable. We'd rather say that clearly than claim 'zero data ever leaves your machine' and have you find out otherwise.",
+            "One honest caveat worth stating plainly: Monomind ships with crash reporting enabled by default. If a tool hits a hard crash, it can file a GitHub issue on that tool's own repository via the GitHub API, with secrets and PII redacted before anything is sent - it never phones a Monoes-controlled server. You can turn it off entirely with monomind crash-reporting disable. We'd rather say that clearly than claim 'zero data ever leaves your machine' and have you find out otherwise.",
           ],
           image: {
             src: "/images/blog/flow-state-telemetry.jpg",
             alt: "Open source contribution activity artwork",
-            caption: "Figure 3: Built in the open under Apache-2.0 — extend it, fork it, or self-host it on your own terms.",
+            caption: "Figure 3: Built in the open under Apache-2.0 - extend it, fork it, or self-host it on your own terms.",
           },
           keyTakeaways: [
-            "Monomind is Apache-2.0, not MIT — open, extensible, and with an explicit patent grant.",
+            "Monomind is Apache-2.0, not MIT - open, extensible, and with an explicit patent grant.",
             "Crash reporting is on by default and opt-out (monomind crash-reporting disable); when it fires, it files a redacted GitHub issue on the relevant tool's own repo, never a Monoes-controlled server.",
-            "No hosted telemetry backend exists to opt out of in the first place — the honest privacy story is 'no vendor telemetry server,' not 'zero network calls, ever.'",
+            "No hosted telemetry backend exists to opt out of in the first place - the honest privacy story is 'no vendor telemetry server,' not 'zero network calls, ever.'",
           ],
         },
       ],
       conclusion: [
-        "The thesis behind Monomind hasn't changed: local-first, sovereign AI tooling that doesn't lock you into one vendor or meter your orchestration loop on top of your model bill. What's changed in this piece is a commitment to only make claims we can actually stand behind — accurate licensing, an honest description of the memory architecture, and a clear-eyed account of the one outbound call the tool does make by default.",
+        "The thesis behind Monomind hasn't changed: local-first, sovereign AI tooling that doesn't lock you into one vendor or meter your orchestration loop on top of your model bill. What's changed in this piece is a commitment to only make claims we can actually stand behind - accurate licensing, an honest description of the memory architecture, and a clear-eyed account of the one outbound call the tool does make by default.",
         "Explore the open-source Monomind engine on GitHub, or read the docs to see how it plugs into Claude Code, opencode, Google Antigravity, or Kimi Code.",
       ],
     },
@@ -1087,8 +1087,8 @@ npx monomind@latest memory list --namespace patterns --limit 10`,
   {
     slug: "zero-rip-and-replace-erp-automation",
     title: "Zero Rip-and-Replace: A Non-Invasive Approach to Automating Legacy-System Processes",
-    subtitle: "What a Monoes Workforce engagement looks like when the process to automate — like accounts payable or vendor reconciliation — lives inside a legacy ERP or CRM.",
-    excerpt: "Replacing a legacy ERP takes years and carries real operational risk. Here's how a Workforce engagement is designed to automate the process instead — operating over existing UIs and APIs, with human approval built in from day one.",
+    subtitle: "What a Monoes Workforce engagement looks like when the process to automate - like accounts payable or vendor reconciliation - lives inside a legacy ERP or CRM.",
+    excerpt: "Replacing a legacy ERP takes years and carries real operational risk. Here's how a Workforce engagement is designed to automate the process instead - operating over existing UIs and APIs, with human approval built in from day one.",
     date: "July 24, 2026",
     readTime: "8 min read",
     featured: false,
@@ -1101,12 +1101,12 @@ npx monomind@latest memory list --namespace patterns --limit 10`,
     coverImage: {
       src: "/images/blog/gemini_1786440191_0.png",
       alt: "Workspace representing a legacy back-office process",
-      caption: "Legacy back-office processes — like accounts payable — are often the highest-ROI candidates for a Workforce engagement, precisely because they're the most manual.",
+      caption: "Legacy back-office processes - like accounts payable - are often the highest-ROI candidates for a Workforce engagement, precisely because they're the most manual.",
     },
     content: {
       introduction: [
-        "For most enterprise organizations, the software that runs the business — an ERP, a CRM, an accounting suite — isn't going anywhere. It's deeply customized, it's load-bearing, and replacing it is a multi-year, multi-million-dollar undertaking that few teams are willing to greenlight just to fix one slow process.",
-        "But the processes that run on top of that software are often still manual: someone re-keying invoice data, cross-checking a purchase order in one tab against a PDF in another, chasing an approval over email. That gap — between a system nobody wants to touch and a process everybody wishes were faster — is what a Monoes Workforce engagement is built to close. This post walks through how we'd approach that kind of engagement, and the design philosophy behind it. We don't have a completed case study to point to yet — we're intentionally building our first ones in the open, with founding clients, rather than claiming results we haven't earned.",
+        "For most enterprise organizations, the software that runs the business - an ERP, a CRM, an accounting suite - isn't going anywhere. It's deeply customized, it's load-bearing, and replacing it is a multi-year, multi-million-dollar undertaking that few teams are willing to greenlight just to fix one slow process.",
+        "But the processes that run on top of that software are often still manual: someone re-keying invoice data, cross-checking a purchase order in one tab against a PDF in another, chasing an approval over email. That gap - between a system nobody wants to touch and a process everybody wishes were faster - is what a Monoes Workforce engagement is built to close. This post walks through how we'd approach that kind of engagement, and the design philosophy behind it. We don't have a completed case study to point to yet - we're intentionally building our first ones in the open, with founding clients, rather than claiming results we haven't earned.",
       ],
       sections: [
         {
@@ -1114,9 +1114,9 @@ npx monomind@latest memory list --namespace patterns --limit 10`,
           heading: "1. Non-Invasive by Design: Working Over Interfaces, Not Inside Databases",
           subheading: "Why we build connectors that operate the way a person does, rather than rewriting backend logic",
           paragraphs: [
-            "Modifying a legacy system's backend — custom scripts, direct database writes, undocumented internal APIs — is exactly the kind of work that voids support contracts and introduces compliance risk. It's also usually unnecessary for the problem at hand.",
-            "The architecture we configure per engagement is deliberately layered: a Workflow (a deterministic controller for the overall process), Agents (reasoning bounded to a specific step, like reading an invoice), Policies (versioned, auditable rules set by the client — for example, what dollar threshold requires human sign-off), and Connectors (the swappable bridge into a client's actual systems — their ERP, their CRM, their inbox). Connectors are built to operate the same surfaces a person already uses: existing UI sessions, existing REST endpoints, existing exports. No backend rewrite, no new database schema.",
-            "That non-invasive posture is also what makes a Discovery engagement possible before anything is built: we can map an existing process end-to-end — where the data lives, where the approvals happen, where the manual work actually is — without touching production systems at all.",
+            "Modifying a legacy system's backend - custom scripts, direct database writes, undocumented internal APIs - is exactly the kind of work that voids support contracts and introduces compliance risk. It's also usually unnecessary for the problem at hand.",
+            "The architecture we configure per engagement is deliberately layered: a Workflow (a deterministic controller for the overall process), Agents (reasoning bounded to a specific step, like reading an invoice), Policies (versioned, auditable rules set by the client - for example, what dollar threshold requires human sign-off), and Connectors (the swappable bridge into a client's actual systems - their ERP, their CRM, their inbox). Connectors are built to operate the same surfaces a person already uses: existing UI sessions, existing REST endpoints, existing exports. No backend rewrite, no new database schema.",
+            "That non-invasive posture is also what makes a Discovery engagement possible before anything is built: we can map an existing process end-to-end - where the data lives, where the approvals happen, where the manual work actually is - without touching production systems at all.",
           ],
           image: {
             src: "/images/blog/gemini_1786440080_0.png",
@@ -1126,7 +1126,7 @@ npx monomind@latest memory list --namespace patterns --limit 10`,
           codeBlock: {
             filename: "process-definition-illustrative.json",
             language: "json",
-            code: `// Illustrative shape only — the kind of process definition
+            code: `// Illustrative shape only - the kind of process definition
 // a Discovery engagement report might capture, not a shipped
 // product feature or a real integration with any named vendor.
 {
@@ -1155,16 +1155,16 @@ npx monomind@latest memory list --namespace patterns --limit 10`,
         {
           id: "trust-earned-in-stages",
           heading: "2. Human Approval First, Autonomy Earned Over Time",
-          subheading: "Why engagements typically start at Level 2 — AI executes, a human approves — not full autonomy",
+          subheading: "Why engagements typically start at Level 2 - AI executes, a human approves - not full autonomy",
           paragraphs: [
-            "We think about engagement maturity across five levels: Manual, AI Copilot, AI Executes with Human Approval, Autonomous Execution, and Autonomous Exception Handling. A new engagement typically starts at Level 2 — the system does the work, but a person reviews and approves before anything final happens. Autonomy is earned upward from there, as the policy proves itself against real cases.",
-            "Policies are set per client, not assumed. 'An invoice over a given dollar amount needs a human sign-off' is a real, common policy — but the threshold, the escalation path, and who the approver is are all decisions the client makes, versioned and auditable, not a default baked into the product.",
-            "Practically, this means the first weeks of a Pilot look less like 'the process is automated' and more like 'the process is drafted by the system and checked by a person' — with the review burden shrinking as the policy earns trust, not disappearing on day one.",
+            "We think about engagement maturity across five levels: Manual, AI Copilot, AI Executes with Human Approval, Autonomous Execution, and Autonomous Exception Handling. A new engagement typically starts at Level 2 - the system does the work, but a person reviews and approves before anything final happens. Autonomy is earned upward from there, as the policy proves itself against real cases.",
+            "Policies are set per client, not assumed. 'An invoice over a given dollar amount needs a human sign-off' is a real, common policy - but the threshold, the escalation path, and who the approver is are all decisions the client makes, versioned and auditable, not a default baked into the product.",
+            "Practically, this means the first weeks of a Pilot look less like 'the process is automated' and more like 'the process is drafted by the system and checked by a person' - with the review burden shrinking as the policy earns trust, not disappearing on day one.",
           ],
           image: {
             src: "/images/blog/human-ai-partnership.jpg",
             alt: "Human reviewing work alongside an automated process",
-            caption: "Engagements start with a human in the approval loop — autonomy is earned as the policy proves itself, not assumed from the outset.",
+            caption: "Engagements start with a human in the approval loop - autonomy is earned as the policy proves itself, not assumed from the outset.",
           },
           keyTakeaways: [
             "Engagements start at Level 2: AI executes, a human approves.",
@@ -1175,27 +1175,27 @@ npx monomind@latest memory list --namespace patterns --limit 10`,
         {
           id: "how-an-engagement-is-scoped",
           heading: "3. How an Engagement Is Actually Scoped and Priced",
-          subheading: "Discovery, Pilot, and Expand — a fixed, itemized path rather than open-ended billing",
+          subheading: "Discovery, Pilot, and Expand - a fixed, itemized path rather than open-ended billing",
           paragraphs: [
             "An engagement starts with Discovery: a 1-Day Discovery ($3,000) maps a single process end-to-end and identifies the highest-ROI automation opportunity within it, or a 5-Day Discovery ($12,000) maps multiple processes across departments and produces a ranked opportunity backlog.",
-            "From there, a Pilot is scoped from the Discovery findings — typically starting around $15,000 and scaling with the number of processes and systems involved — and it's always a fixed, itemized quote drawn directly from the Discovery report, never open-ended time-and-materials billing. A successful Pilot moves into Expand & Build Trust (roughly one to three months, extending the automation and raising the human-in-the-loop level as warranted), and eventually Scale, as an ongoing engagement.",
-            "We're currently running this as a founding client program: three slots, 20% off implementation, and direct access to the person building it — no account-manager layer — in exchange for being a named reference once the first worker is live. We're upfront that we don't have a completed case study yet, because we haven't built one; the founding client program is how the first ones get built, honestly.",
+            "From there, a Pilot is scoped from the Discovery findings - typically starting around $15,000 and scaling with the number of processes and systems involved - and it's always a fixed, itemized quote drawn directly from the Discovery report, never open-ended time-and-materials billing. A successful Pilot moves into Expand & Build Trust (roughly one to three months, extending the automation and raising the human-in-the-loop level as warranted), and eventually Scale, as an ongoing engagement.",
+            "We're currently running this as a founding client program: three slots, 20% off implementation, and direct access to the person building it - no account-manager layer - in exchange for being a named reference once the first worker is live. We're upfront that we don't have a completed case study yet, because we haven't built one; the founding client program is how the first ones get built, honestly.",
           ],
           image: {
             src: "/images/blog/gemini_1786440132_0.png",
             alt: "Workspace where a process is reviewed and refined",
-            caption: "A Pilot is scoped from the Discovery report into a fixed, itemized quote — not open-ended billing.",
+            caption: "A Pilot is scoped from the Discovery report into a fixed, itemized quote - not open-ended billing.",
           },
           keyTakeaways: [
             "Discovery: 1-Day ($3,000) maps one process; 5-Day ($12,000) maps a ranked backlog across departments.",
-            "Pilots start around $15,000 as a fixed, itemized quote from the Discovery report — never open-ended.",
+            "Pilots start around $15,000 as a fixed, itemized quote from the Discovery report - never open-ended.",
             "The founding client program trades a discount and direct access for being a named reference once a worker is live.",
           ],
         },
       ],
       conclusion: [
         "A legacy system doesn't have to be replaced for the process running on top of it to get faster. The point of a non-invasive, human-approved-first engagement is that it can start small, prove itself against real cases, and expand only as far as the client wants to take it.",
-        "If a manual process in your ERP, CRM, or back office sounds like a fit, a 1-Day or 5-Day Discovery is the place to start — it maps the process and the opportunity before anything is built.",
+        "If a manual process in your ERP, CRM, or back office sounds like a fit, a 1-Day or 5-Day Discovery is the place to start - it maps the process and the opportunity before anything is built.",
       ],
     },
   },

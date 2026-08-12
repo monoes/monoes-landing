@@ -78,7 +78,7 @@ export default function LegalPage() {
             This website does not collect personal data beyond standard server logs and any
             analytics you can see in our page source (currently privacy-respecting, cookieless
             analytics only). We do not sell or share data with third parties. The open-source tools
-            are self-hosted and phone nothing home — your usage data stays on your machine.
+            are self-hosted and phone nothing home - your usage data stays on your machine.
           </p>
         </section>
 

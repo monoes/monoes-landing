@@ -39,7 +39,7 @@ function GraphEngineeringDiagram() {
       <div className="flex items-center justify-between border-b border-gold/20 pb-4 mb-6">
         <div>
           <span className="text-xs font-mono text-gold uppercase tracking-wider">
-            Graph Engineering Playbook — Monomind Adaptation
+            Graph Engineering Playbook - Monomind Adaptation
           </span>
           <h4 className="text-lg font-bold text-ivory">
             Seven Concepts, Five Wired, Two Scaffolded
@@ -93,7 +93,7 @@ function V22OrgRuntimeDiagram() {
             Monomind v2.2 Release Architecture
           </span>
           <h4 className="text-lg font-bold text-ivory">
-            Org Runtime v2 — OrgDaemon, OrgBus, PolicyEngine
+            Org Runtime v2 - OrgDaemon, OrgBus, PolicyEngine
           </h4>
         </div>
         <span className="px-2.5 py-1 rounded bg-gold/20 text-xs font-mono text-gold border border-gold/30">
@@ -149,7 +149,7 @@ function V23LocalMemoryDiagram() {
             Monomind v2.3.1 Engine Architecture
           </span>
           <h4 className="text-lg font-bold text-ivory">
-            LanceDB Removed — Local SQLite + Local Embeddings
+            LanceDB Removed - Local SQLite + Local Embeddings
           </h4>
         </div>
         <span className="px-2.5 py-1 rounded bg-emerald-500/20 text-xs font-mono text-emerald-400 border border-emerald-500/30">
@@ -172,7 +172,7 @@ function V23LocalMemoryDiagram() {
             2. Embeddings
           </div>
           <p className="text-xs text-ivory/80 leading-relaxed">
-            Local MiniLM/HuggingFace models run in-process via transformers.js — no API key, no cloud call.
+            Local MiniLM/HuggingFace models run in-process via transformers.js - no API key, no cloud call.
           </p>
         </div>
 
@@ -181,7 +181,7 @@ function V23LocalMemoryDiagram() {
             3. Fallback Index
           </div>
           <p className="text-xs text-ivory/80 leading-relaxed">
-            A pure-JS HNSW index exists only as a dormant fallback for native SQLite load failures — not the active path.
+            A pure-JS HNSW index exists only as a dormant fallback for native SQLite load failures - not the active path.
           </p>
         </div>
       </div>
@@ -203,7 +203,7 @@ function V25SecondBrainDiagram() {
             Monomind v2.5 Feature Architecture
           </span>
           <h4 className="text-lg font-bold text-ivory">
-            Second Brain — Local Document Knowledge Base
+            Second Brain - Local Document Knowledge Base
           </h4>
         </div>
         <span className="px-2.5 py-1 rounded bg-gold/20 text-xs font-mono text-gold border border-gold/30">

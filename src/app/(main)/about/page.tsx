@@ -20,7 +20,7 @@ export default function AboutPage() {
 
       <div className="space-y-6 text-gold-bronze leading-relaxed text-lg font-light">
         <p>
-          Monoes is the company behind four open-source AI tools —{" "}
+          Monoes is the company behind four open-source AI tools -{" "}
           <Link href="/projects/monomind" className="text-gold-dark underline underline-offset-2 hover:text-espresso">
             Monomind
           </Link>
@@ -36,7 +36,7 @@ export default function AboutPage() {
           <Link href="/projects/monotask" className="text-gold-dark underline underline-offset-2 hover:text-espresso">
             MonoTask
           </Link>
-          {" "}— and a paid service line,{" "}
+          {" "}- and a paid service line,{" "}
           <Link href="/workforce" className="text-gold-dark underline underline-offset-2 hover:text-espresso">
             Monoes Workforce
           </Link>
@@ -58,7 +58,7 @@ export default function AboutPage() {
           >
             GitHub
           </a>
-          . When you hire Workforce, you work directly with the person who built the engine — no
+          . When you hire Workforce, you work directly with the person who built the engine - no
           account-manager layer.
         </p>
 
@@ -67,9 +67,9 @@ export default function AboutPage() {
           Most AI tools sell you a model and call it a worker. We don&apos;t think that&apos;s
           enough. Take a Workforce engagement that automates AP: a worker finishes the job, it
           reads the invoice, matches it to the PO, decides whether it needs approval, posts it to
-          the client&apos;s ERP, and tells you what it did — with an audit trail behind every
-          step. Building that requires an orchestration engine with a separate policy layer —
-          tool and file scoping, budgets, an audit trail — and a human in the loop on the
+          the client&apos;s ERP, and tells you what it did - with an audit trail behind every
+          step. Building that requires an orchestration engine with a separate policy layer -
+          tool and file scoping, budgets, an audit trail - and a human in the loop on the
           decisions that matter. Monomind is the orchestration engine underneath it.
         </p>
 

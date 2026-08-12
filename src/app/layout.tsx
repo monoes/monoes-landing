@@ -11,7 +11,7 @@ export const metadata: Metadata = {
     template: "%s · Monoes",
   },
   description:
-    "One engine, two paths. Self-host Monomind, Mono Agent, MonoClip, and MonoTask for free under Apache-2.0 — or hire Monoes Workforce to deploy AI digital workers that run your real business processes end-to-end.",
+    "One engine, two paths. Self-host Monomind, Mono Agent, MonoClip, and MonoTask for free under Apache-2.0 - or hire Monoes Workforce to deploy AI digital workers that run your real business processes end-to-end.",
   alternates: { canonical: "/" },
   icons: {
     icon: [

@@ -16,7 +16,7 @@ const quickPicks: { label: string; keywords: string[] }[] = [
 ];
 
 function shortlistHref(shortlist: string[]) {
-  const subject = `Workforce Discovery — interested in ${shortlist.length} worker${shortlist.length === 1 ? "" : "s"}`;
+  const subject = `Workforce Discovery - interested in ${shortlist.length} worker${shortlist.length === 1 ? "" : "s"}`;
   const body = `I'd like to explore automating these processes:\n\n${shortlist.map((s) => `• ${s}`).join("\n")}\n\n- Company name:\n- Team size:\n- Systems you run (ERP / CRM / email):\n- Preferred Discovery package (1-Day $3,000 / 5-Day $12,000):\n`;
   return `mailto:${discoveryContactEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 }

@@ -19,7 +19,7 @@ const principles = [
   },
   {
     title: "Human-in-the-loop on what matters",
-    body: "Monomind's org runtime includes a real policy engine that governs what each agent role can do autonomously — tool allow/deny lists, file scope restrictions, and audit trails are part of the open-source engine. During an engagement, we configure that layer with the approval rules specific to your business — like pausing on an invoice over a threshold you set — so a reasoning model is never the thing that decides what's allowed.",
+    body: "Monomind's org runtime includes a real policy engine that governs what each agent role can do autonomously - tool allow/deny lists, file scope restrictions, and audit trails are part of the open-source engine. During an engagement, we configure that layer with the approval rules specific to your business - like pausing on an invoice over a threshold you set - so a reasoning model is never the thing that decides what's allowed.",
   },
   {
     title: "Full audit trail",
@@ -31,7 +31,7 @@ const principles = [
   },
   {
     title: "Versioned, testable policies",
-    body: "The policy engine underneath every worker is versioned and auditable at the engine level. The specific rules — approval thresholds, vendor matching logic, exception routing — are configured per engagement, and you can see exactly which policy version governed any past action and roll back if needed.",
+    body: "The policy engine underneath every worker is versioned and auditable at the engine level. The specific rules - approval thresholds, vendor matching logic, exception routing - are configured per engagement, and you can see exactly which policy version governed any past action and roll back if needed.",
   },
 ];
 
@@ -45,7 +45,7 @@ export default function SecurityPage() {
         How we handle your data and your decisions.
       </h1>
       <p className="text-lg text-gold-bronze leading-relaxed font-light mb-12">
-        Workforce touches your ERP, CRM, and email — systems that hold the financial and personal
+        Workforce touches your ERP, CRM, and email - systems that hold the financial and personal
         data your business runs on. Here is exactly how that works: what's built into monomind's
         open-source engine, and what we configure per engagement on top of it.
       </p>

@@ -24,12 +24,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   if (!post) {
     return {
-      title: "Post Not Found — Monoes Blog",
+      title: "Post Not Found - Monoes Blog",
     };
   }
 
   return {
-    title: `${post.title} — Monoes Blog`,
+    title: `${post.title} - Monoes Blog`,
     description: post.excerpt,
     openGraph: {
       title: post.title,
@@ -211,7 +211,7 @@ export default async function BlogPostPage({ params }: PageProps) {
                 </p>
                 {section.quote.author && (
                   <cite className="block text-xs font-mono text-gold-dark not-italic">
-                    — {section.quote.author}
+                    - {section.quote.author}
                   </cite>
                 )}
               </blockquote>
