@@ -51,6 +51,258 @@ export interface BlogPost {
 }
 
 export const BLOG_POSTS: BlogPost[] = [
+  // --- GRAPH ENGINEERING DEEP DIVE (Andrew Ng playbook adaptation) ---
+  {
+    slug: "graph-engineering-multi-agent-systems",
+    title: "Graph Engineering for Multi-Agent Systems: How Monomind Makes Agent Organizations Programmable",
+    subtitle: "Andrew Ng's July 2026 playbook reframes multi-agent AI as graph engineering — nodes, edges, and graphs that restructure themselves as work unfolds. Here is how Monomind's org runtime implements it, with the honest gaps called out.",
+    excerpt: "Loops make agent behavior programmable; graphs make agent organizations programmable. A close look at how Monomind adapted Andrew Ng's graph engineering playbook into a dynamic work graph with split, merge, cancel, structured handoffs, and cost-efficient planner-and-workers patterns.",
+    date: "August 12, 2026",
+    readTime: "12 min read",
+    featured: true,
+    tags: ["Architecture", "Graph Engineering", "Multi-Agent", "Monomind"],
+    author: {
+      name: "Monoes Team",
+      role: "Monomind Core",
+      avatar: "/images/monkey/welcoming-arms.png",
+    },
+    coverImage: {
+      src: "/images/blog/gemini_1786531382_0.png",
+      alt: "Two overlapping graphs — a stable org-graph of named agent roles in gold, and a dynamic work-graph of tasks that split and merge as dashed lines, on an ivory editorial canvas",
+      caption: "Graph engineering runs two graphs at once: a stable org-graph (who) and a dynamic work-graph (what, right now). Monomind hosts both inside a single OrgDaemon process.",
+    },
+    content: {
+      introduction: [
+        "For most of the last two years, the conversation around AI agents has been about prompts — getting a single model to do one thing well. Then it became about loops — trigger, act, verify, retry — turning one agent's behavior into a repeatable cycle. In July 2026, Andrew Ng's team published a short playbook called \"Graph Engineering for Multi-Agentic Systems\" that argues the next stage is already here, and it is not about either of those things. It is about graphs.",
+        "The thesis is compact enough to fit in one sentence: loops make agent behavior programmable, but graphs make agent organizations programmable. A loop is a subroutine. A graph is a program. Once you are running more than one agent, the interesting engineering is no longer what any single agent does on its turn — it is how the agents are wired together, what flows along the wires, and how the wiring itself changes while the work is happening.",
+        "Monomind's org runtime was already built around that intuition: real, provider-backed agent sessions coordinated through an append-only event bus and gated by per-role policy. A few commits ago we took the playbook's seven concepts and turned them into concrete machinery inside that runtime. This article is an honest walk through what that adaptation looks like in code, where it lands cleanly, and where the playbook's ambitions are still scaffolding rather than working behavior.",
+      ],
+      sections: [
+        {
+          id: "from-loops-to-graphs",
+          heading: "1. The Three-Stage Progression: Prompts, Loops, Graphs",
+          subheading: "Why the unit of engineering moved from a string to a cycle to a graph",
+          paragraphs: [
+            "The playbook lays out a progression, and it is worth restating because it explains why the abstractions in Monomind's org runtime look the way they do. Prompt engineering controls one model response; its primitive is a string. Loop engineering controls one agent's behavior cycle — trigger, act, verify, retry — and its primitive is the loop. Graph engineering controls the organization of multiple agents; its primitive is a graph of nodes (agents) and edges (dependencies and handoffs).",
+            "Each stage does not replace the previous one — it contains it. A graph node still runs a loop, and that loop still issues prompts. What changes is the unit a developer reasons about. When you have one agent, you tune its loop. When you have eight, tuning eight loops in isolation is the wrong scale of problem — you need to engineer the topology that connects them, the contracts that cross the edges, and the rules that govern what happens when a node fails or the work itself changes shape.",
+            "That last point is the important one. Most production multi-agent systems are described as graphs, but under the hood they are frozen graphs: a fixed pipeline defined before the run starts, executed top to bottom. The playbook's argument is that a real work graph is not frozen. It restructures itself while work is happening — branches split when scope expands, parallel paths merge when they converge early, nodes disappear when evidence makes them moot. Engineering that restructuring, not just the initial topology, is what graph engineering actually means.",
+          ],
+          quote: {
+            text: "Loops make agent behavior programmable. Graphs make agent organizations programmable.",
+            author: "Graph Engineering for Multi-Agentic Systems playbook (Ng, July 2026)",
+          },
+          keyTakeaways: [
+            "Prompt → loop → graph is a progression of scale, not replacement: a graph node still runs a loop that issues prompts.",
+            "The hard part of multi-agent engineering is not the initial topology — it is engineering how the topology changes mid-run.",
+            "A frozen pipeline calling itself a graph is the common anti-pattern the playbook is arguing against.",
+          ],
+        },
+        {
+          id: "two-graphs-not-one",
+          heading: "2. Two Graphs, Not One: Who Versus What-Right-Now",
+          subheading: "The org-graph is stable and answers who; the work-graph is ephemeral and answers what, right now",
+          paragraphs: [
+            "The single most useful idea in the playbook is that a production multi-agent system runs two distinct graphs at the same time, and confusing them is the source of a lot of brittle designs. The org-graph is structural and stable: long-lived agents with named roles, defined reporting lines, zone ownership, and preserved memory. The work-graph is dynamic and ephemeral: task nodes that exist only as long as the work exists, with edges that split, merge, and dissolve as runtime evidence arrives.",
+            "Monomind's org runtime has always been split exactly along this line, even before the playbook landed. The org-graph lives in the OrgDef — a config file at .monomind/orgs/<name>.json that declares roles (id, title, type, reports_to), their per-role policy, and the provider each role runs on. That file changes between runs, not during them: redeployment changes the org-graph, runtime does not. The work-graph lives in TaskDag, an in-memory directed-acyclic-graph of tasks that is born empty at the start of each run and is mutated continuously as the run unfolds.",
+            "Before the playbook adaptation, TaskDag was honest but limited: it could add a task, complete one, or fail one. That is enough to express a static plan, which is exactly the frozen-pipeline shape the playbook pushes back against. The adaptation graduates TaskDag into a genuine dynamic work graph by giving it three new operations that match how real work restructures itself: split, merge, and cancel.",
+          ],
+          codeBlock: {
+            filename: ".monomind/orgs/example.json (org-graph, stable)",
+            language: "json",
+            code: `{
+  "name": "example",
+  "roles": [
+    {
+      "id": "advisor",
+      "title": "Advisor (Planner)",
+      "type": "boss",
+      "reports_to": null,
+      "provider": { "kind": "subscription" }
+    },
+    {
+      "id": "worker-1",
+      "title": "Worker 1",
+      "type": "specialist",
+      "reports_to": "advisor",
+      "adapter_config": { "model": "claude-haiku-4-5-20251001" }
+    }
+  ]
+}`,
+          },
+          keyTakeaways: [
+            "The org-graph (roles, reporting lines, policy) is stable across a run; the work-graph (tasks, dependencies) is ephemeral and mutable.",
+            "Monomind separates them cleanly: OrgDef is the org-graph, TaskDag is the work-graph, and neither is stored in the other.",
+            "Pre-adaptation TaskDag could only add, complete, or fail — the static-pipeline shape the playbook argues against.",
+          ],
+        },
+        {
+          id: "dynamic-work-graph",
+          heading: "3. The Dynamic Work Graph: Split, Merge, Cancel",
+          subheading: "Three operations that restructure the DAG while it is running — with dependency rewiring and cycle detection",
+          paragraphs: [
+            "The centerpiece of the adaptation is three new operations on TaskDag, each mapping to a concrete runtime trigger. split(parentId, children) handles scope expansion: when a task turns out to be bigger than expected, a role splits it into parallel children. The parent moves to a terminal 'split' status, every child inherits the parent's dependencies, and — critically — every downstream task that depended on the parent is automatically rewired to depend on all of the children. The children carry a splitFrom field pointing back to the parent, so the lineage is auditable even after the parent is gone.",
+            "merge(sourceId, targetId) is the symmetric operation for early convergence: when two parallel branches produce overlapping work, a role merges one into the other. The source moves to 'merged' with a mergedInto pointer, its dependencies are unioned into the target's, and downstream tasks are rewired from the source to the target. cancel(taskId, reason) handles the case where new evidence makes a planned task moot: the task moves to 'cancelled' and, because cancelled is a satisfied state, anything that was waiting on it is immediately unblocked and dispatched.",
+            "What makes these safe to call mid-run, rather than a way to corrupt a DAG, is that each one does an honest cycle check after rewiring. If a split or merge would introduce a cycle, the operation is rolled back and throws — the parent's status is restored, the new children are deleted, and the run continues as if the call never happened. The DAG never enters an inconsistent state, even when an agent proposes a restructuring that would have created a loop.",
+          ],
+          image: {
+            src: "/images/blog/gemini_1786531423_0.png",
+            alt: "An isometric directed acyclic graph reorganizing itself — a parent node splitting into three children, two branches merging into one, and one node dissolving to show cancellation, with dependency arrows rewiring",
+            caption: "split, merge, and cancel restructure the work graph at runtime. Children inherit the parent's deps; downstream tasks are rewired to all children; cancelled tasks satisfy their dependents so downstream is unblocked.",
+          },
+          codeBlock: {
+            filename: "agent tool calls (session.ts)",
+            language: "json",
+            code: `// Scope expands — split into parallel children
+{ "tool": "org_task_split",
+  "args": { "parentId": "task-3",
+            "children": [
+              { "title": "Extract entities", "assignee": "entity-extractor" },
+              { "title": "Extract relationships", "assignee": "relationship-resolver" }
+            ] } }
+
+// Parallel branches converge early — fold one into the other
+{ "tool": "org_task_merge",
+  "args": { "sourceId": "task-5", "targetId": "task-6" } }
+
+// Evidence made a planned task moot — cancel and unblock downstream
+{ "tool": "org_task_cancel",
+  "args": { "taskId": "task-2", "reason": "source doc already covered this" } }`,
+          },
+          keyTakeaways: [
+            "split() rewires downstream tasks to depend on ALL children; children carry a splitFrom lineage pointer.",
+            "merge() unions the source's deps into the target and rewires downstream to the target; source gets a mergedInto pointer.",
+            "cancel() treats 'cancelled' as a satisfied state, so dependents are immediately promoted to ready and dispatched.",
+            "Every split and merge runs cycle detection on the result and rolls back atomically if it would introduce a loop.",
+          ],
+        },
+        {
+          id: "structured-handoffs",
+          heading: "4. Structured Handoffs: Typed Envelopes Across Node Boundaries",
+          subheading: "Replacing freeform messages with a schema for context, artifacts, decisions, and next action",
+          paragraphs: [
+            "An edge in a work graph is only as good as what crosses it. The playbook's handoff-protocol concept is that the package a downstream agent receives should be a typed structure — context, artifacts produced, decisions made, and the next action expected — rather than a blob of freeform text the upstream agent happened to write. Miss a field on a freeform message and the downstream agent acts without information it needed; miss a field on a typed envelope and the schema rejects it before delivery.",
+            "Monomind encodes this as OrgHandoffSchema, a Zod-validated envelope with four compartments. contextPackage is an array of {source, summary} slices that give the receiver the background without forcing it to re-read everything. artifacts is an array of {path, description} references to the files or outputs the handoff is about. decisions is an array of {text, rationale} records so the reasoning behind a choice travels with it, not just the outcome. nextAction is the one required field — a concrete statement of what the receiver is expected to do next.",
+            "It is worth being precise about how far this goes. The schema exists, validates, and is the documented shape for org_send payloads; the agents in the advisor-orchestrator template are explicitly instructed to report results with a structured handoff. The envelope makes a handoff machine-checkable and far less lossy than prose. But Monomind does not yet force every inter-role message through this schema at the transport level — a role can still send a plain message. The typed handoff is the recommended, schema-backed shape, not a hard runtime gate.",
+          ],
+          image: {
+            src: "/images/blog/gemini_1786531460_0.png",
+            alt: "Typed context-package envelopes flowing along thin gold lines between agent nodes, each envelope carrying labeled compartments for context, artifacts, decisions, and next action",
+            caption: "OrgHandoffSchema is a typed envelope: contextPackage, artifacts, decisions, nextAction. The schema rejects a malformed handoff before delivery; a freeform message cannot guarantee that.",
+          },
+          codeBlock: {
+            filename: "OrgHandoffSchema (types.ts)",
+            language: "typescript",
+            code: `export const OrgHandoffSchema = z.object({
+  taskId: z.string().optional(),
+  contextPackage: z.array(
+    z.object({ source: z.string(), summary: z.string() })
+  ).default([]),
+  artifacts: z.array(
+    z.object({ path: z.string(), description: z.string().optional() })
+  ).default([]),
+  decisions: z.array(
+    z.object({ text: z.string(), rationale: z.string().optional() })
+  ).default([]),
+  nextAction: z.string(),   // the only required field
+});`,
+          },
+          keyTakeaways: [
+            "OrgHandoffSchema has four compartments: contextPackage, artifacts, decisions, and the required nextAction.",
+            "Each slice/artifact/decision carries its own source/path/rationale so provenance travels with the handoff.",
+            "The schema validates and is the documented org_send shape, but plain messages are still allowed — it is a recommended envelope, not yet a transport-level gate.",
+          ],
+        },
+        {
+          id: "work-graph-generators",
+          heading: "5. Work Graph Generators: org_plan_graph",
+          subheading: "Proposing a full work graph in one call, with cross-reference resolution between named tasks",
+          paragraphs: [
+            "The playbook's fourth concept is the work-graph generator: logic that takes an incoming task and produces the graph — deciding which nodes to spawn, what order to run them in, and where parallelism is safe. Without it, a coordinator role has to create tasks one at a time and figure out dependencies as it goes, which is slow and token-expensive. With it, a planner can declare the whole shape of the work in a single tool call and let the runtime materialize it.",
+            "Monomind implements this as org_plan_graph. A role submits an array of task specs, each with a local name, a title, an assignee, and an after array referencing other specs by name. The runtime runs a fixed-point resolution loop: it walks the pending specs repeatedly, creating each one only once every name in its after array has either been created in this same plan or already exists in the DAG. The after field accepts either a local plan name or a pre-existing task id, so a plan can build on work that is already in flight rather than only on itself.",
+            "If the loop exhausts itself with specs still pending — meaning the plan contained a forward reference it could not resolve — org_plan_graph returns a structured error naming the unresolved specs, alongside the tasks it did manage to create. Because each individual add runs TaskDag's built-in cycle detection, a plan whose after-edges form a cycle is rejected mid-build rather than producing a corrupt graph. It is the same dynamic work graph, just populated in one batch instead of node by node.",
+          ],
+          codeBlock: {
+            filename: "org_plan_graph — propose a full graph in one call",
+            language: "json",
+            code: `{
+  "tool": "org_plan_graph",
+  "args": {
+    "tasks": [
+      { "name": "ingest",  "title": "Ingest source documents",  "assignee": "entity-extractor",   "after": [] },
+      { "name": "resolve", "title": "Resolve coreferences",      "assignee": "relationship-resolver", "after": ["ingest"] },
+      { "name": "validate","title": "Validate against glossary", "assignee": "ontology-validator", "after": ["resolve"] },
+      { "name": "learn",   "title": "Commit graph to org memory","assignee": "kg-lead",            "after": ["validate"] }
+    ]
+  }
+}
+
+// unresolved forward references come back as a structured error:
+{ "error": "unresolved dependencies in plan: learn",
+  "created": [ { "name": "ingest", "id": "task-1", "status": "ready" } ] }`,
+          },
+          keyTakeaways: [
+            "org_plan_graph takes named task specs with after-edges and resolves them in a fixed-point loop.",
+            "after accepts a local plan name OR an existing task id, so plans can extend a graph already in flight.",
+            "Unresolved references return a structured error plus the tasks that did create successfully — the plan is not all-or-nothing.",
+          ],
+        },
+        {
+          id: "observability-and-failure-routing",
+          heading: "6. Observability and Failure Routing — and an Honest Gap",
+          subheading: "Per-node tracing and per-node failure rules: what shipped, and what is still scaffolding",
+          paragraphs: [
+            "Two of the playbook's concepts — graph observability (per-node traces: which nodes ran, in what order, at what latency and token cost) and per-node failure routing (retry, fallback, escalate rules per node, not just per role) — are the ones where the adaptation is most partial, and it would be dishonest to pretend otherwise. We added the shape of both, and we want to be explicit about how far each one actually goes.",
+            "On observability, the BusEvent type union now includes a 'trace' event kind, and the event interface carries traceNodeId, traceDurationMs, traceTokensIn, and traceTokensOut fields for per-node execution traces. The OrgBus itself is type-agnostic — it is an append-only JSONL log with in-process fanout, and it will faithfully persist and fan out any trace event it is handed. What is not there yet is an emitter: no code in the org runtime currently produces a 'trace' event. The pathway is an open extension point for future OpenTelemetry and cost-tracking work, not a live feature you can read off a dashboard today.",
+            "Failure routing is in the same state, one layer down. FailureRoutingSchema — retry (maxAttempts, backoffMs), fallbackAssignee, escalate — is attached to the org's run_config and validates cleanly, so you can write a config that declares a per-role fallback. But no runtime code reads run_config.failure_routing yet to actually retry, fall back, or escalate. What does work end-to-end is the older, coarser-grained circuit_breaker: after a configurable number of consecutive non-success session results from a role (default five), the circuit trips, the role's mailbox is closed, and an audit event records it. That is enforced today; per-node failure routing is the documented next step on top of it.",
+          ],
+          quote: {
+            text: "If a blog post intends to describe retry, fallback, escalate, or trace emission as functioning behavior, those statements would not match the source as of this commit. We would rather say that clearly than have you find out otherwise.",
+            author: "Monomind Core Team",
+          },
+          keyTakeaways: [
+            "BusEvent has a 'trace' type and four trace* fields, and OrgBus will carry them — but no code emits trace events yet. It is a forward-compatible extension point, not a live feature.",
+            "FailureRoutingSchema (retry / fallbackAssignee / escalate) validates and is accepted by run_config, but no runtime code reads it yet — it is configured-but-not-enforced.",
+            "circuit_breaker IS fully wired: after N consecutive failures (default 5) the role's mailbox closes and an audit event fires.",
+          ],
+        },
+        {
+          id: "patterns-advisor-orchestrator-and-zone-defense",
+          heading: "7. Patterns: Advisor-Orchestrator, Zone Defense, and a Multi-Agent KG Pipeline",
+          subheading: "First-class org templates that encode the playbook's recurring graph shapes",
+          paragraphs: [
+            "The playbook closes with three named patterns. Advisor-orchestrator puts one expensive planner node in front of several cheap worker nodes — the planner decomposes and synthesizes, the workers execute — and reports roughly ninety-two percent of single-agent quality at about sixty-three percent of the cost. Zone defense gives long-lived specialists stable domain ownership so they accumulate context over time. Multi-LLM council fixes the topology and adds anti-groupthink deliberation gates. The adaptation ships two of these as first-class org templates you can create with a single command.",
+            "The advisor-orchestrator template is a three-role org: an advisor (boss, default frontier model) that reads the full task context, calls org_plan_graph to propose the work graph in one shot, and synthesizes worker outputs; and two workers (on claude-haiku-4-5, the fast model) that execute assigned tasks, report results via a structured handoff, and flag scope expansion for org_task_split. The model split is not decorative — it is the economics. Verification and mechanical work spend roughly a third of the tokens of a frontier model for checklist-shaped work, so the template routes accordingly.",
+            "The kg-extraction template is a four-role multi-agent pipeline for pulling a validated knowledge graph out of source documents: a kg-lead boss decomposes the work and calls org_learn with the final validated graph, an entity-extractor reads chunks and pulls entities, a relationship-resolver resolves coreferences and emits typed source-relation-target edges, and an ontology-validator (on the fast model) checks edges against the existing glossary and rejects malformed triples before they reach org_learn. It is the playbook's zone-defense idea applied to a concrete extraction problem — each specialist owns one well-bounded step and hands off a typed package to the next.",
+          ],
+          image: {
+            src: "/images/blog/gemini_1786531501_0.png",
+            alt: "An advisor-orchestrator pattern — one large central gold planner node radiating thin espresso lines to several smaller fast worker nodes arranged around it, each worker returning results to the planner",
+            caption: "The advisor-orchestrator template: one frontier-model planner decomposes and synthesizes; cheap fast-model workers execute. The model split is the economics — mechanical work spends a third of the tokens.",
+          },
+          codeBlock: {
+            filename: "terminal",
+            language: "bash",
+            code: `# Create either pattern as a runnable org in one command
+npx monomind@latest org create my-planner --template advisor-orchestrator
+npx monomind@latest org create my-kg      --template kg-extraction
+
+# Then run it — the advisor will call org_plan_graph to propose the work graph
+npx monomind@latest org run my-planner --goal "<your objective>"`,
+          },
+          keyTakeaways: [
+            "advisor-orchestrator: one frontier-model planner + fast-model workers; the template wires org_plan_graph and org_task_split into the role responsibilities directly.",
+            "kg-extraction: a 4-role zone-defense pipeline (lead, entity-extractor, relationship-resolver, ontology-validator) ending in org_learn.",
+            "FAST_MODEL is claude-haiku-4-5-20251001; review/QA/worker roles use it, coordinators keep the default strongest model.",
+          ],
+        },
+      ],
+      conclusion: [
+        "Graph engineering is a useful frame because it names the thing that was already hard about multi-agent systems — not the agents, but the wiring, and especially the wiring that changes while the work is happening. Monomind's adaptation takes the playbook's seven concepts and lands five of them as fully-wired machinery: the two-graphs split (OrgDef and TaskDag), the dynamic work graph (split, merge, cancel with rewiring and cycle detection), the work-graph generator (org_plan_graph), structured handoffs (OrgHandoffSchema), and two first-class org templates (advisor-orchestrator and kg-extraction). Sixty-one tests in tests/orgrt cover the new behavior, and a live four-agent release-pipeline run exercised org_plan_graph, auto-dispatch, and structured handoffs end to end.",
+        "The remaining two concepts — per-node trace emission and per-node failure routing — are present as schema and validated extension points but are not enforced at runtime yet, and this article says so plainly rather than dressing them up as shipped features. The circuit breaker, which is enforced, does the coarser-grained version of the job today. If you want to see the working parts in code, everything lives under packages/@monomind/cli/src/orgrt/, the source-of-truth doc is docs/graph-engineering-playbook.md, and Monomind is Apache-2.0 licensed and open source.",
+      ],
+    },
+  },
+
   // --- 5 REAL RELEASE ARTICLES (chronological) ---
   {
     slug: "monomind-v22-org-runtime-v2",
@@ -507,7 +759,7 @@ monomind init --kimicode`,
       avatar: "/images/monkey/welcoming-arms.png",
     },
     tags: ["Release", "v2.9", "Security", "Reliability"],
-    featured: true,
+    featured: false,
     coverImage: {
       src: "/images/blog/gemini_1786439547_0.png",
       alt: "Abstract visualization of a code review pipeline scanning through layers of source files",

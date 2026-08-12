@@ -16,9 +16,72 @@ export function ReleaseDiagram({ slug }: ReleaseDiagramProps) {
       return <V28AntigravityDiagram />;
     case "monomind-v29-hardening-review-swarm":
       return <V29HardeningDiagram />;
+    case "graph-engineering-multi-agent-systems":
+      return <GraphEngineeringDiagram />;
     default:
       return null;
   }
+}
+
+function GraphEngineeringDiagram() {
+  const rows = [
+    { concept: "Two graphs (org + work)", impl: "OrgDef + TaskDag", status: "wired" },
+    { concept: "Dynamic agent orgs", impl: "split / merge / cancel", status: "wired" },
+    { concept: "Handoff protocol", impl: "OrgHandoffSchema", status: "wired" },
+    { concept: "Work graph generator", impl: "org_plan_graph", status: "wired" },
+    { concept: "Patterns (advisor / KG)", impl: "2 org templates", status: "wired" },
+    { concept: "Per-node observability", impl: "'trace' event type", status: "scaffold" },
+    { concept: "Per-node failure routing", impl: "FailureRoutingSchema", status: "scaffold" },
+  ];
+
+  return (
+    <div className="my-8 rounded-2xl bg-espresso-deep border border-gold/30 p-6 sm:p-8 text-ivory shadow-soft-lg">
+      <div className="flex items-center justify-between border-b border-gold/20 pb-4 mb-6">
+        <div>
+          <span className="text-xs font-mono text-gold uppercase tracking-wider">
+            Graph Engineering Playbook — Monomind Adaptation
+          </span>
+          <h4 className="text-lg font-bold text-ivory">
+            Seven Concepts, Five Wired, Two Scaffolded
+          </h4>
+        </div>
+        <span className="px-2.5 py-1 rounded bg-gold/20 text-xs font-mono text-gold border border-gold/30">
+          61 tests added
+        </span>
+      </div>
+
+      <div className="space-y-2">
+        {rows.map((r) => (
+          <div
+            key={r.concept}
+            className="p-3 sm:p-4 rounded-xl bg-espresso border border-gold/20 flex flex-wrap items-center justify-between gap-3 text-xs font-mono"
+          >
+            <div className="flex items-center gap-3 min-w-0">
+              <span
+                className={
+                  "px-2 py-0.5 rounded font-bold " +
+                  (r.status === "wired"
+                    ? "bg-emerald-500/20 text-emerald-400"
+                    : "bg-amber-500/20 text-amber-400")
+                }
+              >
+                {r.status === "wired" ? "WIRED" : "SCAFFOLD"}
+              </span>
+              <span className="text-ivory/90 truncate">{r.concept}</span>
+            </div>
+            <span className="text-gold/80 truncate">{r.impl}</span>
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-6 p-4 rounded-xl bg-espresso/60 border border-gold/20 flex flex-wrap items-center justify-between gap-3 text-xs font-mono text-gold/80">
+        <span>
+          circuit_breaker (enforced) &rarr; failure_routing (configured, not yet enforced)
+        </span>
+        <span className="text-ivory/60">Apache-2.0 &nbsp;·&nbsp; orgrt/</span>
+      </div>
+    </div>
+  );
 }
 
 function V22OrgRuntimeDiagram() {
