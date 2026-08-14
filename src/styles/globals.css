@@ -10,9 +10,12 @@
   --color-espresso-deep: #1a1208;
   --color-gold: #C8A97E;
   --color-gold-dark: #8B6914;
-  --color-gold-bronze: #8B7355;
+  --color-gold-bronze: #7D6549;  /* Darkened from #8B7355 for 4.89:1 ratio (was 4.47:1) */
   --color-gold-warm: #B8956A;
   --color-gold-muted: #A07840;
+
+  /* Semantic text colors for WCAG AA compliance */
+  --color-gold-text: #8B6914;  /* For text on light backgrounds - 7.08:1 AAA */
 
   /* Fonts */
   --font-sans: var(--font-satoshi), system-ui, sans-serif;

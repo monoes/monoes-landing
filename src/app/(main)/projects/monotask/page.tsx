@@ -14,5 +14,38 @@ export const metadata: Metadata = {
 export default function MonoTaskPage() {
   const project = getProject("monotask");
   if (!project) notFound();
-  return <ProjectPageLayout project={project} demo={<KanbanSync />} />;
+
+  const softwareSchema = {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    name: "MonoTask",
+    applicationCategory: "BusinessApplication",
+    operatingSystem: "Linux, macOS, Windows",
+    offers: {
+      "@type": "Offer",
+      price: "0",
+      priceCurrency: "USD",
+    },
+    description:
+      "Local-first P2P kanban with no server and no account. Boards in SQLite, synced via Automerge CRDTs over iroh QUIC. Works offline.",
+    url: "https://monoes.me/projects/monotask",
+    downloadUrl: "https://github.com/monoes/monotask",
+    applicationSubCategory: "Project Management",
+    license: "https://www.apache.org/licenses/LICENSE-2.0",
+    author: {
+      "@type": "Organization",
+      name: "Monoes",
+      url: "https://monoes.me",
+    },
+  };
+
+  return (
+    <>
+      <ProjectPageLayout project={project} demo={<KanbanSync />} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareSchema) }}
+      />
+    </>
+  );
 }

@@ -68,12 +68,12 @@ export function KanbanSync() {
   };
 
   return (
-    <div className="w-full rounded-2xl bg-ivory-warm border border-ivory-linen p-4">
-      <p className="text-xs tracking-label text-gold-bronze uppercase mb-4">
+    <div className="w-full rounded-2xl bg-ivory-warm border border-ivory-linen p-3 sm:p-4">
+      <p className="text-xs tracking-label text-gold-bronze uppercase mb-3 sm:mb-4">
         P2P CRDT Sync
       </p>
 
-      <div className="flex flex-col md:flex-row gap-4">
+      <div className="flex flex-col md:flex-row gap-3 sm:gap-4">
         {/* Peer A */}
         <PeerBoard
           label="Peer A"
@@ -120,11 +120,11 @@ function PeerBoard({ label, cards, onMove, showMoveButtons, ripple }: PeerBoardP
         {label}
       </div>
 
-      <div className="flex gap-2">
+      <div className="flex gap-1.5 sm:gap-2 overflow-x-auto">
         {COLUMNS.map((col) => {
           const colCards = cards.filter((c) => c.column === col.key);
           return (
-            <div key={col.key} className="flex-1 min-w-0">
+            <div key={col.key} className="flex-1 min-w-[90px] sm:min-w-0">
               <div
                 className="text-[10px] font-medium mb-1.5 px-1"
                 style={{ color: COL_COLORS[col.key] }}
@@ -151,7 +151,7 @@ function PeerBoard({ label, cards, onMove, showMoveButtons, ripple }: PeerBoardP
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 0.9 }}
                         transition={{ duration: 0.2, ease: "easeOut" }}
-                        className="relative rounded-md px-2 py-1.5 text-[10px] text-espresso font-medium"
+                        className="relative rounded-md px-2 py-1.5 text-[10px] text-espresso font-medium break-words"
                         style={{
                           background: "#FFFFF0",
                           border: "1px solid rgba(237,229,216,0.7)",
@@ -169,7 +169,7 @@ function PeerBoard({ label, cards, onMove, showMoveButtons, ripple }: PeerBoardP
                           />
                         )}
 
-                        <span className="block leading-tight">{card.title}</span>
+                        <span className="block leading-tight break-words hyphens-auto">{card.title}</span>
 
                         {canMove && (
                           <button

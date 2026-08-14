@@ -1,11 +1,23 @@
+import type { Metadata } from "next";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "Monomind Architecture",
+  description:
+    "Technical architecture of Monomind: 8 packages, 32 CLI commands, 8 background workers, and 46 Monograph MCP tools. Explore the monorepo structure.",
+  alternates: { canonical: "/projects/monomind/architecture" },
+  openGraph: {
+    title: "Monomind Architecture - 8 packages, 46 MCP tools",
+    description: "Deep dive into Monomind's technical architecture and monorepo structure.",
+  },
+};
 
 const accent = "#8B6914";
 
 const stats = [
   { value: "8", label: "Packages" },
   { value: "32", label: "CLI Commands" },
-  { value: "15", label: "Background Workers" },
+  { value: "7", label: "Background Workers" },
   { value: "46", label: "Monograph MCP Tools" },
 ];
 
@@ -26,8 +38,8 @@ const components = [
     name: "@monoes/hooks",
     path: "packages/@monomind/hooks/",
     description:
-      "Typed HookEvent registry/executor library plus a WorkerManager running 15 background workers (14 statically configured + the always-on progress worker). Bridged into the live dispatch path via .claude/helpers, which is the mechanism Claude Code actually calls.",
-    tags: ["20 HookEvent types", "15 workers", "registry + executor"],
+      "Typed HookEvent registry/executor library plus a WorkerManager running 8 background workers. Bridged into the live dispatch path via .claude/helpers, which is the mechanism Claude Code actually calls.",
+    tags: ["20 HookEvent types", "8 workers", "registry + executor"],
     color: "#8B7355",
   },
   {
@@ -166,11 +178,10 @@ const hookGroups = [
     ],
   },
   {
-    title: "15 background workers",
+    title: "8 background workers",
     items: [
-      "14 statically configured: performance, health, swarm, git, learning, adr, ddd, security, patterns, cache, map, audit, optimize, consolidate",
-      "+ 1 always-on: progress (registered dynamically, not in the static config)",
-      "Metrics-producing workers (ddd, map, audit, optimize, consolidate) auto-refresh at session start when their output is missing or older than 6 hours.",
+      "8 workers: health, security, code mapping, audit consolidation, and others",
+      "Metrics-producing workers auto-refresh at session start when their output is missing or older than 6 hours.",
     ],
   },
 ];
@@ -298,7 +309,7 @@ export default function MonomindArchitecturePage() {
               {/* Row 1: hooks / mcp / memory / routing */}
               <rect x="40" y="215" width="180" height="60" rx="10" fill="rgba(139,115,85,0.08)" stroke="#8B7355" strokeWidth="1.5" />
               <text x="130" y="240" textAnchor="middle" fill="#2A2318" fontSize="11" fontWeight="700">@monoes/hooks</text>
-              <text x="130" y="256" textAnchor="middle" fill="#8B7355" fontSize="9" fontWeight="600">Registry + 15 workers</text>
+              <text x="130" y="256" textAnchor="middle" fill="#8B7355" fontSize="9" fontWeight="600">Registry + 8 workers</text>
 
               <rect x="240" y="215" width="180" height="60" rx="10" fill="rgba(184,149,106,0.08)" stroke="#B8956A" strokeWidth="1.5" />
               <text x="330" y="240" textAnchor="middle" fill="#2A2318" fontSize="11" fontWeight="700">@monoes/memory</text>
@@ -444,7 +455,7 @@ export default function MonomindArchitecturePage() {
           <p className="text-xs uppercase tracking-label font-semibold mb-3" style={{ color: accent }}>Hook System</p>
           <h2 className="text-3xl md:text-4xl font-semibold text-espresso mb-4">Two Different Things Called &quot;Hooks&quot;</h2>
           <p className="text-espresso/55 font-light leading-relaxed max-w-2xl mb-12">
-            29 CLI subcommands and 20 typed registry events are different mechanisms that happen to share a name, plus 15 background workers underneath both.
+            29 CLI subcommands and 20 typed registry events are different mechanisms that happen to share a name, plus 8 background workers underneath both.
           </p>
           <div className="grid gap-6 sm:grid-cols-1 lg:grid-cols-3">
             {hookGroups.map((g) => (

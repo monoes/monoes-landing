@@ -304,6 +304,39 @@ export default async function BlogPostPage({ params }: PageProps) {
           </div>
         )}
       </div>
+
+      {/* BlogPosting JSON-LD Schema */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BlogPosting",
+            headline: post.title,
+            description: post.excerpt,
+            image: `https://monoes.me${post.coverImage.src}`,
+            datePublished: new Date(post.date).toISOString(),
+            dateModified: new Date(post.date).toISOString(),
+            author: {
+              "@type": "Person",
+              name: post.author.name,
+              jobTitle: post.author.role,
+            },
+            publisher: {
+              "@type": "Organization",
+              name: "Monoes",
+              logo: {
+                "@type": "ImageObject",
+                url: "https://monoes.me/images/logo-512.png",
+              },
+            },
+            mainEntityOfPage: {
+              "@type": "WebPage",
+              "@id": `https://monoes.me/blog/${post.slug}`,
+            },
+          }),
+        }}
+      />
     </article>
   );
 }

@@ -1,9 +1,21 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { getAllRepoStats } from "@/lib/github";
 import { StatsBar } from "@/components/community/StatsBar";
 import { EcosystemGrid } from "@/components/community/EcosystemGrid";
 import { ContributeSteps } from "@/components/community/ContributeSteps";
 import { TechStack } from "@/components/community/TechStack";
+
+export const metadata: Metadata = {
+  title: "Community",
+  description:
+    "Join the Monoes open-source community. Contribute to Monomind, Mono Agent, MonoClip, and MonoTask. Every line is Apache-2.0, every contribution matters.",
+  alternates: { canonical: "/community" },
+  openGraph: {
+    title: "Monoes Community - Built in the open, shaped by the troop",
+    description: "Every line of monoes is open source. Join the community on GitHub.",
+  },
+};
 
 export default async function CommunityPage() {
   const stats = await getAllRepoStats();

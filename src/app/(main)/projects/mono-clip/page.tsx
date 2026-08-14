@@ -14,5 +14,38 @@ export const metadata: Metadata = {
 export default function MonoClipPage() {
   const project = getProject("mono-clip");
   if (!project) notFound();
-  return <ProjectPageLayout project={project} demo={<ClipboardSim />} />;
+
+  const softwareSchema = {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    name: "MonoClip",
+    applicationCategory: "UtilitiesApplication",
+    operatingSystem: "macOS",
+    offers: {
+      "@type": "Offer",
+      price: "0",
+      priceCurrency: "USD",
+    },
+    description:
+      "Native macOS clipboard manager with AI integration via MCP server. 8MB binary, ~30MB RAM, blazing-fast search across your entire clip history.",
+    url: "https://monoes.me/projects/mono-clip",
+    downloadUrl: "https://github.com/monoes/mono-clip",
+    applicationSubCategory: "Clipboard Manager",
+    license: "https://www.apache.org/licenses/LICENSE-2.0",
+    author: {
+      "@type": "Organization",
+      name: "Monoes",
+      url: "https://monoes.me",
+    },
+  };
+
+  return (
+    <>
+      <ProjectPageLayout project={project} demo={<ClipboardSim />} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareSchema) }}
+      />
+    </>
+  );
 }

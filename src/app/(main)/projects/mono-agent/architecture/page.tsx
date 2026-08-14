@@ -1,4 +1,12 @@
+import type { Metadata } from "next";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "Mono Agent Architecture",
+  description:
+    "Technical architecture of Mono Agent: 73 node types, 52K+ lines of Go, DAG-based workflow engine, and 40+ database tables. Workflow automation internals.",
+  alternates: { canonical: "/projects/mono-agent/architecture" },
+};
 
 const accent = "#C8A97E";
 

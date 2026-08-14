@@ -73,7 +73,7 @@ export const projects: Project[] = [
         icon: "🪝",
         title: "Hooks + Workers",
         description:
-          "29 hook CLI subcommands plus 7 background workers (health, security, code mapping, audit consolidation) for self-learning automation.",
+          "29 hook CLI subcommands plus 8 background workers (health, security, code mapping, audit consolidation, and more) for self-learning automation.",
       },
     ],
     install: [

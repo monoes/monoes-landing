@@ -1,4 +1,12 @@
+import type { Metadata } from "next";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "MonoClip Architecture",
+  description:
+    "Technical architecture of MonoClip: ~8MB binary, ~30MB RAM, <200ms startup. Rust + SQLite clipboard manager with MCP server integration.",
+  alternates: { canonical: "/projects/mono-clip/architecture" },
+};
 
 const accent = "#B8956A";
 

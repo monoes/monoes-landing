@@ -14,5 +14,38 @@ export const metadata: Metadata = {
 export default function MonoAgentPage() {
   const project = getProject("mono-agent");
   if (!project) notFound();
-  return <ProjectPageLayout project={project} demo={<WorkflowBuilder />} />;
+
+  const softwareSchema = {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    name: "Mono Agent",
+    applicationCategory: "DeveloperApplication",
+    operatingSystem: "Linux, macOS, Windows",
+    offers: {
+      "@type": "Offer",
+      price: "0",
+      priceCurrency: "USD",
+    },
+    description:
+      "Self-hosted browser and workflow automation. 70+ workflow nodes, stealth Chrome via Rod, multi-profile isolation, and a visual DAG editor.",
+    url: "https://monoes.me/projects/mono-agent",
+    downloadUrl: "https://github.com/monoes/mono-agent",
+    applicationSubCategory: "Workflow Automation",
+    license: "https://www.apache.org/licenses/LICENSE-2.0",
+    author: {
+      "@type": "Organization",
+      name: "Monoes",
+      url: "https://monoes.me",
+    },
+  };
+
+  return (
+    <>
+      <ProjectPageLayout project={project} demo={<WorkflowBuilder />} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareSchema) }}
+      />
+    </>
+  );
 }

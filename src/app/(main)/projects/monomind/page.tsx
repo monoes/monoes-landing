@@ -21,16 +21,48 @@ export const metadata: Metadata = {
 export default function MonomindPage() {
   const project = getProject("monomind");
   if (!project) notFound();
+
+  const softwareSchema = {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    name: "Monomind",
+    applicationCategory: "DeveloperApplication",
+    operatingSystem: "Linux, macOS, Windows",
+    offers: {
+      "@type": "Offer",
+      price: "0",
+      priceCurrency: "USD",
+    },
+    description:
+      "Open-source autonomous AI agent orchestration with persistent memory, self-coordinating agent orgs, and a codebase knowledge graph.",
+    url: "https://monoes.me/projects/monomind",
+    downloadUrl: "https://github.com/monoes/monomind",
+    softwareVersion: "2.9.2",
+    applicationSubCategory: "AI Agent Orchestration",
+    license: "https://www.apache.org/licenses/LICENSE-2.0",
+    author: {
+      "@type": "Organization",
+      name: "Monoes",
+      url: "https://monoes.me",
+    },
+  };
+
   return (
-    <ProjectPageLayout
-      project={project}
-      demo={
-        <div className="flex flex-col gap-6">
-          <OrgSimulation />
-          <SwarmSimulation />
-          <MonographDemo />
-        </div>
-      }
-    />
+    <>
+      <ProjectPageLayout
+        project={project}
+        demo={
+          <div className="flex flex-col gap-6">
+            <OrgSimulation />
+            <SwarmSimulation />
+            <MonographDemo />
+          </div>
+        }
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareSchema) }}
+      />
+    </>
   );
 }

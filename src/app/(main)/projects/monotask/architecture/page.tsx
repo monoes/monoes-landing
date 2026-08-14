@@ -1,4 +1,12 @@
+import type { Metadata } from "next";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "MonoTask Architecture",
+  description:
+    "Technical architecture of MonoTask: Zero servers, Ed25519 identity, Automerge CRDTs, and libp2p P2P networking. True local-first kanban in Rust.",
+  alternates: { canonical: "/projects/monotask/architecture" },
+};
 
 const accent = "#A07840";
 

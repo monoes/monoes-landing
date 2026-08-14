@@ -25,7 +25,7 @@ const heroStats: Record<string, { label: string; value: string }[]> = {
   "monomind": [
     { label: "CLI Commands",       value: "32" },
     { label: "Packages",           value: "8" },
-    { label: "Background Workers", value: "15" },
+    { label: "Background Workers", value: "8" },
   ],
   "mono-clip": [
     { label: "Binary Size",    value: "~8MB" },

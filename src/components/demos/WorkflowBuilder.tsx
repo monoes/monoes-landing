@@ -38,7 +38,7 @@ const CATEGORY_COLOR: Record<Node["category"], string> = {
 
 const NODE_W = 140;
 const NODE_H = 60;
-const CANVAS_W = 700;
+const BASE_CANVAS_W = 700;
 const CANVAS_H = 380;
 
 export function WorkflowBuilder() {
@@ -47,17 +47,36 @@ export function WorkflowBuilder() {
   const [activeNode,  setActiveNode]  = useState<string | null>(null);
   const [running,     setRunning]     = useState(false);
   const [runIdx,      setRunIdx]      = useState(-1);
+  const [canvasWidth, setCanvasWidth] = useState(BASE_CANVAS_W);
   const runTimer = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // execution path through the DAG
   const RUN_SEQ = ["cron", "chrome", "scrape", "ai", "filter", "post"];
 
+  // Update canvas width on mount and resize
+  useEffect(() => {
+    const updateWidth = () => {
+      if (containerRef.current) {
+        const containerWidth = containerRef.current.offsetWidth;
+        // Account for p-4 padding (16px on each side = 32px total)
+        const availableWidth = containerWidth - 32;
+        setCanvasWidth(Math.min(BASE_CANVAS_W, availableWidth));
+      }
+    };
+    updateWidth();
+    window.addEventListener("resize", updateWidth);
+    return () => window.removeEventListener("resize", updateWidth);
+  }, []);
+
+  // Calculate scale factor for responsive node positioning
+  const scale = canvasWidth / BASE_CANVAS_W;
+
   // Canvas is inset-4 (16px from container left); subtract that offset so
   // drawn edges align with the absolutely-positioned node divs.
   const CANVAS_OFFSET_X = 16;
   const getCenter = (node: Node) => ({
-    x: node.x - CANVAS_OFFSET_X + NODE_W / 2,
-    y: node.y + NODE_H / 2,
+    x: (node.x * scale) - CANVAS_OFFSET_X + (NODE_W * scale) / 2,
+    y: node.y + (NODE_H * scale) / 2,
   });
 
   const drawCanvas = useCallback(() => {
@@ -67,13 +86,13 @@ export function WorkflowBuilder() {
     if (!ctx) return;
 
     const dpr = window.devicePixelRatio || 1;
-    canvas.width  = CANVAS_W * dpr;
+    canvas.width  = canvasWidth * dpr;
     canvas.height = CANVAS_H * dpr;
-    canvas.style.width  = CANVAS_W + "px";
+    canvas.style.width  = canvasWidth + "px";
     canvas.style.height = CANVAS_H + "px";
     ctx.scale(dpr, dpr);
 
-    ctx.clearRect(0, 0, CANVAS_W, CANVAS_H);
+    ctx.clearRect(0, 0, canvasWidth, CANVAS_H);
 
     EDGES.forEach((edge) => {
       const fn = NODES.find((n) => n.id === edge.from)!;
@@ -88,19 +107,22 @@ export function WorkflowBuilder() {
       const dx = tc.x - fc.x;
       const dy = tc.y - fc.y;
 
+      const scaledNodeW = NODE_W * scale;
+      const scaledNodeH = NODE_H * scale;
+
       let sx: number, sy: number, ex: number, ey: number;
       if (Math.abs(dx) >= Math.abs(dy)) {
         // primarily horizontal: connect left/right edges
-        sx = fc.x + (dx > 0 ? NODE_W / 2 : -NODE_W / 2);
+        sx = fc.x + (dx > 0 ? scaledNodeW / 2 : -scaledNodeW / 2);
         sy = fc.y;
-        ex = tc.x + (dx > 0 ? -NODE_W / 2 : NODE_W / 2);
+        ex = tc.x + (dx > 0 ? -scaledNodeW / 2 : scaledNodeW / 2);
         ey = tc.y;
       } else {
         // primarily vertical: connect top/bottom edges
         sx = fc.x;
-        sy = fc.y + (dy > 0 ? NODE_H / 2 : -NODE_H / 2);
+        sy = fc.y + (dy > 0 ? scaledNodeH / 2 : -scaledNodeH / 2);
         ex = tc.x;
-        ey = tc.y + (dy > 0 ? -NODE_H / 2 : NODE_H / 2);
+        ey = tc.y + (dy > 0 ? -scaledNodeH / 2 : scaledNodeH / 2);
       }
 
       ctx.beginPath();
@@ -118,7 +140,7 @@ export function WorkflowBuilder() {
       ctx.stroke();
       ctx.setLineDash([]);
     });
-  }, [activeNode, running, runIdx]);
+  }, [activeNode, running, runIdx, canvasWidth, scale]);
 
   useEffect(() => { drawCanvas(); }, [drawCanvas]);
 
@@ -182,7 +204,7 @@ export function WorkflowBuilder() {
         <canvas
           ref={canvasRef}
           className="absolute inset-4 pointer-events-none"
-          style={{ width: CANVAS_W, height: CANVAS_H }}
+          style={{ width: canvasWidth, height: CANVAS_H, maxWidth: "100%" }}
         />
 
         {/* Nodes */}
@@ -199,10 +221,10 @@ export function WorkflowBuilder() {
               onClick={() => !running && setActiveNode((p) => p === node.id ? null : node.id)}
               className="absolute flex flex-col items-center justify-center gap-1 rounded-xl border transition-all duration-200"
               style={{
-                left: node.x,
+                left: node.x * scale,
                 top: node.y + 16,
-                width: NODE_W,
-                height: NODE_H,
+                width: NODE_W * scale,
+                height: NODE_H * scale,
                 background: isCurrent
                   ? `${color}22`
                   : isDone
@@ -231,9 +253,12 @@ export function WorkflowBuilder() {
                   style={{ background: isDone ? "#5cb85c" : color }}
                 />
               )}
-              <span className="text-lg leading-none">{node.icon}</span>
-              <span className="text-xs font-medium leading-tight text-center px-2"
-                style={{ color: isCurrent ? color : isDone ? "rgba(255,255,240,0.6)" : "rgba(255,255,240,0.5)" }}>
+              <span className="leading-none" style={{ fontSize: `${scale * 18}px` }}>{node.icon}</span>
+              <span className="font-medium leading-tight text-center px-2"
+                style={{
+                  fontSize: `${scale * 12}px`,
+                  color: isCurrent ? color : isDone ? "rgba(255,255,240,0.6)" : "rgba(255,255,240,0.5)"
+                }}>
                 {node.label}
               </span>
             </button>

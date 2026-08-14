@@ -16,16 +16,43 @@ export const metadata: Metadata = {
 };
 
 export default function WorkforcePage() {
+  const serviceSchema = {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    name: "Monoes Workforce",
+    description:
+      "AI digital workers that execute your business processes end-to-end on the ERP, CRM, and email systems you already run. Fully managed deployment and ongoing audit.",
+    provider: {
+      "@type": "Organization",
+      name: "Monoes",
+      url: "https://monoes.me",
+      logo: "https://monoes.me/images/logo-512.png",
+    },
+    areaServed: "Worldwide",
+    serviceType: "AI Process Automation",
+    url: "https://monoes.me/workforce",
+    offers: {
+      "@type": "Offer",
+      description: "Discovery audit starting at $4,500 for process mapping and ROI analysis",
+    },
+  };
+
   return (
-    <main>
-      <WorkforceHero />
-      <ValueProps />
-      <CapabilitiesGrid />
-      <HowItWorks />
-      <DiscoveryPackages />
-      <FoundingClientProgram />
-      <BookACall />
-      <PoweredByMonomind />
-    </main>
+    <>
+      <main>
+        <WorkforceHero />
+        <ValueProps />
+        <CapabilitiesGrid />
+        <HowItWorks />
+        <DiscoveryPackages />
+        <FoundingClientProgram />
+        <BookACall />
+        <PoweredByMonomind />
+      </main>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceSchema) }}
+      />
+    </>
   );
 }

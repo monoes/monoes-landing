@@ -27,6 +27,7 @@ export const satoshi = localFont({
   variable: "--font-satoshi",
   display: "swap",
   fallback: ["system-ui", "sans-serif"],
+  adjustFontFallback: "Arial",
 });
 
 export const jetbrainsMono = JetBrains_Mono({

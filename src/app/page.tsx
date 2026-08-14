@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { gsap } from 'gsap';
 import './landing.css';
 
@@ -27,7 +28,7 @@ export default function LandingPage() {
     // Handle body styles that can't be in CSS (to avoid affecting other pages)
     document.documentElement.style.overflow = 'hidden';
     document.body.style.overflow = 'hidden';
-    document.body.style.fontFamily = "Georgia, 'Times New Roman', serif";
+    document.body.style.fontFamily = "var(--font-satoshi), 'Helvetica Neue', system-ui, sans-serif";
     document.body.style.background = '#2A2318';
     document.body.style.color = '#2A2318';
 
@@ -849,14 +850,24 @@ export default function LandingPage() {
       <div className="reading-bar" id="rbar"></div>
 
       <nav>
-        <span className="nav-logo">Monoes</span>
+        <Link href="/" className="nav-logo">
+          <Image
+            src="/images/monkey/welcoming-arms.png"
+            alt="Monoes open-source AI agent platform logo"
+            width={32}
+            height={32}
+            className="nav-logo-img"
+          />
+          <span>MONOES</span>
+        </Link>
         <div className="nav-links">
+          <a href="https://github.com/monoes/monomind/discussions" className="nav-link" target="_blank" rel="noopener noreferrer">Community</a>
           <Link href="/product#projects" className="nav-link">Projects</Link>
           <Link href="/workforce" className="nav-link">Workforce</Link>
           <Link href="/whitepaper" className="nav-link">Whitepaper</Link>
           <Link href="/blog" className="nav-link">Blog</Link>
-          <a href="https://github.com/monoes/monomind" className="nav-link" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
-          <Link href="/workforce" className="nav-cta-link">Hire us →</Link>
+          <a href="https://github.com/monoes" className="nav-link" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+          <a href="https://github.com/monoes/monomind" className="nav-cta-link" target="_blank" rel="noopener noreferrer">Get started →</a>
           <button
             className="nav-hamburger"
             aria-label="Toggle menu"
@@ -872,11 +883,13 @@ export default function LandingPage() {
 
       {mobileOpen && (
         <div className="nav-mobile-menu">
+          <a href="https://github.com/monoes/monomind/discussions" className="nav-mobile-link" target="_blank" rel="noopener noreferrer" onClick={() => setMobileOpen(false)}>Community ↗</a>
           <Link href="/product#projects" className="nav-mobile-link" onClick={() => setMobileOpen(false)}>Projects</Link>
           <Link href="/workforce" className="nav-mobile-link" onClick={() => setMobileOpen(false)}>Workforce</Link>
           <Link href="/whitepaper" className="nav-mobile-link" onClick={() => setMobileOpen(false)}>Whitepaper</Link>
           <Link href="/blog" className="nav-mobile-link" onClick={() => setMobileOpen(false)}>Blog</Link>
-          <a href="https://github.com/monoes/monomind" className="nav-mobile-link" target="_blank" rel="noopener noreferrer" onClick={() => setMobileOpen(false)}>GitHub ↗</a>
+          <a href="https://github.com/monoes" className="nav-mobile-link" target="_blank" rel="noopener noreferrer" onClick={() => setMobileOpen(false)}>GitHub ↗</a>
+          <a href="https://github.com/monoes/monomind" className="nav-mobile-link" target="_blank" rel="noopener noreferrer" onClick={() => setMobileOpen(false)}>Get started →</a>
         </div>
       )}
 
@@ -900,7 +913,7 @@ export default function LandingPage() {
                   <em>A company.</em>
                 </h1>
                 <p className="hero-sub">
-                  Monomind is the open-source autonomous agent platform that turns a single engineer into a complete organization: engineering, marketing, operations, and sales, all running without a team.
+                  Monomind is the open-source autonomous agent platform that turns a single engineer into an autonomous organization: engineering, marketing, operations, and sales, each coordinating without manual handoffs.
                 </p>
                 <div className="hero-actions">
                   <a href="https://github.com/monoes/monomind" className="btn-primary" target="_blank" rel="noopener noreferrer">★ Star on GitHub</a>
@@ -938,7 +951,7 @@ export default function LandingPage() {
               <div className="cap-card game-frame">
                 <span className="cap-num">01 · Orchestration</span>
                 <div className="cap-title">90+ specialized agent roles</div>
-                <p className="cap-body">Domain experts across engineering, security, architecture, and more, plus fully custom org roles you define. Hierarchical swarms fan out in parallel, not sequential pipelines that bottleneck.</p>
+                <p className="cap-body">Domain experts across engineering, security, architecture, DevOps, and QA, plus fully custom org roles you define. Hierarchical swarms fan out in parallel, not sequential pipelines that bottleneck.</p>
                 <div className="cap-code">/mastermind:createorg --name ai-intel-pod --auto \<br />  &quot;Track AI competitive landscape weekly&quot;<br /><span style={{color:'rgba(200,220,200,0.7)'}}>✓ 5 profiles · 1 matrix · 90KB report · 2m 14s</span></div>
               </div>
               <div className="cap-card game-frame">

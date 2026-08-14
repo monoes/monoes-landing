@@ -84,7 +84,7 @@ export function ClipboardSim() {
         backdropFilter: "blur(16px)",
         WebkitBackdropFilter: "blur(16px)",
         border: "1px solid rgba(237,229,216,0.8)",
-        maxWidth: 360,
+        maxWidth: "min(360px, 100%)",
       }}
     >
       {/* Header */}

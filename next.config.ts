@@ -3,9 +3,6 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   /* config options here */
   reactCompiler: true,
-  images: {
-    unoptimized: true,
-  },
   async redirects() {
     return [
       {
@@ -21,11 +18,6 @@ const nextConfig: NextConfig = {
       {
         source: "/research",
         destination: "/whitepaper",
-        permanent: true,
-      },
-      {
-        source: "/projects/monochat/architecture",
-        destination: "/projects/monomind/architecture",
         permanent: true,
       },
       {
