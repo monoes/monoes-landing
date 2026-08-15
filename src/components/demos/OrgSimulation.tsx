@@ -32,13 +32,13 @@ const SPECIALISTS: SpecialistDef[] = [
 ];
 
 const GOLD       = "#C8A97E";
-const GOLD_FAINT = "rgba(200,169,126,0.18)";
-const GOLD_MID   = "rgba(200,169,126,0.55)";
-const GREEN_GLOW = "rgba(100,200,120,0.12)";
-const GREEN_RING = "rgba(100,200,120,0.7)";
-const GREEN_FILL = "rgba(100,200,120,0.22)";
+const GOLD_FAINT = "rgba(200,169,126,0.25)";
+const GOLD_MID   = "rgba(200,169,126,0.75)";
+const GREEN_GLOW = "rgba(72,187,120,0.30)";
+const GREEN_RING = "rgba(72,187,120,0.9)";
+const GREEN_FILL = "rgba(72,187,120,0.25)";
 const ESPRESSO   = "#2A2318";
-const IVORY      = "#FAF7F0";
+const DARK_BG    = "#140e08";
 
 // Canvas dimensions
 const CW = 560;
@@ -123,7 +123,7 @@ export function OrgSimulation() {
       ctx.beginPath();
       ctx.moveTo(ax + SR + 2, SY);
       ctx.lineTo(bx2 - SR - 2, SY);
-      ctx.strokeStyle = bothActive ? GOLD_MID : "rgba(200,169,126,0.25)";
+      ctx.strokeStyle = bothActive ? GOLD_MID : "rgba(200,169,126,0.3)";
       ctx.lineWidth   = bothActive ? 1.5 : 1;
       ctx.setLineDash(bothActive ? [] : [3, 4]);
       ctx.stroke();
@@ -140,30 +140,30 @@ export function OrgSimulation() {
       if (working || complete) {
         ctx.beginPath();
         ctx.arc(sx, SY, SR + 7, 0, Math.PI * 2);
-        ctx.fillStyle = complete ? GREEN_GLOW : "rgba(200,169,126,0.12)";
+        ctx.fillStyle = complete ? GREEN_GLOW : "rgba(200,169,126,0.2)";
         ctx.fill();
       }
 
       // Node circle
       ctx.beginPath();
       ctx.arc(sx, SY, SR, 0, Math.PI * 2);
-      ctx.fillStyle = complete ? GREEN_FILL : working ? GOLD_FAINT : "rgba(200,169,126,0.07)";
-      ctx.strokeStyle = complete ? GREEN_RING : working ? GOLD : GOLD_FAINT;
+      ctx.fillStyle = complete ? GREEN_FILL : working ? "rgba(200,169,126,0.2)" : "rgba(42,35,24,0.7)";
+      ctx.strokeStyle = complete ? GREEN_RING : working ? GOLD : "rgba(200,169,126,0.4)";
       ctx.lineWidth = 1.2;
       ctx.fill();
       ctx.stroke();
 
       // Abbr / checkmark
-      ctx.font = "bold 9px sans-serif";
-      ctx.fillStyle = complete ? "rgba(60,180,80,0.9)" : working ? GOLD : GOLD_MID;
+      ctx.font = "bold 9.5px sans-serif";
+      ctx.fillStyle = complete ? "#48bb78" : working ? GOLD : "rgba(250,247,240,0.85)";
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
       ctx.fillText(complete ? "✓" : sp.abbr, sx, SY);
 
       // Label below
-      ctx.font = "8.5px sans-serif";
-      ctx.fillStyle = "rgba(42,35,24,0.5)";
-      ctx.fillText(sp.label, sx, SY + SR + 10);
+      ctx.font = "9px sans-serif";
+      ctx.fillStyle = "rgba(250,247,240,0.7)";
+      ctx.fillText(sp.label, sx, SY + SR + 11);
     });
 
     // --- Boss node ---
@@ -171,7 +171,7 @@ export function OrgSimulation() {
 
     ctx.beginPath();
     ctx.arc(BX, BY, pr + 9, 0, Math.PI * 2);
-    ctx.fillStyle = pulse ? "rgba(200,169,126,0.13)" : "transparent";
+    ctx.fillStyle = pulse ? "rgba(200,169,126,0.25)" : "transparent";
     ctx.fill();
 
     ctx.beginPath();
@@ -179,7 +179,7 @@ export function OrgSimulation() {
     ctx.fillStyle = GOLD;
     ctx.fill();
 
-    ctx.font = "bold 10px sans-serif";
+    ctx.font = "bold 10.5px sans-serif";
     ctx.fillStyle = ESPRESSO;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
@@ -236,41 +236,41 @@ export function OrgSimulation() {
   }, []);
 
   return (
-    <div className="flex flex-col gap-3 w-full rounded-2xl bg-ivory-warm border border-ivory-linen p-4">
-      <p className="text-xs tracking-label text-gold-bronze uppercase">
+    <div className="flex flex-col gap-4 w-full rounded-2xl bg-espresso-deep/90 border border-gold/20 p-5 shadow-soft">
+      <p className="text-xs tracking-label text-gold uppercase font-semibold">
         Autonomous Org
       </p>
 
       <div className="flex flex-col gap-3">
         {/* Canvas, scrollable on narrow screens */}
-        <div className="overflow-x-auto rounded-xl" style={{ background: IVORY }}>
+        <div className="overflow-x-auto rounded-xl border border-gold/15" style={{ background: DARK_BG }}>
           <canvas
             ref={canvasRef}
             width={CW}
             height={CH}
             className="block rounded-xl"
-            style={{ minWidth: CW, background: IVORY }}
+            style={{ minWidth: CW, background: DARK_BG }}
           />
         </div>
 
         {/* Activity log */}
         <div
           ref={logRef}
-          className="rounded-xl border border-gold/10 bg-espresso/5 px-4 py-3 font-mono text-xs leading-relaxed min-h-[80px] max-h-[140px] overflow-y-auto scroll-smooth"
-          style={{ color: "rgba(42,35,24,0.55)" }}
+          className="rounded-xl border border-gold/15 bg-[#100a05] px-4 py-3 font-mono text-xs leading-relaxed min-h-[80px] max-h-[140px] overflow-y-auto scroll-smooth"
+          style={{ color: "rgba(250,247,240,0.75)" }}
         >
           {log.length === 0 ? (
-            <span className="opacity-35">Activity log…</span>
+            <span className="text-ivory/30">Activity log…</span>
           ) : (
             log.map((line, i) => (
               <div
                 key={i}
                 style={{
                   color: line.startsWith("✓")
-                    ? "rgba(50,160,70,0.85)"
+                    ? "#48bb78"
                     : line.startsWith("◆")
                     ? GOLD
-                    : "rgba(42,35,24,0.65)",
+                    : "rgba(250,247,240,0.75)",
                 }}
               >
                 {line}
@@ -285,8 +285,8 @@ export function OrgSimulation() {
           <button
             onClick={runOrg}
             disabled={runStatus === "running"}
-            className="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 disabled:opacity-50"
-            style={{ background: ESPRESSO, color: GOLD, border: `1px solid ${GOLD}` }}
+            className="px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 disabled:opacity-50 hover:bg-gold-warm"
+            style={{ background: GOLD, color: ESPRESSO }}
           >
             {runStatus === "running" ? "Running…" : "Run Org →"}
           </button>
@@ -295,14 +295,14 @@ export function OrgSimulation() {
         {runStatus === "done" && (
           <button
             onClick={reset}
-            className="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200"
-            style={{ background: "transparent", color: GOLD, border: `1px solid ${GOLD}40` }}
+            className="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:bg-gold/15"
+            style={{ background: "transparent", color: GOLD, border: `1px solid ${GOLD}60` }}
           >
             ↺ Run again
           </button>
         )}
 
-        <span className="text-xs font-mono text-gold-bronze">
+        <span className="text-xs font-mono text-gold/70">
           {runStatus === "idle"    && "● idle"}
           {runStatus === "running" && "◌ coordinating"}
           {runStatus === "done"    && "✓ Complete"}

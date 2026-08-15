@@ -9,7 +9,7 @@ export default function MainLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="bg-ivory font-sans text-gold-bronze antialiased">
+    <div className="min-h-screen bg-espresso font-sans text-ivory antialiased selection:bg-gold/25 selection:text-ivory">
       <GrainOverlay />
       <ScrollProgress />
       <Navbar />

@@ -26,10 +26,10 @@ export function ProjectPageLayout({ project, demo }: { project: Project; demo: R
       {project.cli && <CLISection data={project.cli} accent={project.accent} />}
 
       {/* Install */}
-      <section className="bg-ivory-warm px-4 sm:px-6 md:px-8 py-16 sm:py-20 border-t border-ivory-linen">
+      <section className="bg-espresso-deep px-4 sm:px-6 md:px-8 py-16 sm:py-20 border-t border-gold/15">
         <div className="mx-auto max-w-4xl">
-          <p className="mb-2 text-xs uppercase tracking-label font-medium text-gold-dark">Get Started</p>
-          <h2 className="mb-8 text-2xl font-semibold text-espresso tracking-tight">
+          <p className="mb-2 text-xs uppercase tracking-label font-medium text-gold">Get Started</p>
+          <h2 className="mb-8 text-2xl font-semibold text-ivory tracking-tight">
             Up and running in seconds.
           </h2>
           <TerminalBlock lines={project.install} />

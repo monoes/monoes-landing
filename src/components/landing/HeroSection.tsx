@@ -144,34 +144,30 @@ export function HeroSection() {
       },
     });
 
-    // Title/subtitle animation
-    const titleSt = gsap.fromTo(
+    // Initial fade in immediately on load
+    gsap.fromTo(
       titleRef.current,
-      { opacity: 0, y: 30 },
-      {
-        opacity: 1,
-        y: 0,
-        ease: "power2.out",
-        scrollTrigger: {
-          trigger: section,
-          start: "15% top",
-          end: "35% top",
-          scrub: true,
-        },
-      }
+      { opacity: 0, y: 24 },
+      { opacity: 1, y: 0, duration: 0.8, ease: "power2.out", delay: 0.1 }
     );
 
-    const subtitleSt = gsap.fromTo(
+    gsap.fromTo(
       subtitleRef.current,
-      { opacity: 0, y: 20 },
+      { opacity: 0, y: 16 },
+      { opacity: 1, y: 0, duration: 0.8, ease: "power2.out", delay: 0.3 }
+    );
+
+    // Scroll trigger for subtle scroll-away parallax
+    const scrollSt = gsap.to(
+      [titleRef.current, subtitleRef.current],
       {
-        opacity: 1,
-        y: 0,
-        ease: "power2.out",
+        opacity: 0.2,
+        y: -30,
+        ease: "power1.in",
         scrollTrigger: {
           trigger: section,
-          start: "25% top",
-          end: "40% top",
+          start: "20% top",
+          end: "50% top",
           scrub: true,
         },
       }
@@ -181,15 +177,14 @@ export function HeroSection() {
       cancelAnimationFrame(rafId);
       window.removeEventListener("resize", resize);
       st.kill();
-      titleSt.kill();
-      subtitleSt.kill();
+      scrollSt.kill();
     };
   }, []);
 
   return (
     <section
       ref={sectionRef}
-      className="relative h-[200vh] bg-ivory"
+      className="relative h-[200vh] bg-espresso text-ivory pt-16"
     >
       {/* Sticky inner container */}
       <div className="sticky top-0 h-screen overflow-hidden">
@@ -206,36 +201,33 @@ export function HeroSection() {
           style={{ zIndex: 2 }}
         >
           {/* Brand wordmark above headline */}
-          <p className="mb-6 text-xs uppercase tracking-label text-gold-bronze font-medium">
+          <p className="mb-6 text-xs uppercase tracking-label text-gold font-semibold">
             monoes
           </p>
           <h1
             ref={titleRef}
-            className="text-5xl md:text-7xl lg:text-8xl font-semibold tracking-tight text-espresso max-w-4xl leading-none"
-            style={{ opacity: 0 }}
+            className="text-5xl md:text-7xl lg:text-8xl font-semibold tracking-tight text-ivory max-w-4xl leading-none"
           >
             Tools that think{" "}
-            <span className="text-gold-warm">with you</span>
+            <span className="text-gold">with you</span>
           </h1>
           <p
             ref={subtitleRef}
-            className="mt-8 text-lg md:text-xl text-gold-bronze tracking-wide max-w-md font-light"
-            style={{ opacity: 0 }}
+            className="mt-8 text-lg md:text-xl text-ivory/70 tracking-wide max-w-md font-light leading-relaxed"
           >
             Four open-source instruments. One philosophy.
           </p>
 
           <div
             className="mt-8"
-            style={{ animation: "fadeInUp 0.8s ease 1.2s both" }}
+            style={{ animation: "fadeInUp 0.8s ease 0.6s both" }}
           >
             <Link
               href="/whitepaper"
-              className="group inline-flex items-center gap-2 text-xs uppercase tracking-label font-semibold px-5 py-2.5 rounded-full border text-gold-dark transition-all duration-300 hover:bg-gold-dark hover:text-ivory hover:border-gold-dark"
-              style={{ animation: "whitepaper-blink 3s ease-in-out infinite" }}
+              className="group inline-flex items-center gap-2 text-xs uppercase tracking-label font-semibold px-5 py-2.5 rounded-full border border-gold/40 text-gold transition-all duration-300 hover:bg-gold hover:text-espresso"
             >
               <span
-                className="inline-block w-1.5 h-1.5 rounded-full bg-gold-dark group-hover:bg-ivory transition-colors"
+                className="inline-block w-1.5 h-1.5 rounded-full bg-gold group-hover:bg-espresso transition-colors"
                 style={{ animation: "pulse-dot 3s ease-in-out infinite" }}
               />
               White Paper: The One-Person Company
@@ -249,11 +241,11 @@ export function HeroSection() {
           className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
           style={{ zIndex: 2 }}
         >
-          <p className="text-xs uppercase tracking-label text-gold-bronze">
+          <p className="text-xs uppercase tracking-label text-gold/70">
             Scroll to discover
           </p>
           <div
-            className="w-px h-8 bg-gold-bronze animate-bounce"
+            className="w-px h-8 bg-gold/50 animate-bounce"
             style={{ animationDuration: "1.5s" }}
           />
         </div>

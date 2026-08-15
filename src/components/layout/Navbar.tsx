@@ -31,11 +31,11 @@ export function Navbar() {
       <motion.nav
         className="fixed left-0 right-0 top-0 z-40 flex items-center justify-between px-8 py-4 transition-all duration-300"
         style={{
-          backgroundColor: scrolled ? "rgba(255,255,240,0.95)" : "transparent",
-          backdropFilter: scrolled ? "blur(12px)" : "none",
+          backgroundColor: scrolled ? "rgba(42,35,24,0.92)" : "rgba(42,35,24,0.75)",
+          backdropFilter: "blur(12px)",
           borderBottom: scrolled
-            ? "1px solid rgba(200,169,126,0.12)"
-            : "1px solid transparent",
+            ? "1px solid rgba(200,169,126,0.18)"
+            : "1px solid rgba(200,169,126,0.08)",
         }}
       >
         <Link href="/" className="flex items-center gap-3">
@@ -44,9 +44,9 @@ export function Navbar() {
             alt="Monoes open-source AI agent platform logo"
             width={36}
             height={36}
-            className="h-9 w-9 rounded-full object-cover object-top shadow-soft"
+            className="h-9 w-9 rounded-full object-cover object-top shadow-soft border border-gold/20"
           />
-          <span className="text-sm font-semibold uppercase tracking-widest text-espresso">
+          <span className="text-sm font-semibold uppercase tracking-widest text-ivory">
             Monoes
           </span>
         </Link>
@@ -59,7 +59,7 @@ export function Navbar() {
               href={link.href}
               target={link.external ? "_blank" : undefined}
               rel={link.external ? "noopener noreferrer" : undefined}
-              className="group relative text-sm text-gold-bronze transition-colors hover:text-gold"
+              className="group relative text-sm text-ivory/75 transition-colors hover:text-gold"
             >
               {link.label}
               {link.external && (
@@ -72,7 +72,7 @@ export function Navbar() {
             href="https://github.com/monoes/monomind"
             target="_blank"
             rel="noopener noreferrer"
-            className="rounded-full border border-gold/40 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-gold-dark transition-all hover:bg-gold-dark hover:text-white"
+            className="rounded-full border border-gold/40 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-gold transition-all hover:bg-gold hover:text-espresso"
           >
             Get started →
           </Link>
@@ -80,7 +80,7 @@ export function Navbar() {
 
         {/* Mobile hamburger */}
         <button
-          className="text-gold-bronze md:hidden"
+          className="text-ivory/80 hover:text-gold md:hidden"
           onClick={() => setMobileOpen(!mobileOpen)}
           aria-label="Toggle menu"
         >
@@ -103,14 +103,14 @@ export function Navbar() {
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <div className="fixed inset-x-0 top-14 z-30 border-b border-ivory-linen bg-ivory/95 backdrop-blur-lg md:hidden">
+        <div className="fixed inset-x-0 top-16 z-30 border-b border-gold/20 bg-espresso-deep/95 backdrop-blur-lg md:hidden">
           <div className="flex flex-col gap-4 px-8 py-6">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
                 onClick={() => setMobileOpen(false)}
-                className="text-sm text-gold-bronze"
+                className="text-sm text-ivory/80 hover:text-gold"
               >
                 {link.label}
               </Link>

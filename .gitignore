@@ -54,10 +54,25 @@ data/mastermind-*.jsonl
 ._*
 
 # monomind runtime
-.monomind/
 
 # Secrets / env files
 .env
 .env.local
 .env.*.local
+# monomind runtime — exclude sensitive and machine-specific data
+.monomind/sessions/
+.monomind/security/
+.monomind/*.tmp
+.monomind/*.log
+.monomind/daemon.pid
+.monomind/*.db
+.monomind/*.db-wal
+.monomind/*.db-shm
 
+# monomind runtime state
+.monomind/data/
+.monomind/metrics/
+.monomind/knowledge/
+.monomind/*.json
+.monomind/*.jsonl
+**/.monomind/*.json

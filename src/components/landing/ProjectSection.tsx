@@ -86,10 +86,10 @@ export function ProjectSection({ project }: ProjectSectionProps) {
   return (
     <section
       ref={sectionRef}
-      className="relative h-screen bg-ivory-warm overflow-hidden"
+      className="relative h-screen bg-espresso overflow-hidden border-t border-gold/15"
     >
       {/* Progress bar */}
-      <div className="absolute top-0 left-0 right-0 h-0.5 bg-ivory-linen z-10">
+      <div className="absolute top-0 left-0 right-0 h-0.5 bg-gold/15 z-10">
         <div
           ref={progressBarRef}
           className="h-full w-0"
@@ -109,19 +109,19 @@ export function ProjectSection({ project }: ProjectSectionProps) {
               {project.number}
             </p>
             <p
-              className="text-xs uppercase tracking-label text-espresso/50 font-medium"
+              className="text-xs uppercase tracking-label text-gold/50 font-medium"
             >
               {project.language}
             </p>
           </div>
 
           {/* Tagline / headline */}
-          <h2 className="text-3xl md:text-5xl lg:text-6xl font-light tracking-tight text-espresso leading-tight max-w-xl">
+          <h2 className="text-3xl md:text-5xl lg:text-6xl font-semibold tracking-tight text-ivory leading-tight max-w-xl">
             {project.tagline}
           </h2>
 
           {/* Description */}
-          <p className="text-base md:text-lg text-espresso/65 font-normal max-w-lg leading-relaxed">
+          <p className="text-base md:text-lg text-ivory/70 font-normal max-w-lg leading-relaxed">
             {project.description}
           </p>
 
@@ -130,12 +130,12 @@ export function ProjectSection({ project }: ProjectSectionProps) {
             {displayFeatures.map((feature, i) => (
               <div
                 key={i}
-                className="feature-item bg-ivory rounded-lg p-4 border-l-2 shadow-soft space-y-1"
-                style={{ borderColor: project.accent }}
+                className="feature-item bg-espresso-deep/90 rounded-xl p-4 border border-gold/15 border-l-2 shadow-soft space-y-1"
+                style={{ borderLeftColor: project.accent }}
               >
                 <span className="text-xl">{feature.icon}</span>
-                <p className="text-sm font-semibold text-espresso">{feature.title}</p>
-                <p className="text-xs text-espresso/60 leading-snug">{feature.description}</p>
+                <p className="text-sm font-semibold text-ivory">{feature.title}</p>
+                <p className="text-xs text-ivory/60 leading-snug">{feature.description}</p>
               </div>
             ))}
           </div>
@@ -143,7 +143,7 @@ export function ProjectSection({ project }: ProjectSectionProps) {
           {/* CTA link */}
           <Link
             href={`/projects/${project.slug}`}
-            className="inline-flex items-center gap-2 text-sm uppercase tracking-label font-medium transition-opacity hover:opacity-70"
+            className="inline-flex items-center gap-2 text-sm uppercase tracking-label font-semibold transition-opacity hover:opacity-80"
             style={{ color: project.accent }}
           >
             Explore {project.name}
@@ -154,12 +154,11 @@ export function ProjectSection({ project }: ProjectSectionProps) {
         {/* Right side - 40% */}
         <div className="hidden md:flex items-center justify-center w-[40%] px-10">
           <div
-            className="relative w-56 h-56 lg:w-72 lg:h-72 rounded-full flex items-center justify-center border"
-            style={{ borderColor: project.accent + "40" }}
+            className="relative w-56 h-56 lg:w-72 lg:h-72 rounded-full flex items-center justify-center border border-gold/25 bg-espresso-deep shadow-2xl p-2"
           >
             {/* Glow */}
             <div
-              className="absolute inset-0 rounded-full blur-2xl opacity-10"
+              className="absolute inset-0 rounded-full blur-2xl opacity-20 pointer-events-none"
               style={{ backgroundColor: project.accent }}
             />
             {/* Monkey persona */}

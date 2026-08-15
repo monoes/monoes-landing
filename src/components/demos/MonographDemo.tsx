@@ -5,13 +5,13 @@ import { useRef, useEffect, useState, useCallback } from "react";
 type Phase = "idle" | "scanning" | "indexing" | "detecting" | "done";
 
 const GOLD    = "#C8A97E";
-const GOLD_F  = "rgba(200,169,126,0.18)";
+const GOLD_F  = "rgba(200,169,126,0.30)";
 const ESPRESSO = "#2A2318";
-const IVORY   = "#FAF7F0";
+const DARK_BG = "#140e08";
 
 // Community accent colors
-const COMM_RING = ["#C8A97E", "#8CC8A0", "#88A4CC"];
-const COMM_FILL = ["rgba(200,169,126,0.20)", "rgba(140,200,160,0.20)", "rgba(136,164,204,0.20)"];
+const COMM_RING = ["#C8A97E", "#48bb78", "#4A9BAF"];
+const COMM_FILL = ["rgba(200,169,126,0.25)", "rgba(72,187,120,0.25)", "rgba(74,155,175,0.25)"];
 const COMM_LABEL = ["Backend / API", "Data & Docs", "UI & Features"];
 
 interface GNode {
@@ -321,24 +321,24 @@ export function MonographDemo() {
       </div>
 
       {/* Canvas */}
-      <div className="overflow-x-auto rounded-xl" style={{ background: IVORY }}>
+      <div className="overflow-x-auto rounded-xl border border-gold/15" style={{ background: DARK_BG }}>
         <canvas
           ref={canvasRef}
           width={CW}
           height={CH}
           className="block rounded-xl"
-          style={{ minWidth: CW, background: IVORY }}
+          style={{ minWidth: CW, background: DARK_BG }}
         />
       </div>
 
       {/* Log */}
       <div
         ref={logRef}
-        className="rounded-xl border border-gold/10 bg-espresso/5 px-4 py-3 font-mono text-xs leading-relaxed min-h-[60px] max-h-[130px] overflow-y-auto scroll-smooth"
-        style={{ color: "rgba(42,35,24,0.55)" }}
+        className="rounded-xl border border-gold/15 bg-[#100a05] px-4 py-3 font-mono text-xs leading-relaxed min-h-[60px] max-h-[130px] overflow-y-auto scroll-smooth"
+        style={{ color: "rgba(250,247,240,0.75)" }}
       >
         {log.length === 0 ? (
-          <span className="opacity-35">Activity log…</span>
+          <span className="text-ivory/30">Activity log…</span>
         ) : (
           log.map((line, i) => (
             <div
@@ -348,7 +348,7 @@ export function MonographDemo() {
                   ? GOLD
                   : line.includes("path:")
                   ? GOLD
-                  : "rgba(42,35,24,0.60)",
+                  : "rgba(250,247,240,0.75)",
               }}
             >
               {line}
@@ -359,12 +359,12 @@ export function MonographDemo() {
 
       {/* Description lines */}
       <div className="flex flex-col gap-0.5 px-0.5">
-        <p className="text-[10px] font-mono text-espresso/40 leading-snug">
+        <p className="text-[11px] font-mono text-ivory/70 leading-snug">
           AST-parsed dependency graph of any codebase. Louvain clustering groups files into logical communities. God nodes (API, DB, UI) are highly-connected hubs. Changing them has the widest blast radius.
         </p>
-        <p className="text-[10px] font-mono leading-snug">
-          <span style={{ color: GOLD }} className="opacity-70">Good for:</span>{" "}
-          <span className="text-espresso/45">Understanding blast radius before edits, finding dead code, routing agents to the right files automatically.</span>
+        <p className="text-[11px] font-mono leading-snug">
+          <span className="text-gold font-medium">Good for:</span>{" "}
+          <span className="text-ivory/60">Understanding blast radius before edits, finding dead code, routing agents to the right files automatically.</span>
         </p>
       </div>
 
@@ -374,8 +374,8 @@ export function MonographDemo() {
           <button
             onClick={runBuild}
             disabled={phase !== "idle"}
-            className="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 disabled:opacity-50"
-            style={{ background: ESPRESSO, color: GOLD, border: `1px solid ${GOLD}` }}
+            className="px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 disabled:opacity-50 hover:bg-gold-warm"
+            style={{ background: GOLD, color: ESPRESSO }}
           >
             {phase === "idle"      && "Build Graph →"}
             {phase === "scanning"  && "Scanning…"}
@@ -385,13 +385,13 @@ export function MonographDemo() {
         ) : (
           <button
             onClick={reset}
-            className="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200"
-            style={{ background: "transparent", color: GOLD, border: `1px solid rgba(200,169,126,0.35)` }}
+            className="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:bg-gold/15"
+            style={{ background: "transparent", color: GOLD, border: `1px solid ${GOLD}60` }}
           >
             ↺ Run again
           </button>
         )}
-        <span className="text-xs font-mono text-gold-bronze">
+        <span className="text-xs font-mono text-gold/70">
           {phase === "idle"      && "● idle"}
           {phase === "scanning"  && "◌ scanning"}
           {phase === "indexing"  && "◌ indexing"}

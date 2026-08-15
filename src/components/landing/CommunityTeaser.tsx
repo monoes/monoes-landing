@@ -17,14 +17,14 @@ export function CommunityTeaser() {
   return (
     <section
       ref={sectionRef}
-      className="relative py-40 md:py-56 px-6 overflow-hidden bg-ivory-parchment"
+      className="relative py-40 md:py-56 px-6 overflow-hidden bg-espresso-deep border-t border-gold/15"
     >
       {/* Subtle background glow */}
       <motion.div
         style={{ y: bgY }}
         className="absolute inset-0 pointer-events-none"
       >
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-gold opacity-[0.06] blur-3xl" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-gold opacity-[0.08] blur-3xl" />
       </motion.div>
 
       {/* Top divider */}
@@ -32,19 +32,19 @@ export function CommunityTeaser() {
 
       <div className="relative max-w-3xl mx-auto text-center space-y-8">
         {/* Label */}
-        <p className="text-xs uppercase tracking-label text-gold-dark font-medium">
+        <p className="text-xs uppercase tracking-label text-gold font-semibold">
           Join the Troop
         </p>
 
         {/* Heading */}
-        <h2 className="text-4xl md:text-5xl lg:text-6xl font-light tracking-tight leading-tight text-espresso">
+        <h2 className="text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tight leading-tight text-ivory">
           Built in the open.{" "}
           <br className="hidden md:block" />
-          <span className="text-gold-warm">Shaped by the community.</span>
+          <span className="text-gold">Shaped by the community.</span>
         </h2>
 
         {/* Sub-copy */}
-        <p className="text-lg md:text-xl font-light text-gold-bronze max-w-xl mx-auto leading-relaxed">
+        <p className="text-lg md:text-xl font-light text-ivory/70 max-w-xl mx-auto leading-relaxed">
           Every tool is open-source, every decision is in public. Join us and
           help shape what&apos;s next.
         </p>
@@ -55,7 +55,7 @@ export function CommunityTeaser() {
             href="https://github.com/monoes"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-8 py-3 border border-espresso text-espresso text-sm uppercase tracking-label font-medium rounded-sm transition-all hover:bg-espresso hover:text-ivory"
+            className="inline-flex items-center gap-2 px-8 py-3 bg-gold text-espresso text-sm uppercase tracking-label font-semibold rounded-lg transition-all hover:bg-gold-warm"
           >
             <svg
               width="16"
@@ -71,7 +71,7 @@ export function CommunityTeaser() {
 
           <Link
             href="/community"
-            className="inline-flex items-center gap-2 px-8 py-3 border border-gold text-gold-dark text-sm uppercase tracking-label font-medium rounded-sm transition-all hover:bg-gold hover:text-ivory"
+            className="inline-flex items-center gap-2 px-8 py-3 border border-gold/40 text-gold text-sm uppercase tracking-label font-semibold rounded-lg transition-all hover:bg-gold/10"
           >
             Community →
           </Link>

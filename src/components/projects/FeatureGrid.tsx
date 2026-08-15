@@ -29,7 +29,7 @@ export function FeatureGrid({ project }: { project: Project }) {
   }, []);
 
   return (
-    <section className="bg-ivory-parchment px-8 py-24">
+    <section className="bg-espresso px-6 sm:px-8 py-24 border-t border-gold/15">
       <div className="mx-auto max-w-6xl">
         {/* Section header */}
         <div className="mb-14 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
@@ -40,12 +40,12 @@ export function FeatureGrid({ project }: { project: Project }) {
             >
               Key Features
             </p>
-            <h2 className="text-3xl font-semibold text-espresso md:text-4xl leading-tight">
+            <h2 className="text-3xl font-semibold text-ivory md:text-4xl leading-tight">
               Everything you need.
               <br className="hidden md:block" /> Nothing you don&apos;t.
             </h2>
           </div>
-          <p className="font-mono text-sm text-espresso/30">
+          <p className="font-mono text-sm text-gold/40">
             {project.features.length} capabilities
           </p>
         </div>
@@ -58,27 +58,26 @@ export function FeatureGrid({ project }: { project: Project }) {
           {project.features.map((feat, i) => (
             <div
               key={i}
-              className="feature-card group relative rounded-2xl border border-espresso/10 bg-white p-7 shadow-soft transition-[border-color,box-shadow] duration-200 hover:border-espresso/20 hover:shadow-soft-lg"
+              className="feature-card group relative rounded-2xl border border-gold/20 bg-espresso-deep/90 p-7 shadow-soft transition-[border-color,box-shadow,transform] duration-200 hover:border-gold/40 hover:-translate-y-0.5 hover:shadow-soft-lg"
               style={{ opacity: 0 }}
             >
               {/* Index */}
-              <span className="absolute top-5 right-6 font-mono text-xs text-espresso/20">
+              <span className="absolute top-5 right-6 font-mono text-xs text-gold/40">
                 {String(i + 1).padStart(2, "0")}
               </span>
 
               {/* Icon */}
               <div
-                className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl text-2xl"
-                style={{ backgroundColor: project.accent, opacity: 0.9 }}
+                className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl text-2xl border border-gold/20 bg-gold/10"
               >
                 {feat.icon}
               </div>
 
               {/* Text */}
-              <h3 className="mb-2 text-base font-semibold text-espresso leading-snug">
+              <h3 className="mb-2 text-base font-semibold text-ivory leading-snug">
                 {feat.title}
               </h3>
-              <p className="text-sm leading-relaxed text-espresso/60">
+              <p className="text-sm leading-relaxed text-ivory/65">
                 {feat.description}
               </p>
 

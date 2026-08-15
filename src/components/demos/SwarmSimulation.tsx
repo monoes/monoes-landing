@@ -6,12 +6,12 @@ type Status  = "idle" | "running" | "done";
 type TopoKey = "hierarchical" | "mesh" | "hierarchical-mesh" | "ring" | "star" | "hybrid" | "adaptive";
 
 const GOLD      = "#C8A97E";
-const GOLD_F    = "rgba(200,169,126,0.16)";
-const GOLD_M    = "rgba(200,169,126,0.60)";
-const GREEN_F   = "rgba(100,200,120,0.22)";
-const GREEN_R   = "rgba(100,200,120,0.70)";
+const GOLD_F    = "rgba(200,169,126,0.30)";
+const GOLD_M    = "rgba(200,169,126,0.75)";
+const GREEN_F   = "rgba(72,187,120,0.30)";
+const GREEN_R   = "rgba(72,187,120,0.90)";
 const ESPRESSO  = "#2A2318";
-const IVORY     = "#FAF7F0";
+const DARK_BG   = "#140e08";
 
 const CW = 320, CH = 218;
 const CX = CW / 2, CY = CH / 2;
@@ -310,8 +310,8 @@ export function SwarmSimulation() {
   const def = TOPOS[topo];
 
   return (
-    <div className="flex flex-col gap-3 w-full rounded-2xl bg-ivory-warm border border-ivory-linen p-4">
-      <p className="text-xs tracking-label text-gold-bronze uppercase">Agent Swarm</p>
+    <div className="flex flex-col gap-4 w-full rounded-2xl bg-espresso-deep/90 border border-gold/20 p-5 shadow-soft">
+      <p className="text-xs tracking-label text-gold uppercase font-semibold">Agent Swarm</p>
 
       {/* Topology selector */}
       <div className="flex flex-wrap items-center gap-1.5">
@@ -324,15 +324,15 @@ export function SwarmSimulation() {
               onClick={() => switchTopo(key)}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-150"
               style={{
-                background:   on ? ESPRESSO : "rgba(42,35,24,0.04)",
-                color:        on ? GOLD : "rgba(42,35,24,0.55)",
-                border:       `1px solid ${on ? GOLD : "rgba(200,169,126,0.22)"}`,
+                background:   on ? GOLD : "rgba(200,169,126,0.08)",
+                color:        on ? ESPRESSO : "rgba(250,247,240,0.8)",
+                border:       `1px solid ${on ? GOLD : "rgba(200,169,126,0.25)"}`,
               }}
             >
               {t.label}
               <span
-                className="hidden sm:inline text-[9px] font-normal opacity-70 border rounded px-1 py-px"
-                style={{ borderColor: on ? `${GOLD}50` : "rgba(200,169,126,0.25)" }}
+                className="hidden sm:inline text-[9px] font-normal border rounded px-1 py-px"
+                style={{ borderColor: on ? `${ESPRESSO}40` : "rgba(200,169,126,0.35)", color: on ? ESPRESSO : "rgba(250,247,240,0.6)" }}
               >
                 {t.badge}
               </span>
@@ -340,7 +340,7 @@ export function SwarmSimulation() {
           );
         })}
 
-        <span className="text-gold/20 mx-1">·</span>
+        <span className="text-gold/30 mx-1">·</span>
 
         {SECONDARY.map(key => {
           const on = topo === key;
@@ -350,9 +350,9 @@ export function SwarmSimulation() {
               onClick={() => switchTopo(key)}
               className="px-2.5 py-1 rounded-md text-[10px] font-medium transition-all duration-150"
               style={{
-                background:  on ? "rgba(42,35,24,0.08)" : "transparent",
-                color:       on ? "rgba(42,35,24,0.72)" : "rgba(42,35,24,0.35)",
-                border:      `1px solid ${on ? "rgba(200,169,126,0.35)" : "rgba(200,169,126,0.14)"}`,
+                background:  on ? "rgba(200,169,126,0.2)" : "transparent",
+                color:       on ? GOLD : "rgba(250,247,240,0.5)",
+                border:      `1px solid ${on ? GOLD : "rgba(200,169,126,0.18)"}`,
               }}
             >
               {TOPOS[key].label}
@@ -362,20 +362,22 @@ export function SwarmSimulation() {
       </div>
 
       {/* Canvas */}
-      <canvas
-        ref={canvasRef}
-        width={CW}
-        height={CH}
-        className="rounded-xl self-center"
-        style={{ background: IVORY, width: CW, height: CH }}
-      />
+      <div className="flex justify-center rounded-xl border border-gold/15 p-2" style={{ background: DARK_BG }}>
+        <canvas
+          ref={canvasRef}
+          width={CW}
+          height={CH}
+          className="rounded-xl self-center"
+          style={{ background: DARK_BG, width: CW, height: CH }}
+        />
+      </div>
 
       {/* Topology note */}
       <div className="flex flex-col gap-0.5 px-0.5">
-        <p className="text-[10px] font-mono text-espresso/40 leading-snug">{def.note}</p>
-        <p className="text-[10px] font-mono leading-snug">
-          <span style={{ color: GOLD }} className="opacity-70">Good for:</span>{" "}
-          <span className="text-espresso/45">{def.goodFor}</span>
+        <p className="text-[11px] font-mono text-ivory/70 leading-snug">{def.note}</p>
+        <p className="text-[11px] font-mono leading-snug">
+          <span className="text-gold font-medium">Good for:</span>{" "}
+          <span className="text-ivory/60">{def.goodFor}</span>
         </p>
       </div>
 
@@ -385,21 +387,21 @@ export function SwarmSimulation() {
           <button
             onClick={runSwarm}
             disabled={status === "running"}
-            className="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 disabled:opacity-50"
-            style={{ background: ESPRESSO, color: GOLD, border: `1px solid ${GOLD}` }}
+            className="px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 disabled:opacity-50 hover:bg-gold-warm"
+            style={{ background: GOLD, color: ESPRESSO }}
           >
             {status === "running" ? "Running…" : "Run Swarm →"}
           </button>
         ) : (
           <button
             onClick={reset}
-            className="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200"
-            style={{ background: "transparent", color: GOLD, border: `1px solid rgba(200,169,126,0.35)` }}
+            className="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:bg-gold/15"
+            style={{ background: "transparent", color: GOLD, border: `1px solid ${GOLD}60` }}
           >
             ↺ Run again
           </button>
         )}
-        <span className="text-xs font-mono text-gold-bronze">
+        <span className="text-xs font-mono text-gold/70">
           {status === "idle"    && "● idle"}
           {status === "running" && "◌ running"}
           {status === "done"    && "✓ complete"}
