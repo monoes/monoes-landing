@@ -54,12 +54,13 @@ export function ResearchHero() {
             {QUOTE_WORDS.map((word, i) => (
               <motion.span
                 key={i}
-                className="inline-block mr-[0.26em]"
+                className="inline-block"
                 initial={reduce ? {} : { opacity: 0, y: 6 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.35, delay: 0.5 + i * 0.025, ease: expo }}
               >
                 {word}
+                {i < QUOTE_WORDS.length - 1 ? " " : ""}
               </motion.span>
             ))}
           </motion.blockquote>

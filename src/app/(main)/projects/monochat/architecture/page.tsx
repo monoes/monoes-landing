@@ -323,7 +323,7 @@ export default function MonoChatArchitecturePage() {
               <div key={step.num} className="rounded-2xl border border-espresso/10 bg-white p-6 shadow-soft flex gap-5">
                 <div className="flex-shrink-0 w-9 h-9 rounded-xl flex items-center justify-center text-sm font-bold text-white"
                   style={{ background: step.color }}>{step.num}</div>
-                <div className="flex-1">
+                <div className="flex-1 min-w-0">
                   <h4 className="text-sm font-semibold text-espresso mb-2">{step.title}</h4>
                   <p className="text-sm text-espresso/60 leading-relaxed mb-3">{step.body}</p>
                   {step.code && (
@@ -384,7 +384,7 @@ export default function MonoChatArchitecturePage() {
           </div>
 
           {/* Crypto stack table */}
-          <div className="rounded-2xl border border-espresso/10 bg-white shadow-soft overflow-hidden">
+          <div className="rounded-2xl border border-espresso/10 bg-white shadow-soft overflow-x-auto">
             <div className="px-5 py-3 border-b border-espresso/8 bg-ivory-warm/50">
               <p className="text-[10px] uppercase tracking-label font-semibold text-espresso/40">Full Cryptography Stack</p>
             </div>
@@ -412,7 +412,7 @@ export default function MonoChatArchitecturePage() {
           <p className="text-espresso/55 font-light leading-relaxed max-w-2xl mb-12">
             CBOR-encoded binary protocol. Prefixed with 0x01 (handshake) or 0x02 (application data) before transmission over the WebRTC DataChannel.
           </p>
-          <div className="rounded-2xl border border-espresso/10 bg-white shadow-soft overflow-hidden mb-6">
+          <div className="rounded-2xl border border-espresso/10 bg-white shadow-soft overflow-x-auto mb-6">
             <div className="px-5 py-3 border-b border-espresso/8 bg-ivory-warm/50">
               <p className="text-[10px] uppercase tracking-label font-semibold text-espresso/40">WireMessage Fields</p>
             </div>

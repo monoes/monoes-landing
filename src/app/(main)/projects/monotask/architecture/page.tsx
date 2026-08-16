@@ -338,11 +338,11 @@ export default function MonoTaskArchitecturePage() {
               <div key={step.num} className="rounded-2xl border border-espresso/10 bg-white p-6 shadow-soft flex gap-5">
                 <div className="flex-shrink-0 w-9 h-9 rounded-xl flex items-center justify-center text-sm font-bold text-white"
                   style={{ background: step.color }}>{step.num}</div>
-                <div className="flex-1">
+                <div className="flex-1 min-w-0">
                   <h4 className="text-sm font-semibold text-espresso mb-2">{step.title}</h4>
                   <p className="text-sm text-espresso/60 leading-relaxed mb-3">{step.body}</p>
                   {step.code && (
-                    <code className="block text-xs bg-ivory-warm border border-espresso/8 rounded-lg px-4 py-2 text-espresso/70 font-mono">{step.code}</code>
+                    <code className="block text-xs bg-ivory-warm border border-espresso/8 rounded-lg px-4 py-2 text-espresso/70 font-mono overflow-x-auto">{step.code}</code>
                   )}
                 </div>
               </div>
@@ -408,9 +408,9 @@ export default function MonoTaskArchitecturePage() {
                 ))}
               </div>
             </div>
-            <div className="rounded-2xl border border-espresso/10 bg-white p-6 shadow-soft">
+            <div className="rounded-2xl border border-espresso/10 bg-white p-6 shadow-soft min-w-0">
               <p className="text-[10px] uppercase tracking-label font-semibold text-espresso/40 mb-4">Invite Token Flow</p>
-              <pre className="text-xs font-mono text-espresso/65 leading-loose">{`// Creator
+              <pre className="text-xs font-mono text-espresso/65 leading-loose overflow-x-auto">{`// Creator
 let meta = InviteMetadata {
   space_id, pubkey,
   expiry, permissions,
@@ -436,7 +436,7 @@ Identity::verify(meta.pubkey, &meta, &sig)?;
           <p className="text-espresso/55 font-light leading-relaxed max-w-2xl mb-12">
             Rust + bundled SQLite ensures consistent performance across all platforms.
           </p>
-          <div className="rounded-2xl border border-espresso/10 bg-white shadow-soft overflow-hidden">
+          <div className="rounded-2xl border border-espresso/10 bg-white shadow-soft overflow-x-auto">
             <table className="w-full border-collapse">
               <thead>
                 <tr className="border-b border-espresso/8 bg-ivory-warm/50">

@@ -409,11 +409,11 @@ export default function MonoClipArchitecturePage() {
               <div key={step.num} className="rounded-2xl border border-espresso/10 bg-white p-6 shadow-soft flex gap-5">
                 <div className="flex-shrink-0 w-9 h-9 rounded-xl flex items-center justify-center text-sm font-bold text-white"
                   style={{ background: step.color }}>{step.num}</div>
-                <div className="flex-1">
+                <div className="flex-1 min-w-0">
                   <h4 className="text-sm font-semibold text-espresso mb-2">{step.title}</h4>
                   <p className="text-sm text-espresso/60 leading-relaxed mb-3">{step.body}</p>
                   {step.code && (
-                    <code className="block text-xs bg-ivory-warm border border-espresso/8 rounded-lg px-4 py-2 text-espresso/70 font-mono">{step.code}</code>
+                    <code className="block text-xs bg-ivory-warm border border-espresso/8 rounded-lg px-4 py-2 text-espresso/70 font-mono overflow-x-auto">{step.code}</code>
                   )}
                 </div>
               </div>
@@ -503,7 +503,7 @@ export default function MonoClipArchitecturePage() {
           <p className="text-espresso/55 font-light leading-relaxed max-w-2xl mb-12">
             Tauri + Rust deliver native performance. Every metric is measured on macOS with SSD storage.
           </p>
-          <div className="rounded-2xl border border-espresso/10 bg-white shadow-soft overflow-hidden mb-8">
+          <div className="rounded-2xl border border-espresso/10 bg-white shadow-soft overflow-x-auto mb-8">
             <table className="w-full border-collapse">
               <thead>
                 <tr className="border-b border-espresso/8 bg-ivory-warm/50">

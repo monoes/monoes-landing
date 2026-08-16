@@ -52,6 +52,7 @@
 ═══════════════════════════════════════════════════ */
 #snapWrap {
   height: 100vh;
+  height: 100dvh;
   overflow-y: scroll;
   scroll-snap-type: y mandatory;
   scrollbar-width: none;
@@ -64,6 +65,7 @@
 ═══════════════════════════════════════════════════ */
 .slide {
   height: 100vh;
+  height: 100dvh;
   scroll-snap-align: start;
   scroll-snap-stop: always;
   overflow: hidden;
@@ -985,7 +987,7 @@ nav {
   .status-text { font-size: 10px; }
   .slide-dots { display: none; }
   .version-badge { right: 16px; bottom: 10px; }
-  .slide { justify-content: flex-start; padding-top: 68px; overflow-y: hidden; }
+  .slide { justify-content: flex-start; padding-top: 68px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
   .slide-content { padding: 0 14px; }
   .hero-inner    { padding: 0 14px; }
   .section-label { font-size: 10px; letter-spacing: 0.18em; margin-bottom: 4px; }

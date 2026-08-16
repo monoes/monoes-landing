@@ -37,7 +37,7 @@ export function CLISection({ data, accent }: { data: CLISectionData; accent: str
         {/* Command groups */}
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
           {data.groups.map((group) => (
-            <div key={group.title}>
+            <div key={group.title} className="min-w-0">
               <h3 className="mb-1 text-sm font-semibold text-ivory/80">{group.title}</h3>
               {group.description && (
                 <p className="mb-3 text-xs text-ivory/40 leading-relaxed">{group.description}</p>

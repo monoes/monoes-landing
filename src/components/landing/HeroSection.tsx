@@ -187,7 +187,7 @@ export function HeroSection() {
       className="relative h-[200vh] bg-espresso text-ivory pt-16"
     >
       {/* Sticky inner container */}
-      <div className="sticky top-0 h-screen overflow-hidden">
+      <div className="sticky top-0 h-dvh overflow-hidden">
         {/* Particle canvas */}
         <canvas
           ref={canvasRef}

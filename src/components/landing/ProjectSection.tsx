@@ -86,7 +86,7 @@ export function ProjectSection({ project }: ProjectSectionProps) {
   return (
     <section
       ref={sectionRef}
-      className="relative h-screen bg-espresso overflow-hidden border-t border-gold/15"
+      className="relative min-h-screen md:h-screen overflow-hidden bg-espresso border-t border-gold/15"
     >
       {/* Progress bar */}
       <div className="absolute top-0 left-0 right-0 h-0.5 bg-gold/15 z-10">
