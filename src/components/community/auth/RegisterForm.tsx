@@ -54,13 +54,22 @@ export function RegisterForm() {
           minLength={8}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          aria-describedby="password-hint"
           className="w-full rounded-md border border-espresso/30 px-3 py-2 text-sm"
         />
+        <p id="password-hint" className="mt-1 text-xs text-espresso/55">
+          At least 8 characters.
+        </p>
       </div>
-      {error && <p className="text-sm text-red-700">{error}</p>}
+      {error && (
+        <p role="alert" className="text-sm text-red-700">
+          {error}
+        </p>
+      )}
       <button
         type="submit"
         disabled={submitting}
+        aria-busy={submitting}
         className="w-full rounded-md bg-espresso px-5 py-2 text-sm font-medium text-ivory transition-opacity hover:opacity-80 disabled:opacity-50"
       >
         {submitting ? "Creating account…" : "Create account"}
