@@ -17,13 +17,18 @@ export function LoginForm() {
     e.preventDefault();
     setError(null);
     setSubmitting(true);
-    const { error: signInError } = await authClient.signIn.email({ email, password });
-    setSubmitting(false);
-    if (signInError) {
-      setError(signInError.message ?? "Invalid email or password.");
-      return;
+    try {
+      const { error: signInError } = await authClient.signIn.email({ email, password });
+      if (signInError) {
+        setError(signInError.message ?? "Invalid email or password.");
+        return;
+      }
+      router.push("/community");
+    } catch {
+      setError("Something went wrong. Please try again.");
+    } finally {
+      setSubmitting(false);
     }
-    router.push("/community");
   }
 
   return (
