@@ -1,6 +1,8 @@
+import { getPlatformProxy } from "wrangler";
+import { drizzle } from "drizzle-orm/d1";
 import { eq } from "drizzle-orm";
 import { getAuth } from "../src/lib/auth";
-import { getDb } from "../src/lib/db";
+import * as schema from "../src/lib/db/schema";
 import { user } from "../src/lib/db/schema";
 
 const { ADMIN_EMAIL: email, ADMIN_USERNAME: username, ADMIN_PASSWORD: pw } = process.env;
@@ -11,8 +13,9 @@ async function main() {
     process.exit(1);
   }
 
-  const auth = getAuth();
-  const db = getDb();
+  const { env } = await getPlatformProxy({ envFiles: [] });
+  const db = drizzle(env.COMMUNITY_DB as D1Database, { schema });
+  const auth = getAuth(db);
 
   const existing = await db.select().from(user).where(eq(user.email, email)).limit(1);
 

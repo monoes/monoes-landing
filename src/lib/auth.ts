@@ -1,13 +1,13 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { getDb } from "@/lib/db";
+import { getDb, type Db } from "@/lib/db";
 import * as schema from "@/lib/db/schema";
 
 const { BETTER_AUTH_SECRET: sec, BETTER_AUTH_URL: url } = process.env;
 
-export function getAuth() {
+export function getAuth(db: Db = getDb()) {
   return betterAuth({
-    database: drizzleAdapter(getDb(), { provider: "sqlite", schema }),
+    database: drizzleAdapter(db, { provider: "sqlite", schema }),
     emailAndPassword: {
       enabled: true,
       requireEmailVerification: false,
