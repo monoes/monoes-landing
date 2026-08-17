@@ -15,4 +15,4 @@ routes = [
 [[d1_databases]]
 binding = "COMMUNITY_DB"
 database_name = "monoes-community"
-database_id = "00000000-0000-0000-0000-000000000000"
+database_id = "00000000-0000-0000-0000-000000000000" # TODO: replace with the real ID from `wrangler d1 create monoes-community`
