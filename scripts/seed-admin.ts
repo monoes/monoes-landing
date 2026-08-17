@@ -13,7 +13,7 @@ async function main() {
     process.exit(1);
   }
 
-  const { env } = await getPlatformProxy({ envFiles: [] });
+  const { env, dispose } = await getPlatformProxy({ envFiles: [] });
   const db = drizzle(env.COMMUNITY_DB as D1Database, { schema });
   const auth = getAuth(db);
 
@@ -29,6 +29,7 @@ async function main() {
     .where(eq(user.email, email));
 
   console.log(`Admin account ready: ${email} (username: ${username})`);
+  await dispose();
 }
 
 main().catch((err) => {
