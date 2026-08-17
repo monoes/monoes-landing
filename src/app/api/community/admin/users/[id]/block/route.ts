@@ -19,10 +19,15 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
 
   const db = getDb();
   const blockedAt = body.blocked ? new Date() : null;
-  await db
+  const updated = await db
     .update(user)
     .set({ blockedAt, blockedBy: body.blocked ? session.user.id : null, updatedAt: new Date() })
-    .where(eq(user.id, id));
+    .where(eq(user.id, id))
+    .returning({ id: user.id });
+
+  if (updated.length === 0) {
+    return NextResponse.json({ error: "User not found" }, { status: 404 });
+  }
 
   return NextResponse.json({ blockedAt: blockedAt ? blockedAt.toISOString() : null });
 }

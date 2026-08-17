@@ -21,7 +21,15 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   }
 
   const db = getDb();
-  await db.update(user).set({ role: body.role, updatedAt: new Date() }).where(eq(user.id, id));
+  const updated = await db
+    .update(user)
+    .set({ role: body.role, updatedAt: new Date() })
+    .where(eq(user.id, id))
+    .returning({ id: user.id });
+
+  if (updated.length === 0) {
+    return NextResponse.json({ error: "User not found" }, { status: 404 });
+  }
 
   return NextResponse.json({ role: body.role });
 }
