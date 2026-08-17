@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server.js";
+import { NextRequest, NextResponse } from "next/server";
 
 const PUBLIC_PATHS = new Set(["/community", "/community/login", "/community/register"]);
 const SESSION_COOKIE = "better-auth.session_token";

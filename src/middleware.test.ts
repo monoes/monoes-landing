@@ -1,7 +1,22 @@
 import { describe, it, mock } from "node:test";
 import assert from "node:assert/strict";
-import { NextRequest } from "next/server.js";
-import { middleware, type GetSession } from "./middleware.ts";
+import { register } from "node:module";
+import type { GetSession } from "./middleware.ts";
+
+// Plain `node --test` cannot resolve the bare "next/server" specifier: the
+// installed `next` package has no "exports" map, and Node's ESM resolver
+// requires an exact file match or explicit extension for such subpath
+// specifiers (it suggests "next/server.js" — the real file backing the
+// public "next/server" entry point). This hook is scoped to this test file
+// only, via a runtime module.register() call, so `src/middleware.ts` can
+// keep importing the standard, documented "next/server" specifier.
+register(
+  "data:text/javascript,export function resolve(specifier, context, next) { if (specifier === 'next/server') { return next('next/server.js', context); } return next(specifier, context); }",
+  import.meta.url,
+);
+
+const { NextRequest } = await import("next/server");
+const { middleware } = await import("./middleware.ts");
 
 const getSessionMock = mock.fn<GetSession>(async () => null);
 
