@@ -13,23 +13,26 @@ async function main() {
     process.exit(1);
   }
 
-  const { env, dispose } = await getPlatformProxy({ envFiles: [] });
-  const db = drizzle(env.COMMUNITY_DB as D1Database, { schema });
-  const auth = getAuth(db);
+  const { env, dispose } = await getPlatformProxy<CloudflareEnv>({ envFiles: [] });
+  try {
+    const db = drizzle(env.COMMUNITY_DB, { schema });
+    const auth = getAuth(db);
 
-  const existing = await db.select().from(user).where(eq(user.email, email)).limit(1);
+    const existing = await db.select().from(user).where(eq(user.email, email)).limit(1);
 
-  if (existing.length === 0) {
-    await auth.api.signUpEmail({ body: { email, password: pw, name: username } });
+    if (existing.length === 0) {
+      await auth.api.signUpEmail({ body: { email, password: pw, name: username } });
+    }
+
+    await db
+      .update(user)
+      .set({ role: "admin", username, updatedAt: new Date() })
+      .where(eq(user.email, email));
+
+    console.log(`Admin account ready: ${email} (username: ${username})`);
+  } finally {
+    await dispose();
   }
-
-  await db
-    .update(user)
-    .set({ role: "admin", username, updatedAt: new Date() })
-    .where(eq(user.email, email));
-
-  console.log(`Admin account ready: ${email} (username: ${username})`);
-  await dispose();
 }
 
 main().catch((err) => {
