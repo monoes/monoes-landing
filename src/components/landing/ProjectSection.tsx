@@ -86,7 +86,7 @@ export function ProjectSection({ project }: ProjectSectionProps) {
   return (
     <section
       ref={sectionRef}
-      className="relative min-h-screen md:h-screen overflow-hidden bg-espresso border-t border-gold/15"
+      className="relative min-h-screen md:h-screen overflow-y-auto overflow-x-hidden bg-espresso border-t border-gold/15"
     >
       {/* Progress bar */}
       <div className="absolute top-0 left-0 right-0 h-0.5 bg-gold/15 z-10">
@@ -99,7 +99,7 @@ export function ProjectSection({ project }: ProjectSectionProps) {
 
       <div ref={contentRef} className="flex h-full">
         {/* Left side - 60% */}
-        <div className="flex flex-col justify-center px-10 md:px-16 lg:px-20 py-20 w-full md:w-[60%] space-y-8">
+        <div className="flex flex-col justify-center px-10 md:px-16 lg:px-20 py-12 w-full md:w-[60%] space-y-5">
           {/* Project number */}
           <div className="space-y-1">
             <p

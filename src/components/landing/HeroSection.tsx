@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import Link from "next/link";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -144,19 +143,6 @@ export function HeroSection() {
       },
     });
 
-    // Initial fade in immediately on load
-    gsap.fromTo(
-      titleRef.current,
-      { opacity: 0, y: 24 },
-      { opacity: 1, y: 0, duration: 0.8, ease: "power2.out", delay: 0.1 }
-    );
-
-    gsap.fromTo(
-      subtitleRef.current,
-      { opacity: 0, y: 16 },
-      { opacity: 1, y: 0, duration: 0.8, ease: "power2.out", delay: 0.3 }
-    );
-
     // Scroll trigger for subtle scroll-away parallax
     const scrollSt = gsap.to(
       [titleRef.current, subtitleRef.current],
@@ -217,22 +203,6 @@ export function HeroSection() {
           >
             Four open-source instruments. One philosophy.
           </p>
-
-          <div
-            className="mt-8"
-            style={{ animation: "fadeInUp 0.8s ease 0.6s both" }}
-          >
-            <Link
-              href="/whitepaper"
-              className="group inline-flex items-center gap-2 text-xs uppercase tracking-label font-semibold px-5 py-2.5 rounded-full border border-gold/40 text-gold transition-all duration-300 hover:bg-gold hover:text-espresso"
-            >
-              <span
-                className="inline-block w-1.5 h-1.5 rounded-full bg-gold group-hover:bg-espresso transition-colors"
-                style={{ animation: "pulse-dot 3s ease-in-out infinite" }}
-              />
-              White Paper: The One-Person Company
-            </Link>
-          </div>
         </div>
 
         {/* Scroll indicator */}
