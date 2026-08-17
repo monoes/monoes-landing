@@ -55,4 +55,14 @@ describe("community middleware", () => {
     const res = await middleware(req, getSessionMock);
     assert.equal(res.status, 200);
   });
+
+  it("redirects blocked users to /community/login?blocked=1 and clears the session cookie", async () => {
+    getSessionMock.mock.mockImplementationOnce(async () => ({
+      user: { id: "u1", username: "someone", role: "member", blockedAt: new Date() },
+    }));
+    const req = new NextRequest("http://localhost/community/admin");
+    const res = await middleware(req, getSessionMock);
+    assert.match(res.headers.get("location") ?? "", /\/community\/login\?blocked=1$/);
+    assert.equal(res.cookies.get("better-auth.session_token")?.value, "");
+  });
 });

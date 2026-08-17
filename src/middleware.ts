@@ -53,7 +53,8 @@ export async function middleware(
     return NextResponse.redirect(new URL("/community/onboarding", request.url));
   }
 
-  if (pathname.startsWith("/community/admin") && user.role !== "admin") {
+  const isAdminPath = pathname === "/community/admin" || pathname.startsWith("/community/admin/");
+  if (isAdminPath && user.role !== "admin") {
     return NextResponse.redirect(new URL("/community", request.url));
   }
 
