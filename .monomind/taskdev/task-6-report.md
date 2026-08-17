@@ -115,4 +115,4 @@ Result: **PASS**, 4/4 tests —
 
 Also re-ran `npx tsc --noEmit -p tsconfig.json` (clean except the same pre-existing `TS5097` precedent noted above, now on the `import type { GetSession } from "./middleware.ts"` line instead) and `npx eslint src/middleware.ts src/middleware.test.ts` (clean, no output).
 
-**Commit:** `1c7f6e1` — `fix: keep middleware.ts on next/server, isolate test via module.register hook` (see below for actual SHA).
+**Commit:** `506dfa4` — `fix: keep middleware.ts on next/server, isolate test via module.register hook`
