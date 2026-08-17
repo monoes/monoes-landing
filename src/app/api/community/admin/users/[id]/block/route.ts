@@ -1,0 +1,28 @@
+import { NextResponse } from "next/server";
+import { eq } from "drizzle-orm";
+import { getAuth } from "@/lib/auth";
+import { getDb } from "@/lib/db";
+import { user } from "@/lib/db/schema";
+
+export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const session = await getAuth().api.getSession({ headers: request.headers });
+  const role = (session?.user as { role?: string } | undefined)?.role;
+  if (!session || (role !== "admin" && role !== "moderator")) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
+  const { id } = await params;
+  const body = (await request.json().catch(() => null)) as { blocked?: unknown } | null;
+  if (typeof body?.blocked !== "boolean") {
+    return NextResponse.json({ error: "Missing 'blocked' boolean" }, { status: 400 });
+  }
+
+  const db = getDb();
+  const blockedAt = body.blocked ? new Date() : null;
+  await db
+    .update(user)
+    .set({ blockedAt, blockedBy: body.blocked ? session.user.id : null, updatedAt: new Date() })
+    .where(eq(user.id, id));
+
+  return NextResponse.json({ blockedAt: blockedAt ? blockedAt.toISOString() : null });
+}
