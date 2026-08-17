@@ -16,7 +16,7 @@ register(
 );
 
 const { NextRequest } = await import("next/server");
-const { middleware } = await import("./middleware.ts");
+const { middleware, runMiddleware } = await import("./middleware.ts");
 
 const getSessionMock = mock.fn<GetSession>(async () => null);
 
@@ -24,7 +24,7 @@ describe("community middleware", () => {
   it("redirects unauthenticated users to /community/login", async () => {
     getSessionMock.mock.mockImplementationOnce(async () => null);
     const req = new NextRequest("http://localhost/community/admin");
-    const res = await middleware(req, getSessionMock);
+    const res = await runMiddleware(req, getSessionMock);
     assert.equal(res.status, 307);
     assert.match(res.headers.get("location") ?? "", /\/community\/login$/);
   });
@@ -34,7 +34,7 @@ describe("community middleware", () => {
       user: { id: "u1", username: null, role: "member", blockedAt: null },
     }));
     const req = new NextRequest("http://localhost/community/admin");
-    const res = await middleware(req, getSessionMock);
+    const res = await runMiddleware(req, getSessionMock);
     assert.match(res.headers.get("location") ?? "", /\/community\/onboarding$/);
   });
 
@@ -43,7 +43,7 @@ describe("community middleware", () => {
       user: { id: "u1", username: "someone", role: "member", blockedAt: null },
     }));
     const req = new NextRequest("http://localhost/community/admin");
-    const res = await middleware(req, getSessionMock);
+    const res = await runMiddleware(req, getSessionMock);
     assert.match(res.headers.get("location") ?? "", /\/community$/);
   });
 
@@ -52,7 +52,7 @@ describe("community middleware", () => {
       user: { id: "u1", username: "someone", role: "admin", blockedAt: null },
     }));
     const req = new NextRequest("http://localhost/community/admin");
-    const res = await middleware(req, getSessionMock);
+    const res = await runMiddleware(req, getSessionMock);
     assert.equal(res.status, 200);
   });
 
@@ -61,8 +61,16 @@ describe("community middleware", () => {
       user: { id: "u1", username: "someone", role: "member", blockedAt: new Date() },
     }));
     const req = new NextRequest("http://localhost/community/admin");
-    const res = await middleware(req, getSessionMock);
+    const res = await runMiddleware(req, getSessionMock);
     assert.match(res.headers.get("location") ?? "", /\/community\/login\?blocked=1$/);
     assert.equal(res.cookies.get("better-auth.session_token")?.value, "");
+  });
+
+  it("exports `middleware` with exactly one parameter, matching Next.js's (request, event) call signature", () => {
+    // Regression guard: Next.js invokes middleware as `middleware(request, event)`.
+    // If `getSession` ever moves back onto `middleware` itself as a second
+    // parameter, Next's real `event` argument silently overrides our default
+    // and every authenticated request throws "getSession is not a function".
+    assert.equal(middleware.length, 1);
   });
 });

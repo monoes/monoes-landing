@@ -25,7 +25,13 @@ const defaultGetSession: GetSession = async (args) => {
   return session as unknown as { user: SessionUser } | null;
 };
 
-export async function middleware(
+// Exported separately (rather than as `middleware`'s own second parameter)
+// so the production `middleware` export below keeps the exact single-argument
+// signature Next.js invokes it with. Next.js actually calls middleware as
+// `middleware(request, event)` — a second, non-optional NextFetchEvent
+// argument — which would silently clobber a `getSession` default parameter
+// if it lived directly on `middleware` itself.
+export async function runMiddleware(
   request: NextRequest,
   getSession: GetSession = defaultGetSession,
 ) {
@@ -59,6 +65,10 @@ export async function middleware(
   }
 
   return NextResponse.next();
+}
+
+export async function middleware(request: NextRequest) {
+  return runMiddleware(request);
 }
 
 export const config = {
