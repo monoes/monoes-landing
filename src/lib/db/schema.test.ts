@@ -5,7 +5,19 @@ import { user, session, account, verification } from "./schema.ts";
 describe("db schema", () => {
   it("exports a user table with the required columns", () => {
     const columns = Object.keys(user);
-    for (const col of ["id", "email", "username", "role", "blockedAt", "blockedBy"]) {
+    for (const col of [
+      "id",
+      "name",
+      "email",
+      "emailVerified",
+      "image",
+      "username",
+      "role",
+      "blockedAt",
+      "blockedBy",
+      "createdAt",
+      "updatedAt",
+    ]) {
       assert.ok(columns.includes(col), `missing column: ${col}`);
     }
   });
