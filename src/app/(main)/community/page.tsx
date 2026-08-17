@@ -19,6 +19,11 @@ export const metadata: Metadata = {
   },
 };
 
+// Session-aware since Task 14 — getAuth()/getCloudflareContext() require a
+// dynamic (per-request) render, so this page can no longer be statically
+// prerendered at build time.
+export const dynamic = "force-dynamic";
+
 export default async function CommunityPage() {
   const [stats, session] = await Promise.all([
     getAllRepoStats(),

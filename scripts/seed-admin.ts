@@ -9,7 +9,11 @@ const { ADMIN_EMAIL: email, ADMIN_USERNAME: username, ADMIN_PASSWORD: pw } = pro
 
 async function main() {
   if (!email || !pw || !username) {
-    console.error("Set ADMIN_EMAIL, ADMIN_PASSWORD, ADMIN_USERNAME (e.g. via .dev.vars) before running this script.");
+    console.error(
+      "Set ADMIN_EMAIL, ADMIN_PASSWORD, ADMIN_USERNAME in your environment before running this script " +
+        "(e.g. `export $(grep -v '^#' .dev.vars | xargs)` to load them from your local .dev.vars file first — " +
+        "this script does not read .dev.vars itself).",
+    );
     process.exit(1);
   }
 

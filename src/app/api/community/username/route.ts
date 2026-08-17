@@ -13,6 +13,9 @@ export async function POST(request: Request) {
   if (!session) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   }
+  if ((session.user as { blockedAt?: unknown }).blockedAt) {
+    return NextResponse.json({ error: "Account blocked" }, { status: 403 });
+  }
 
   const body = (await request.json().catch(() => null)) as { username?: unknown } | null;
   const username = typeof body?.username === "string" ? body.username.trim() : "";

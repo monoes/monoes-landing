@@ -5,7 +5,8 @@ import { user } from "@/lib/db/schema";
 
 export async function GET(request: Request) {
   const session = await getAuth().api.getSession({ headers: request.headers });
-  if (!session || (session.user as { role?: string }).role !== "admin") {
+  const sessionUser = session?.user as { role?: string; blockedAt?: unknown } | undefined;
+  if (!session || sessionUser?.role !== "admin" || sessionUser?.blockedAt) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 

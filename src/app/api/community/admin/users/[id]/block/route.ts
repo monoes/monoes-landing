@@ -6,8 +6,9 @@ import { user } from "@/lib/db/schema";
 
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await getAuth().api.getSession({ headers: request.headers });
-  const role = (session?.user as { role?: string } | undefined)?.role;
-  if (!session || (role !== "admin" && role !== "moderator")) {
+  const sessionUser = session?.user as { role?: string; blockedAt?: unknown } | undefined;
+  const role = sessionUser?.role;
+  if (!session || (role !== "admin" && role !== "moderator") || sessionUser?.blockedAt) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 

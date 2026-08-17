@@ -87,3 +87,6 @@ data/mastermind-*.jsonl
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+
+# taskdev scratch (briefs, reports, review diffs — process notes, not source)
+.monomind/taskdev/

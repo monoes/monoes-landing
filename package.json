@@ -10,7 +10,9 @@
     "lint": "eslint",
     "db:generate": "drizzle-kit generate",
     "db:migrate:local": "wrangler d1 migrations apply monoes-community --local",
-    "seed:admin": "tsx scripts/seed-admin.ts"
+    "seed:admin": "tsx scripts/seed-admin.ts",
+    "test": "node --experimental-strip-types --test 'src/**/*.test.ts'",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "better-auth": "^1.6.0",

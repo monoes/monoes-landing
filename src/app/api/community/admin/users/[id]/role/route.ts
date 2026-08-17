@@ -10,7 +10,8 @@ export function isValidRole(value: unknown): value is "member" | "moderator" | "
 
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await getAuth().api.getSession({ headers: request.headers });
-  if (!session || (session.user as { role?: string }).role !== "admin") {
+  const sessionUser = session?.user as { role?: string; blockedAt?: unknown } | undefined;
+  if (!session || sessionUser?.role !== "admin" || sessionUser?.blockedAt) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 

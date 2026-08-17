@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 
 const PUBLIC_PATHS = new Set(["/community", "/community/login", "/community/register"]);
-const SESSION_COOKIE = "better-auth.session_token";
+// Better Auth prefixes the cookie with "__Secure-" whenever the connection is
+// https (production), but not over plain http (local dev) — clear both names
+// since we can't know which one is active without importing better-auth's
+// internal cookie-naming logic here.
+const SESSION_COOKIE_NAMES = ["better-auth.session_token", "__Secure-better-auth.session_token"];
 
 type SessionUser = {
   id: string;
@@ -51,7 +55,9 @@ export async function runMiddleware(
 
   if (user.blockedAt) {
     const response = NextResponse.redirect(new URL("/community/login?blocked=1", request.url));
-    response.cookies.delete(SESSION_COOKIE);
+    for (const cookieName of SESSION_COOKIE_NAMES) {
+      response.cookies.delete(cookieName);
+    }
     return response;
   }
 
