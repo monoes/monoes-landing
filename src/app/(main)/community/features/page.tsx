@@ -48,7 +48,10 @@ export default async function FeaturesPage() {
       <div className="mx-auto max-w-3xl">
         <p className="mb-2 text-xs uppercase tracking-label text-gold-dark font-medium">Community</p>
         <h1 className="mb-6 text-3xl font-semibold text-espresso tracking-tight">Feature requests</h1>
-        <FeatureList initialFeatures={items} />
+        <FeatureList
+          initialFeatures={items}
+          currentUsername={(session?.user as { username?: string | null } | undefined)?.username ?? null}
+        />
       </div>
     </main>
   );

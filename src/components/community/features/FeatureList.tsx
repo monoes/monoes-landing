@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { FeatureCard, type Feature } from "./FeatureCard";
 
 type SortMode = "score" | "newest" | "oldest";
@@ -18,8 +17,13 @@ function sortFeatures(features: Feature[], mode: SortMode): Feature[] {
   return copy;
 }
 
-export function FeatureList({ initialFeatures }: { initialFeatures: Feature[] }) {
-  const router = useRouter();
+export function FeatureList({
+  initialFeatures,
+  currentUsername,
+}: {
+  initialFeatures: Feature[];
+  currentUsername: string | null;
+}) {
   const [features, setFeatures] = useState(initialFeatures);
   const [sortMode, setSortMode] = useState<SortMode>("score");
   const [showForm, setShowForm] = useState(false);
@@ -72,10 +76,34 @@ export function FeatureList({ initialFeatures }: { initialFeatures: Feature[] })
         setFormError(data.error ?? "Could not submit feature.");
         return;
       }
+      const created = (await res.json()) as {
+        id: string;
+        title: string;
+        description: string;
+        status: Feature["status"];
+        createdAt: string;
+      };
+      // Append the newly created feature to local state directly rather than
+      // relying on router.refresh(): this component's `features` state was
+      // seeded once from the `initialFeatures` prop via useState, and React
+      // does not re-sync useState from new props on a parent re-render, so a
+      // refresh() alone would silently fail to show the new submission here.
+      setFeatures((prev) => [
+        ...prev,
+        {
+          id: created.id,
+          title: created.title,
+          description: created.description,
+          authorUsername: currentUsername,
+          status: created.status,
+          createdAt: created.createdAt,
+          score: 0,
+          myVote: 0,
+        },
+      ]);
       setTitle("");
       setDescription("");
       setShowForm(false);
-      router.refresh();
     } catch {
       setFormError("Something went wrong. Please try again.");
     } finally {
