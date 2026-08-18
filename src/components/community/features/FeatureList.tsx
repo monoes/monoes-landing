@@ -1,9 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { FeatureCard, type Feature } from "./FeatureCard";
 
 type SortMode = "score" | "newest" | "oldest";
+
+function isSortMode(value: string | null): value is SortMode {
+  return value === "score" || value === "newest" || value === "oldest";
+}
 
 function sortFeatures(features: Feature[], mode: SortMode): Feature[] {
   const copy = [...features];
@@ -24,8 +29,13 @@ export function FeatureList({
   initialFeatures: Feature[];
   currentUsername: string | null;
 }) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [features, setFeatures] = useState(initialFeatures);
-  const [sortMode, setSortMode] = useState<SortMode>("score");
+  const [sortMode, setSortMode] = useState<SortMode>(() => {
+    const param = searchParams.get("sort");
+    return isSortMode(param) ? param : "score";
+  });
   const [showForm, setShowForm] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -111,6 +121,11 @@ export function FeatureList({
     }
   }
 
+  function handleSortChange(mode: SortMode) {
+    setSortMode(mode);
+    router.replace(`?sort=${mode}`, { scroll: false });
+  }
+
   const sorted = sortFeatures(features, sortMode);
 
   return (
@@ -120,7 +135,7 @@ export function FeatureList({
           {(["score", "newest", "oldest"] as const).map((mode) => (
             <button
               key={mode}
-              onClick={() => setSortMode(mode)}
+              onClick={() => handleSortChange(mode)}
               className={`rounded px-3 py-1 text-xs font-medium ${
                 sortMode === mode ? "bg-espresso text-ivory" : "border border-espresso/30 text-espresso"
               }`}
