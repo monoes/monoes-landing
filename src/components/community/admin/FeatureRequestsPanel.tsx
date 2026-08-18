@@ -11,6 +11,8 @@ type Feature = {
   createdAt: string;
 };
 
+const STATUS_OPTIONS: Feature["status"][] = ["open", "planned", "shipped", "declined"];
+
 export function FeatureRequestsPanel({ initialFeatures }: { initialFeatures: Feature[] }) {
   const [features, setFeatures] = useState(initialFeatures);
 
@@ -76,10 +78,11 @@ export function FeatureRequestsPanel({ initialFeatures }: { initialFeatures: Fea
                     onChange={(e) => changeStatus(f.id, e.target.value as Feature["status"])}
                     className="rounded border border-espresso/30 bg-transparent px-2 py-1 text-xs"
                   >
-                    <option value="open">open</option>
-                    <option value="planned">planned</option>
-                    <option value="shipped">shipped</option>
-                    <option value="declined">declined</option>
+                    {STATUS_OPTIONS.map((status) => (
+                      <option key={status} value={status}>
+                        {status}
+                      </option>
+                    ))}
                   </select>
                 </td>
                 <td className="px-4 py-2">
@@ -121,10 +124,11 @@ export function FeatureRequestsPanel({ initialFeatures }: { initialFeatures: Fea
                     onChange={(e) => changeStatus(f.id, e.target.value as Feature["status"])}
                     className="rounded border border-espresso/30 bg-transparent px-2 py-1 text-xs"
                   >
-                    <option value="open">open</option>
-                    <option value="planned">planned</option>
-                    <option value="shipped">shipped</option>
-                    <option value="declined">declined</option>
+                    {STATUS_OPTIONS.map((status) => (
+                      <option key={status} value={status}>
+                        {status}
+                      </option>
+                    ))}
                   </select>
                 </td>
                 <td className="px-4 py-2 text-espresso/55">{new Date(f.createdAt).toLocaleDateString()}</td>
