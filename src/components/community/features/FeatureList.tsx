@@ -2,18 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { FeatureCard } from "./FeatureCard";
-
-type Feature = {
-  id: string;
-  title: string;
-  description: string;
-  authorUsername: string | null;
-  status: "open" | "planned" | "shipped" | "declined";
-  createdAt: string;
-  score: number;
-  myVote: -1 | 0 | 1;
-};
+import { FeatureCard, type Feature } from "./FeatureCard";
 
 type SortMode = "score" | "newest" | "oldest";
 
@@ -38,16 +27,34 @@ export function FeatureList({ initialFeatures }: { initialFeatures: Feature[] })
   const [description, setDescription] = useState("");
   const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [votingIds, setVotingIds] = useState<Set<string>>(new Set());
+  const [voteError, setVoteError] = useState<string | null>(null);
 
   async function handleVote(id: string, value: -1 | 0 | 1) {
-    const res = await fetch(`/api/community/features/${id}/vote`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ value }),
-    });
-    if (!res.ok) return;
-    const data = (await res.json()) as { score: number; myVote: -1 | 0 | 1 };
-    setFeatures((prev) => prev.map((f) => (f.id === id ? { ...f, score: data.score, myVote: data.myVote } : f)));
+    if (votingIds.has(id)) return; // ignore clicks while a vote on this feature is in flight
+    setVoteError(null);
+    setVotingIds((prev) => new Set(prev).add(id));
+    try {
+      const res = await fetch(`/api/community/features/${id}/vote`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ value }),
+      });
+      if (!res.ok) {
+        setVoteError("Could not record your vote. Please try again.");
+        return;
+      }
+      const data = (await res.json()) as { score: number; myVote: -1 | 0 | 1 };
+      setFeatures((prev) => prev.map((f) => (f.id === id ? { ...f, score: data.score, myVote: data.myVote } : f)));
+    } catch {
+      setVoteError("Something went wrong. Please try again.");
+    } finally {
+      setVotingIds((prev) => {
+        const next = new Set(prev);
+        next.delete(id);
+        return next;
+      });
+    }
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -148,9 +155,15 @@ export function FeatureList({ initialFeatures }: { initialFeatures: Feature[] })
         </form>
       )}
 
+      {voteError && (
+        <p role="alert" className="mb-3 text-sm text-red-700">
+          {voteError}
+        </p>
+      )}
+
       <div className="space-y-3">
         {sorted.map((f) => (
-          <FeatureCard key={f.id} feature={f} onVote={handleVote} />
+          <FeatureCard key={f.id} feature={f} onVote={handleVote} voting={votingIds.has(f.id)} />
         ))}
         {sorted.length === 0 && <p className="text-sm text-espresso/55">No feature requests yet. Be the first!</p>}
       </div>

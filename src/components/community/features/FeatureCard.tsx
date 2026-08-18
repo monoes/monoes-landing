@@ -1,6 +1,6 @@
 "use client";
 
-type Feature = {
+export type Feature = {
   id: string;
   title: string;
   description: string;
@@ -28,9 +28,11 @@ const STATUS_COLOR: Record<Feature["status"], string> = {
 export function FeatureCard({
   feature,
   onVote,
+  voting,
 }: {
   feature: Feature;
   onVote: (id: string, value: -1 | 0 | 1) => void;
+  voting: boolean;
 }) {
   function handleVoteClick(clicked: 1 | -1) {
     // clicking the already-active vote removes it; otherwise sets the new value
@@ -50,9 +52,11 @@ export function FeatureCard({
         <div className="flex flex-col items-center gap-1">
           <button
             onClick={() => handleVoteClick(1)}
+            disabled={voting}
             aria-pressed={feature.myVote === 1}
             aria-label="Upvote"
-            className={`rounded px-2 py-1 text-sm ${
+            aria-busy={voting}
+            className={`rounded px-2 py-1 text-sm disabled:opacity-50 ${
               feature.myVote === 1 ? "bg-espresso text-ivory" : "border border-espresso/30 text-espresso"
             }`}
           >
@@ -61,9 +65,11 @@ export function FeatureCard({
           <span className="text-sm font-semibold text-espresso">{feature.score}</span>
           <button
             onClick={() => handleVoteClick(-1)}
+            disabled={voting}
             aria-pressed={feature.myVote === -1}
             aria-label="Downvote"
-            className={`rounded px-2 py-1 text-sm ${
+            aria-busy={voting}
+            className={`rounded px-2 py-1 text-sm disabled:opacity-50 ${
               feature.myVote === -1 ? "bg-espresso text-ivory" : "border border-espresso/30 text-espresso"
             }`}
           >
