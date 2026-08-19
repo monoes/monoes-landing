@@ -4,6 +4,7 @@ import { useState } from "react";
 import { OverviewPanel } from "./OverviewPanel";
 import { UsersPanel } from "./UsersPanel";
 import { FeatureRequestsPanel } from "./FeatureRequestsPanel";
+import { BugReportsPanel } from "./BugReportsPanel";
 import { PlaceholderPanel } from "./PlaceholderPanel";
 
 type User = {
@@ -24,9 +25,20 @@ type Feature = {
   createdAt: string;
 };
 
+type Bug = {
+  id: string;
+  title: string;
+  authorUsername: string | null;
+  status: "open" | "in_progress" | "resolved" | "wontfix";
+  severity: "low" | "medium" | "high" | "critical";
+  commentCount: number;
+  labels: { id: string; name: string; color: string }[];
+  createdAt: string;
+};
+
 const TABS = ["Overview", "Users", "Feature requests", "Bug reports", "Forum", "Org gallery"] as const;
 
-export function AdminDashboard({ users, features }: { users: User[]; features: Feature[] }) {
+export function AdminDashboard({ users, features, bugs }: { users: User[]; features: Feature[]; bugs: Bug[] }) {
   const [tab, setTab] = useState<(typeof TABS)[number]>("Overview");
 
   return (
@@ -47,7 +59,7 @@ export function AdminDashboard({ users, features }: { users: User[]; features: F
       {tab === "Overview" && <OverviewPanel users={users} />}
       {tab === "Users" && <UsersPanel initialUsers={users} />}
       {tab === "Feature requests" && <FeatureRequestsPanel initialFeatures={features} />}
-      {tab === "Bug reports" && <PlaceholderPanel title="Bug reports" phase={3} />}
+      {tab === "Bug reports" && <BugReportsPanel bugs={bugs} />}
       {tab === "Forum" && <PlaceholderPanel title="Forum" phase={4} />}
       {tab === "Org gallery" && <PlaceholderPanel title="Org gallery" phase={5} />}
     </div>
