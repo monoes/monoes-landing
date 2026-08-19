@@ -15,12 +15,6 @@ register(
     if (specifier === "@/lib/db/schema") {
       return { url: "data:text/javascript,export const orgUpload = {};", shortCircuit: true };
     }
-    if (specifier === "@/lib/community/is-moderator") {
-      return {
-        url: "data:text/javascript,export const isModerator = (s) => { const u = s?.user; return !!s && (u?.role === 'admin' || u?.role === 'moderator') && !u?.blockedAt; };",
-        shortCircuit: true,
-      };
-    }
     if (specifier === "drizzle-orm") {
       return { url: "data:text/javascript,export const eq = () => {};", shortCircuit: true };
     }

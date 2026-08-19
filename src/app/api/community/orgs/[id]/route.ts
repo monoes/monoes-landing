@@ -3,7 +3,6 @@ import { eq } from "drizzle-orm";
 import { getAuth } from "@/lib/auth";
 import { getDb } from "@/lib/db";
 import { orgUpload } from "@/lib/db/schema";
-import { isModerator } from "@/lib/community/is-moderator";
 
 export function canDeleteOrgUpload(currentUser: { id: string; role?: string }, uploaderId: string): boolean {
   return currentUser.id === uploaderId || currentUser.role === "admin" || currentUser.role === "moderator";
