@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
+import { getAuth } from "@/lib/auth";
 import { getDb } from "@/lib/db";
 import { orgUpload, user } from "@/lib/db/schema";
 import { OrgGallery } from "@/components/community/orgs/OrgGallery";
@@ -11,6 +13,8 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function OrgsPage() {
+  const session = await getAuth().api.getSession({ headers: await headers() });
+
   const db = getDb();
   const [orgs, authors] = await Promise.all([
     db.select().from(orgUpload),
@@ -36,7 +40,10 @@ export default async function OrgsPage() {
       <div className="mx-auto max-w-3xl">
         <p className="mb-2 text-xs uppercase tracking-label text-gold-dark font-medium">Community</p>
         <h1 className="mb-6 text-3xl font-semibold text-espresso tracking-tight">Org gallery</h1>
-        <OrgGallery initialOrgs={items} />
+        <OrgGallery
+          initialOrgs={items}
+          currentUsername={(session?.user as { username?: string | null } | undefined)?.username ?? null}
+        />
       </div>
     </main>
   );

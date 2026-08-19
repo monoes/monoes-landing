@@ -3,7 +3,13 @@
 import { useState } from "react";
 import { OrgCard, type Org } from "./OrgCard";
 
-export function OrgGallery({ initialOrgs }: { initialOrgs: Org[] }) {
+export function OrgGallery({
+  initialOrgs,
+  currentUsername,
+}: {
+  initialOrgs: Org[];
+  currentUsername: string | null;
+}) {
   const [orgs, setOrgs] = useState(initialOrgs);
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
@@ -42,7 +48,7 @@ export function OrgGallery({ initialOrgs }: { initialOrgs: Org[] }) {
           goal: created.goal,
           topology: created.topology,
           roleCount: created.roleCount,
-          uploaderUsername: null,
+          uploaderUsername: currentUsername,
           createdAt: created.createdAt,
         },
         ...prev,
