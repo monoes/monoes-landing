@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function BugsPage() {
-  await getAuth().api.getSession({ headers: await headers() });
+  const session = await getAuth().api.getSession({ headers: await headers() });
 
   const db = getDb();
   const [bugs, comments, labels, labelLinks, authors] = await Promise.all([
@@ -56,7 +56,11 @@ export default async function BugsPage() {
       <div className="mx-auto max-w-3xl">
         <p className="mb-2 text-xs uppercase tracking-label text-gold-dark font-medium">Community</p>
         <h1 className="mb-6 text-3xl font-semibold text-espresso tracking-tight">Bug reports</h1>
-        <BugList initialBugs={items} availableLabels={labels.map((l) => ({ id: l.id, name: l.name }))} />
+        <BugList
+          initialBugs={items}
+          availableLabels={labels.map((l) => ({ id: l.id, name: l.name }))}
+          currentUsername={(session?.user as { username?: string | null } | undefined)?.username ?? null}
+        />
       </div>
     </main>
   );

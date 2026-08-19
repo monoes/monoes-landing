@@ -15,12 +15,25 @@ function isSortMode(value: string | null): value is SortMode {
   return value === "newest" || value === "oldest";
 }
 
+function filterAndSortBugs(bugs: Bug[], statusFilter: StatusFilter, labelFilter: string, sortMode: SortMode): Bug[] {
+  return bugs
+    .filter((b) => statusFilter === "all" || b.status === statusFilter)
+    .filter((b) => !labelFilter || b.labels.some((l) => l.id === labelFilter))
+    .sort((a, b) =>
+      sortMode === "newest"
+        ? new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        : new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+    );
+}
+
 export function BugList({
   initialBugs,
   availableLabels,
+  currentUsername,
 }: {
   initialBugs: Bug[];
   availableLabels: { id: string; name: string }[];
+  currentUsername: string | null;
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -96,7 +109,7 @@ export function BugList({
           id: created.id,
           title: created.title,
           description: created.description,
-          authorUsername: null,
+          authorUsername: currentUsername,
           status: created.status,
           severity: created.severity,
           createdAt: created.createdAt,
@@ -116,14 +129,7 @@ export function BugList({
     }
   }
 
-  const filtered = bugs
-    .filter((b) => statusFilter === "all" || b.status === statusFilter)
-    .filter((b) => !labelFilter || b.labels.some((l) => l.id === labelFilter))
-    .sort((a, b) =>
-      sortMode === "newest"
-        ? new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-        : new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
-    );
+  const filtered = filterAndSortBugs(bugs, statusFilter, labelFilter, sortMode);
 
   return (
     <div>
@@ -132,6 +138,7 @@ export function BugList({
           <select
             value={statusFilter}
             onChange={(e) => handleStatusChange(e.target.value as StatusFilter)}
+            aria-label="Filter by status"
             className="rounded border border-espresso/30 bg-transparent px-2 py-1 text-xs"
           >
             <option value="all">All statuses</option>
@@ -143,6 +150,7 @@ export function BugList({
           <select
             value={labelFilter}
             onChange={(e) => handleLabelChange(e.target.value)}
+            aria-label="Filter by label"
             className="rounded border border-espresso/30 bg-transparent px-2 py-1 text-xs"
           >
             <option value="">All labels</option>
