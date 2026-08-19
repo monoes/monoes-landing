@@ -76,3 +76,17 @@ data/mastermind-*.jsonl
 .monomind/*.json
 .monomind/*.jsonl
 **/.monomind/*.json
+
+# Community auth secrets
+.dev.vars
+.dev.vars.*
+!.dev.vars.example
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+
+# taskdev scratch (briefs, reports, review diffs — process notes, not source)
+.monomind/taskdev/
