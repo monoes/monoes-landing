@@ -27,6 +27,11 @@ export function parseAndValidateOrgJson(text: string): { success: true; data: Or
   return { success: true, data: result.data };
 }
 
+export function extractTopology(org: OrgDef): string | null {
+  const value = (org as Record<string, unknown>).topology;
+  return typeof value === "string" ? value : null;
+}
+
 export async function POST(request: Request) {
   const session = await getAuth().api.getSession({ headers: request.headers });
   if (!session) {
@@ -43,7 +48,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "orgJson is required" }, { status: 400 });
   }
   if (!isValidOrgJsonSize(orgJsonText)) {
-    return NextResponse.json({ error: "File exceeds 500 KB limit." }, { status: 400 });
+    return NextResponse.json({ error: `File exceeds ${MAX_ORG_JSON_BYTES / 1000} KB limit.` }, { status: 400 });
   }
 
   const validated = parseAndValidateOrgJson(orgJsonText);
@@ -52,7 +57,7 @@ export async function POST(request: Request) {
   }
 
   const org = validated.data;
-  const topology = typeof (org as { topology?: unknown }).topology === "string" ? (org as { topology: string }).topology : null;
+  const topology = extractTopology(org);
 
   const db = getDb();
   const now = new Date();

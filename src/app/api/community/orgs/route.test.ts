@@ -55,4 +55,31 @@ describe("org upload validation", () => {
       assert.equal(result.data.roles.length, 1);
     }
   });
+
+  it("extractTopology returns the topology string when present", async () => {
+    const { extractTopology, parseAndValidateOrgJson } = await import("./route.ts");
+    const result = parseAndValidateOrgJson(JSON.stringify({ name: "test-org", topology: "star", roles: [{ id: "boss" }] }));
+    assert.equal(result.success, true);
+    if (result.success) {
+      assert.equal(extractTopology(result.data), "star");
+    }
+  });
+
+  it("extractTopology returns null when topology is absent", async () => {
+    const { extractTopology, parseAndValidateOrgJson } = await import("./route.ts");
+    const result = parseAndValidateOrgJson(JSON.stringify({ name: "test-org", roles: [{ id: "boss" }] }));
+    assert.equal(result.success, true);
+    if (result.success) {
+      assert.equal(extractTopology(result.data), null);
+    }
+  });
+
+  it("extractTopology returns null when topology is present but not a string", async () => {
+    const { extractTopology, parseAndValidateOrgJson } = await import("./route.ts");
+    const result = parseAndValidateOrgJson(JSON.stringify({ name: "test-org", topology: 123, roles: [{ id: "boss" }] }));
+    assert.equal(result.success, true);
+    if (result.success) {
+      assert.equal(extractTopology(result.data), null);
+    }
+  });
 });
