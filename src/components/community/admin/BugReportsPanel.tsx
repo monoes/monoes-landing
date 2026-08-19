@@ -1,3 +1,5 @@
+import { STATUS_LABEL, SEVERITY_LABEL } from "@/components/community/bugs/BugCard";
+
 type Bug = {
   id: string;
   title: string;
@@ -54,8 +56,8 @@ export function BugReportsPanel({ bugs }: { bugs: Bug[] }) {
                   </a>
                 </td>
                 <td className="px-4 py-2 text-espresso/70">{b.authorUsername ?? "—"}</td>
-                <td className="px-4 py-2 text-espresso/70">{b.status}</td>
-                <td className="px-4 py-2 text-espresso/70">{b.severity}</td>
+                <td className="px-4 py-2 text-espresso/70">{STATUS_LABEL[b.status]}</td>
+                <td className="px-4 py-2 text-espresso/70">{SEVERITY_LABEL[b.severity]}</td>
                 <td className="px-4 py-2">
                   <div className="flex flex-wrap gap-1">
                     {b.labels.map((label) => (

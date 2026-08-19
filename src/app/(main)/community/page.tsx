@@ -52,6 +52,9 @@ export default async function CommunityPage() {
                 <Link href="/community/features" className="rounded-md border border-espresso/30 px-5 py-2 text-sm text-espresso font-medium transition-colors hover:border-espresso">
                   Feature requests
                 </Link>
+                <Link href="/community/bugs" className="rounded-md border border-espresso/30 px-5 py-2 text-sm text-espresso font-medium transition-colors hover:border-espresso">
+                  Bug reports
+                </Link>
                 <a href="https://github.com/monoes" target="_blank" rel="noopener noreferrer" className="rounded-md border border-espresso/30 px-5 py-2 text-sm text-espresso font-medium transition-colors hover:border-espresso">
                   View on GitHub ↗
                 </a>
