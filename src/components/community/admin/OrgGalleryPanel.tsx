@@ -8,13 +8,28 @@ type Org = {
 };
 
 export function OrgGalleryPanel({ orgs }: { orgs: Org[] }) {
+  const total = orgs.length;
+  const byTopology = { hierarchical: 0, star: 0, mesh: 0 };
+  for (const o of orgs) {
+    const key = (o.topology ?? "hierarchical") as keyof typeof byTopology;
+    if (key in byTopology) byTopology[key]++;
+    else byTopology.hierarchical++;
+  }
+
   return (
     <div>
-      <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <div className="rounded-lg border border-ivory-linen bg-ivory-warm p-4 text-center">
-          <p className="text-2xl font-semibold text-espresso">{orgs.length}</p>
-          <p className="mt-1 text-xs text-espresso/55">Total uploads</p>
-        </div>
+      <div className="mb-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
+        {[
+          { label: "Total", value: total },
+          { label: "Hierarchical", value: byTopology.hierarchical },
+          { label: "Star", value: byTopology.star },
+          { label: "Mesh", value: byTopology.mesh },
+        ].map((s) => (
+          <div key={s.label} className="rounded-lg border border-ivory-linen bg-ivory-warm p-4 text-center">
+            <p className="text-2xl font-semibold text-espresso">{s.value}</p>
+            <p className="mt-1 text-xs text-espresso/55">{s.label}</p>
+          </div>
+        ))}
       </div>
 
       <p className="mb-2 text-xs uppercase tracking-label text-gold-dark font-medium">All org uploads</p>
