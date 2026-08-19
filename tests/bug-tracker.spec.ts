@@ -80,8 +80,10 @@ test("admin changes status/severity and attaches a label", async ({ page, browse
     await setUserRole(adminEmail, "admin");
 
     await adminPage.goto(bugUrl);
-    await adminPage.locator("select").first().selectOption("in_progress");
-    await expect(adminPage.locator("select").first()).toHaveValue("in_progress");
+    await adminPage.getByLabel("Status").selectOption("in_progress");
+    await expect(adminPage.getByLabel("Status")).toHaveValue("in_progress");
+    await adminPage.getByLabel("Severity").selectOption("critical");
+    await expect(adminPage.getByLabel("Severity")).toHaveValue("critical");
 
     const labelName = `regression-${Date.now()}`;
     await adminPage.getByRole("button", { name: "+ new label" }).click();
