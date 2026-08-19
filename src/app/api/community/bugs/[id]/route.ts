@@ -3,6 +3,7 @@ import { eq } from "drizzle-orm";
 import { getAuth } from "@/lib/auth";
 import { getDb } from "@/lib/db";
 import { bug } from "@/lib/db/schema";
+import { isModerator } from "@/lib/community/is-moderator";
 
 export function isValidStatus(value: unknown): value is "open" | "in_progress" | "resolved" | "wontfix" {
   return value === "open" || value === "in_progress" || value === "resolved" || value === "wontfix";
@@ -10,12 +11,6 @@ export function isValidStatus(value: unknown): value is "open" | "in_progress" |
 
 export function isValidSeverity(value: unknown): value is "low" | "medium" | "high" | "critical" {
   return value === "low" || value === "medium" || value === "high" || value === "critical";
-}
-
-function isModerator(session: { user: unknown } | null): boolean {
-  const sessionUser = session?.user as { role?: string; blockedAt?: unknown } | undefined;
-  const role = sessionUser?.role;
-  return !!session && (role === "admin" || role === "moderator") && !sessionUser?.blockedAt;
 }
 
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {

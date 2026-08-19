@@ -15,6 +15,9 @@ register(
     if (specifier === "@/lib/db/schema") {
       return { url: "data:text/javascript,export const bugLabel = {};", shortCircuit: true };
     }
+    if (specifier === "@/lib/community/is-moderator") {
+      return { url: "data:text/javascript,export const isModerator = () => true;", shortCircuit: true };
+    }
     if (specifier === "drizzle-orm") {
       return { url: "data:text/javascript,export const eq = () => {};", shortCircuit: true };
     }

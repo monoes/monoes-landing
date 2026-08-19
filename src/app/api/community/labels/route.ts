@@ -3,6 +3,7 @@ import { eq } from "drizzle-orm";
 import { getAuth } from "@/lib/auth";
 import { getDb } from "@/lib/db";
 import { bugLabel } from "@/lib/db/schema";
+import { isModerator } from "@/lib/community/is-moderator";
 
 export function isValidLabelName(value: string): boolean {
   return value.trim().length > 0 && value.trim().length <= 30;
@@ -10,12 +11,6 @@ export function isValidLabelName(value: string): boolean {
 
 export function isValidLabelColor(value: string): boolean {
   return /^#[0-9a-fA-F]{6}$/.test(value);
-}
-
-function isModerator(session: { user: unknown } | null): boolean {
-  const sessionUser = session?.user as { role?: string; blockedAt?: unknown } | undefined;
-  const role = sessionUser?.role;
-  return !!session && (role === "admin" || role === "moderator") && !sessionUser?.blockedAt;
 }
 
 export async function POST(request: Request) {

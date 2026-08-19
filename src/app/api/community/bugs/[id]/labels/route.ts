@@ -3,15 +3,10 @@ import { and, eq } from "drizzle-orm";
 import { getAuth } from "@/lib/auth";
 import { getDb } from "@/lib/db";
 import { bug, bugLabel, bugLabelLink } from "@/lib/db/schema";
+import { isModerator } from "@/lib/community/is-moderator";
 
 export function isValidLabelId(value: unknown): value is string {
   return typeof value === "string" && value.trim().length > 0;
-}
-
-function isModerator(session: { user: unknown } | null): boolean {
-  const sessionUser = session?.user as { role?: string; blockedAt?: unknown } | undefined;
-  const role = sessionUser?.role;
-  return !!session && (role === "admin" || role === "moderator") && !sessionUser?.blockedAt;
 }
 
 export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
