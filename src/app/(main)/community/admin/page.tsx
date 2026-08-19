@@ -3,7 +3,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { getAuth } from "@/lib/auth";
 import { getDb } from "@/lib/db";
-import { user, feature, featureVote, bug, bugComment, bugLabel, bugLabelLink } from "@/lib/db/schema";
+import { user, feature, featureVote, bug, bugComment, bugLabel, bugLabelLink, orgUpload } from "@/lib/db/schema";
 import { AdminDashboard } from "@/components/community/admin/AdminDashboard";
 
 export const metadata: Metadata = {
@@ -21,7 +21,7 @@ export default async function AdminPage() {
   }
 
   const db = getDb();
-  const [rows, featureRows, votes, bugRows, commentRows, labelRows, labelLinkRows, authors] = await Promise.all([
+  const [rows, featureRows, votes, bugRows, commentRows, labelRows, labelLinkRows, orgRows, authors] = await Promise.all([
     db
       .select({
         id: user.id,
@@ -38,6 +38,7 @@ export default async function AdminPage() {
     db.select({ bugId: bugComment.bugId }).from(bugComment),
     db.select().from(bugLabel),
     db.select().from(bugLabelLink),
+    db.select().from(orgUpload),
     db.select({ id: user.id, username: user.username }).from(user),
   ]);
 
@@ -86,12 +87,21 @@ export default async function AdminPage() {
     createdAt: b.createdAt.toISOString(),
   }));
 
+  const orgs = orgRows.map((o) => ({
+    id: o.id,
+    name: o.name,
+    uploaderUsername: authorMap.get(o.uploaderId) ?? null,
+    roleCount: o.roleCount,
+    topology: o.topology,
+    createdAt: o.createdAt.toISOString(),
+  }));
+
   return (
     <main className="bg-ivory-warm px-8 py-16">
       <div className="mx-auto max-w-5xl">
         <p className="mb-2 text-xs uppercase tracking-label text-gold-dark font-medium">Admin</p>
         <h1 className="mb-6 text-3xl font-semibold text-espresso tracking-tight">Dashboard</h1>
-        <AdminDashboard users={users} features={features} bugs={bugs} />
+        <AdminDashboard users={users} features={features} bugs={bugs} orgs={orgs} />
       </div>
     </main>
   );

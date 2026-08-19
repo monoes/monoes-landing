@@ -5,6 +5,7 @@ import { OverviewPanel } from "./OverviewPanel";
 import { UsersPanel } from "./UsersPanel";
 import { FeatureRequestsPanel } from "./FeatureRequestsPanel";
 import { BugReportsPanel } from "./BugReportsPanel";
+import { OrgGalleryPanel } from "./OrgGalleryPanel";
 import { PlaceholderPanel } from "./PlaceholderPanel";
 
 type User = {
@@ -36,9 +37,28 @@ type Bug = {
   createdAt: string;
 };
 
+type Org = {
+  id: string;
+  name: string;
+  uploaderUsername: string | null;
+  roleCount: number;
+  topology: string | null;
+  createdAt: string;
+};
+
 const TABS = ["Overview", "Users", "Feature requests", "Bug reports", "Forum", "Org gallery"] as const;
 
-export function AdminDashboard({ users, features, bugs }: { users: User[]; features: Feature[]; bugs: Bug[] }) {
+export function AdminDashboard({
+  users,
+  features,
+  bugs,
+  orgs,
+}: {
+  users: User[];
+  features: Feature[];
+  bugs: Bug[];
+  orgs: Org[];
+}) {
   const [tab, setTab] = useState<(typeof TABS)[number]>("Overview");
 
   return (
@@ -61,7 +81,7 @@ export function AdminDashboard({ users, features, bugs }: { users: User[]; featu
       {tab === "Feature requests" && <FeatureRequestsPanel initialFeatures={features} />}
       {tab === "Bug reports" && <BugReportsPanel bugs={bugs} />}
       {tab === "Forum" && <PlaceholderPanel title="Forum" phase={4} />}
-      {tab === "Org gallery" && <PlaceholderPanel title="Org gallery" phase={5} />}
+      {tab === "Org gallery" && <OrgGalleryPanel orgs={orgs} />}
     </div>
   );
 }
