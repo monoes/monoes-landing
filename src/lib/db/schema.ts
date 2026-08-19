@@ -125,3 +125,16 @@ export const bugLabelLink = sqliteTable(
   },
   (table) => [uniqueIndex("bug_label_link_bug_label_unique").on(table.bugId, table.labelId)],
 );
+
+export const orgUpload = sqliteTable("org_upload", {
+  id: text("id").primaryKey(),
+  name: text("name").notNull(),
+  goal: text("goal").notNull().default(""),
+  topology: text("topology"),
+  roleCount: integer("role_count").notNull(),
+  orgJson: text("org_json").notNull(),
+  uploaderId: text("uploader_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
+});

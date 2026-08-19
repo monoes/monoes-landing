@@ -11,6 +11,7 @@ import {
   bugComment,
   bugLabel,
   bugLabelLink,
+  orgUpload,
 } from "./schema.ts";
 
 describe("db schema", () => {
@@ -100,5 +101,16 @@ describe("db schema", () => {
     for (const col of ["bugId", "labelId"]) {
       assert.ok(columns.includes(col), `missing column: ${col}`);
     }
+  });
+
+  it("exports an orgUpload table with the required columns", () => {
+    const columns = Object.keys(orgUpload);
+    for (const col of ["id", "name", "goal", "topology", "roleCount", "orgJson", "uploaderId", "createdAt"]) {
+      assert.ok(columns.includes(col), `missing column: ${col}`);
+    }
+  });
+
+  it("orgUpload.goal column has '' as its default", () => {
+    assert.equal(orgUpload.goal.default, "");
   });
 });
