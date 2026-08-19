@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { STATUS_LABEL, SEVERITY_LABEL } from "./BugCard";
 
 type Status = "open" | "in_progress" | "resolved" | "wontfix";
 type Severity = "low" | "medium" | "high" | "critical";
@@ -57,6 +58,7 @@ export function BugDetail({
   const [labelError, setLabelError] = useState<string | null>(null);
   const [deleted, setDeleted] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [triageError, setTriageError] = useState<string | null>(null);
 
   async function handleDeleteBug() {
     setDeleteError(null);
@@ -70,33 +72,54 @@ export function BugDetail({
   }
 
   async function handleStatusChange(next: Status) {
+    const previous = status;
     setStatus(next);
-    await fetch(`/api/community/bugs/${bug.id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ status: next }),
-    });
+    setTriageError(null);
+    try {
+      const res = await fetch(`/api/community/bugs/${bug.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: next }),
+      });
+      if (!res.ok) {
+        setStatus(previous);
+        setTriageError("Could not update status. Please try again.");
+      }
+    } catch {
+      setStatus(previous);
+      setTriageError("Could not update status. Please try again.");
+    }
   }
 
   async function handleSeverityChange(next: Severity) {
+    const previous = severity;
     setSeverity(next);
-    await fetch(`/api/community/bugs/${bug.id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ severity: next }),
-    });
+    setTriageError(null);
+    try {
+      const res = await fetch(`/api/community/bugs/${bug.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ severity: next }),
+      });
+      if (!res.ok) {
+        setSeverity(previous);
+        setTriageError("Could not update severity. Please try again.");
+      }
+    } catch {
+      setSeverity(previous);
+      setTriageError("Could not update severity. Please try again.");
+    }
   }
 
-  async function handleAttachLabel(labelId: string) {
-    if (!labelId || labels.some((l) => l.id === labelId)) return;
+  async function handleAttachLabel(label: BugLabel) {
+    if (!label.id || labels.some((l) => l.id === label.id)) return;
     const res = await fetch(`/api/community/bugs/${bug.id}/labels`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ labelId }),
+      body: JSON.stringify({ labelId: label.id }),
     });
     if (!res.ok) return;
-    const label = allLabels.find((l) => l.id === labelId);
-    if (label) setLabels((prev) => [...prev, label]);
+    setLabels((prev) => [...prev, label]);
   }
 
   async function handleDetachLabel(labelId: string) {
@@ -119,10 +142,10 @@ export function BugDetail({
       return;
     }
     const created = (await res.json()) as BugLabel;
-    await handleAttachLabel(created.id);
+    router.refresh();
+    await handleAttachLabel(created);
     setNewLabelName("");
     setShowNewLabelForm(false);
-    router.refresh();
   }
 
   async function handleCommentSubmit(e: React.FormEvent) {
@@ -182,7 +205,7 @@ export function BugDetail({
             <select value={status} onChange={(e) => handleStatusChange(e.target.value as Status)} className="rounded border border-espresso/30 bg-transparent px-2 py-1 text-xs">
               {STATUS_OPTIONS.map((s) => (
                 <option key={s} value={s}>
-                  {s}
+                  {STATUS_LABEL[s]}
                 </option>
               ))}
             </select>
@@ -192,7 +215,7 @@ export function BugDetail({
             <select value={severity} onChange={(e) => handleSeverityChange(e.target.value as Severity)} className="rounded border border-espresso/30 bg-transparent px-2 py-1 text-xs">
               {SEVERITY_OPTIONS.map((s) => (
                 <option key={s} value={s}>
-                  {s}
+                  {SEVERITY_LABEL[s]}
                 </option>
               ))}
             </select>
@@ -201,7 +224,10 @@ export function BugDetail({
             Add label
             <select
               value=""
-              onChange={(e) => handleAttachLabel(e.target.value)}
+              onChange={(e) => {
+                const label = allLabels.find((l) => l.id === e.target.value);
+                if (label) handleAttachLabel(label);
+              }}
               className="rounded border border-espresso/30 bg-transparent px-2 py-1 text-xs"
             >
               <option value="">Select…</option>
@@ -244,10 +270,15 @@ export function BugDetail({
               {labelError}
             </p>
           )}
+          {triageError && (
+            <p role="alert" className="w-full text-xs text-red-700">
+              {triageError}
+            </p>
+          )}
         </div>
       ) : (
         <p className="mt-4 text-xs text-espresso/55">
-          Status: {status} · Severity: {severity}
+          Status: {STATUS_LABEL[status]} · Severity: {SEVERITY_LABEL[severity]}
         </p>
       )}
 

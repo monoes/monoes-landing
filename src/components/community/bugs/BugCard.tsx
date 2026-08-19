@@ -16,28 +16,28 @@ export type Bug = {
   labels: BugLabelChip[];
 };
 
-const STATUS_LABEL: Record<Bug["status"], string> = {
+export const STATUS_LABEL: Record<Bug["status"], string> = {
   open: "Open",
   in_progress: "In progress",
   resolved: "Resolved",
   wontfix: "Won't fix",
 };
 
-const STATUS_COLOR: Record<Bug["status"], string> = {
+export const STATUS_COLOR: Record<Bug["status"], string> = {
   open: "text-espresso/70",
   in_progress: "text-gold-dark",
   resolved: "text-green-700",
   wontfix: "text-red-700",
 };
 
-const SEVERITY_LABEL: Record<Bug["severity"], string> = {
+export const SEVERITY_LABEL: Record<Bug["severity"], string> = {
   low: "Low",
   medium: "Medium",
   high: "High",
   critical: "Critical",
 };
 
-const SEVERITY_COLOR: Record<Bug["severity"], string> = {
+export const SEVERITY_COLOR: Record<Bug["severity"], string> = {
   low: "text-espresso/55",
   medium: "text-gold-dark",
   high: "text-orange-600",
