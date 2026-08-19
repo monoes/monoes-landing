@@ -1,0 +1,9 @@
+{
+  "name": "e2e-test-org",
+  "goal": "A test org for end-to-end testing.",
+  "topology": "hierarchical",
+  "roles": [
+    { "id": "boss", "title": "Team Lead", "type": "boss", "reports_to": null, "responsibilities": ["plan work", "review output"] },
+    { "id": "writer", "title": "Writer", "type": "specialist", "reports_to": "boss", "responsibilities": ["write docs"] }
+  ]
+}
