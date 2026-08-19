@@ -85,4 +85,44 @@ describe("computeLayout", () => {
     const mid = result.nodes.find((n) => n.id === "mid")!;
     assert.ok(boss.y < mid.y);
   });
+
+  it("splits a hierarchical layer into multiple visual rows when it exceeds MAX_PER_ROW", () => {
+    const roles = [
+      { id: "boss", reports_to: null },
+      { id: "c1", reports_to: "boss" },
+      { id: "c2", reports_to: "boss" },
+      { id: "c3", reports_to: "boss" },
+      { id: "c4", reports_to: "boss" },
+      { id: "c5", reports_to: "boss" },
+    ];
+    const result = computeLayout(roles, "hierarchical", 720, 320);
+    const children = ["c1", "c2", "c3", "c4", "c5"].map((id) => result.nodes.find((n) => n.id === id)!);
+    const distinctYs = new Set(children.map((n) => n.y));
+    // 5 same-depth children with MAX_PER_ROW=3 (per Math.max(2, Math.min(4, Math.ceil(Math.sqrt(6))))) must split into 2 visual rows (3 + 2), not 1.
+    assert.equal(distinctYs.size, 2);
+  });
+
+  it("grows viewBoxHeight when hierarchical rows exceed the given height", () => {
+    // 6 depth levels (boss -> ... -> depth 5) at ROW_H=100 each needs totalH = PAD*2 (120) + 6*100 = 720,
+    // which exceeds a deliberately small height of 200.
+    const roles = [
+      { id: "r0", reports_to: null },
+      { id: "r1", reports_to: "r0" },
+      { id: "r2", reports_to: "r1" },
+      { id: "r3", reports_to: "r2" },
+      { id: "r4", reports_to: "r3" },
+      { id: "r5", reports_to: "r4" },
+    ];
+    const result = computeLayout(roles, "hierarchical", 720, 200);
+    assert.ok(result.viewBoxHeight > 200);
+  });
+
+  it("does not grow viewBoxHeight when rows fit within the given height", () => {
+    const roles = [
+      { id: "boss", reports_to: null },
+      { id: "mid", reports_to: "boss" },
+    ];
+    const result = computeLayout(roles, "hierarchical", 720, 320);
+    assert.equal(result.viewBoxHeight, 320);
+  });
 });
