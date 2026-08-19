@@ -15,6 +15,13 @@
       "when": 1787058350936,
       "tag": "0001_perpetual_silver_surfer",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1787146453713,
+      "tag": "0002_adorable_exodus",
+      "breakpoints": true
     }
   ]
 }

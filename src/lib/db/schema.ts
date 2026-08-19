@@ -81,3 +81,47 @@ export const featureVote = sqliteTable(
   },
   (table) => [uniqueIndex("feature_vote_feature_user_unique").on(table.featureId, table.userId)],
 );
+
+export const bug = sqliteTable("bug", {
+  id: text("id").primaryKey(),
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  authorId: text("author_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  status: text("status").notNull().default("open"),
+  severity: text("severity").notNull(),
+  createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
+  updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
+});
+
+export const bugComment = sqliteTable("bug_comment", {
+  id: text("id").primaryKey(),
+  bugId: text("bug_id")
+    .notNull()
+    .references(() => bug.id, { onDelete: "cascade" }),
+  authorId: text("author_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  body: text("body").notNull(),
+  createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
+});
+
+export const bugLabel = sqliteTable("bug_label", {
+  id: text("id").primaryKey(),
+  name: text("name").notNull().unique(),
+  color: text("color").notNull(),
+});
+
+export const bugLabelLink = sqliteTable(
+  "bug_label_link",
+  {
+    bugId: text("bug_id")
+      .notNull()
+      .references(() => bug.id, { onDelete: "cascade" }),
+    labelId: text("label_id")
+      .notNull()
+      .references(() => bugLabel.id, { onDelete: "cascade" }),
+  },
+  (table) => [uniqueIndex("bug_label_link_bug_label_unique").on(table.bugId, table.labelId)],
+);
