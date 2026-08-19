@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 export type ModalRole = {
   id: string;
@@ -13,10 +13,35 @@ export type ModalRole = {
 };
 
 export function RoleModal({ role, onClose }: { role: ModalRole; onClose: () => void }) {
+  const panelRef = useRef<HTMLDivElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+
   useEffect(() => {
+    closeButtonRef.current?.focus();
+
     function handleKeyDown(e: KeyboardEvent) {
-      if (e.key === "Escape") onClose();
+      if (e.key === "Escape") {
+        onClose();
+        return;
+      }
+      if (e.key !== "Tab" || !panelRef.current) return;
+
+      const focusable = panelRef.current.querySelectorAll<HTMLElement>(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+      );
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
     }
+
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [onClose]);
@@ -29,9 +54,11 @@ export function RoleModal({ role, onClose }: { role: ModalRole; onClose: () => v
       }}
     >
       <div
+        ref={panelRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby="role-modal-title"
+        tabIndex={-1}
         className="max-h-[80vh] w-full max-w-md overflow-y-auto rounded-lg bg-ivory p-6 shadow-xl"
       >
         <div className="mb-4 flex items-start justify-between gap-4">
@@ -44,6 +71,7 @@ export function RoleModal({ role, onClose }: { role: ModalRole; onClose: () => v
             </p>
           </div>
           <button
+            ref={closeButtonRef}
             type="button"
             onClick={onClose}
             aria-label="Close"

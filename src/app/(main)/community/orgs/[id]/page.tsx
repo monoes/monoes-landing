@@ -6,6 +6,7 @@ import { getAuth } from "@/lib/auth";
 import { getDb } from "@/lib/db";
 import { orgUpload } from "@/lib/db/schema";
 import { OrgDetail } from "@/components/community/orgs/OrgDetail";
+import { canDeleteOrgUpload } from "@/app/api/community/orgs/[id]/route";
 
 export const metadata: Metadata = {
   title: "Org detail",
@@ -37,7 +38,7 @@ export default async function OrgDetailPage({ params }: { params: Promise<{ id: 
   const parsed = JSON.parse(row.orgJson) as { roles?: ParsedRole[] };
   const roles = Array.isArray(parsed.roles) ? parsed.roles : [];
 
-  const canDelete = !!sessionUser && (sessionUser.id === row.uploaderId || sessionUser.role === "admin" || sessionUser.role === "moderator");
+  const canDelete = !!sessionUser && canDeleteOrgUpload(sessionUser, row.uploaderId);
 
   return (
     <main className="bg-ivory-warm px-8 py-16">
