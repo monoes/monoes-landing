@@ -108,14 +108,14 @@ export function ProfileForm({ initial, username }: { initial: FormValues; userna
           )}
           <label
             className="cursor-pointer rounded-md border border-espresso/30 px-4 py-2 text-sm font-medium text-espresso transition-colors hover:border-espresso aria-disabled:opacity-50"
-            aria-disabled={uploading}
+            aria-disabled={uploading || saving}
           >
             {uploading ? "Uploading…" : "Upload avatar"}
             <input
               type="file"
               accept="image/png,image/jpeg,image/webp"
               onChange={handleAvatarSelect}
-              disabled={uploading}
+              disabled={uploading || saving}
               className="hidden"
             />
           </label>
@@ -260,7 +260,7 @@ export function ProfileForm({ initial, username }: { initial: FormValues; userna
 
         <button
           type="submit"
-          disabled={saving}
+          disabled={saving || uploading}
           aria-busy={saving}
           className="w-full rounded-md bg-espresso px-5 py-2 text-sm font-medium text-ivory transition-opacity hover:opacity-80 disabled:opacity-50"
         >
