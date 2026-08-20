@@ -861,7 +861,7 @@ export default function LandingPage() {
           <span>MONOES</span>
         </Link>
         <div className="nav-links">
-          <a href="https://github.com/monoes/monomind/discussions" className="nav-link" target="_blank" rel="noopener noreferrer">Community</a>
+          <Link href="/community" className="nav-link">Community</Link>
           <Link href="/product#projects" className="nav-link">Projects</Link>
           <Link href="/workforce" className="nav-link">Workforce</Link>
           <Link href="/whitepaper" className="nav-link">Whitepaper</Link>
@@ -883,7 +883,7 @@ export default function LandingPage() {
 
       {mobileOpen && (
         <div className="nav-mobile-menu">
-          <a href="https://github.com/monoes/monomind/discussions" className="nav-mobile-link" target="_blank" rel="noopener noreferrer" onClick={() => setMobileOpen(false)}>Community ↗</a>
+          <Link href="/community" className="nav-mobile-link" onClick={() => setMobileOpen(false)}>Community</Link>
           <Link href="/product#projects" className="nav-mobile-link" onClick={() => setMobileOpen(false)}>Projects</Link>
           <Link href="/workforce" className="nav-mobile-link" onClick={() => setMobileOpen(false)}>Workforce</Link>
           <Link href="/whitepaper" className="nav-mobile-link" onClick={() => setMobileOpen(false)}>Whitepaper</Link>
