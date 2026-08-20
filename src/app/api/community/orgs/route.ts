@@ -41,8 +41,15 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Account blocked" }, { status: 403 });
   }
 
-  const contentLength = Number(request.headers.get("content-length") ?? 0);
-  if (contentLength > MAX_ORG_JSON_BYTES) {
+  const contentLength = Number(request.headers.get("content-length"));
+  // JSON-escaping the org text into the {"orgJson": "..."} envelope roughly
+  // doubles quotes/backslashes/newlines, so give the envelope headroom over
+  // the raw-text limit rather than comparing 1:1 — otherwise a legitimate
+  // file near the limit gets falsely rejected. A missing or malformed header
+  // (e.g. chunked transfer-encoding) is rejected outright rather than let
+  // through, since every real client here sends a real content-length and
+  // letting an unmeasured body through would defeat the point of this check.
+  if (!Number.isFinite(contentLength) || contentLength > MAX_ORG_JSON_BYTES * 2 + 1024) {
     return NextResponse.json({ error: `File exceeds ${MAX_ORG_JSON_BYTES / 1000} KB limit.` }, { status: 400 });
   }
 
