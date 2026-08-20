@@ -12,7 +12,7 @@ type Role = {
   reports_to?: string | null;
   responsibilities?: string[];
   adapter_config?: { model?: string };
-  policy?: { git?: string };
+  policy?: { git?: string; allowTools?: string[]; denyTools?: string[] };
 };
 
 export type OrgDetailData = {
@@ -36,6 +36,8 @@ function toModalRole(role: Role): ModalRole {
     responsibilities: Array.isArray(role.responsibilities) ? role.responsibilities : [],
     model: role.adapter_config?.model,
     gitAccess: role.policy?.git,
+    allowToolsCount: role.policy?.allowTools?.length,
+    denyToolsCount: role.policy?.denyTools?.length,
   };
 }
 
@@ -139,7 +141,11 @@ export function OrgDetail({ org }: { org: OrgDetailData }) {
                 <p className="mt-1 text-xs text-espresso/55">
                   id: {role.id}
                   {role.reports_to ? ` · reports to: ${role.reports_to}` : ""}
+                  {role.type ? ` · ${role.type}` : ""}
                 </p>
+                {role.responsibilities && role.responsibilities.length > 0 && (
+                  <p className="mt-1 text-xs text-espresso/70">{role.responsibilities.slice(0, 2).join(" · ")}</p>
+                )}
               </button>
             ))}
             {org.roles.length === 0 && <p className="text-sm text-espresso/55">No roles defined.</p>}

@@ -71,7 +71,7 @@ export function computeLayout(
     });
   } else {
     // Hierarchical (default): layer by reports_to depth.
-    const depthMap: Record<string, number> = {};
+    const depthMap: Record<string, number> = Object.create(null);
     roles.forEach((r) => {
       if (!r.reports_to || r.reports_to === r.id) depthMap[r.id] = 0;
     });
@@ -115,7 +115,7 @@ export function computeLayout(
     const ROW_H = 100;
     const totalH = Math.max(height, PAD * 2 + totalRows * ROW_H);
 
-    const positionsById: Record<string, { x: number; y: number }> = {};
+    const positionsById: Record<string, { x: number; y: number }> = Object.create(null);
     visualRows.forEach((ids, rowIdx) => {
       const y = PAD + rowIdx * ROW_H + ROW_H / 2;
       const colW = (width - PAD * 2) / (ids.length + 1);

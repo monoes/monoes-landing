@@ -58,10 +58,18 @@ export function OrgChart({
       {roles.map((role, i) => {
         const pos = nodeById.get(role.id);
         if (!pos) return null;
+        const isBoss = !role.reports_to;
         return (
           <g key={role.id} onClick={() => onSelectRole(role.id)} className="cursor-pointer">
-            <circle cx={pos.x} cy={pos.y} r={22} fill={roleColor(i)} />
-            <text x={pos.x} y={pos.y + 36} textAnchor="middle" className="fill-espresso text-[10px] font-medium">
+            <circle
+              cx={pos.x}
+              cy={pos.y}
+              r={isBoss ? 28 : 22}
+              fill={roleColor(i)}
+              stroke={isBoss ? "var(--color-espresso, #4b3621)" : "none"}
+              strokeWidth={isBoss ? 2 : 0}
+            />
+            <text x={pos.x} y={pos.y + (isBoss ? 42 : 36)} textAnchor="middle" className="fill-espresso text-[10px] font-medium">
               {role.id}
             </text>
           </g>

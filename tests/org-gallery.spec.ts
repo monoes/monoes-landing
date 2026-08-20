@@ -166,3 +166,35 @@ test("moderator deletes someone else's org upload", async ({ page, browser }) =>
     await modContext.close();
   }
 });
+
+test("a member who is neither uploader nor moderator cannot delete someone else's org upload", async ({ page, browser }) => {
+  await registerAndOnboard(page, uniqueEmail(), uniqueUsername());
+  await page.goto("/community/orgs");
+  const fileInput = page.locator('input[type="file"]');
+  const uploadResponsePromise = page.waitForResponse(
+    (res) => res.url().includes("/api/community/orgs") && res.request().method() === "POST",
+  );
+  await fileInput.setInputFiles(path.join(__dirname, "fixtures", "valid-org.json"));
+  const uploadResponse = await uploadResponsePromise;
+  const created = (await uploadResponse.json()) as { id: string };
+  await page.locator(`a[href="/community/orgs/${created.id}"]`).click();
+  const orgUrl = page.url();
+
+  const otherEmail = uniqueEmail();
+  const otherContext = await browser.newContext();
+  const otherPage = await otherContext.newPage();
+  try {
+    await registerAndOnboard(otherPage, otherEmail, uniqueUsername());
+    await otherPage.goto(orgUrl);
+    await otherPage.waitForLoadState("networkidle");
+    // Ordinary members see no Delete button at all.
+    await expect(otherPage.getByRole("button", { name: "Delete" })).not.toBeVisible();
+
+    // Defense in depth: the API itself must also reject the request even if
+    // someone bypasses the UI (e.g. a direct fetch call).
+    const deleteResponse = await otherPage.request.delete(`/api/community/orgs/${created.id}`);
+    expect(deleteResponse.status()).toBe(403);
+  } finally {
+    await otherContext.close();
+  }
+});

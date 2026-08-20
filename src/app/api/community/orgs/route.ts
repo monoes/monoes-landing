@@ -41,6 +41,11 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Account blocked" }, { status: 403 });
   }
 
+  const contentLength = Number(request.headers.get("content-length") ?? 0);
+  if (contentLength > MAX_ORG_JSON_BYTES) {
+    return NextResponse.json({ error: `File exceeds ${MAX_ORG_JSON_BYTES / 1000} KB limit.` }, { status: 400 });
+  }
+
   const body = (await request.json().catch(() => null)) as { orgJson?: unknown } | null;
   const orgJsonText = typeof body?.orgJson === "string" ? body.orgJson : "";
 

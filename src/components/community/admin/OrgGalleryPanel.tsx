@@ -11,8 +11,8 @@ export function OrgGalleryPanel({ orgs }: { orgs: Org[] }) {
   const total = orgs.length;
   const byTopology = { hierarchical: 0, star: 0, mesh: 0 };
   for (const o of orgs) {
-    const key = (o.topology ?? "hierarchical") as keyof typeof byTopology;
-    if (key in byTopology) byTopology[key]++;
+    const key = o.topology ?? "hierarchical";
+    if (Object.hasOwn(byTopology, key)) byTopology[key as keyof typeof byTopology]++;
     else byTopology.hierarchical++;
   }
 

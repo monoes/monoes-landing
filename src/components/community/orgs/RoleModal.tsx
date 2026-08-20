@@ -10,6 +10,8 @@ export type ModalRole = {
   responsibilities: string[];
   model?: string;
   gitAccess?: string;
+  allowToolsCount?: number;
+  denyToolsCount?: number;
 };
 
 export function RoleModal({ role, onClose }: { role: ModalRole; onClose: () => void }) {
@@ -96,6 +98,12 @@ export function RoleModal({ role, onClose }: { role: ModalRole; onClose: () => v
         {role.gitAccess && (
           <p className="mb-3 text-xs text-espresso/70">
             Git access: <span className="text-espresso">{role.gitAccess}</span>
+          </p>
+        )}
+
+        {(role.allowToolsCount !== undefined || role.denyToolsCount !== undefined) && (
+          <p className="mb-3 text-xs text-espresso/70">
+            Tools: <span className="text-espresso">{role.allowToolsCount ?? 0} allowed, {role.denyToolsCount ?? 0} denied</span>
           </p>
         )}
 

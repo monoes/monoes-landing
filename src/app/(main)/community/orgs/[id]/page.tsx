@@ -6,7 +6,7 @@ import { getAuth } from "@/lib/auth";
 import { getDb } from "@/lib/db";
 import { orgUpload } from "@/lib/db/schema";
 import { OrgDetail } from "@/components/community/orgs/OrgDetail";
-import { canDeleteOrgUpload } from "@/app/api/community/orgs/[id]/route";
+import { canDeleteOrgUpload } from "@/lib/community/can-delete-org-upload";
 
 export const metadata: Metadata = {
   title: "Org detail",
@@ -33,7 +33,7 @@ export default async function OrgDetailPage({ params }: { params: Promise<{ id: 
     reports_to?: string | null;
     responsibilities?: string[];
     adapter_config?: { model?: string };
-    policy?: { git?: string };
+    policy?: { git?: string; allowTools?: string[]; denyTools?: string[] };
   };
   const parsed = JSON.parse(row.orgJson) as { roles?: ParsedRole[] };
   const roles = Array.isArray(parsed.roles) ? parsed.roles : [];

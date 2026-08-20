@@ -125,4 +125,14 @@ describe("computeLayout", () => {
     const result = computeLayout(roles, "hierarchical", 720, 320);
     assert.equal(result.viewBoxHeight, 320);
   });
+
+  it("handles a role id that collides with Object.prototype property names", () => {
+    const roles = [
+      { id: "constructor", reports_to: null },
+      { id: "child", reports_to: "constructor" },
+    ];
+    const result = computeLayout(roles, "hierarchical", 720, 320);
+    assert.ok(result.nodes.find((n) => n.id === "constructor"));
+    assert.ok(result.nodes.find((n) => n.id === "child"));
+  });
 });

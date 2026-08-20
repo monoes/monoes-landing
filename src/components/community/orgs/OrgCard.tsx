@@ -23,7 +23,7 @@ export const TOPOLOGY_COLOR: Record<string, string> = {
 const GOAL_TRUNCATE_LENGTH = 150;
 
 export function OrgCard({ org }: { org: Org }) {
-  const topologyKey = org.topology ?? "hierarchical";
+  const topologyKey = Object.hasOwn(TOPOLOGY_LABEL, org.topology ?? "") ? (org.topology as string) : "hierarchical";
   const displayedGoal = org.goal.length > GOAL_TRUNCATE_LENGTH ? `${org.goal.slice(0, GOAL_TRUNCATE_LENGTH)}…` : org.goal;
 
   return (
@@ -37,7 +37,8 @@ export function OrgCard({ org }: { org: Org }) {
         {org.uploaderUsername ?? "unknown"} · {org.roleCount} role{org.roleCount === 1 ? "" : "s"} ·{" "}
         <span className={TOPOLOGY_COLOR[topologyKey] ?? "text-espresso/70"}>
           {TOPOLOGY_LABEL[topologyKey] ?? topologyKey}
-        </span>
+        </span>{" "}
+        · {new Date(org.createdAt).toLocaleDateString()}
       </p>
     </a>
   );
