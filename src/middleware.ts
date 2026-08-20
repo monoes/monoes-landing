@@ -41,7 +41,7 @@ export async function runMiddleware(
 ) {
   const { pathname } = request.nextUrl;
 
-  if (PUBLIC_PATHS.has(pathname)) {
+  if (PUBLIC_PATHS.has(pathname) || pathname.startsWith("/community/u/")) {
     return NextResponse.next();
   }
 

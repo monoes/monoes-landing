@@ -66,6 +66,13 @@ describe("community middleware", () => {
     assert.equal(res.cookies.get("better-auth.session_token")?.value, "");
   });
 
+  it("allows logged-out visitors through to /community/u/someone", async () => {
+    getSessionMock.mock.mockImplementationOnce(async () => null);
+    const req = new NextRequest("http://localhost/community/u/someone");
+    const res = await runMiddleware(req, getSessionMock);
+    assert.equal(res.status, 200);
+  });
+
   it("exports `middleware` with exactly one parameter, matching Next.js's (request, event) call signature", () => {
     // Regression guard: Next.js invokes middleware as `middleware(request, event)`.
     // If `getSession` ever moves back onto `middleware` itself as a second
