@@ -38,9 +38,11 @@ export default async function CommunityPage() {
                     Admin dashboard
                   </Link>
                 )}
-                <Link href={`/community/u/${(session.user as { username?: string }).username}`} className="rounded-md border border-espresso/30 px-5 py-2 text-sm text-espresso font-medium transition-colors hover:border-espresso">
-                  My profile
-                </Link>
+                {(session.user as { username?: string }).username && (
+                  <Link href={`/community/u/${(session.user as { username?: string }).username}`} className="rounded-md border border-espresso/30 px-5 py-2 text-sm text-espresso font-medium transition-colors hover:border-espresso">
+                    My profile
+                  </Link>
+                )}
                 <Link href="/community/features" className="bg-espresso text-ivory rounded-md px-5 py-2 text-sm font-medium transition-opacity hover:opacity-80">
                   Feature requests
                 </Link>

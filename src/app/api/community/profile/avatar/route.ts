@@ -39,12 +39,14 @@ export async function POST(request: Request) {
   if (!isValidAvatarContentType(file.type)) {
     return NextResponse.json({ error: "Avatar must be a PNG, JPEG, or WebP image." }, { status: 400 });
   }
+  if (file.size === 0) {
+    return NextResponse.json({ error: "Avatar file is empty." }, { status: 400 });
+  }
   if (!isValidAvatarSize(file.size)) {
     return NextResponse.json({ error: "Avatar must be 2 MB or smaller." }, { status: 400 });
   }
 
-  const ext = CONTENT_TYPE_EXT[file.type];
-  const key = `avatars/${session.user.id}.${ext}`;
+  const key = `avatars/${session.user.id}`;
 
   const { env } = getCloudflareContext();
   await env.AVATARS.put(key, await file.arrayBuffer(), {
