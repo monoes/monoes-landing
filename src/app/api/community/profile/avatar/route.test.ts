@@ -36,6 +36,7 @@ describe("avatar upload validation", () => {
   it("isValidAvatarSize accepts up to 2MB, rejects larger", async () => {
     const { isValidAvatarSize } = await import("./route.ts");
     const twoMb = 2 * 1024 * 1024;
+    assert.equal(isValidAvatarSize(0), false);
     assert.equal(isValidAvatarSize(twoMb), true);
     assert.equal(isValidAvatarSize(twoMb + 1), false);
     assert.equal(isValidAvatarSize(1024), true);

@@ -18,7 +18,7 @@ export function isValidAvatarContentType(contentType: string): boolean {
 }
 
 export function isValidAvatarSize(sizeBytes: number): boolean {
-  return sizeBytes <= MAX_AVATAR_BYTES;
+  return sizeBytes > 0 && sizeBytes <= MAX_AVATAR_BYTES;
 }
 
 export async function POST(request: Request) {
