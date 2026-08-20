@@ -6,7 +6,7 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 
 const navLinks = [
-  { label: "Community", href: "https://github.com/monoes/monomind/discussions", external: true },
+  { label: "Community", href: "/community" },
   { label: "Projects", href: "/product#projects" },
   { label: "Workforce", href: "/workforce" },
   { label: "Whitepaper", href: "/whitepaper" },
