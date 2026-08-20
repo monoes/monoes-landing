@@ -60,7 +60,9 @@ export async function PATCH(request: Request) {
   const tagline = typeof body?.tagline === "string" ? body.tagline.trim() : "";
   const jobTitle = typeof body?.jobTitle === "string" ? body.jobTitle.trim() : "";
   const company = typeof body?.company === "string" ? body.company.trim() : "";
-  const tags = Array.isArray(body?.tags) ? body.tags.filter((t): t is string => typeof t === "string") : [];
+  const tags = Array.isArray(body?.tags)
+    ? body.tags.filter((t): t is string => typeof t === "string").map((t) => t.trim())
+    : [];
   const githubUrl = typeof body?.githubUrl === "string" ? body.githubUrl.trim() : "";
   const twitterUrl = typeof body?.twitterUrl === "string" ? body.twitterUrl.trim() : "";
   const linkedinUrl = typeof body?.linkedinUrl === "string" ? body.linkedinUrl.trim() : "";
