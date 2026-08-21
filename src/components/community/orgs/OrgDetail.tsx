@@ -15,6 +15,21 @@ type Role = {
   policy?: { git?: string; allowTools?: string[]; denyTools?: string[] };
 };
 
+export type RunFile = {
+  id: string;
+  filename: string;
+  fileType: "md" | "html";
+};
+
+export type RunData = {
+  id: string;
+  label: string | null;
+  uploaderUsername: string | null;
+  createdAt: string;
+  canDelete: boolean;
+  files: RunFile[];
+};
+
 export type OrgDetailData = {
   id: string;
   name: string;
@@ -23,9 +38,11 @@ export type OrgDetailData = {
   roles: Role[];
   orgJson: string;
   canDelete: boolean;
+  runs: RunData[];
+  currentUsername: string | null;
 };
 
-type Tab = "chart" | "roles";
+type Tab = "chart" | "roles" | "outputs";
 
 function toModalRole(role: Role): ModalRole {
   return {
@@ -47,8 +64,42 @@ export function OrgDetail({ org }: { org: OrgDetailData }) {
   const [selectedRoleId, setSelectedRoleId] = useState<string | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const [expandedRunIds, setExpandedRunIds] = useState<Set<string>>(new Set());
+  const [runDeleteError, setRunDeleteError] = useState<string | null>(null);
+  const [deletingRunIds, setDeletingRunIds] = useState<Set<string>>(new Set());
+  const [runs, setRuns] = useState(org.runs);
 
   const selectedRole = org.roles.find((r) => r.id === selectedRoleId);
+
+  function toggleRunExpanded(runId: string) {
+    setExpandedRunIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(runId)) next.delete(runId);
+      else next.add(runId);
+      return next;
+    });
+  }
+
+  async function handleDeleteRun(runId: string) {
+    setRunDeleteError(null);
+    setDeletingRunIds((prev) => new Set(prev).add(runId));
+    try {
+      const res = await fetch(`/api/community/orgs/${org.id}/runs/${runId}`, { method: "DELETE" });
+      if (!res.ok) {
+        setRunDeleteError("Could not delete this run. Please try again.");
+        return;
+      }
+      setRuns((prev) => prev.filter((r) => r.id !== runId));
+    } catch {
+      setRunDeleteError("Something went wrong. Please try again.");
+    } finally {
+      setDeletingRunIds((prev) => {
+        const next = new Set(prev);
+        next.delete(runId);
+        return next;
+      });
+    }
+  }
 
   function handleDownload() {
     const blob = new Blob([org.orgJson], { type: "application/json" });
@@ -84,7 +135,7 @@ export function OrgDetail({ org }: { org: OrgDetailData }) {
 
       <div className="mt-4 flex items-center justify-between gap-3">
         <div className="flex gap-2 border-b border-ivory-linen">
-          {(["chart", "roles"] as const).map((t) => (
+          {(["chart", "roles", "outputs"] as const).map((t) => (
             <button
               key={t}
               onClick={() => setTab(t)}
@@ -92,7 +143,7 @@ export function OrgDetail({ org }: { org: OrgDetailData }) {
                 tab === t ? "border-b-2 border-espresso text-espresso" : "text-espresso/55"
               }`}
             >
-              {t === "chart" ? "Chart" : "Roles"}
+              {t === "chart" ? "Chart" : t === "roles" ? "Roles" : "Outputs"}
             </button>
           ))}
         </div>
@@ -149,6 +200,52 @@ export function OrgDetail({ org }: { org: OrgDetailData }) {
               </button>
             ))}
             {org.roles.length === 0 && <p className="text-sm text-espresso/55">No roles defined.</p>}
+          </div>
+        )}
+        {tab === "outputs" && (
+          <div>
+            {runDeleteError && (
+              <p role="alert" className="mb-3 text-xs text-red-700">
+                {runDeleteError}
+              </p>
+            )}
+            <div className="space-y-3">
+              {runs.map((run) => (
+                <div key={run.id} className="rounded-lg border border-ivory-linen bg-ivory p-4">
+                  <div className="flex items-center justify-between gap-3">
+                    <button
+                      type="button"
+                      onClick={() => toggleRunExpanded(run.id)}
+                      className="text-left text-sm text-espresso hover:underline"
+                    >
+                      {run.label || "Untitled run"} · {run.uploaderUsername ?? "unknown"} ·{" "}
+                      {new Date(run.createdAt).toLocaleString()}
+                    </button>
+                    {run.canDelete && (
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteRun(run.id)}
+                        disabled={deletingRunIds.has(run.id)}
+                        aria-busy={deletingRunIds.has(run.id)}
+                        className="rounded-md border border-red-700 px-2 py-1 text-xs font-medium text-red-700 disabled:opacity-50"
+                      >
+                        {deletingRunIds.has(run.id) ? "Deleting…" : "Delete"}
+                      </button>
+                    )}
+                  </div>
+                  {expandedRunIds.has(run.id) && (
+                    <ul className="mt-3 space-y-1">
+                      {run.files.map((file) => (
+                        <li key={file.id} className="text-sm text-espresso/70">
+                          {file.filename}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              ))}
+              {runs.length === 0 && <p className="text-sm text-espresso/55">No outputs uploaded yet.</p>}
+            </div>
           </div>
         )}
       </div>
