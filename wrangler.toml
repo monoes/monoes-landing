@@ -21,3 +21,7 @@ migrations_dir = "drizzle"
 [[r2_buckets]]
 binding = "AVATARS"
 bucket_name = "monoes-community-avatars"
+
+[[r2_buckets]]
+binding = "ORG_FILES"
+bucket_name = "monoes-community-org-files"
