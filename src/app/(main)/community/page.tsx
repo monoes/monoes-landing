@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { headers } from "next/headers";
 import { getAuth } from "@/lib/auth";
+import { getFeedItems } from "@/lib/community/feed";
+import { FeedList } from "@/components/community/feed/FeedList";
 
 export const metadata: Metadata = {
   title: "Community",
@@ -13,57 +15,61 @@ export const metadata: Metadata = {
   },
 };
 
-// Session-aware since Task 14 — getAuth()/getCloudflareContext() require a
-// dynamic (per-request) render, so this page can no longer be statically
-// prerendered at build time.
 export const dynamic = "force-dynamic";
 
 export default async function CommunityPage() {
   const session = await getAuth().api.getSession({ headers: await headers() });
   const role = (session?.user as { role?: string } | undefined)?.role;
+  const username = (session?.user as { username?: string } | undefined)?.username;
+
+  const { items, hasMore } = await getFeedItems({ sort: "latest", page: 0, currentUserId: session?.user.id });
 
   return (
     <main>
-      <section className="flex min-h-[70vh] items-center justify-center bg-ivory-warm px-8 pt-16 text-center">
-        <div>
-          <p className="mb-4 text-xs uppercase tracking-label text-gold-dark font-medium">Community</p>
-          <h1 className="mb-8 text-4xl font-semibold text-espresso md:text-5xl tracking-tight">
-            Report bugs. Request features.<br />Share your orgs.
-          </h1>
-          <div className="flex flex-wrap justify-center gap-3">
-            {session ? (
-              <>
-                {role === "admin" && (
-                  <Link href="/community/admin" className="bg-espresso text-ivory rounded-md px-5 py-2 text-sm font-medium transition-opacity hover:opacity-80">
-                    Admin dashboard
-                  </Link>
-                )}
-                {(session.user as { username?: string }).username && (
-                  <Link href={`/community/u/${(session.user as { username?: string }).username}`} className="rounded-md border border-espresso/30 px-5 py-2 text-sm text-espresso font-medium transition-colors hover:border-espresso">
-                    My profile
-                  </Link>
-                )}
-                <Link href="/community/features" className="bg-espresso text-ivory rounded-md px-5 py-2 text-sm font-medium transition-opacity hover:opacity-80">
-                  Feature requests
+      <section className="bg-ivory-warm px-8 pt-16 pb-8 text-center">
+        <p className="mb-4 text-xs uppercase tracking-label text-gold-dark font-medium">Community</p>
+        <h1 className="mb-8 text-4xl font-semibold text-espresso md:text-5xl tracking-tight">
+          Report bugs. Request features.<br />Share your orgs.
+        </h1>
+        <div className="flex flex-wrap justify-center gap-3">
+          {session ? (
+            <>
+              {role === "admin" && (
+                <Link href="/community/admin" className="bg-espresso text-ivory rounded-md px-5 py-2 text-sm font-medium transition-opacity hover:opacity-80">
+                  Admin dashboard
                 </Link>
-                <Link href="/community/bugs" className="rounded-md border border-espresso/30 px-5 py-2 text-sm text-espresso font-medium transition-colors hover:border-espresso">
-                  Bug reports
+              )}
+              {username && (
+                <Link href={`/community/u/${username}`} className="rounded-md border border-espresso/30 px-5 py-2 text-sm text-espresso font-medium transition-colors hover:border-espresso">
+                  My profile
                 </Link>
-                <Link href="/community/orgs" className="rounded-md border border-espresso/30 px-5 py-2 text-sm text-espresso font-medium transition-colors hover:border-espresso">
-                  Org gallery
-                </Link>
-              </>
-            ) : (
-              <>
-                <Link href="/community/register" className="bg-espresso text-ivory rounded-md px-5 py-2 text-sm font-medium transition-opacity hover:opacity-80">
-                  Join the community
-                </Link>
-                <Link href="/community/login" className="rounded-md border border-espresso/30 px-5 py-2 text-sm text-espresso font-medium transition-colors hover:border-espresso">
-                  Sign in
-                </Link>
-              </>
-            )}
-          </div>
+              )}
+              <Link href="/community/features" className="rounded-md border border-espresso/30 px-5 py-2 text-sm text-espresso font-medium transition-colors hover:border-espresso">
+                Feature requests
+              </Link>
+              <Link href="/community/bugs" className="rounded-md border border-espresso/30 px-5 py-2 text-sm text-espresso font-medium transition-colors hover:border-espresso">
+                Bug reports
+              </Link>
+              <Link href="/community/orgs" className="rounded-md border border-espresso/30 px-5 py-2 text-sm text-espresso font-medium transition-colors hover:border-espresso">
+                Org gallery
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link href="/community/register" className="bg-espresso text-ivory rounded-md px-5 py-2 text-sm font-medium transition-opacity hover:opacity-80">
+                Join the community
+              </Link>
+              <Link href="/community/login" className="rounded-md border border-espresso/30 px-5 py-2 text-sm text-espresso font-medium transition-colors hover:border-espresso">
+                Sign in
+              </Link>
+            </>
+          )}
+        </div>
+      </section>
+
+      <section className="bg-ivory-warm px-8 pb-16">
+        <div className="mx-auto max-w-3xl">
+          <FeedList initialItems={items} initialHasMore={hasMore} />
         </div>
       </section>
     </main>
