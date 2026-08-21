@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { VoteButtons } from "@/components/community/VoteButtons";
 
 const DESCRIPTION_TRUNCATE_LENGTH = 200;
 
@@ -40,11 +41,6 @@ export function FeatureCard({
 }) {
   const [expanded, setExpanded] = useState(false);
 
-  function handleVoteClick(clicked: 1 | -1) {
-    // clicking the already-active vote removes it; otherwise sets the new value
-    onVote(feature.id, feature.myVote === clicked ? 0 : clicked);
-  }
-
   const isLong = feature.description.length > DESCRIPTION_TRUNCATE_LENGTH;
   const displayedDescription =
     isLong && !expanded ? `${feature.description.slice(0, DESCRIPTION_TRUNCATE_LENGTH)}…` : feature.description;
@@ -70,33 +66,12 @@ export function FeatureCard({
             {feature.authorUsername ?? "unknown"} · <span className={STATUS_COLOR[feature.status]}>{STATUS_LABEL[feature.status]}</span>
           </p>
         </div>
-        <div className="flex flex-col items-center gap-1">
-          <button
-            onClick={() => handleVoteClick(1)}
-            disabled={voting}
-            aria-pressed={feature.myVote === 1}
-            aria-label="Upvote"
-            aria-busy={voting}
-            className={`rounded px-2 py-1 text-sm disabled:opacity-50 ${
-              feature.myVote === 1 ? "bg-espresso text-ivory" : "border border-espresso/30 text-espresso"
-            }`}
-          >
-            ▲
-          </button>
-          <span className="text-sm font-semibold text-espresso">{feature.score}</span>
-          <button
-            onClick={() => handleVoteClick(-1)}
-            disabled={voting}
-            aria-pressed={feature.myVote === -1}
-            aria-label="Downvote"
-            aria-busy={voting}
-            className={`rounded px-2 py-1 text-sm disabled:opacity-50 ${
-              feature.myVote === -1 ? "bg-espresso text-ivory" : "border border-espresso/30 text-espresso"
-            }`}
-          >
-            ▼
-          </button>
-        </div>
+        <VoteButtons
+          score={feature.score}
+          myVote={feature.myVote}
+          onVote={(value) => onVote(feature.id, value)}
+          voting={voting}
+        />
       </div>
     </div>
   );
