@@ -1,5 +1,9 @@
 import { test, expect } from "@playwright/test";
 import path from "node:path";
+import { getPlatformProxy } from "wrangler";
+import { drizzle } from "drizzle-orm/d1";
+import { eq } from "drizzle-orm";
+import { user } from "../src/lib/db/schema";
 
 function uniqueEmail() {
   return `profile-${Date.now()}-${Math.random().toString(36).slice(2)}@example.com`;
@@ -18,6 +22,16 @@ async function registerAndOnboard(page: import("@playwright/test").Page, email: 
   await page.fill("#username", username);
   await page.click('button[type="submit"]');
   await expect(page).toHaveURL(/\/community$/);
+}
+
+async function blockUser(email: string) {
+  const { env, dispose } = await getPlatformProxy<CloudflareEnv>({ envFiles: [] });
+  try {
+    const db = drizzle(env.COMMUNITY_DB);
+    await db.update(user).set({ blockedAt: new Date(), updatedAt: new Date() }).where(eq(user.email, email));
+  } finally {
+    await dispose();
+  }
 }
 
 test("edit profile fields, upload an avatar, and see them on the public profile page", async ({ page }) => {
@@ -73,4 +87,24 @@ test("My profile link on /community goes to the signed-in user's profile", async
   await page.goto("/community");
   await page.getByRole("link", { name: "My profile" }).click();
   await expect(page).toHaveURL(new RegExp(`/community/u/${username}$`));
+});
+
+test("a blocked user's public profile shows a suspended placeholder, not their real content", async ({ page }) => {
+  const email = uniqueEmail();
+  const username = uniqueUsername();
+  await registerAndOnboard(page, email, username);
+
+  await page.goto("/community/settings/profile");
+  await page.fill("#tagline", "This should not be visible once blocked.");
+  await page.fill("#githubUrl", "https://github.com/monoes");
+  await page.click('button[type="submit"]');
+  await expect(page).toHaveURL(new RegExp(`/community/u/${username}$`));
+
+  await blockUser(email);
+
+  await page.goto(`/community/u/${username}`);
+  await expect(page.getByText(`@${username}`)).toBeVisible();
+  await expect(page.getByText("This account has been suspended.")).toBeVisible();
+  await expect(page.getByText("This should not be visible once blocked.")).not.toBeVisible();
+  await expect(page.getByRole("main").getByRole("link", { name: "GitHub" })).not.toBeVisible();
 });

@@ -44,7 +44,7 @@ export function ProfileCard({ profile }: { profile: Profile }) {
       {profile.tags.length > 0 && (
         <div className="mt-4 flex flex-wrap justify-center gap-2">
           {profile.tags.map((tag) => (
-            <span key={tag} className="rounded-full bg-espresso/10 px-3 py-1 text-xs text-espresso">
+            <span key={tag} className="rounded bg-espresso/10 px-2 py-0.5 text-xs font-medium text-espresso">
               {tag}
             </span>
           ))}

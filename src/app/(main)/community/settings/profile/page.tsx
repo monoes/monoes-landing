@@ -10,6 +10,16 @@ import { ProfileForm } from "@/components/community/profile/ProfileForm";
 export const metadata: Metadata = { title: "Edit profile" };
 export const dynamic = "force-dynamic";
 
+function parseTags(tagsJson: string | null | undefined): string[] {
+  if (!tagsJson) return [];
+  try {
+    const parsed = JSON.parse(tagsJson);
+    return Array.isArray(parsed) ? parsed.filter((t): t is string => typeof t === "string") : [];
+  } catch {
+    return [];
+  }
+}
+
 export default async function ProfileSettingsPage() {
   const session = await getAuth().api.getSession({ headers: await headers() });
   if (!session) redirect("/community/login");
@@ -28,7 +38,7 @@ export default async function ProfileSettingsPage() {
             tagline: row?.tagline ?? "",
             jobTitle: row?.jobTitle ?? "",
             company: row?.company ?? "",
-            tags: row?.tagsJson ? (JSON.parse(row.tagsJson) as string[]) : [],
+            tags: parseTags(row?.tagsJson),
             githubUrl: row?.githubUrl ?? "",
             twitterUrl: row?.twitterUrl ?? "",
             linkedinUrl: row?.linkedinUrl ?? "",
