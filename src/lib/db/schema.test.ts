@@ -16,6 +16,8 @@ import {
   postVote,
   bugVote,
   orgVote,
+  orgRun,
+  orgRunFile,
 } from "./schema.ts";
 
 describe("db schema", () => {
@@ -144,6 +146,20 @@ describe("db schema", () => {
       for (const col of [idCol, "userId", "value", "createdAt"]) {
         assert.ok(columns.includes(col), `missing column: ${col}`);
       }
+    }
+  });
+
+  it("exports an orgRun table with the required columns", () => {
+    const columns = Object.keys(orgRun);
+    for (const col of ["id", "orgUploadId", "uploaderId", "label", "createdAt"]) {
+      assert.ok(columns.includes(col), `missing column: ${col}`);
+    }
+  });
+
+  it("exports an orgRunFile table with the required columns", () => {
+    const columns = Object.keys(orgRunFile);
+    for (const col of ["id", "orgRunId", "filename", "fileType", "r2Key", "sizeBytes", "createdAt"]) {
+      assert.ok(columns.includes(col), `missing column: ${col}`);
     }
   });
 });

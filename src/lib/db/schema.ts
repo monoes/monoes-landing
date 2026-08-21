@@ -206,3 +206,27 @@ export const orgVote = sqliteTable(
   },
   (table) => [uniqueIndex("org_vote_org_user_unique").on(table.orgUploadId, table.userId)],
 );
+
+export const orgRun = sqliteTable("org_run", {
+  id: text("id").primaryKey(),
+  orgUploadId: text("org_upload_id")
+    .notNull()
+    .references(() => orgUpload.id, { onDelete: "cascade" }),
+  uploaderId: text("uploader_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  label: text("label"),
+  createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
+});
+
+export const orgRunFile = sqliteTable("org_run_file", {
+  id: text("id").primaryKey(),
+  orgRunId: text("org_run_id")
+    .notNull()
+    .references(() => orgRun.id, { onDelete: "cascade" }),
+  filename: text("filename").notNull(),
+  fileType: text("file_type").notNull(),
+  r2Key: text("r2_key").notNull(),
+  sizeBytes: integer("size_bytes").notNull(),
+  createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
+});

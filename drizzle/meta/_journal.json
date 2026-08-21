@@ -43,6 +43,13 @@
       "when": 1787309895159,
       "tag": "0005_swift_naoko",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1787327952525,
+      "tag": "0006_last_rocket_raccoon",
+      "breakpoints": true
     }
   ]
 }
