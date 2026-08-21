@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import type { FeedItem } from "@/lib/community/feed";
 import { FeedCard } from "./FeedCard";
 
@@ -29,6 +29,7 @@ export function FeedList({
   const [loadingMore, setLoadingMore] = useState(false);
   const [votingIds, setVotingIds] = useState<Set<string>>(new Set());
   const [feedError, setFeedError] = useState<string | null>(null);
+  const requestIdRef = useRef(0);
 
   function buildFeedUrl(sort: SortMode, page: number) {
     const params = new URLSearchParams({ sort, page: String(page) });
@@ -41,8 +42,10 @@ export function FeedList({
     setFeedError(null);
     setSortMode(mode);
     setPage(0);
+    const thisRequestId = ++requestIdRef.current;
     try {
       const res = await fetch(buildFeedUrl(mode, 0));
+      if (thisRequestId !== requestIdRef.current) return; // a newer request superseded this one
       if (!res.ok) {
         setFeedError("Could not load the feed. Please try again.");
         return;
@@ -51,11 +54,13 @@ export function FeedList({
       setItems(data.items);
       setHasMore(data.hasMore);
     } catch {
+      if (thisRequestId !== requestIdRef.current) return;
       setFeedError("Something went wrong. Please try again.");
     }
   }
 
   async function handleLoadMore() {
+    if (loadingMore) return; // ignore re-entrant clicks
     setFeedError(null);
     setLoadingMore(true);
     try {
@@ -110,6 +115,7 @@ export function FeedList({
           <button
             key={mode}
             onClick={() => handleSortChange(mode)}
+            aria-pressed={sortMode === mode}
             className={`rounded px-3 py-1 text-xs font-medium ${
               sortMode === mode ? "bg-espresso text-ivory" : "border border-espresso/30 text-espresso"
             }`}
