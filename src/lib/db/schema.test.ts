@@ -12,6 +12,10 @@ import {
   bugLabel,
   bugLabelLink,
   orgUpload,
+  post,
+  postVote,
+  bugVote,
+  orgVote,
 } from "./schema.ts";
 
 describe("db schema", () => {
@@ -121,5 +125,25 @@ describe("db schema", () => {
 
   it("orgUpload.goal column has '' as its default", () => {
     assert.equal(orgUpload.goal.default, "");
+  });
+
+  it("exports a post table with the required columns", () => {
+    const columns = Object.keys(post);
+    for (const col of ["id", "title", "body", "authorId", "createdAt", "updatedAt"]) {
+      assert.ok(columns.includes(col), `missing column: ${col}`);
+    }
+  });
+
+  it("exports postVote, bugVote, and orgVote tables with the required columns", () => {
+    for (const [table, idCol] of [
+      [postVote, "postId"],
+      [bugVote, "bugId"],
+      [orgVote, "orgUploadId"],
+    ] as const) {
+      const columns = Object.keys(table);
+      for (const col of [idCol, "userId", "value", "createdAt"]) {
+        assert.ok(columns.includes(col), `missing column: ${col}`);
+      }
+    }
   });
 });

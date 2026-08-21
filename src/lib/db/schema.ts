@@ -147,3 +147,62 @@ export const orgUpload = sqliteTable("org_upload", {
     .references(() => user.id, { onDelete: "cascade" }),
   createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
 });
+
+export const post = sqliteTable("post", {
+  id: text("id").primaryKey(),
+  title: text("title").notNull(),
+  body: text("body").notNull(),
+  authorId: text("author_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
+  updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
+});
+
+export const postVote = sqliteTable(
+  "post_vote",
+  {
+    id: text("id").primaryKey(),
+    postId: text("post_id")
+      .notNull()
+      .references(() => post.id, { onDelete: "cascade" }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    value: integer("value").notNull(),
+    createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
+  },
+  (table) => [uniqueIndex("post_vote_post_user_unique").on(table.postId, table.userId)],
+);
+
+export const bugVote = sqliteTable(
+  "bug_vote",
+  {
+    id: text("id").primaryKey(),
+    bugId: text("bug_id")
+      .notNull()
+      .references(() => bug.id, { onDelete: "cascade" }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    value: integer("value").notNull(),
+    createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
+  },
+  (table) => [uniqueIndex("bug_vote_bug_user_unique").on(table.bugId, table.userId)],
+);
+
+export const orgVote = sqliteTable(
+  "org_vote",
+  {
+    id: text("id").primaryKey(),
+    orgUploadId: text("org_upload_id")
+      .notNull()
+      .references(() => orgUpload.id, { onDelete: "cascade" }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    value: integer("value").notNull(),
+    createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
+  },
+  (table) => [uniqueIndex("org_vote_org_user_unique").on(table.orgUploadId, table.userId)],
+);
