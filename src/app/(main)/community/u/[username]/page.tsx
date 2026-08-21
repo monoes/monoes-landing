@@ -5,6 +5,11 @@ import { eq } from "drizzle-orm";
 import { getDb } from "@/lib/db";
 import { user } from "@/lib/db/schema";
 import { ProfileCard, type Profile } from "@/components/community/profile/ProfileCard";
+import { getFeedItems } from "@/lib/community/feed";
+import { FeedList } from "@/components/community/feed/FeedList";
+import { NewPostForm } from "@/components/community/profile/NewPostForm";
+import { getAuth } from "@/lib/auth";
+import { headers } from "next/headers";
 
 export const dynamic = "force-dynamic";
 
@@ -18,7 +23,7 @@ function parseTags(tagsJson: string | null): string[] {
   }
 }
 
-type ProfileLookup = { profile: Profile; suspended: false } | { suspended: true; username: string } | null;
+type ProfileLookup = { profile: Profile; id: string; suspended: false } | { suspended: true; username: string } | null;
 
 const loadProfile = cache(async (username: string): Promise<ProfileLookup> => {
   const db = getDb();
@@ -32,6 +37,7 @@ const loadProfile = cache(async (username: string): Promise<ProfileLookup> => {
 
   return {
     suspended: false,
+    id: row.id,
     profile: {
       name: row.name,
       username: row.username ?? username,
@@ -84,9 +90,22 @@ export default async function ProfilePage({ params }: { params: Promise<{ userna
     );
   }
 
+  const session = await getAuth().api.getSession({ headers: await headers() });
+  const { items, hasMore } = await getFeedItems({
+    sort: "latest",
+    page: 0,
+    authorId: result.id,
+    currentUserId: session?.user.id,
+  });
+
   return (
     <main className="bg-ivory-warm px-8 py-16">
       <ProfileCard profile={result.profile} />
+      <div className="mx-auto mt-10 max-w-3xl">
+        <h2 className="mb-4 text-lg font-semibold text-espresso">Activity</h2>
+        {session?.user.id === result.id && <NewPostForm />}
+        <FeedList initialItems={items} initialHasMore={hasMore} authorId={result.id} />
+      </div>
     </main>
   );
 }
