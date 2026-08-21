@@ -70,6 +70,7 @@ test("admin changes status/severity and attaches a label", async ({ page, browse
   await page.getByRole("button", { name: "Submit" }).click();
   await expect(page.getByText(title)).toBeVisible();
   await page.getByText(title).click();
+  await expect(page).toHaveURL(/\/community\/bugs\/.+/);
   const bugUrl = page.url();
 
   const adminEmail = uniqueEmail();
@@ -113,6 +114,7 @@ test("moderator deletes a bug report", async ({ page, browser }) => {
   await page.getByRole("button", { name: "Submit" }).click();
   await expect(page.getByText(title)).toBeVisible();
   await page.getByText(title).click();
+  await expect(page).toHaveURL(/\/community\/bugs\/.+/);
   const bugUrl = page.url();
 
   const modEmail = uniqueEmail();

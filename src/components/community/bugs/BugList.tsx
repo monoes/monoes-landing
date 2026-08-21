@@ -53,6 +53,35 @@ export function BugList({
   const [severity, setSeverity] = useState<Bug["severity"]>("medium");
   const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [votingIds, setVotingIds] = useState<Set<string>>(new Set());
+  const [voteError, setVoteError] = useState<string | null>(null);
+
+  async function handleVote(id: string, value: -1 | 0 | 1) {
+    if (votingIds.has(id)) return;
+    setVoteError(null);
+    setVotingIds((prev) => new Set(prev).add(id));
+    try {
+      const res = await fetch(`/api/community/bugs/${id}/vote`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ value }),
+      });
+      if (!res.ok) {
+        setVoteError("Could not record your vote. Please try again.");
+        return;
+      }
+      const data = (await res.json()) as { score: number; myVote: -1 | 0 | 1 };
+      setBugs((prev) => prev.map((b) => (b.id === id ? { ...b, score: data.score, myVote: data.myVote } : b)));
+    } catch {
+      setVoteError("Something went wrong. Please try again.");
+    } finally {
+      setVotingIds((prev) => {
+        const next = new Set(prev);
+        next.delete(id);
+        return next;
+      });
+    }
+  }
 
   function updateQuery(next: { status?: StatusFilter; label?: string; sort?: SortMode }) {
     const params = new URLSearchParams();
@@ -115,6 +144,8 @@ export function BugList({
           createdAt: created.createdAt,
           commentCount: 0,
           labels: [],
+          score: 0,
+          myVote: 0,
         },
         ...prev,
       ]);
@@ -242,9 +273,15 @@ export function BugList({
         </form>
       )}
 
+      {voteError && (
+        <p role="alert" className="mb-3 text-sm text-red-700">
+          {voteError}
+        </p>
+      )}
+
       <div className="space-y-3">
         {filtered.map((b) => (
-          <BugCard key={b.id} bug={b} />
+          <BugCard key={b.id} bug={b} onVote={handleVote} voting={votingIds.has(b.id)} />
         ))}
         {filtered.length === 0 && <p className="text-sm text-espresso/55">No bug reports match these filters.</p>}
       </div>

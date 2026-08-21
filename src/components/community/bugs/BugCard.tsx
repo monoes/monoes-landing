@@ -1,3 +1,6 @@
+import Link from "next/link";
+import { VoteButtons } from "@/components/community/VoteButtons";
+
 export type BugLabelChip = {
   id: string;
   name: string;
@@ -14,6 +17,8 @@ export type Bug = {
   createdAt: string;
   commentCount: number;
   labels: BugLabelChip[];
+  score: number;
+  myVote: -1 | 0 | 1;
 };
 
 export const STATUS_LABEL: Record<Bug["status"], string> = {
@@ -46,17 +51,22 @@ export const SEVERITY_COLOR: Record<Bug["severity"], string> = {
 
 const DESCRIPTION_TRUNCATE_LENGTH = 200;
 
-export function BugCard({ bug }: { bug: Bug }) {
+export function BugCard({
+  bug,
+  onVote,
+  voting,
+}: {
+  bug: Bug;
+  onVote: (id: string, value: -1 | 0 | 1) => void;
+  voting: boolean;
+}) {
   const isLong = bug.description.length > DESCRIPTION_TRUNCATE_LENGTH;
   const displayedDescription = isLong ? `${bug.description.slice(0, DESCRIPTION_TRUNCATE_LENGTH)}…` : bug.description;
 
   return (
-    <a
-      href={`/community/bugs/${bug.id}`}
-      className="block rounded-lg border border-ivory-linen bg-ivory p-5 transition-colors hover:border-espresso/30"
-    >
+    <div className="rounded-lg border border-ivory-linen bg-ivory p-5 transition-colors hover:border-espresso/30">
       <div className="flex items-start justify-between gap-4">
-        <div className="min-w-0">
+        <Link href={`/community/bugs/${bug.id}`} className="min-w-0 flex-1">
           <p className="font-medium text-espresso">{bug.title}</p>
           <p className="mt-1 text-sm text-espresso/70">{displayedDescription}</p>
           {bug.labels.length > 0 && (
@@ -78,8 +88,9 @@ export function BugCard({ bug }: { bug: Bug }) {
             <span className={STATUS_COLOR[bug.status]}>{STATUS_LABEL[bug.status]}</span> ·{" "}
             {bug.commentCount} comment{bug.commentCount === 1 ? "" : "s"}
           </p>
-        </div>
+        </Link>
+        <VoteButtons score={bug.score} myVote={bug.myVote} onVote={(value) => onVote(bug.id, value)} voting={voting} />
       </div>
-    </a>
+    </div>
   );
 }

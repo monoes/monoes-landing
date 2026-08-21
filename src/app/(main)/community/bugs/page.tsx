@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { getAuth } from "@/lib/auth";
 import { getDb } from "@/lib/db";
-import { bug, bugComment, bugLabel, bugLabelLink, user } from "@/lib/db/schema";
+import { bug, bugComment, bugLabel, bugLabelLink, user, bugVote } from "@/lib/db/schema";
 import { BugList } from "@/components/community/bugs/BugList";
 
 export const metadata: Metadata = {
@@ -16,12 +16,13 @@ export default async function BugsPage() {
   const session = await getAuth().api.getSession({ headers: await headers() });
 
   const db = getDb();
-  const [bugs, comments, labels, labelLinks, authors] = await Promise.all([
+  const [bugs, comments, labels, labelLinks, authors, votes] = await Promise.all([
     db.select().from(bug),
     db.select({ bugId: bugComment.bugId }).from(bugComment),
     db.select().from(bugLabel),
     db.select().from(bugLabelLink),
     db.select({ id: user.id, username: user.username }).from(user),
+    db.select().from(bugVote),
   ]);
 
   const authorMap = new Map(authors.map((a) => [a.id, a.username]));
@@ -38,6 +39,14 @@ export default async function BugsPage() {
     list.push({ id: label.id, name: label.name, color: label.color });
     labelsByBug.set(link.bugId, list);
   }
+  const scoreByBug = new Map<string, number>();
+  const myVoteByBug = new Map<string, number>();
+  for (const v of votes) {
+    scoreByBug.set(v.bugId, (scoreByBug.get(v.bugId) ?? 0) + v.value);
+    if (session && v.userId === session.user.id) {
+      myVoteByBug.set(v.bugId, v.value);
+    }
+  }
 
   const items = bugs.map((b) => ({
     id: b.id,
@@ -49,6 +58,8 @@ export default async function BugsPage() {
     createdAt: b.createdAt.toISOString(),
     commentCount: commentCountByBug.get(b.id) ?? 0,
     labels: labelsByBug.get(b.id) ?? [],
+    score: scoreByBug.get(b.id) ?? 0,
+    myVote: (myVoteByBug.get(b.id) ?? 0) as -1 | 0 | 1,
   }));
 
   return (
