@@ -4,6 +4,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { OrgChart } from "./OrgChart";
 import { RoleModal, type ModalRole } from "./RoleModal";
+import { RunUploadForm } from "./RunUploadForm";
+import { RunFileViewer } from "./RunFileViewer";
 
 type Role = {
   id: string;
@@ -68,6 +70,7 @@ export function OrgDetail({ org }: { org: OrgDetailData }) {
   const [runDeleteError, setRunDeleteError] = useState<string | null>(null);
   const [deletingRunIds, setDeletingRunIds] = useState<Set<string>>(new Set());
   const [runs, setRuns] = useState(org.runs);
+  const [viewingFile, setViewingFile] = useState<RunFile | null>(null);
 
   const selectedRole = org.roles.find((r) => r.id === selectedRoleId);
 
@@ -204,6 +207,11 @@ export function OrgDetail({ org }: { org: OrgDetailData }) {
         )}
         {tab === "outputs" && (
           <div>
+            <RunUploadForm
+              orgId={org.id}
+              currentUsername={org.currentUsername}
+              onUploaded={(run) => setRuns((prev) => [run, ...prev])}
+            />
             {runDeleteError && (
               <p role="alert" className="mb-3 text-xs text-red-700">
                 {runDeleteError}
@@ -236,8 +244,14 @@ export function OrgDetail({ org }: { org: OrgDetailData }) {
                   {expandedRunIds.has(run.id) && (
                     <ul className="mt-3 space-y-1">
                       {run.files.map((file) => (
-                        <li key={file.id} className="text-sm text-espresso/70">
-                          {file.filename}
+                        <li key={file.id}>
+                          <button
+                            type="button"
+                            onClick={() => setViewingFile(file)}
+                            className="text-sm text-espresso/70 hover:text-espresso hover:underline"
+                          >
+                            {file.filename}
+                          </button>
                         </li>
                       ))}
                     </ul>
@@ -246,6 +260,12 @@ export function OrgDetail({ org }: { org: OrgDetailData }) {
               ))}
               {runs.length === 0 && <p className="text-sm text-espresso/55">No outputs uploaded yet.</p>}
             </div>
+            {viewingFile && (
+              <div className="mt-4">
+                <p className="mb-2 text-xs font-medium text-espresso/55">{viewingFile.filename}</p>
+                <RunFileViewer file={viewingFile} />
+              </div>
+            )}
           </div>
         )}
       </div>
