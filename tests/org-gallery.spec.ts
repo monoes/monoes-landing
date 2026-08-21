@@ -148,6 +148,7 @@ test("moderator deletes someone else's org upload", async ({ page, browser }) =>
   const uploadResponse = await uploadResponsePromise;
   const created = (await uploadResponse.json()) as { id: string };
   await page.locator(`a[href="/community/orgs/${created.id}"]`).click();
+  await expect(page).toHaveURL(/\/community\/orgs\/.+/);
   const orgUrl = page.url();
 
   const modEmail = uniqueEmail();
@@ -178,6 +179,7 @@ test("a member who is neither uploader nor moderator cannot delete someone else'
   const uploadResponse = await uploadResponsePromise;
   const created = (await uploadResponse.json()) as { id: string };
   await page.locator(`a[href="/community/orgs/${created.id}"]`).click();
+  await expect(page).toHaveURL(/\/community\/orgs\/.+/);
   const orgUrl = page.url();
 
   const otherEmail = uniqueEmail();

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { getAuth } from "@/lib/auth";
 import { getDb } from "@/lib/db";
-import { orgUpload, user } from "@/lib/db/schema";
+import { orgUpload, user, orgVote } from "@/lib/db/schema";
 import { OrgGallery } from "@/components/community/orgs/OrgGallery";
 
 export const metadata: Metadata = {
@@ -16,12 +16,21 @@ export default async function OrgsPage() {
   const session = await getAuth().api.getSession({ headers: await headers() });
 
   const db = getDb();
-  const [orgs, authors] = await Promise.all([
+  const [orgs, authors, votes] = await Promise.all([
     db.select().from(orgUpload),
     db.select({ id: user.id, username: user.username }).from(user),
+    db.select().from(orgVote),
   ]);
 
   const authorMap = new Map(authors.map((a) => [a.id, a.username]));
+  const scoreByOrg = new Map<string, number>();
+  const myVoteByOrg = new Map<string, number>();
+  for (const v of votes) {
+    scoreByOrg.set(v.orgUploadId, (scoreByOrg.get(v.orgUploadId) ?? 0) + v.value);
+    if (session && v.userId === session.user.id) {
+      myVoteByOrg.set(v.orgUploadId, v.value);
+    }
+  }
 
   const items = orgs
     .map((o) => ({
@@ -32,6 +41,8 @@ export default async function OrgsPage() {
       roleCount: o.roleCount,
       uploaderUsername: authorMap.get(o.uploaderId) ?? null,
       createdAt: o.createdAt.toISOString(),
+      score: scoreByOrg.get(o.id) ?? 0,
+      myVote: (myVoteByOrg.get(o.id) ?? 0) as -1 | 0 | 1,
     }))
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
