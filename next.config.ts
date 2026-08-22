@@ -39,6 +39,19 @@ const nextConfig: NextConfig = {
           { key: "Content-Security-Policy", value: "sandbox; frame-ancestors 'self'" },
         ],
       },
+      {
+        source: "/",
+        headers: [
+          {
+            key: "Link",
+            value: [
+              '</.well-known/api-catalog>; rel="api-catalog"',
+              '</api/openapi.json>; rel="service-desc"',
+              '</community/api-docs>; rel="service-doc"',
+            ].join(", "),
+          },
+        ],
+      },
     ];
   },
   async redirects() {
