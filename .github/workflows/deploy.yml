@@ -25,6 +25,9 @@ jobs:
 
       - run: npx @opennextjs/cloudflare build
 
+      - name: Generate Markdown-for-Agents assets
+        run: node scripts/generate-markdown-assets.mjs
+
       - name: Deploy to Cloudflare Workers
         run: npx wrangler deploy
         env:

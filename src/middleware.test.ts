@@ -16,9 +16,8 @@ register(
 );
 
 const { NextRequest } = await import("next/server");
-const { middleware, runMiddleware, isMarkdownEligiblePath, wantsMarkdown, renderAsMarkdown } = await import(
-  "./middleware.ts"
-);
+const { middleware, runMiddleware, isMarkdownEligiblePath, wantsMarkdown, markdownAssetPath, renderAsMarkdown } =
+  await import("./middleware.ts");
 
 const getSessionMock = mock.fn<GetSession>(async () => null);
 
@@ -108,8 +107,17 @@ describe("markdown negotiation", () => {
     assert.equal(wantsMarkdown(null), false);
   });
 
-  it("renderAsMarkdown converts the fetched HTML to markdown with a text/markdown content type", async () => {
-    const doFetch = mock.fn(async () => new Response("<h1>Hello</h1><p>World</p>", { status: 200 }));
+  it("markdownAssetPath maps a page path to its pre-generated .md sibling", () => {
+    assert.equal(markdownAssetPath("/workforce"), "/workforce.md");
+    assert.equal(markdownAssetPath("/blog/some-post"), "/blog/some-post.md");
+    assert.equal(markdownAssetPath("/"), "/index.md");
+  });
+
+  it("renderAsMarkdown serves the pre-generated markdown asset with a text/markdown content type", async () => {
+    const doFetch = mock.fn(async (input) => {
+      assert.match(input, /\/workforce\.md$/);
+      return new Response("# Hello\n\nWorld", { status: 200 });
+    });
     const req = new NextRequest("http://localhost/workforce", { headers: { accept: "text/markdown" } });
     const res = await renderAsMarkdown(req, doFetch);
     assert.equal(res.headers.get("Content-Type"), "text/markdown; charset=utf-8");
@@ -119,19 +127,20 @@ describe("markdown negotiation", () => {
     assert.match(body, /World/);
   });
 
-  it("renderAsMarkdown falls through to NextResponse.next() when the internal fetch fails", async () => {
-    const doFetch = mock.fn(async () => new Response("error", { status: 500 }));
+  it("renderAsMarkdown falls through to NextResponse.next() when no pre-generated asset exists", async () => {
+    const doFetch = mock.fn(async () => new Response("not found", { status: 404 }));
     const req = new NextRequest("http://localhost/workforce", { headers: { accept: "text/markdown" } });
     const res = await renderAsMarkdown(req, doFetch);
     assert.equal(res.status, 200);
     assert.notEqual(res.headers.get("Content-Type"), "text/markdown; charset=utf-8");
   });
 
-  it("middleware() short-circuits requests carrying the internal passthrough header to avoid recursion", async () => {
-    const req = new NextRequest("http://localhost/workforce", {
-      headers: { accept: "text/markdown", "x-markdown-passthrough": "1" },
+  it("renderAsMarkdown falls through to NextResponse.next() when the fetch itself throws", async () => {
+    const doFetch = mock.fn(async () => {
+      throw new Error("network error");
     });
-    const res = await middleware(req);
+    const req = new NextRequest("http://localhost/workforce", { headers: { accept: "text/markdown" } });
+    const res = await renderAsMarkdown(req, doFetch);
     assert.equal(res.status, 200);
   });
 });

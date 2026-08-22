@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { NodeHtmlMarkdown } from "node-html-markdown";
 
 const PUBLIC_PATHS = new Set(["/community", "/community/login", "/community/register", "/community/api-docs"]);
 // Better Auth prefixes the cookie with "__Secure-" whenever the connection is
@@ -74,13 +73,6 @@ export async function runMiddleware(
   return NextResponse.next();
 }
 
-// Header set on the internal loopback request `renderAsMarkdown` makes to
-// fetch the real HTML — without this, that request would itself be seen as
-// wanting markdown (it forces `Accept: text/html`, but a defensive check
-// against re-entering the conversion path costs nothing and guards against
-// any future change to that header value).
-const MARKDOWN_PASSTHROUGH_HEADER = "x-markdown-passthrough";
-
 // Pages under /community are either auth-gated or app UI, not the kind of
 // dense marketing/reference content this exists to strip down for agents;
 // API routes, Next internals, and well-known files are handled by the
@@ -100,13 +92,22 @@ export function wantsMarkdown(acceptHeader: string | null): boolean {
   return (acceptHeader ?? "").toLowerCase().includes("text/markdown");
 }
 
+// Mirrors scripts/generate-markdown-assets.mjs's output path convention —
+// that build-time script converts every eligible page's prerendered HTML
+// to a `<path>.md` sibling asset ahead of time. A request-time
+// HTML->Markdown conversion (fetching the live page from inside the
+// Worker, then translating it) was tried first and proved unreliable on
+// Cloudflare: neither a self-referential `fetch(request.url)` nor the
+// ASSETS binding could re-invoke Next's own rendering for a second,
+// differently-headered request from inside itself. Serving a real
+// pre-generated static asset sidesteps that entirely — the same proven
+// mechanism already used for robots.txt, openapi.json, and images.
+export function markdownAssetPath(pathname: string): string {
+  return pathname === "/" ? "/index.md" : `${pathname}.md`;
+}
+
 export type DoFetch = (input: string, init?: RequestInit) => Promise<Response>;
 
-// A plain self-referential `fetch(request.url)` is unreliable inside a
-// Cloudflare Worker (observed 404s in production for requests that work
-// fine when hit directly) — going through the ASSETS binding instead stays
-// inside the Worker and hits exactly the same prerendered HTML file the
-// browser would get, with no network round-trip.
 const assetsFetch: DoFetch = async (input, init) => {
   const { getCloudflareContext } = await import("@opennextjs/cloudflare");
   const { env } = getCloudflareContext();
@@ -114,31 +115,24 @@ const assetsFetch: DoFetch = async (input, init) => {
 };
 
 export async function renderAsMarkdown(request: NextRequest, doFetch: DoFetch = assetsFetch): Promise<Response> {
-  const headers = new Headers(request.headers);
-  headers.set("accept", "text/html");
-  headers.set(MARKDOWN_PASSTHROUGH_HEADER, "1");
+  const mdUrl = new URL(markdownAssetPath(request.nextUrl.pathname), request.url);
 
-  let htmlResponse: Response;
+  let response: Response;
   try {
-    htmlResponse = await doFetch(request.url, { headers });
-  } catch (err) {
-    const response = NextResponse.next();
-    response.headers.set("x-mfa-debug", `fetch-threw: ${err instanceof Error ? err.message : String(err)}`);
-    return response;
+    response = await doFetch(mdUrl.toString());
+  } catch {
+    return NextResponse.next();
   }
 
-  if (!htmlResponse.ok) {
-    const response = NextResponse.next();
-    response.headers.set("x-mfa-debug", `fetch-not-ok: ${htmlResponse.status}`);
-    return response;
+  if (!response.ok) {
+    return NextResponse.next();
   }
 
-  const html = await htmlResponse.text();
-  const markdown = NodeHtmlMarkdown.translate(html);
+  const markdown = await response.text();
   const approxTokens = Math.ceil(markdown.length / 4);
 
   return new Response(markdown, {
-    status: htmlResponse.status,
+    status: 200,
     headers: {
       "Content-Type": "text/markdown; charset=utf-8",
       "x-markdown-tokens": String(approxTokens),
@@ -147,10 +141,6 @@ export async function renderAsMarkdown(request: NextRequest, doFetch: DoFetch = 
 }
 
 export async function middleware(request: NextRequest) {
-  if (request.headers.get(MARKDOWN_PASSTHROUGH_HEADER)) {
-    return NextResponse.next();
-  }
-
   const { pathname } = request.nextUrl;
 
   if (pathname.startsWith("/community")) {
@@ -161,9 +151,7 @@ export async function middleware(request: NextRequest) {
     return renderAsMarkdown(request);
   }
 
-  const response = NextResponse.next();
-  response.headers.set("x-mfa-debug", `not-eligible: eligible=${isMarkdownEligiblePath(pathname)} wants=${wantsMarkdown(request.headers.get("accept"))}`);
-  return response;
+  return NextResponse.next();
 }
 
 export const config = {
