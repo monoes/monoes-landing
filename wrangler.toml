@@ -6,6 +6,27 @@ main = ".open-next/worker.js"
 [assets]
 directory = ".open-next/assets"
 binding = "ASSETS"
+# Cloudflare serves matching static assets directly at the edge, bypassing
+# the Worker (and Next.js middleware) entirely by default — which silently
+# defeats the Markdown-for-Agents content negotiation in src/middleware.ts
+# for every prerendered static page (home, blog posts, projects/*, etc).
+# Force the Worker to run first for page-like paths so middleware always
+# gets a chance to intercept; exclude bulky binary/static asset paths from
+# this to avoid adding Worker latency to every image/font/JS chunk load.
+run_worker_first = [
+  "/*",
+  "!/_next/static/*",
+  "!/_next/image*",
+  "!/images/*",
+  "!/fonts/*",
+  "!/*.ico",
+  "!/*.png",
+  "!/*.jpg",
+  "!/*.jpeg",
+  "!/*.svg",
+  "!/*.mp4",
+  "!/*.webmanifest",
+]
 
 routes = [
   { pattern = "monoes.me/*", zone_name = "monoes.me" },
