@@ -107,9 +107,19 @@ export async function renderAsMarkdown(request: NextRequest, doFetch: DoFetch = 
   headers.set("accept", "text/html");
   headers.set(MARKDOWN_PASSTHROUGH_HEADER, "1");
 
-  const htmlResponse = await doFetch(request.url, { headers });
+  let htmlResponse: Response;
+  try {
+    htmlResponse = await doFetch(request.url, { headers });
+  } catch (err) {
+    const response = NextResponse.next();
+    response.headers.set("x-mfa-debug", `fetch-threw: ${err instanceof Error ? err.message : String(err)}`);
+    return response;
+  }
+
   if (!htmlResponse.ok) {
-    return NextResponse.next();
+    const response = NextResponse.next();
+    response.headers.set("x-mfa-debug", `fetch-not-ok: ${htmlResponse.status}`);
+    return response;
   }
 
   const html = await htmlResponse.text();
@@ -140,7 +150,9 @@ export async function middleware(request: NextRequest) {
     return renderAsMarkdown(request);
   }
 
-  return NextResponse.next();
+  const response = NextResponse.next();
+  response.headers.set("x-mfa-debug", `not-eligible: eligible=${isMarkdownEligiblePath(pathname)} wants=${wantsMarkdown(request.headers.get("accept"))}`);
+  return response;
 }
 
 export const config = {
