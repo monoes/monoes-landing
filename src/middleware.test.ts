@@ -16,7 +16,9 @@ register(
 );
 
 const { NextRequest } = await import("next/server");
-const { middleware, runMiddleware } = await import("./middleware.ts");
+const { middleware, runMiddleware, isMarkdownEligiblePath, wantsMarkdown, renderAsMarkdown } = await import(
+  "./middleware.ts"
+);
 
 const getSessionMock = mock.fn<GetSession>(async () => null);
 
@@ -79,5 +81,57 @@ describe("community middleware", () => {
     // parameter, Next's real `event` argument silently overrides our default
     // and every authenticated request throws "getSession is not a function".
     assert.equal(middleware.length, 1);
+  });
+});
+
+describe("markdown negotiation", () => {
+  it("isMarkdownEligiblePath excludes /community, /api, /_next, /.well-known, and file-extension paths", () => {
+    assert.equal(isMarkdownEligiblePath("/community"), false);
+    assert.equal(isMarkdownEligiblePath("/community/orgs"), false);
+    assert.equal(isMarkdownEligiblePath("/api/openapi.json"), false);
+    assert.equal(isMarkdownEligiblePath("/_next/static/chunk.js"), false);
+    assert.equal(isMarkdownEligiblePath("/.well-known/api-catalog"), false);
+    assert.equal(isMarkdownEligiblePath("/robots.txt"), false);
+    assert.equal(isMarkdownEligiblePath("/images/hero.png"), false);
+  });
+
+  it("isMarkdownEligiblePath allows ordinary page paths", () => {
+    assert.equal(isMarkdownEligiblePath("/"), true);
+    assert.equal(isMarkdownEligiblePath("/workforce"), true);
+    assert.equal(isMarkdownEligiblePath("/blog/some-post"), true);
+  });
+
+  it("wantsMarkdown matches an Accept header containing text/markdown, case-insensitively", () => {
+    assert.equal(wantsMarkdown("text/markdown"), true);
+    assert.equal(wantsMarkdown("TEXT/MARKDOWN"), true);
+    assert.equal(wantsMarkdown("text/html,application/xhtml+xml"), false);
+    assert.equal(wantsMarkdown(null), false);
+  });
+
+  it("renderAsMarkdown converts the fetched HTML to markdown with a text/markdown content type", async () => {
+    const doFetch = mock.fn(async () => new Response("<h1>Hello</h1><p>World</p>", { status: 200 }));
+    const req = new NextRequest("http://localhost/workforce", { headers: { accept: "text/markdown" } });
+    const res = await renderAsMarkdown(req, doFetch);
+    assert.equal(res.headers.get("Content-Type"), "text/markdown; charset=utf-8");
+    assert.ok(res.headers.get("x-markdown-tokens"));
+    const body = await res.text();
+    assert.match(body, /# Hello/);
+    assert.match(body, /World/);
+  });
+
+  it("renderAsMarkdown falls through to NextResponse.next() when the internal fetch fails", async () => {
+    const doFetch = mock.fn(async () => new Response("error", { status: 500 }));
+    const req = new NextRequest("http://localhost/workforce", { headers: { accept: "text/markdown" } });
+    const res = await renderAsMarkdown(req, doFetch);
+    assert.equal(res.status, 200);
+    assert.notEqual(res.headers.get("Content-Type"), "text/markdown; charset=utf-8");
+  });
+
+  it("middleware() short-circuits requests carrying the internal passthrough header to avoid recursion", async () => {
+    const req = new NextRequest("http://localhost/workforce", {
+      headers: { accept: "text/markdown", "x-markdown-passthrough": "1" },
+    });
+    const res = await middleware(req);
+    assert.equal(res.status, 200);
   });
 });

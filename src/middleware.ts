@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { NodeHtmlMarkdown } from "node-html-markdown";
 
 const PUBLIC_PATHS = new Set(["/community", "/community/login", "/community/register", "/community/api-docs"]);
 // Better Auth prefixes the cookie with "__Secure-" whenever the connection is
@@ -73,10 +74,75 @@ export async function runMiddleware(
   return NextResponse.next();
 }
 
+// Header set on the internal loopback request `renderAsMarkdown` makes to
+// fetch the real HTML — without this, that request would itself be seen as
+// wanting markdown (it forces `Accept: text/html`, but a defensive check
+// against re-entering the conversion path costs nothing and guards against
+// any future change to that header value).
+const MARKDOWN_PASSTHROUGH_HEADER = "x-markdown-passthrough";
+
+// Pages under /community are either auth-gated or app UI, not the kind of
+// dense marketing/reference content this exists to strip down for agents;
+// API routes, Next internals, and well-known files are handled by the
+// matcher below already but are excluded here too for callers that check
+// eligibility directly. A trailing file extension (robots.txt, images,
+// fonts, sitemap.xml, favicon.ico) marks a non-page asset.
+export function isMarkdownEligiblePath(pathname: string): boolean {
+  if (pathname.startsWith("/community")) return false;
+  if (pathname.startsWith("/api")) return false;
+  if (pathname.startsWith("/_next")) return false;
+  if (pathname.startsWith("/.well-known")) return false;
+  if (/\.[^/]+$/.test(pathname)) return false;
+  return true;
+}
+
+export function wantsMarkdown(acceptHeader: string | null): boolean {
+  return (acceptHeader ?? "").toLowerCase().includes("text/markdown");
+}
+
+export type DoFetch = (input: string, init?: RequestInit) => Promise<Response>;
+
+export async function renderAsMarkdown(request: NextRequest, doFetch: DoFetch = fetch): Promise<Response> {
+  const headers = new Headers(request.headers);
+  headers.set("accept", "text/html");
+  headers.set(MARKDOWN_PASSTHROUGH_HEADER, "1");
+
+  const htmlResponse = await doFetch(request.url, { headers });
+  if (!htmlResponse.ok) {
+    return NextResponse.next();
+  }
+
+  const html = await htmlResponse.text();
+  const markdown = NodeHtmlMarkdown.translate(html);
+  const approxTokens = Math.ceil(markdown.length / 4);
+
+  return new Response(markdown, {
+    status: htmlResponse.status,
+    headers: {
+      "Content-Type": "text/markdown; charset=utf-8",
+      "x-markdown-tokens": String(approxTokens),
+    },
+  });
+}
+
 export async function middleware(request: NextRequest) {
-  return runMiddleware(request);
+  if (request.headers.get(MARKDOWN_PASSTHROUGH_HEADER)) {
+    return NextResponse.next();
+  }
+
+  const { pathname } = request.nextUrl;
+
+  if (pathname.startsWith("/community")) {
+    return runMiddleware(request);
+  }
+
+  if (isMarkdownEligiblePath(pathname) && wantsMarkdown(request.headers.get("accept"))) {
+    return renderAsMarkdown(request);
+  }
+
+  return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/community/:path*"],
+  matcher: ["/((?!api|_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml|\\.well-known).*)"],
 };
