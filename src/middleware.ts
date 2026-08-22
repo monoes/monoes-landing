@@ -102,7 +102,18 @@ export function wantsMarkdown(acceptHeader: string | null): boolean {
 
 export type DoFetch = (input: string, init?: RequestInit) => Promise<Response>;
 
-export async function renderAsMarkdown(request: NextRequest, doFetch: DoFetch = fetch): Promise<Response> {
+// A plain self-referential `fetch(request.url)` is unreliable inside a
+// Cloudflare Worker (observed 404s in production for requests that work
+// fine when hit directly) — going through the ASSETS binding instead stays
+// inside the Worker and hits exactly the same prerendered HTML file the
+// browser would get, with no network round-trip.
+const assetsFetch: DoFetch = async (input, init) => {
+  const { getCloudflareContext } = await import("@opennextjs/cloudflare");
+  const { env } = getCloudflareContext();
+  return env.ASSETS.fetch(new Request(input, init));
+};
+
+export async function renderAsMarkdown(request: NextRequest, doFetch: DoFetch = assetsFetch): Promise<Response> {
   const headers = new Headers(request.headers);
   headers.set("accept", "text/html");
   headers.set(MARKDOWN_PASSTHROUGH_HEADER, "1");
