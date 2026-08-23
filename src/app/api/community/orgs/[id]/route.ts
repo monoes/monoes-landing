@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
 import { eq } from "drizzle-orm";
-import { getAuth } from "@/lib/auth";
+import { getAuthenticatedUser } from "@/lib/community/get-authenticated-user";
 import { getDb } from "@/lib/db";
 import { orgUpload } from "@/lib/db/schema";
 import { canDeleteOrgUpload } from "@/lib/community/can-delete-org-upload";
 
 export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
-  const session = await getAuth().api.getSession({ headers: request.headers });
+  const session = await getAuthenticatedUser(request, "community:write");
   if (!session) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   }

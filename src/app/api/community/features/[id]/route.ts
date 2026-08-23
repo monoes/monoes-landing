@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
 import { eq } from "drizzle-orm";
-import { getAuth } from "@/lib/auth";
+import { getAuthenticatedUser } from "@/lib/community/get-authenticated-user";
 import { getDb } from "@/lib/db";
 import { feature } from "@/lib/db/schema";
 
 export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
-  const session = await getAuth().api.getSession({ headers: request.headers });
+  const session = await getAuthenticatedUser(request, "community:write");
   const sessionUser = session?.user as { role?: string; blockedAt?: unknown } | undefined;
   const role = sessionUser?.role;
   if (!session || (role !== "admin" && role !== "moderator") || sessionUser?.blockedAt) {

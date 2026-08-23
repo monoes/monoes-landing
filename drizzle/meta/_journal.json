@@ -50,6 +50,20 @@
       "when": 1787327952525,
       "tag": "0006_last_rocket_raccoon",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "6",
+      "when": 1787474591310,
+      "tag": "0007_tense_silver_fox",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "6",
+      "when": 1787475052028,
+      "tag": "0008_workable_abomination",
+      "breakpoints": true
     }
   ]
 }

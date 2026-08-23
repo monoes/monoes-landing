@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
-import { getAuth } from "@/lib/auth";
+import { getAuthenticatedUser } from "@/lib/community/get-authenticated-user";
 import { getFeedItems, parseSort, parsePage } from "@/lib/community/feed";
 
 export async function GET(request: Request) {
-  const session = await getAuth().api.getSession({ headers: request.headers });
+  const session = await getAuthenticatedUser(request, "community:read");
   const url = new URL(request.url);
   const sort = parseSort(url.searchParams.get("sort"));
   const page = parsePage(url.searchParams.get("page"));

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { eq } from "drizzle-orm";
-import { getAuth } from "@/lib/auth";
+import { getAuthenticatedUser } from "@/lib/community/get-authenticated-user";
 import { getDb } from "@/lib/db";
 import { bugLabel } from "@/lib/db/schema";
 import { isModerator } from "@/lib/community/is-moderator";
@@ -14,7 +14,7 @@ export function isValidLabelColor(value: string): boolean {
 }
 
 export async function POST(request: Request) {
-  const session = await getAuth().api.getSession({ headers: request.headers });
+  const session = await getAuthenticatedUser(request, "community:write");
   if (!isModerator(session)) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }

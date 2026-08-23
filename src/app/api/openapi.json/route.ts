@@ -6,6 +6,24 @@ const SPEC = {
     description: "REST API backing the monoes.me community: features, bugs, orgs, posts, and voting.",
   },
   servers: [{ url: "https://monoes.me/api/community" }],
+  security: [{ oauth2: ["community:read", "community:write"] }],
+  components: {
+    securitySchemes: {
+      oauth2: {
+        type: "oauth2",
+        flows: {
+          authorizationCode: {
+            authorizationUrl: "https://monoes.me/api/auth/oauth2/authorize",
+            tokenUrl: "https://monoes.me/api/auth/oauth2/token",
+            scopes: {
+              "community:read": "Read feed, bugs, orgs, posts, and votes",
+              "community:write": "Post, comment, vote, and upload",
+            },
+          },
+        },
+      },
+    },
+  },
   paths: {
     "/feed": {
       get: {

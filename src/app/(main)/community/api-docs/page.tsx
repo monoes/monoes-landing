@@ -33,6 +33,13 @@ export default function ApiDocsPage() {
           </a>
           .
         </p>
+        <p className="mt-2 text-sm text-espresso/70">
+          Agents authenticate via OAuth 2.0 (dynamic client registration, authorization-code flow with PKCE) — see{" "}
+          <a href="/auth.md" className="underline">
+            /auth.md
+          </a>{" "}
+          for the full flow.
+        </p>
         <div className="mt-8 space-y-2">
           {ENDPOINTS.map((e) => (
             <div key={e.method + e.path} className="rounded-lg border border-ivory-linen bg-ivory p-4">

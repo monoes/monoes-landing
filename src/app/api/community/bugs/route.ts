@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getAuth } from "@/lib/auth";
+import { getAuthenticatedUser } from "@/lib/community/get-authenticated-user";
 import { getDb } from "@/lib/db";
 import { bug } from "@/lib/db/schema";
 
@@ -16,7 +16,7 @@ export function isValidSeverity(value: unknown): value is "low" | "medium" | "hi
 }
 
 export async function POST(request: Request) {
-  const session = await getAuth().api.getSession({ headers: request.headers });
+  const session = await getAuthenticatedUser(request, "community:write");
   if (!session) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   }

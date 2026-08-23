@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { and, eq } from "drizzle-orm";
-import { getAuth } from "@/lib/auth";
+import { getAuthenticatedUser } from "@/lib/community/get-authenticated-user";
 import { getDb } from "@/lib/db";
 import { bug, bugVote } from "@/lib/db/schema";
 
@@ -9,7 +9,7 @@ export function isValidVoteValue(value: unknown): value is 1 | -1 | 0 {
 }
 
 export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
-  const session = await getAuth().api.getSession({ headers: request.headers });
+  const session = await getAuthenticatedUser(request, "community:write");
   if (!session) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   }

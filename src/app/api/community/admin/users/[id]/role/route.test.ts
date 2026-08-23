@@ -17,6 +17,9 @@ register(
     if (specifier === "@/lib/auth") {
       return { url: "data:text/javascript,export const getAuth = () => ({});", shortCircuit: true };
     }
+    if (specifier === "@/lib/community/get-authenticated-user") {
+      return { url: "data:text/javascript,export const getAuthenticatedUser = async () => null;", shortCircuit: true };
+    }
     if (specifier === "@/lib/db") {
       return { url: "data:text/javascript,export const getDb = () => ({});", shortCircuit: true };
     }
