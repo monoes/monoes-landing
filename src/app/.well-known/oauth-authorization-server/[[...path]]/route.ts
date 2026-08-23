@@ -36,5 +36,22 @@ export function GET() {
     token_endpoint_auth_methods_supported: ["none", "client_secret_basic", "client_secret_post", "private_key_jwt"],
     code_challenge_methods_supported: ["S256"],
     authorization_response_iss_parameter_supported: true,
+    // Non-standard extension (not part of RFC 8414) that agent-readiness
+    // scanners (e.g. isitagentready.com, per its auth.md skill) look for
+    // directly on the Authorization Server Metadata response, pointing
+    // agents at registration and documenting the one flow this server
+    // supports. Mirrors the same block published in /auth.md.
+    agent_auth: {
+      skill: `${baseUrl()}/.well-known/agent-skills/oauth/SKILL.md`,
+      register_uri: `${issuer}/oauth2/register`,
+      methods: [
+        {
+          type: "oauth2_authorization_code",
+          authorization_endpoint: `${issuer}/oauth2/authorize`,
+          token_endpoint: `${issuer}/oauth2/token`,
+          scopes: [...OAUTH_SCOPES],
+        },
+      ],
+    },
   });
 }
