@@ -5,6 +5,7 @@ import { register } from "node:module";
 register(
   `data:text/javascript,
   export function resolve(specifier, context, next) {
+    if (specifier === "@/lib/community/hash-token") return next("./hash-token.ts", context);
     if (specifier === "@/lib/auth") {
       return { url: "data:text/javascript,export const getAuth = () => ({ api: { getSession: async () => globalThis.__stubSession } });", shortCircuit: true };
     }

@@ -414,3 +414,22 @@ export const oauthClientAssertion = sqliteTable("oauth_client_assertion", {
   id: text("id").primaryKey(),
   expiresAt: integer("expires_at", { mode: "timestamp_ms" }).notNull(),
 });
+
+// Owned by the app (not a better-auth plugin table) — see
+// docs/mastermind/specs/2026-08-23-verified-email-claim-design.md. Backs
+// the headless "verified_email" identity-assertion flow: an agent submits
+// an email, the user relays a one-time code back, and a matched+unexpired
+// row issues a real oauth_access_token row on verification.
+export const emailClaimRequest = sqliteTable("email_claim_request", {
+  id: text("id").primaryKey(),
+  email: text("email").notNull(),
+  codeHash: text("code_hash").notNull(),
+  clientId: text("client_id")
+    .notNull()
+    .references(() => oauthClient.clientId, { onDelete: "cascade" }),
+  scope: text("scope").notNull(),
+  attempts: integer("attempts").notNull().default(0),
+  expiresAt: integer("expires_at", { mode: "timestamp" }).notNull(),
+  consumedAt: integer("consumed_at", { mode: "timestamp" }),
+  createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
+});

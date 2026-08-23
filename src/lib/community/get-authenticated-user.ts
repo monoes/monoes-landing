@@ -2,6 +2,7 @@ import { eq } from "drizzle-orm";
 import { getAuth } from "@/lib/auth";
 import { getDb } from "@/lib/db";
 import { oauthAccessToken, user } from "@/lib/db/schema";
+import { sha256Base64Url } from "@/lib/community/hash-token";
 
 export type AuthenticatedUser = {
   id: string;
@@ -9,11 +10,6 @@ export type AuthenticatedUser = {
   role: "member" | "moderator" | "admin";
   blockedAt: Date | string | null;
 };
-
-function base64url(bytes: ArrayBuffer): string {
-  const binary = String.fromCharCode(...new Uint8Array(bytes));
-  return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
-}
 
 // @better-auth/oauth-provider stores opaque access tokens hashed (SHA-256,
 // base64url, no padding) rather than in plaintext — confirmed empirically
@@ -24,11 +20,9 @@ function base64url(bytes: ArrayBuffer): string {
 // access tokens (via jwksUrl) or remote introspection (which requires
 // confidential-client credentials our public client doesn't have), and this
 // app already IS the resource server holding the same database, so a
-// direct lookup avoids both dead ends.
-async function hashBearerToken(bearerValue: string): Promise<string> {
-  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(bearerValue));
-  return base64url(digest);
-}
+// direct lookup avoids both dead ends. The email-claim flow
+// (src/app/api/auth/agent/claim/verify/route.ts) issues tokens into this
+// same table using the same hash, so both paths verify identically here.
 
 /**
  * Resolves the authenticated user for a /api/community/* request: the
@@ -53,7 +47,7 @@ export async function getAuthenticatedUser(
   const bearerValue = authHeader.slice("bearer ".length).trim();
   if (!bearerValue) return null;
 
-  const hashedToken = await hashBearerToken(bearerValue);
+  const hashedToken = await sha256Base64Url(bearerValue);
   const db = getDb();
   const [tokenRow] = await db
     .select({
