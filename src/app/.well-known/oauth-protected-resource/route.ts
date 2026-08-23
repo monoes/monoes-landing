@@ -15,7 +15,11 @@ function issuerUrl(): string {
 export function GET() {
   return Response.json(
     {
-      resource: `${baseUrl()}/api/community`,
+      // Scoped to the site origin, not the /api/community path prefix —
+      // agent-readiness scanners validate this field against the scanned
+      // URL itself (the origin), and monoes.me's OAuth-protected surface
+      // (currently /api/community/*) is the site's only such API today.
+      resource: baseUrl(),
       authorization_servers: [issuerUrl()],
       scopes_supported: [...OAUTH_SCOPES],
       bearer_methods_supported: ["header"],
