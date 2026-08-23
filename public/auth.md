@@ -39,6 +39,27 @@ agent_auth:
       scopes: [community:read, community:write]
 ```
 
+## Verified-email identity assertion (headless agents)
+
+For agents that cannot open a browser at all, monoes.me also supports a headless flow: relay a one-time code emailed to the account owner, in exchange for a scoped access token identical in shape to the one the OAuth flow issues.
+
+1. Register a `client_id` the same way as OAuth (`POST /api/auth/oauth2/register`), if you don't already have one.
+2. `POST /api/auth/agent/claim` — body `{ "email": string, "client_id": string, "scope": string }` (space-separated scopes, e.g. `"community:read community:write"`). Always returns `200 { "message": "If this email is registered, a verification code has been sent." }`, whether or not the email matched an account — this avoids leaking which emails have accounts. Rate limited to 3 outstanding requests per email per hour.
+3. If the email matched a real account, a 6-digit code arrives by email. The user relays it to the agent out-of-band (e.g. pastes it into their chat with the agent).
+4. `POST /api/auth/agent/claim/verify` — body `{ "email": string, "code": string, "client_id": string }`. On success: `200 { "access_token": string, "token_type": "Bearer", "expires_in": 3600, "scope": string }`. Codes expire after 10 minutes and allow at most 5 attempts; any failure (wrong code, expired, exhausted attempts, unknown email) returns the same `400 { "error": "invalid_or_expired_code" }` — no information about which case occurred.
+5. Call `/api/community/*` endpoints with `Authorization: Bearer <access_token>`, exactly as with the OAuth-issued token.
+
+```yaml
+agent_auth:
+  identity_endpoint: https://monoes.me/api/auth/agent/claim
+  claim_endpoint: https://monoes.me/api/auth/agent/claim/verify
+  identity_types_supported: [identity_assertion]
+  identity_assertion:
+    assertion_types_supported: [verified_email]
+    credential_types_supported: [access_token]
+    claim_uri: https://monoes.me/api/auth/agent/claim/verify
+```
+
 ## Cookie-based session auth (browser client)
 
 The site's own frontend uses plain email/password with a session cookie, provided by [Better Auth](https://www.better-auth.com/):

@@ -42,7 +42,7 @@ export function GET() {
     // agents at registration and documenting the one flow this server
     // supports. Mirrors the same block published in /auth.md.
     agent_auth: {
-      skill: `${baseUrl()}/auth.md`,
+      skill: "/auth.md",
       register_uri: `${issuer}/oauth2/register`,
       methods: [
         {
@@ -52,6 +52,17 @@ export function GET() {
           scopes: [...OAUTH_SCOPES],
         },
       ],
+      // Headless identity-assertion flow for agents that cannot open a
+      // browser at all: relay a one-time code emailed to the account
+      // owner. See docs/mastermind/specs/2026-08-23-verified-email-claim-design.md.
+      identity_endpoint: `${baseUrl()}/api/auth/agent/claim`,
+      claim_endpoint: `${baseUrl()}/api/auth/agent/claim/verify`,
+      identity_types_supported: ["identity_assertion"],
+      identity_assertion: {
+        assertion_types_supported: ["verified_email"],
+        credential_types_supported: ["access_token"],
+        claim_uri: `${baseUrl()}/api/auth/agent/claim/verify`,
+      },
     },
   });
 }
