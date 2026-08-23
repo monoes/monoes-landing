@@ -30,7 +30,7 @@ Scopes: `community:read` (GET endpoints), `community:write` (POST/PATCH/DELETE e
 
 ```yaml
 agent_auth:
-  skill: https://monoes.me/.well-known/agent-skills/oauth/SKILL.md
+  skill: https://monoes.me/auth.md
   register_uri: https://monoes.me/api/auth/oauth2/register
   methods:
     - type: oauth2_authorization_code

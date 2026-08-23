@@ -42,7 +42,7 @@ export function GET() {
     // agents at registration and documenting the one flow this server
     // supports. Mirrors the same block published in /auth.md.
     agent_auth: {
-      skill: `${baseUrl()}/.well-known/agent-skills/oauth/SKILL.md`,
+      skill: `${baseUrl()}/auth.md`,
       register_uri: `${issuer}/oauth2/register`,
       methods: [
         {
