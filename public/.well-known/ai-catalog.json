@@ -1,0 +1,29 @@
+{
+  "specVersion": "1.0",
+  "host": {
+    "displayName": "monoes.me"
+  },
+  "entries": [
+    {
+      "identifier": "urn:air:monoes.me:mcp:community",
+      "displayName": "Monoes Community MCP Server",
+      "type": "application/mcp-server-card+json",
+      "url": "https://monoes.me/.well-known/mcp.json",
+      "description": "MCP tools for the monoes.me community: feature requests, bug reports, forum posts, and org uploads."
+    },
+    {
+      "identifier": "urn:air:monoes.me:skills:community",
+      "displayName": "Monoes Community Agent Skill",
+      "type": "application/json",
+      "url": "https://monoes.me/.well-known/agent-skills/index.json",
+      "description": "Agent Skills Discovery index for interacting with the monoes.me community API and MCP server."
+    },
+    {
+      "identifier": "urn:air:monoes.me:oauth:authorization-server",
+      "displayName": "Monoes OAuth 2.0 Authorization Server",
+      "type": "application/json",
+      "url": "https://monoes.me/.well-known/oauth-authorization-server",
+      "description": "RFC 8414 Authorization Server Metadata for OAuth 2.0 access to the monoes.me community API, including the auth.md agent_auth extension."
+    }
+  ]
+}
