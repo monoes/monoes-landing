@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { satoshi, jetbrainsMono } from "@/lib/fonts";
+import { WebMcpRegistration } from "@/components/WebMcpRegistration";
 import "@/styles/globals.css";
 
 const SITE_URL = "https://monoes.me";
@@ -57,6 +58,7 @@ export default function RootLayout({
     <html lang="en" className={`${satoshi.variable} ${jetbrainsMono.variable}`}>
       <body>
         {children}
+        <WebMcpRegistration />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
