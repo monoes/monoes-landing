@@ -114,6 +114,20 @@ const assetsFetch: DoFetch = async (input, init) => {
   return env.ASSETS.fetch(new Request(input, init));
 };
 
+// Cloudflare's shared edge CDN cache sits in front of the Worker and caches
+// by URL only — it does not vary by the Accept header on this zone's plan
+// (that needs a paid Cache Rules feature with a custom cache key). Without
+// this, whichever variant (HTML or markdown) happens to populate a given
+// edge location's cache first gets served to every later request that hits
+// that location, regardless of what Accept header the client sends —
+// silently defeating content negotiation for the variant that lost the
+// race. Disabling caching on markdown-eligible paths trades away CDN
+// caching for these pages in exchange for correct negotiation on every
+// request, everywhere.
+function disableEdgeCache(response: Response): void {
+  response.headers.set("Cache-Control", "private, no-store");
+}
+
 export async function renderAsMarkdown(request: NextRequest, doFetch: DoFetch = assetsFetch): Promise<Response> {
   const mdUrl = new URL(markdownAssetPath(request.nextUrl.pathname), request.url);
 
@@ -121,11 +135,15 @@ export async function renderAsMarkdown(request: NextRequest, doFetch: DoFetch = 
   try {
     response = await doFetch(mdUrl.toString());
   } catch {
-    return NextResponse.next();
+    const fallback = NextResponse.next();
+    disableEdgeCache(fallback);
+    return fallback;
   }
 
   if (!response.ok) {
-    return NextResponse.next();
+    const fallback = NextResponse.next();
+    disableEdgeCache(fallback);
+    return fallback;
   }
 
   const markdown = await response.text();
@@ -136,6 +154,7 @@ export async function renderAsMarkdown(request: NextRequest, doFetch: DoFetch = 
     headers: {
       "Content-Type": "text/markdown; charset=utf-8",
       "x-markdown-tokens": String(approxTokens),
+      "Cache-Control": "private, no-store",
     },
   });
 }
@@ -147,8 +166,13 @@ export async function middleware(request: NextRequest) {
     return runMiddleware(request);
   }
 
-  if (isMarkdownEligiblePath(pathname) && wantsMarkdown(request.headers.get("accept"))) {
-    return renderAsMarkdown(request);
+  if (isMarkdownEligiblePath(pathname)) {
+    if (wantsMarkdown(request.headers.get("accept"))) {
+      return renderAsMarkdown(request);
+    }
+    const response = NextResponse.next();
+    disableEdgeCache(response);
+    return response;
   }
 
   return NextResponse.next();

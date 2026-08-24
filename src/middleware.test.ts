@@ -143,4 +143,30 @@ describe("markdown negotiation", () => {
     const res = await renderAsMarkdown(req, doFetch);
     assert.equal(res.status, 200);
   });
+
+  it("renderAsMarkdown disables edge caching so the CDN never pins the markdown variant for other visitors", async () => {
+    const doFetch = mock.fn(async () => new Response("# Hello", { status: 200 }));
+    const req = new NextRequest("http://localhost/workforce", { headers: { accept: "text/markdown" } });
+    const res = await renderAsMarkdown(req, doFetch);
+    assert.equal(res.headers.get("Cache-Control"), "private, no-store");
+  });
+
+  it("renderAsMarkdown disables edge caching on its NextResponse.next() fallback too", async () => {
+    const doFetch = mock.fn(async () => new Response("not found", { status: 404 }));
+    const req = new NextRequest("http://localhost/workforce", { headers: { accept: "text/markdown" } });
+    const res = await renderAsMarkdown(req, doFetch);
+    assert.equal(res.headers.get("Cache-Control"), "private, no-store");
+  });
+
+  it("middleware disables edge caching on markdown-eligible paths even when the client didn't ask for markdown", async () => {
+    const req = new NextRequest("http://localhost/workforce");
+    const res = await middleware(req);
+    assert.equal(res.headers.get("Cache-Control"), "private, no-store");
+  });
+
+  it("isMarkdownEligiblePath excludes /community, keeping its own caching decisions untouched by this logic", () => {
+    // Regression guard for the boundary this feature must not cross: /community
+    // paths go through runMiddleware's own auth flow, not disableEdgeCache.
+    assert.equal(isMarkdownEligiblePath("/community/u/someone"), false);
+  });
 });
