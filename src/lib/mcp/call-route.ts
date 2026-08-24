@@ -1,8 +1,7 @@
 export type RouteResult = { status: number; body: unknown };
 
-type JsonRouteHandler =
-  | ((request: Request) => Promise<Response>)
-  | ((request: Request, ctx: { params: Promise<Record<string, string>> }) => Promise<Response>);
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type JsonRouteHandler = (request: Request, ...rest: any[]) => Promise<Response>;
 
 /**
  * Builds a synthetic Request matching what a /api/community/* route handler
@@ -32,20 +31,15 @@ export async function callJsonRoute(
   });
 
   const response = opts.params
-    ? await (handler as (request: Request, ctx: { params: Promise<Record<string, string>> }) => Promise<Response>)(
-        request,
-        { params: Promise.resolve(opts.params) },
-      )
-    : await (handler as (request: Request) => Promise<Response>)(request);
+    ? await handler(request, { params: Promise.resolve(opts.params) })
+    : await handler(request);
 
   const body = await response.json().catch(() => null);
   return { status: response.status, body };
 }
 
-type FormRouteHandler = (
-  request: Request,
-  ctx: { params: Promise<Record<string, string>> },
-) => Promise<Response>;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type FormRouteHandler = (request: Request, ...rest: any[]) => Promise<Response>;
 
 /**
  * Same bridge as callJsonRoute, for the one route (run_org) that takes
