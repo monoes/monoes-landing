@@ -7,7 +7,9 @@ import { sha256Base64Url } from "@/lib/community/hash-token";
 const TOKEN_TTL_MS = 60 * 60 * 1000;
 const MAX_ATTEMPTS = 5;
 
-const INVALID_OR_EXPIRED = NextResponse.json({ error: "invalid_or_expired_code" }, { status: 400 });
+function invalidOrExpired() {
+  return NextResponse.json({ error: "invalid_or_expired_code" }, { status: 400 });
+}
 
 export function isExpired(expiresAt: Date, now: Date): boolean {
   return expiresAt.getTime() < now.getTime();
@@ -35,7 +37,7 @@ export async function POST(request: Request) {
   const clientId = typeof body?.client_id === "string" ? body.client_id.trim() : "";
 
   if (!email || !code || !clientId) {
-    return INVALID_OR_EXPIRED;
+    return invalidOrExpired();
   }
 
   const db = getDb();
@@ -55,7 +57,7 @@ export async function POST(request: Request) {
     .limit(1);
 
   if (!claim || isExpired(claim.expiresAt, now)) {
-    return INVALID_OR_EXPIRED;
+    return invalidOrExpired();
   }
 
   if (attemptsExhausted(claim.attempts)) {
@@ -63,7 +65,7 @@ export async function POST(request: Request) {
       .update(emailClaimRequest)
       .set({ consumedAt: now })
       .where(eq(emailClaimRequest.id, claim.id));
-    return INVALID_OR_EXPIRED;
+    return invalidOrExpired();
   }
 
   const nextAttempts = claim.attempts + 1;
@@ -74,7 +76,7 @@ export async function POST(request: Request) {
 
   const providedHash = await sha256Base64Url(code);
   if (providedHash !== claim.codeHash) {
-    return INVALID_OR_EXPIRED;
+    return invalidOrExpired();
   }
 
   await db
@@ -84,7 +86,7 @@ export async function POST(request: Request) {
 
   const [matchedUser] = await db.select({ id: user.id }).from(user).where(eq(user.email, email)).limit(1);
   if (!matchedUser) {
-    return INVALID_OR_EXPIRED;
+    return invalidOrExpired();
   }
 
   const rawToken = /* opaque */ generateOpaqueToken();
