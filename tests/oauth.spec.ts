@@ -34,7 +34,8 @@ test("agent can register a client, get user consent, exchange a code for a token
   page,
   baseURL,
 }) => {
-  await registerAndOnboard(page, uniqueEmail(), uniqueUsername());
+  const username = uniqueUsername();
+  await registerAndOnboard(page, uniqueEmail(), username);
 
   // A real agent registering a client, and later exchanging a code for a
   // token, is an independent HTTP client with no session cookie for this
@@ -103,6 +104,13 @@ test("agent can register a client, get user consent, exchange a code for a token
     headers: { Authorization: `Bearer ${grantedAccess}` },
   });
   expect(feedRes.ok()).toBeTruthy();
+
+  const meRes = await agent.get("/api/community/me", {
+    headers: { Authorization: `Bearer ${grantedAccess}` },
+  });
+  expect(meRes.ok()).toBeTruthy();
+  const meBody = (await meRes.json()) as { id?: string; username?: string };
+  expect(meBody.username).toBe(username);
 
   const postRes = await agent.post("/api/community/posts", {
     headers: { Authorization: `Bearer ${grantedAccess}` },
