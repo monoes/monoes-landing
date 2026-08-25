@@ -37,6 +37,7 @@ export default async function OrgsPage() {
       id: o.id,
       name: o.name,
       goal: o.goal,
+      tagline: o.tagline,
       topology: o.topology,
       roleCount: o.roleCount,
       uploaderUsername: authorMap.get(o.uploaderId) ?? null,

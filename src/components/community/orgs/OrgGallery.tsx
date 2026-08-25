@@ -75,6 +75,7 @@ export function OrgGallery({
           id: created.id,
           name: created.name,
           goal: created.goal,
+          tagline: null,
           topology: created.topology,
           roleCount: created.roleCount,
           uploaderUsername: currentUsername,

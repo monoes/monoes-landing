@@ -12,6 +12,9 @@ register(
     if (specifier === "@/lib/community/can-edit-org-upload") {
       return next("../../../../../lib/community/can-edit-org-upload.ts", context);
     }
+    if (specifier === "@/lib/community/can-delete-org-upload") {
+      return next("../../../../../lib/community/can-delete-org-upload.ts", context);
+    }
     if (specifier === "@/lib/db") {
       return { url: "data:text/javascript,export const getDb = () => globalThis.__stubDb();", shortCircuit: true };
     }
