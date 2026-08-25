@@ -34,11 +34,14 @@ export default async function OrgDetailPage({ params }: { params: Promise<{ id: 
     type?: string;
     reports_to?: string | null;
     responsibilities?: string[];
+    agent_type?: string;
     adapter_config?: { model?: string };
     policy?: { git?: string; allowTools?: string[]; denyTools?: string[] };
   };
-  const parsed = JSON.parse(row.orgJson) as { roles?: ParsedRole[] };
+  type ParsedCommEdge = { from: string; to: string; type: "command" | "report" | "feedback" | "handoff" };
+  const parsed = JSON.parse(row.orgJson) as { roles?: ParsedRole[]; communication?: ParsedCommEdge[] };
   const roles = Array.isArray(parsed.roles) ? parsed.roles : [];
+  const communication = Array.isArray(parsed.communication) ? parsed.communication : [];
 
   const canDelete = !!sessionUser && canDeleteOrgUpload(sessionUser, row.uploaderId);
   const canEdit = !!sessionUser && canEditOrgUpload(sessionUser, row.uploaderId);
@@ -84,6 +87,7 @@ export default async function OrgDetailPage({ params }: { params: Promise<{ id: 
             body: row.body,
             topology: row.topology,
             roles,
+            communication,
             orgJson: row.orgJson,
             canDelete,
             canEdit,

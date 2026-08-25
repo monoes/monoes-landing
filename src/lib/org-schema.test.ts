@@ -63,4 +63,36 @@ describe("OrgDefSchema", () => {
     });
     assert.equal(result.success, true);
   });
+
+  it("accepts and types a role's agent_type", () => {
+    const result = OrgDefSchema.safeParse({
+      name: "test-org",
+      roles: [{ id: "boss", agent_type: "claude-sonnet" }],
+    });
+    assert.equal(result.success, true);
+    if (result.success) {
+      assert.equal(result.data.roles[0].agent_type, "claude-sonnet");
+    }
+  });
+
+  it("accepts and types a top-level communication array", () => {
+    const result = OrgDefSchema.safeParse({
+      name: "test-org",
+      roles: [{ id: "boss" }, { id: "writer" }],
+      communication: [{ from: "boss", to: "writer", type: "command" }],
+    });
+    assert.equal(result.success, true);
+    if (result.success) {
+      assert.deepEqual(result.data.communication, [{ from: "boss", to: "writer", type: "command" }]);
+    }
+  });
+
+  it("rejects a communication edge with an invalid type", () => {
+    const result = OrgDefSchema.safeParse({
+      name: "test-org",
+      roles: [{ id: "boss" }],
+      communication: [{ from: "boss", to: "boss", type: "gossip" }],
+    });
+    assert.equal(result.success, false);
+  });
 });

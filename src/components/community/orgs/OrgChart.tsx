@@ -1,6 +1,9 @@
 "use client";
 
 import { computeLayout, type LayoutRole } from "@/lib/org-layout";
+import { buildChartEdges, hasAntiParallelPair, type CommEdge } from "@/lib/org-chart-edges";
+
+export type { CommEdge };
 
 const ROLE_COLORS = [
   "oklch(62% 0.20 186)",
@@ -15,66 +18,174 @@ function roleColor(i: number): string {
   return ROLE_COLORS[i % ROLE_COLORS.length];
 }
 
+// Direct port of monomind's strokeMap/markerMap (packages/@monomind/cli/src/ui/orgs.html).
+const EDGE_STYLE: Record<CommEdge["type"], { color: string; opacity: number; width: number; dash: string; markerId: string; label: string }> = {
+  command: { color: "oklch(62% 0.20 186)", opacity: 0.5, width: 1.5, dash: "", markerId: "arr-command", label: "Command" },
+  report: { color: "oklch(68% 0.18 252)", opacity: 0.4, width: 1, dash: "4 3", markerId: "arr-report", label: "Report" },
+  feedback: { color: "oklch(78% 0.18 80)", opacity: 0.3, width: 1, dash: "2 4", markerId: "arr-feedback", label: "Feedback" },
+  handoff: { color: "oklch(68% 0.20 150)", opacity: 0.45, width: 1.5, dash: "", markerId: "arr-handoff", label: "Handoff" },
+};
+
+const EDGE_TYPE_ORDER: CommEdge["type"][] = ["command", "report", "feedback", "handoff"];
+
 const WIDTH = 720;
 const HEIGHT = 320;
+const NODE_RADIUS = 22;
+const BOSS_RADIUS = 26;
+
+type ChartRole = LayoutRole & { title?: string; agent_type?: string };
 
 export function OrgChart({
   roles,
   topology,
+  communication,
   onSelectRole,
 }: {
-  roles: LayoutRole[];
+  roles: ChartRole[];
   topology: string | null | undefined;
+  communication: CommEdge[];
   onSelectRole: (roleId: string) => void;
 }) {
   const layout = computeLayout(roles, topology, WIDTH, HEIGHT);
   const nodeById = new Map(layout.nodes.map((n) => [n.id, n]));
+  const edges = buildChartEdges(roles, communication);
+  const presentTypes = EDGE_TYPE_ORDER.filter((t) => edges.some((e) => e.type === t));
+
+  if (roles.length === 0) {
+    return (
+      <svg viewBox={`0 0 ${WIDTH} ${HEIGHT}`} className="w-full rounded-lg border border-ivory-linen bg-ivory">
+        <text x={WIDTH / 2} y={HEIGHT / 2} textAnchor="middle" className="fill-espresso/40 text-[11px] font-medium tracking-wide">
+          NO ROLES DEFINED
+        </text>
+      </svg>
+    );
+  }
 
   return (
-    <svg viewBox={`0 0 ${WIDTH} ${layout.viewBoxHeight}`} className="w-full rounded-lg border border-ivory-linen bg-ivory">
-      <defs>
-        <marker id="org-chart-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-          <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--color-espresso, #4b3621)" opacity="0.4" />
-        </marker>
-      </defs>
-      {layout.edges.map((edge, i) => {
-        const from = nodeById.get(edge.from);
-        const to = nodeById.get(edge.to);
-        if (!from || !to) return null;
-        return (
-          <line
-            key={i}
-            x1={from.x}
-            y1={from.y}
-            x2={to.x}
-            y2={to.y}
-            stroke="var(--color-espresso, #4b3621)"
-            strokeOpacity={0.3}
-            strokeWidth={1.5}
-            markerEnd="url(#org-chart-arrow)"
-          />
-        );
-      })}
-      {roles.map((role, i) => {
-        const pos = nodeById.get(role.id);
-        if (!pos) return null;
-        const isBoss = !role.reports_to;
-        return (
-          <g key={role.id} onClick={() => onSelectRole(role.id)} className="cursor-pointer">
-            <circle
-              cx={pos.x}
-              cy={pos.y}
-              r={isBoss ? 28 : 22}
-              fill={roleColor(i)}
-              stroke={isBoss ? "var(--color-espresso, #4b3621)" : "none"}
-              strokeWidth={isBoss ? 2 : 0}
+    <div>
+      <svg id="org-chart-svg" viewBox={`0 0 ${WIDTH} ${layout.viewBoxHeight}`} className="w-full rounded-lg border border-ivory-linen bg-ivory">
+        <defs>
+          {EDGE_TYPE_ORDER.map((type) => (
+            <marker
+              key={type}
+              id={EDGE_STYLE[type].markerId}
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="6"
+              markerHeight="6"
+              orient="auto-start-reverse"
+            >
+              <path d="M 0 0 L 10 5 L 0 10 z" fill={EDGE_STYLE[type].color} opacity={EDGE_STYLE[type].opacity} />
+            </marker>
+          ))}
+        </defs>
+        {edges.map((edge, i) => {
+          const from = nodeById.get(edge.from);
+          const to = nodeById.get(edge.to);
+          if (!from || !to || edge.from === edge.to) return null;
+          const style = EDGE_STYLE[edge.type];
+
+          const dx = to.x - from.x;
+          const dy = to.y - from.y;
+          const len = Math.hypot(dx, dy) || 1;
+          const R = 24;
+
+          let px = 0;
+          let py = 0;
+          if (hasAntiParallelPair(edges, edge.from, edge.to)) {
+            const [canonFrom, canonTo] = edge.from < edge.to ? [edge.from, edge.to] : [edge.to, edge.from];
+            const cp = nodeById.get(canonFrom);
+            const ct = nodeById.get(canonTo);
+            if (cp && ct) {
+              const cdx = ct.x - cp.x;
+              const cdy = ct.y - cp.y;
+              const clen = Math.hypot(cdx, cdy) || 1;
+              const sign = edge.from === canonFrom ? 1 : -1;
+              px = sign * (-cdy / clen) * 6;
+              py = sign * (cdx / clen) * 6;
+            }
+          }
+
+          const x1 = from.x + (dx / len) * R + px;
+          const y1 = from.y + (dy / len) * R + py;
+          const x2 = to.x - (dx / len) * (R + 4) + px;
+          const y2 = to.y - (dy / len) * (R + 4) + py;
+
+          return (
+            <line
+              key={i}
+              x1={x1.toFixed(1)}
+              y1={y1.toFixed(1)}
+              x2={x2.toFixed(1)}
+              y2={y2.toFixed(1)}
+              stroke={style.color}
+              strokeOpacity={style.opacity}
+              strokeWidth={style.width}
+              strokeDasharray={style.dash || undefined}
+              markerEnd={`url(#${style.markerId})`}
             />
-            <text x={pos.x} y={pos.y + (isBoss ? 42 : 36)} textAnchor="middle" className="fill-espresso text-[10px] font-medium">
-              {role.id}
-            </text>
-          </g>
-        );
-      })}
-    </svg>
+          );
+        })}
+        {roles.map((role, i) => {
+          const pos = nodeById.get(role.id);
+          if (!pos) return null;
+          const isBoss = !role.reports_to;
+          const color = roleColor(i);
+          const title = role.title || role.id;
+          const shortTitle = title.length > 10 ? `${title.slice(0, 9)}…` : title;
+          const agentType = role.agent_type;
+          const shortAgentType = agentType && agentType.length > 12 ? `${agentType.slice(0, 11)}…` : agentType;
+
+          return (
+            <g key={role.id} onClick={() => onSelectRole(role.id)} className="cursor-pointer">
+              <circle
+                cx={pos.x}
+                cy={pos.y}
+                r={isBoss ? BOSS_RADIUS : NODE_RADIUS}
+                fill="var(--color-espresso, #4b3621)"
+                stroke={color}
+                strokeWidth={2}
+              />
+              <text
+                x={pos.x}
+                y={pos.y - (agentType ? 2 : -3)}
+                textAnchor="middle"
+                fill={color}
+                className="pointer-events-none text-[9px] font-medium"
+              >
+                {shortTitle}
+              </text>
+              {shortAgentType && (
+                <text x={pos.x} y={pos.y + 10} textAnchor="middle" className="pointer-events-none fill-ivory/60 text-[7px]">
+                  {shortAgentType}
+                </text>
+              )}
+            </g>
+          );
+        })}
+      </svg>
+      {presentTypes.length > 0 && (
+        <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-espresso/55">
+          {presentTypes.map((type) => (
+            <span key={type} className="flex items-center gap-1.5">
+              <svg width="24" height="8">
+                <line
+                  x1="0"
+                  y1="4"
+                  x2="24"
+                  y2="4"
+                  stroke={EDGE_STYLE[type].color}
+                  strokeOpacity={EDGE_STYLE[type].opacity}
+                  strokeWidth={EDGE_STYLE[type].width}
+                  strokeDasharray={EDGE_STYLE[type].dash || undefined}
+                />
+              </svg>
+              {EDGE_STYLE[type].label}
+            </span>
+          ))}
+        </div>
+      )}
+    </div>
   );
 }

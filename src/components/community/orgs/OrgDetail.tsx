@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { OrgChart } from "./OrgChart";
+import { OrgChart, type CommEdge } from "./OrgChart";
 import { RoleModal, type ModalRole } from "./RoleModal";
 import { RunUploadForm } from "./RunUploadForm";
 import { RunFileViewer } from "./RunFileViewer";
@@ -14,6 +14,7 @@ type Role = {
   type?: string;
   reports_to?: string | null;
   responsibilities?: string[];
+  agent_type?: string;
   adapter_config?: { model?: string };
   policy?: { git?: string; allowTools?: string[]; denyTools?: string[] };
 };
@@ -42,6 +43,7 @@ export type OrgDetailData = {
   body: string | null;
   topology: string | null;
   roles: Role[];
+  communication: CommEdge[];
   orgJson: string;
   canDelete: boolean;
   canEdit: boolean;
@@ -212,7 +214,17 @@ export function OrgDetail({ org }: { org: OrgDetailData }) {
 
       <div className="mt-4">
         {tab === "chart" && (
-          <OrgChart roles={org.roles.map((r) => ({ id: r.id, reports_to: r.reports_to ?? null }))} topology={org.topology} onSelectRole={setSelectedRoleId} />
+          <OrgChart
+            roles={org.roles.map((r) => ({
+              id: r.id,
+              reports_to: r.reports_to ?? null,
+              title: r.title,
+              agent_type: r.agent_type,
+            }))}
+            topology={org.topology}
+            communication={org.communication}
+            onSelectRole={setSelectedRoleId}
+          />
         )}
         {tab === "roles" && (
           <div className="space-y-3">

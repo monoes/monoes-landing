@@ -1,0 +1,15 @@
+{
+  "name": "e2e-comms-org",
+  "goal": "A test org with communication edges for chart parity testing.",
+  "topology": "hierarchical",
+  "roles": [
+    { "id": "boss", "title": "Team Lead", "type": "boss", "reports_to": null, "agent_type": "claude-sonnet", "responsibilities": ["plan work", "review output"] },
+    { "id": "writer", "title": "Writer", "type": "specialist", "reports_to": "boss", "agent_type": "claude-haiku", "responsibilities": ["write docs"] },
+    { "id": "reviewer", "title": "Reviewer", "type": "specialist", "reports_to": "boss", "responsibilities": ["review docs"] }
+  ],
+  "communication": [
+    { "from": "boss", "to": "writer", "type": "command" },
+    { "from": "writer", "to": "reviewer", "type": "handoff" },
+    { "from": "reviewer", "to": "writer", "type": "feedback" }
+  ]
+}

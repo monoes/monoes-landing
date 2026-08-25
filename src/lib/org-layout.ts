@@ -1,10 +1,12 @@
 // Ported from monomind/packages/@monomind/cli/src/ui/orgs.html's
-// computeLayout() function (as of this file's creation) — the same
-// positioning algorithm monomind's own dashboard uses to lay out an org
-// chart, translated from vanilla JS/DOM manipulation into a pure
-// TypeScript function that returns node positions and edges instead of
-// mutating the DOM directly. The math (angles, depth-layering, row
-// splitting) is unchanged from the source.
+// computeLayout() function — the same positioning algorithm monomind's
+// own dashboard uses to lay out an org chart, translated from vanilla
+// JS/DOM manipulation into a pure TypeScript function. The math (angles,
+// depth-layering, row splitting) is unchanged from the source.
+//
+// Position-only, matching monomind's own separation of concerns: edge
+// construction (reports_to + communication) lives in OrgChart.tsx's
+// buildChartEdges(), not here.
 
 export type LayoutRole = {
   id: string;
@@ -17,14 +19,8 @@ export type LayoutNode = {
   y: number;
 };
 
-export type LayoutEdge = {
-  from: string;
-  to: string;
-};
-
-export type OrgLayout = {
+export type OrgPositions = {
   nodes: LayoutNode[];
-  edges: LayoutEdge[];
   viewBoxHeight: number;
 };
 
@@ -33,17 +29,10 @@ export function computeLayout(
   topology: string | null | undefined,
   width: number,
   height: number,
-): OrgLayout {
-  const edges: LayoutEdge[] = [];
-  for (const role of roles) {
-    if (role.reports_to && role.reports_to !== role.id) {
-      edges.push({ from: role.reports_to, to: role.id });
-    }
-  }
-
+): OrgPositions {
   const n = roles.length;
   if (n === 0) {
-    return { nodes: [], edges, viewBoxHeight: height };
+    return { nodes: [], viewBoxHeight: height };
   }
 
   const cx = width / 2;
@@ -131,5 +120,5 @@ export function computeLayout(
     if (totalH > height) viewBoxHeight = totalH;
   }
 
-  return { nodes, edges, viewBoxHeight };
+  return { nodes, viewBoxHeight };
 }

@@ -63,18 +63,6 @@ describe("computeLayout", () => {
     assert.ok(mid.y < leaf.y);
   });
 
-  it("builds one edge per role with a reports_to parent", () => {
-    const roles = [
-      { id: "boss", reports_to: null },
-      { id: "a", reports_to: "boss" },
-      { id: "b", reports_to: "boss" },
-    ];
-    const result = computeLayout(roles, "hierarchical", 720, 320);
-    assert.equal(result.edges.length, 2);
-    assert.ok(result.edges.some((e) => e.from === "boss" && e.to === "a"));
-    assert.ok(result.edges.some((e) => e.from === "boss" && e.to === "b"));
-  });
-
   it("treats a missing/unknown topology as hierarchical", () => {
     const roles = [
       { id: "boss", reports_to: null },

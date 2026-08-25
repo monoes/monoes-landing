@@ -153,8 +153,15 @@ export const RoleSchema = z
     max_turns_per_message: z.number().int().positive().optional(),
     budget_tokens: z.number().int().positive().optional(),
     budget_usd: z.number().positive().optional(),
+    agent_type: z.string().optional(),
   })
   .passthrough();
+
+export const CommunicationEdgeSchema = z.object({
+  from: z.string(),
+  to: z.string(),
+  type: z.enum(["command", "report", "feedback", "handoff"]),
+});
 
 export const DEFAULT_MAX_TURNS_PER_MESSAGE = 100_000;
 
@@ -211,6 +218,7 @@ export const OrgDefSchema = z
       })),
     fence: FenceConfigSchema.optional(),
     roles: z.array(RoleSchema).min(1),
+    communication: z.array(CommunicationEdgeSchema).optional(),
     runtime: z
       .enum([
         "claude",
