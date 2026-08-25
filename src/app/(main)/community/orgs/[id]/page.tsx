@@ -7,6 +7,7 @@ import { getDb } from "@/lib/db";
 import { orgUpload, orgRun, orgRunFile, user } from "@/lib/db/schema";
 import { OrgDetail } from "@/components/community/orgs/OrgDetail";
 import { canDeleteOrgUpload } from "@/lib/community/can-delete-org-upload";
+import { canEditOrgUpload } from "@/lib/community/can-edit-org-upload";
 import { canDeleteOrgRun } from "@/lib/community/can-delete-org-run";
 
 export const metadata: Metadata = {
@@ -40,6 +41,7 @@ export default async function OrgDetailPage({ params }: { params: Promise<{ id: 
   const roles = Array.isArray(parsed.roles) ? parsed.roles : [];
 
   const canDelete = !!sessionUser && canDeleteOrgUpload(sessionUser, row.uploaderId);
+  const canEdit = !!sessionUser && canEditOrgUpload(sessionUser, row.uploaderId);
 
   const [runRows, fileRows, authors] = await Promise.all([
     db.select().from(orgRun).where(eq(orgRun.orgUploadId, id)).orderBy(desc(orgRun.createdAt)),
@@ -77,10 +79,14 @@ export default async function OrgDetailPage({ params }: { params: Promise<{ id: 
             id: row.id,
             name: row.name,
             goal: row.goal,
+            tagline: row.tagline,
+            description: row.description,
+            body: row.body,
             topology: row.topology,
             roles,
             orgJson: row.orgJson,
             canDelete,
+            canEdit,
             runs,
             currentUsername: sessionUser?.username ?? null,
           }}

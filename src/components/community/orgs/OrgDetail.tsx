@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { OrgChart } from "./OrgChart";
 import { RoleModal, type ModalRole } from "./RoleModal";
 import { RunUploadForm } from "./RunUploadForm";
@@ -36,10 +37,14 @@ export type OrgDetailData = {
   id: string;
   name: string;
   goal: string;
+  tagline: string | null;
+  description: string | null;
+  body: string | null;
   topology: string | null;
   roles: Role[];
   orgJson: string;
   canDelete: boolean;
+  canEdit: boolean;
   runs: RunData[];
   currentUsername: string | null;
 };
@@ -71,8 +76,17 @@ export function OrgDetail({ org }: { org: OrgDetailData }) {
   const [deletingRunIds, setDeletingRunIds] = useState<Set<string>>(new Set());
   const [runs, setRuns] = useState(org.runs);
   const [viewingFile, setViewingFile] = useState<RunFile | null>(null);
+  const [bodyHtml, setBodyHtml] = useState<string | null>(null);
 
   const selectedRole = org.roles.find((r) => r.id === selectedRoleId);
+
+  useEffect(() => {
+    if (!org.body) {
+      setBodyHtml(null);
+      return;
+    }
+    import("@/lib/community/render-markdown").then(({ renderMarkdown }) => setBodyHtml(renderMarkdown(org.body!)));
+  }, [org.body]);
 
   function toggleRunExpanded(runId: string) {
     setExpandedRunIds((prev) => {
@@ -134,7 +148,17 @@ export function OrgDetail({ org }: { org: OrgDetailData }) {
   return (
     <div>
       <p className="font-medium text-espresso text-lg">{org.name}</p>
-      {org.goal && <p className="mt-2 text-sm text-espresso/70">{org.goal}</p>}
+      {org.tagline && <p className="mt-1 text-sm font-medium text-gold-dark">{org.tagline}</p>}
+      {(org.description || org.goal) && (
+        <p className="mt-2 text-sm text-espresso/70">{org.description || org.goal}</p>
+      )}
+      {bodyHtml && (
+        <div
+          className="prose prose-sm mt-4 max-w-none rounded-lg border border-ivory-linen bg-ivory p-5"
+          // bodyHtml is produced by renderMarkdown, which sanitizes via isomorphic-dompurify before this component ever receives it
+          dangerouslySetInnerHTML={{ __html: bodyHtml }}
+        />
+      )}
 
       <div className="mt-4 flex items-center justify-between gap-3">
         <div className="flex gap-2 border-b border-ivory-linen">
@@ -158,6 +182,14 @@ export function OrgDetail({ org }: { org: OrgDetailData }) {
           >
             Download
           </button>
+          {org.canEdit && (
+            <Link
+              href={`/community/orgs/${org.id}/edit`}
+              className="rounded-md border border-espresso/30 px-3 py-1.5 text-xs font-medium text-espresso hover:border-espresso"
+            >
+              Edit
+            </Link>
+          )}
           {org.canDelete && (
             <button
               type="button"
