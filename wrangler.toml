@@ -21,7 +21,6 @@ binding = "ASSETS"
 run_worker_first = [
   "/*",
   "!/_next/static/*",
-  "!/_next/image*",
   "!/images/*",
   "!/fonts/*",
   "!/*.ico",
