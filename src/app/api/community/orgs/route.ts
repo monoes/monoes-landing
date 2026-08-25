@@ -78,6 +78,7 @@ export async function POST(request: Request) {
     id,
     name: org.name,
     goal: org.goal,
+    description: org.goal || null,
     topology,
     roleCount: org.roles.length,
     orgJson: orgJsonText,
