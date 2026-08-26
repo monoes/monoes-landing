@@ -37,17 +37,19 @@ test("org chart renders report + communication edges with a matching legend, and
   await page.goto(`/community/orgs/${created.id}`);
   await page.waitForLoadState("networkidle");
 
-  // 2 report edges (boss→writer, boss→reviewer) + 3 communication edges
-  // (command, handoff, feedback) = 5 lines.
-  await expect(page.locator("#org-chart-svg line")).toHaveCount(5);
+  // The fixture declares 3 explicit communication edges (command, handoff,
+  // feedback) — explicit communication is used verbatim, so no additional
+  // structural reports_to lines are auto-generated alongside it.
+  await expect(page.locator("#org-chart-svg path.org-chart-edge")).toHaveCount(3);
 
-  // All 4 edge types are present in this fixture, so the legend shows all 4 labels.
-  for (const label of ["Command", "Report", "Feedback", "Handoff"]) {
+  // Only the 3 edge types actually present in this fixture appear in the legend.
+  for (const label of ["Command", "Feedback", "Handoff"]) {
     await expect(page.getByText(label, { exact: true })).toBeVisible();
   }
+  await expect(page.getByText("Report", { exact: true })).not.toBeVisible();
 
   // Clicking a role node still opens the existing role modal (regression check).
-  await page.locator("#org-chart-svg circle").first().click();
+  await page.locator("#org-chart-svg .org-chart-node circle").first().click();
   await expect(page.getByRole("dialog")).toBeVisible();
   await page.getByRole("button", { name: "Close" }).click();
   await expect(page.getByRole("dialog")).not.toBeVisible();

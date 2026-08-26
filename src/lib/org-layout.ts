@@ -1,124 +1,160 @@
-// Ported from monomind/packages/@monomind/cli/src/ui/orgs.html's
-// computeLayout() function — the same positioning algorithm monomind's
-// own dashboard uses to lay out an org chart, translated from vanilla
-// JS/DOM manipulation into a pure TypeScript function. The math (angles,
-// depth-layering, row splitting) is unchanged from the source.
-//
-// Position-only, matching monomind's own separation of concerns: edge
-// construction (reports_to + communication) lives in OrgChart.tsx's
-// buildChartEdges(), not here.
+// Ported from monomind's dashboard.html V2 org chart (v2RenderOrgChart's
+// layout section) — the same positioning algorithm monomind's own dashboard
+// uses: hub-and-spoke by default, a circular ring for mesh, a line for
+// ring/pipeline, a BFS-by-depth layered layout when the org declares
+// explicit communication edges, and a serpentine grid re-flow for crowded
+// (5+ role) orgs so a wide row doesn't overflow the chart. The "expanded
+// full-page modal" sizing branch from the source has no equivalent here —
+// monoes.me's org chart is always the compact/inline size.
 
 export type LayoutRole = {
   id: string;
   reports_to: string | null;
 };
 
-export type LayoutNode = {
-  id: string;
-  x: number;
-  y: number;
+export type EdgeLike = { from: string; to: string; type?: string };
+
+export type LayoutResult = {
+  positions: Record<string, { x: number; y: number }>;
+  width: number;
+  height: number;
+  nodeRadius: number;
 };
 
-export type OrgPositions = {
-  nodes: LayoutNode[];
-  viewBoxHeight: number;
-};
+function isLeader(r: LayoutRole): boolean {
+  return !r.reports_to || r.reports_to === r.id;
+}
 
 export function computeLayout(
   roles: LayoutRole[],
+  explicitCommunication: EdgeLike[] | undefined,
   topology: string | null | undefined,
-  width: number,
-  height: number,
-): OrgPositions {
-  const n = roles.length;
-  if (n === 0) {
-    return { nodes: [], viewBoxHeight: height };
-  }
+): LayoutResult {
+  const topo = (topology || "hierarchical").toLowerCase();
+  let W = 720;
+  const crowded = roles.length > 4;
+  const R = crowded ? 34 : 42;
+  const PAD_X = crowded ? Math.max(R + 20, 78) : R + 20;
+  const PAD_Y = crowded ? R + 96 : R + 24;
+  const LBL_BELOW = R + 29 + 8;
+  const roleIds = new Set(roles.map((r) => r.id));
+  const leaders = roles.filter(isLeader);
+  const lr = leaders[0] || roles[0];
+  const hasSubs = !!lr && roles.length > 1;
 
-  const cx = width / 2;
-  const cy = height / 2;
-  const PAD = 60;
-  const MAX_PER_ROW = Math.max(2, Math.min(4, Math.ceil(Math.sqrt(n))));
+  const positions: Record<string, { x: number; y: number }> = Object.create(null);
+  let layoutH: number | null = null;
 
-  const nodes: LayoutNode[] = [];
-  let viewBoxHeight = height;
-
-  if (topology === "mesh") {
-    const r = Math.min((width - PAD * 2) / 2, (height - PAD * 2) / 2) * 0.8;
-    roles.forEach((role, i) => {
-      const angle = (2 * Math.PI * i) / n - Math.PI / 2;
-      nodes.push({ id: role.id, x: cx + r * Math.cos(angle), y: cy + r * Math.sin(angle) });
-    });
-  } else if (topology === "star") {
-    const boss = roles.find((r) => !r.reports_to) ?? roles[0];
-    const rest = roles.filter((r) => r.id !== boss.id);
-    nodes.push({ id: boss.id, x: cx, y: cy });
-    const r2 = Math.min((width - PAD * 2) / 2, (height - PAD * 2) / 2) * 0.75;
-    rest.forEach((role, i) => {
-      const angle = (2 * Math.PI * i) / rest.length - Math.PI / 2;
-      nodes.push({ id: role.id, x: cx + r2 * Math.cos(angle), y: cy + r2 * Math.sin(angle) });
-    });
-  } else {
-    // Hierarchical (default): layer by reports_to depth.
-    const depthMap: Record<string, number> = Object.create(null);
-    roles.forEach((r) => {
-      if (!r.reports_to || r.reports_to === r.id) depthMap[r.id] = 0;
-    });
-    let changed = true;
-    let iter = 0;
-    while (changed && iter < 20) {
-      changed = false;
-      iter++;
-      roles.forEach((r) => {
-        if (r.reports_to && r.reports_to !== r.id && depthMap[r.reports_to] !== undefined) {
-          const newDepth = (depthMap[r.reports_to] ?? 0) + 1;
-          if (depthMap[r.id] !== newDepth) {
-            depthMap[r.id] = newDepth;
-            changed = true;
-          }
-        }
+  const hubAndSpoke = () => {
+    if (leaders.length > 0) {
+      leaders.forEach((r, i) => {
+        const x = leaders.length === 1 ? W / 2 : PAD_X + ((W - PAD_X * 2) / (leaders.length - 1)) * i;
+        positions[r.id] = { x, y: PAD_Y };
       });
     }
-    roles.forEach((r) => {
-      if (depthMap[r.id] === undefined) depthMap[r.id] = 1;
+    const subs = roles.filter((r) => !isLeader(r));
+    const usableW = W - PAD_X * 2;
+    const subY = leaders.length > 0 ? PAD_Y + 220 : PAD_Y;
+    subs.forEach((r, i) => {
+      const x = subs.length === 1 ? W / 2 : PAD_X + (usableW / (subs.length - 1)) * i;
+      positions[r.id] = { x, y: subY };
     });
+    const hasBothRows = leaders.length > 0 && subs.length > 0;
+    layoutH = hasBothRows ? PAD_Y + 220 + LBL_BELOW : PAD_Y + LBL_BELOW;
+  };
 
-    const layerMap: Record<number, string[]> = {};
-    Object.entries(depthMap).forEach(([id, depth]) => {
-      if (!layerMap[depth]) layerMap[depth] = [];
-      layerMap[depth].push(id);
+  if (roles.length === 0) {
+    // nothing to lay out
+  } else if (!hasSubs) {
+    positions[roles[0].id] = { x: W / 2, y: 90 };
+    layoutH = 180;
+  } else if (topo === "mesh") {
+    const n = roles.length;
+    const cx = W / 2;
+    const minRad = ((2 * R + 6) * n) / (2 * Math.PI);
+    const rad = Math.max(minRad, Math.min((W - PAD_X * 2) / 2, 130) * 0.82);
+    const cy = Math.max(170, rad + PAD_Y);
+    roles.forEach((r, i) => {
+      const a = (2 * Math.PI * i) / n - Math.PI / 2;
+      positions[r.id] = { x: cx + rad * Math.cos(a), y: cy + rad * Math.sin(a) };
     });
-
-    const visualRows: string[][] = [];
-    const sortedDepths = Object.keys(layerMap)
-      .map(Number)
-      .sort((a, b) => a - b);
-    sortedDepths.forEach((depth) => {
-      const ids = layerMap[depth];
-      for (let i = 0; i < ids.length; i += MAX_PER_ROW) {
-        visualRows.push(ids.slice(i, i + MAX_PER_ROW));
-      }
+    layoutH = Math.round(cy + rad + LBL_BELOW);
+  } else if (topo === "ring" || topo === "pipeline") {
+    const usableW = W - PAD_X * 2;
+    roles.forEach((r, i) => {
+      const x = roles.length === 1 ? W / 2 : PAD_X + (usableW / (roles.length - 1)) * i;
+      positions[r.id] = { x, y: 90 };
     });
-
-    const totalRows = visualRows.length;
-    const ROW_H = 100;
-    const totalH = Math.max(height, PAD * 2 + totalRows * ROW_H);
-
-    const positionsById: Record<string, { x: number; y: number }> = Object.create(null);
-    visualRows.forEach((ids, rowIdx) => {
-      const y = PAD + rowIdx * ROW_H + ROW_H / 2;
-      const colW = (width - PAD * 2) / (ids.length + 1);
-      ids.forEach((id, i) => {
-        positionsById[id] = { x: PAD + colW * (i + 1), y };
+    layoutH = 180;
+  } else if (Array.isArray(explicitCommunication) && explicitCommunication.length > 0) {
+    // BFS multi-level layout — only traverse forward (non-report) edges.
+    const fwdEdges = explicitCommunication.filter((e) => e.type !== "report");
+    if (!fwdEdges.length) {
+      hubAndSpoke();
+    } else {
+      const depth: Record<string, number> = Object.create(null);
+      leaders.forEach((r) => {
+        depth[r.id] = 0;
       });
-    });
-    roles.forEach((r) => {
-      const pos = positionsById[r.id];
-      if (pos) nodes.push({ id: r.id, x: pos.x, y: pos.y });
-    });
+      const queue: string[] = leaders.map((r) => r.id);
+      while (queue.length) {
+        const cur = queue.shift() as string;
+        fwdEdges.forEach((e) => {
+          if (e.from === cur && roleIds.has(e.to) && depth[e.to] === undefined) {
+            depth[e.to] = depth[cur] + 1;
+            queue.push(e.to);
+          }
+        });
+      }
+      roles.forEach((r) => {
+        if (depth[r.id] === undefined) depth[r.id] = 1;
+      });
+      const minDepth = Math.min(...roles.map((r) => depth[r.id]));
+      if (minDepth > 0) roles.forEach((r) => (depth[r.id] -= minDepth));
+      const maxDepth = Math.max(...roles.map((r) => depth[r.id]));
+      const layerOf: Record<number, LayoutRole[]> = {};
+      for (let d = 0; d <= maxDepth; d++) layerOf[d] = [];
+      roles.forEach((r) => layerOf[depth[r.id]].push(r));
 
-    if (totalH > height) viewBoxHeight = totalH;
+      const LAYER_H = 110;
+      layoutH = PAD_Y + maxDepth * LAYER_H + LBL_BELOW;
+
+      for (let d = 0; d <= maxDepth; d++) {
+        const layer = layerOf[d];
+        const usableW = W - PAD_X * 2;
+        layer.forEach((r, i) => {
+          const x = layer.length === 1 ? W / 2 : PAD_X + (usableW / (layer.length - 1)) * i;
+          positions[r.id] = { x, y: PAD_Y + d * LAYER_H };
+        });
+      }
+    }
+  } else {
+    hubAndSpoke();
   }
 
-  return { nodes, viewBoxHeight };
+  // Crowded re-flow: break a wall of <=2 rows into a serpentine grid so
+  // topology reads instead of a wide overlapping row.
+  if (crowded) {
+    const rowsSeen = new Set(Object.values(positions).map((p) => Math.round(p.y)));
+    const rowCounts = [...rowsSeen].map((y) => Object.values(positions).filter((p) => Math.round(p.y) === y).length);
+    const widest = rowCounts.length ? Math.max(...rowCounts) : 0;
+    if (rowsSeen.size <= 2 && widest > 4) {
+      const seq = [...roles].sort((a, b) => positions[a.id].y - positions[b.id].y || positions[a.id].x - positions[b.id].x);
+      const perRow = Math.min(6, Math.ceil(seq.length / Math.ceil(seq.length / 6)));
+      const COL_W = 185;
+      const ROW_H = 205;
+      seq.forEach((r, i) => {
+        const row = Math.floor(i / perRow);
+        let col = i % perRow;
+        if (row % 2 === 1) col = perRow - 1 - col;
+        positions[r.id] = { x: PAD_X + col * COL_W, y: PAD_Y + row * ROW_H };
+      });
+      const rows = Math.ceil(seq.length / perRow);
+      W = PAD_X * 2 + (perRow - 1) * COL_W;
+      layoutH = PAD_Y + (rows - 1) * ROW_H + LBL_BELOW;
+    }
+  }
+
+  const H = layoutH ?? (hasSubs ? 320 : 180);
+  return { positions, width: W, height: H, nodeRadius: R };
 }

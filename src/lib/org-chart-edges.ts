@@ -2,21 +2,31 @@ import type { LayoutRole } from "./org-layout";
 
 export type CommEdge = { from: string; to: string; type: "command" | "report" | "feedback" | "handoff" };
 
-/**
- * Structural report lines come straight from each role's reports_to (the
- * authoritative chain also shown in the Roles tab) — declared communication
- * edges (command/feedback/handoff busses) don't necessarily reflect who
- * actually reports to whom. Ported verbatim from monomind's renderChart()
- * (packages/@monomind/cli/src/ui/orgs.html).
- */
-export function buildChartEdges(roles: LayoutRole[], communication: CommEdge[]): CommEdge[] {
-  const reportEdges: CommEdge[] = roles
-    .filter((r) => r.reports_to && r.reports_to !== r.id)
-    .map((r) => ({ from: r.reports_to as string, to: r.id, type: "report" as const }));
-  return reportEdges.concat(communication);
+function isLeaderRole(r: LayoutRole): boolean {
+  return !r.reports_to || r.reports_to === r.id;
 }
 
-/** True when both A→B and B→A exist among the given edges. */
-export function hasAntiParallelPair(edges: CommEdge[], from: string, to: string): boolean {
-  return edges.some((e) => e.from === to && e.to === from);
+/**
+ * Ported from monomind's dashboard.html V2 org chart (renderChart's
+ * "auto-generate edges" step): when the org declares explicit communication
+ * edges, those are drawn as-is — reports_to lines are NOT also added. Only
+ * when communication is empty does it fall back to auto-generated
+ * command+report pairs between each role and its manager (or the leader,
+ * if reports_to points nowhere real).
+ */
+export function buildChartEdges(roles: LayoutRole[], communication: CommEdge[] | undefined): CommEdge[] {
+  const explicit = Array.isArray(communication) ? communication : [];
+  if (explicit.length > 0 || roles.length <= 1) return explicit;
+
+  const roleIds = new Set(roles.map((r) => r.id));
+  const leader = roles.find(isLeaderRole) || roles[0];
+  return roles
+    .filter((r) => r.id !== leader.id)
+    .flatMap((r) => {
+      const parentId = r.reports_to && r.reports_to !== r.id && roleIds.has(r.reports_to) ? r.reports_to : leader.id;
+      return [
+        { from: parentId, to: r.id, type: "command" as const },
+        { from: r.id, to: parentId, type: "report" as const },
+      ];
+    });
 }

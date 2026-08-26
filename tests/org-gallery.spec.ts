@@ -59,7 +59,7 @@ test("upload a valid org, view its chart, click a role to see the modal, downloa
   await page.waitForLoadState("networkidle");
 
   // Chart tab is the default; click the "boss" node's circle to open the modal.
-  await page.locator("svg circle").first().click();
+  await page.locator("#org-chart-svg .org-chart-node circle").first().click();
   await expect(page.getByRole("dialog")).toBeVisible();
   await expect(page.getByRole("dialog")).toContainText("plan work");
   await page.getByRole("button", { name: "Close" }).click();
