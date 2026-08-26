@@ -65,20 +65,32 @@ export function OrgChart({
     <div>
       <svg id="org-chart-svg" viewBox={`0 0 ${WIDTH} ${layout.viewBoxHeight}`} className="w-full rounded-lg border border-ivory-linen bg-ivory">
         <defs>
+          {/* Exact port of monomind's orgs.html arrow markers (path/refX/refY/size) and node-glow filter. */}
           {EDGE_TYPE_ORDER.map((type) => (
-            <marker
-              key={type}
-              id={EDGE_STYLE[type].markerId}
-              viewBox="0 0 10 10"
-              refX="9"
-              refY="5"
-              markerWidth="6"
-              markerHeight="6"
-              orient="auto-start-reverse"
-            >
-              <path d="M 0 0 L 10 5 L 0 10 z" fill={EDGE_STYLE[type].color} opacity={EDGE_STYLE[type].opacity} />
+            <marker key={type} id={EDGE_STYLE[type].markerId} markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+              <path d="M0,0 L0,6 L6,3 z" fill={EDGE_STYLE[type].color} opacity={EDGE_STYLE[type].opacity} />
             </marker>
           ))}
+          <filter id="org-chart-node-glow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="b" />
+            <feMerge>
+              <feMergeNode in="b" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+          <style>{`
+            @media (prefers-reduced-motion: no-preference) {
+              .org-chart-node-pulse {
+                transform-box: fill-box;
+                transform-origin: center;
+                animation: org-chart-pulse 2.5s ease-in-out infinite;
+              }
+            }
+            @keyframes org-chart-pulse {
+              0%, 100% { transform: scale(1); opacity: 0.18; }
+              50% { transform: scale(1.18); opacity: 0.45; }
+            }
+          `}</style>
         </defs>
         {edges.map((edge, i) => {
           const from = nodeById.get(edge.from);
@@ -146,18 +158,32 @@ export function OrgChart({
                 fill="var(--color-espresso, #4b3621)"
                 stroke={color}
                 strokeWidth={2}
+                filter="url(#org-chart-node-glow)"
+              />
+              {/* Drawn after (on top of) the node so it never shadows the
+                  interactive circle for `circle` locators/selectors — a
+                  stroke-only, pointer-events-none ring naturally surrounds
+                  the node without covering or intercepting it. */}
+              <circle
+                cx={pos.x}
+                cy={pos.y}
+                r={(isBoss ? BOSS_RADIUS : NODE_RADIUS) + 4}
+                fill="none"
+                stroke={color}
+                strokeWidth={1}
+                className="org-chart-node-pulse pointer-events-none"
               />
               <text
                 x={pos.x}
                 y={pos.y - (agentType ? 2 : -3)}
                 textAnchor="middle"
                 fill={color}
-                className="pointer-events-none text-[9px] font-medium"
+                className="pointer-events-none font-mono text-[9px] font-medium"
               >
                 {shortTitle}
               </text>
               {shortAgentType && (
-                <text x={pos.x} y={pos.y + 10} textAnchor="middle" className="pointer-events-none fill-ivory/60 text-[7px]">
+                <text x={pos.x} y={pos.y + 10} textAnchor="middle" className="pointer-events-none fill-ivory/60 font-mono text-[7px]">
                   {shortAgentType}
                 </text>
               )}
@@ -166,7 +192,7 @@ export function OrgChart({
         })}
       </svg>
       {presentTypes.length > 0 && (
-        <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-espresso/55">
+        <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 font-mono text-[10px] tracking-wide text-espresso/55">
           {presentTypes.map((type) => (
             <span key={type} className="flex items-center gap-1.5">
               <svg width="24" height="8">
