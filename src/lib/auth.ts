@@ -6,7 +6,7 @@ import { eq } from "drizzle-orm";
 import { getDb, type Db } from "@/lib/db";
 import * as schema from "@/lib/db/schema";
 
-export const OAUTH_SCOPES = ["community:read", "community:write"] as const;
+export const OAUTH_SCOPES = ["openid", "profile", "email", "community:read", "community:write"] as const;
 
 export function getAuth(db: Db = getDb()) {
   const { BETTER_AUTH_SECRET: sec, BETTER_AUTH_URL: url } = process.env;
