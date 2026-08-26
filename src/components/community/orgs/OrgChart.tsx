@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { computeLayout, type LayoutRole } from "@/lib/org-layout";
 import { buildChartEdges, type CommEdge } from "@/lib/org-chart-edges";
 import { avatarMapFor, roleAvatar } from "@/lib/org-avatars";
@@ -41,6 +42,15 @@ export function OrgChart({
   const { positions, width: W, height: H, nodeRadius: R } = computeLayout(roles, edges, topology);
   const avatarMap = avatarMapFor(roles);
   const presentTypes = EDGE_TYPE_ORDER.filter((t) => edges.some((e) => e.type === t));
+
+  // The flow-particle <animateMotion> is native SMIL — it starts running the
+  // instant the browser parses it, mutating the particle circle's position
+  // before React finishes hydrating. That desync between the server-rendered
+  // snapshot and the now-animated DOM trips a hydration mismatch. Mounting
+  // particles only after hydration completes avoids the browser ever seeing
+  // them in the pre-hydration markup.
+  const [particlesMounted, setParticlesMounted] = useState(false);
+  useEffect(() => setParticlesMounted(true), []);
 
   if (roles.length === 0) {
     return (
@@ -133,7 +143,7 @@ export function OrgChart({
                 strokeDasharray={style.dash || undefined}
                 markerEnd={`url(#${style.markerId})`}
               />
-              {edge.type === "command" && (
+              {edge.type === "command" && particlesMounted && (
                 <circle r="3.5" fill={style.color} opacity={0.7}>
                   <animateMotion dur="2s" repeatCount="indefinite" begin={`${(i * 0.4).toFixed(2)}s`}>
                     {/* eslint-disable-next-line react/no-unknown-property -- xlinkHref keeps older SVG UAs working alongside the modern href attribute */}
