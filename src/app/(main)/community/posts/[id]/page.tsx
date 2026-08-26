@@ -33,7 +33,7 @@ export default async function PostDetailPage({ params }: { params: Promise<{ id:
   const myVote = (votes.find((v) => v.userId === session?.user.id)?.value ?? 0) as -1 | 0 | 1;
 
   return (
-    <main className="bg-ivory-warm px-8 py-16">
+    <main className="bg-ivory-warm px-8 pt-24 pb-16">
       <div className="mx-auto max-w-2xl">
         <p className="mb-2 text-xs uppercase tracking-label text-gold-dark font-medium">Community</p>
         <PostDetail

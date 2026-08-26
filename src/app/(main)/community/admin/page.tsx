@@ -97,7 +97,7 @@ export default async function AdminPage() {
   }));
 
   return (
-    <main className="bg-ivory-warm px-8 py-16">
+    <main className="bg-ivory-warm px-8 pt-24 pb-16">
       <div className="mx-auto max-w-5xl">
         <p className="mb-2 text-xs uppercase tracking-label text-gold-dark font-medium">Admin</p>
         <h1 className="mb-6 text-3xl font-semibold text-espresso tracking-tight">Dashboard</h1>

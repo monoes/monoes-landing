@@ -26,7 +26,7 @@ export default async function CommunityPage() {
 
   return (
     <main>
-      <section className="bg-ivory-warm px-8 pt-16 pb-8 text-center">
+      <section className="bg-ivory-warm px-8 pt-24 pb-8 text-center">
         <p className="mb-4 text-xs uppercase tracking-label text-gold-dark font-medium">Community</p>
         <h1 className="mb-8 text-4xl font-semibold text-espresso md:text-5xl tracking-tight">
           Report bugs. Request features.<br />Share your orgs.

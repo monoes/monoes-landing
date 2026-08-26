@@ -29,7 +29,7 @@ export default async function ProfileSettingsPage() {
   const row = rows[0];
 
   return (
-    <main className="bg-ivory-warm px-8 py-16">
+    <main className="bg-ivory-warm px-8 pt-24 pb-16">
       <div className="mx-auto max-w-lg">
         <p className="mb-2 text-xs uppercase tracking-label text-gold-dark font-medium">Community</p>
         <h1 className="mb-6 text-3xl font-semibold text-espresso tracking-tight">Edit profile</h1>

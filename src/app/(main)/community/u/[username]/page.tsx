@@ -81,7 +81,7 @@ export default async function ProfilePage({ params }: { params: Promise<{ userna
 
   if (result.suspended) {
     return (
-      <main className="bg-ivory-warm px-8 py-16">
+      <main className="bg-ivory-warm px-8 pt-24 pb-16">
         <div className="mx-auto max-w-xl rounded-xl border border-ivory-linen bg-ivory p-8 text-center">
           <p className="text-sm text-espresso/55">@{result.username}</p>
           <p className="mt-3 text-espresso">This account has been suspended.</p>
@@ -99,7 +99,7 @@ export default async function ProfilePage({ params }: { params: Promise<{ userna
   });
 
   return (
-    <main className="bg-ivory-warm px-8 py-16">
+    <main className="bg-ivory-warm px-8 pt-24 pb-16">
       <ProfileCard profile={result.profile} />
       <div className="mx-auto mt-10 max-w-3xl">
         <h2 className="mb-4 text-lg font-semibold text-espresso">Activity</h2>
