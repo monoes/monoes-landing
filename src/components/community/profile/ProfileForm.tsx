@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 type FormValues = {
+  name: string;
   tagline: string;
   jobTitle: string;
   company: string;
@@ -71,6 +72,7 @@ export function ProfileForm({ initial, username }: { initial: FormValues; userna
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          name: values.name,
           tagline: values.tagline,
           jobTitle: values.jobTitle,
           company: values.company,
@@ -123,6 +125,21 @@ export function ProfileForm({ initial, username }: { initial: FormValues; userna
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label htmlFor="name" className="mb-1 block text-sm font-medium text-espresso">
+            Full name
+          </label>
+          <input
+            id="name"
+            type="text"
+            required
+            maxLength={100}
+            value={values.name}
+            onChange={(e) => setValues((v) => ({ ...v, name: e.target.value }))}
+            className="w-full rounded-md border border-espresso/30 px-3 py-2 text-sm"
+          />
+        </div>
+
         <div>
           <label htmlFor="tagline" className="mb-1 block text-sm font-medium text-espresso">
             Tagline

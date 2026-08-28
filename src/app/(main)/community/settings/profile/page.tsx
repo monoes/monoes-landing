@@ -35,6 +35,7 @@ export default async function ProfileSettingsPage() {
         <h1 className="mb-6 text-3xl font-semibold text-espresso tracking-tight">Edit profile</h1>
         <ProfileForm
           initial={{
+            name: row?.name ?? "",
             tagline: row?.tagline ?? "",
             jobTitle: row?.jobTitle ?? "",
             company: row?.company ?? "",

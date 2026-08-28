@@ -24,6 +24,15 @@ register(
 );
 
 describe("profile field validation", () => {
+  it("isValidName rejects empty/whitespace-only and accepts up to 100 chars, rejects longer", async () => {
+    const { isValidName } = await import("./route.ts");
+    assert.equal(isValidName(""), false);
+    assert.equal(isValidName("   "), false);
+    assert.equal(isValidName("Ada Lovelace"), true);
+    assert.equal(isValidName("a".repeat(100)), true);
+    assert.equal(isValidName("a".repeat(101)), false);
+  });
+
   it("isValidTagline accepts empty string and up to 140 chars, rejects longer", async () => {
     const { isValidTagline } = await import("./route.ts");
     assert.equal(isValidTagline(""), true);

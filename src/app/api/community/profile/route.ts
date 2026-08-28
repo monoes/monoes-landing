@@ -4,6 +4,10 @@ import { getDb } from "@/lib/db";
 import { user } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 
+export function isValidName(value: string): boolean {
+  return value.trim().length > 0 && value.trim().length <= 100;
+}
+
 export function isValidTagline(value: string): boolean {
   return value.trim().length <= 140;
 }
@@ -46,6 +50,7 @@ export async function PATCH(request: Request) {
 
   const body = (await request.json().catch(() => null)) as
     | {
+        name?: unknown;
         tagline?: unknown;
         jobTitle?: unknown;
         company?: unknown;
@@ -57,6 +62,7 @@ export async function PATCH(request: Request) {
       }
     | null;
 
+  const name = typeof body?.name === "string" ? body.name.trim() : "";
   const tagline = typeof body?.tagline === "string" ? body.tagline.trim() : "";
   const jobTitle = typeof body?.jobTitle === "string" ? body.jobTitle.trim() : "";
   const company = typeof body?.company === "string" ? body.company.trim() : "";
@@ -68,6 +74,9 @@ export async function PATCH(request: Request) {
   const linkedinUrl = typeof body?.linkedinUrl === "string" ? body.linkedinUrl.trim() : "";
   const websiteUrl = typeof body?.websiteUrl === "string" ? body.websiteUrl.trim() : "";
 
+  if (!isValidName(name)) {
+    return NextResponse.json({ error: "Name must be 1-100 characters." }, { status: 400 });
+  }
   if (!isValidTagline(tagline)) {
     return NextResponse.json({ error: "Tagline must be 140 characters or fewer." }, { status: 400 });
   }
@@ -100,6 +109,7 @@ export async function PATCH(request: Request) {
   await db
     .update(user)
     .set({
+      name,
       tagline: tagline || null,
       jobTitle: jobTitle || null,
       company: company || null,
@@ -113,6 +123,7 @@ export async function PATCH(request: Request) {
     .where(eq(user.id, session.user.id));
 
   return NextResponse.json({
+    name,
     tagline: tagline || null,
     jobTitle: jobTitle || null,
     company: company || null,
