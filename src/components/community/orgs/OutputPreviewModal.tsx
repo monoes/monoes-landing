@@ -7,6 +7,10 @@ import { RunFileViewer } from "./RunFileViewer";
 export function OutputPreviewModal({ file, onClose }: { file: RunFile; onClose: () => void }) {
   const panelRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const newTabHref =
+    file.fileType === "html"
+      ? `/api/community/org-run-files/${file.id}`
+      : `/community/org-run-files/${file.id}`;
 
   useEffect(() => {
     closeButtonRef.current?.focus();
@@ -57,17 +61,36 @@ export function OutputPreviewModal({ file, onClose }: { file: RunFile; onClose: 
           <p id="output-preview-title" className="truncate text-sm font-medium text-espresso">
             {file.filename}
           </p>
-          <button
-            ref={closeButtonRef}
-            type="button"
-            onClick={onClose}
-            aria-label="Close preview"
-            className="shrink-0 rounded p-1.5 text-espresso/55 hover:bg-ivory-linen hover:text-espresso"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5">
-              <path d="M6 6l8 8M14 6l-8 8" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-            </svg>
-          </button>
+          <div className="flex shrink-0 items-center gap-1">
+            <a
+              href={newTabHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 rounded px-2 py-1.5 text-xs font-medium text-espresso/70 hover:bg-ivory-linen hover:text-espresso"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="none" className="h-4 w-4">
+                <path
+                  d="M8 4H4.5A1.5 1.5 0 0 0 3 5.5v10A1.5 1.5 0 0 0 4.5 17h10a1.5 1.5 0 0 0 1.5-1.5V11M12 3h5v5M16.5 3.5 9 11"
+                  stroke="currentColor"
+                  strokeWidth="1.4"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+              Open in new tab
+            </a>
+            <button
+              ref={closeButtonRef}
+              type="button"
+              onClick={onClose}
+              aria-label="Close preview"
+              className="rounded p-1.5 text-espresso/55 hover:bg-ivory-linen hover:text-espresso"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5">
+                <path d="M6 6l8 8M14 6l-8 8" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+              </svg>
+            </button>
+          </div>
         </div>
         <div className="flex-1 overflow-y-auto p-5">
           <RunFileViewer file={file} />
