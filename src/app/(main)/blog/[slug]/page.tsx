@@ -2,14 +2,24 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import { headers } from "next/headers";
+import { eq } from "drizzle-orm";
 import { getAllBlogPosts, getBlogPostBySlug } from "@/lib/blog";
 import { ReleaseDiagram } from "@/components/blog/ReleaseDiagrams";
+import { getAuth } from "@/lib/auth";
+import { getDb } from "@/lib/db";
+import { blogComment, user } from "@/lib/db/schema";
+import { CommentSection } from "@/components/community/CommentSection";
 
 interface PageProps {
   params: Promise<{
     slug: string;
   }>;
 }
+
+// Rendered per-request rather than statically: the comment section reads
+// the session and D1 database, neither of which are available at build time.
+export const dynamic = "force-dynamic";
 
 export async function generateStaticParams() {
   const posts = getAllBlogPosts();
@@ -55,6 +65,26 @@ export default async function BlogPostPage({ params }: PageProps) {
   const allPosts = getAllBlogPosts();
   const currentIndex = allPosts.findIndex((p) => p.slug === post.slug);
   const nextPost = allPosts[(currentIndex + 1) % allPosts.length];
+
+  const session = await getAuth().api.getSession({ headers: await headers() });
+  const sessionUser = session?.user as { id: string; role?: string } | undefined;
+  const canModerate = sessionUser?.role === "admin" || sessionUser?.role === "moderator";
+
+  const db = getDb();
+  const [commentRows, authors] = await Promise.all([
+    db.select().from(blogComment).where(eq(blogComment.postSlug, post.slug)),
+    db.select({ id: user.id, username: user.username }).from(user),
+  ]);
+  const authorMap = new Map(authors.map((a) => [a.id, a.username]));
+  const comments = commentRows
+    .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime())
+    .map((c) => ({
+      id: c.id,
+      authorId: c.authorId,
+      authorUsername: authorMap.get(c.authorId) ?? null,
+      body: c.body,
+      createdAt: c.createdAt.toISOString(),
+    }));
 
   return (
     <article className="min-h-screen bg-ivory pt-24 pb-24">
@@ -303,6 +333,16 @@ export default async function BlogPostPage({ params }: PageProps) {
             </Link>
           </div>
         )}
+
+        {/* Comments */}
+        <div className="pt-12 border-t border-ivory-linen">
+          <CommentSection
+            apiBasePath={`/api/community/blog/${post.slug}/comments`}
+            initialComments={comments}
+            canModerate={canModerate}
+            currentUserId={sessionUser?.id ?? null}
+          />
+        </div>
       </div>
 
       {/* BlogPosting JSON-LD Schema */}

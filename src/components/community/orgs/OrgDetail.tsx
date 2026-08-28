@@ -6,7 +6,8 @@ import Link from "next/link";
 import { OrgChart, type CommEdge } from "./OrgChart";
 import { RoleModal, type ModalRole } from "./RoleModal";
 import { RunUploadForm } from "./RunUploadForm";
-import { RunFileViewer } from "./RunFileViewer";
+import { OutputPreviewModal } from "./OutputPreviewModal";
+import { CommentSection, type Comment } from "../CommentSection";
 
 type Role = {
   id: string;
@@ -67,7 +68,30 @@ function toModalRole(role: Role): ModalRole {
   };
 }
 
-export function OrgDetail({ org }: { org: OrgDetailData }) {
+function FileTypeBadge({ fileType }: { fileType: RunFile["fileType"] }) {
+  const isHtml = fileType === "html";
+  return (
+    <span
+      className={`inline-flex shrink-0 items-center justify-center rounded px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide ${
+        isHtml ? "bg-gold/15 text-gold-dark" : "bg-ivory-linen text-espresso/70"
+      }`}
+    >
+      {isHtml ? "HTML" : "MD"}
+    </span>
+  );
+}
+
+export function OrgDetail({
+  org,
+  initialComments,
+  canModerate,
+  currentUserId,
+}: {
+  org: OrgDetailData;
+  initialComments: Comment[];
+  canModerate: boolean;
+  currentUserId: string | null;
+}) {
   const router = useRouter();
   const [tab, setTab] = useState<Tab>("chart");
   const [selectedRoleId, setSelectedRoleId] = useState<string | null>(null);
@@ -153,13 +177,6 @@ export function OrgDetail({ org }: { org: OrgDetailData }) {
       {org.tagline && <p className="mt-1 text-sm font-medium text-gold-dark">{org.tagline}</p>}
       {(org.description || org.goal) && (
         <p className="mt-2 text-sm text-espresso/70">{org.description || org.goal}</p>
-      )}
-      {bodyHtml && (
-        <div
-          className="prose prose-sm mt-4 max-w-none rounded-lg border border-ivory-linen bg-ivory p-5"
-          // bodyHtml is produced by renderMarkdown, which sanitizes via isomorphic-dompurify before this component ever receives it
-          dangerouslySetInnerHTML={{ __html: bodyHtml }}
-        />
       )}
 
       <div className="mt-4 flex items-center justify-between gap-3">
@@ -286,35 +303,49 @@ export function OrgDetail({ org }: { org: OrgDetailData }) {
                     )}
                   </div>
                   {expandedRunIds.has(run.id) && (
-                    <ul className="mt-3 space-y-1">
+                    <ul className="mt-3 space-y-1.5 border-t border-ivory-linen pt-3">
                       {run.files.map((file) => (
                         <li key={file.id}>
                           <button
                             type="button"
                             onClick={() => setViewingFile(file)}
-                            className="text-sm text-espresso/70 hover:text-espresso hover:underline"
+                            className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm text-espresso/80 transition-colors hover:bg-ivory-warm hover:text-espresso"
                           >
-                            {file.filename}
+                            <FileTypeBadge fileType={file.fileType} />
+                            <span className="truncate">{file.filename}</span>
                           </button>
                         </li>
                       ))}
+                      {run.files.length === 0 && (
+                        <li className="px-2 text-xs text-espresso/55">No files in this run.</li>
+                      )}
                     </ul>
                   )}
                 </div>
               ))}
               {runs.length === 0 && <p className="text-sm text-espresso/55">No outputs uploaded yet.</p>}
             </div>
-            {viewingFile && (
-              <div className="mt-4">
-                <p className="mb-2 text-xs font-medium text-espresso/55">{viewingFile.filename}</p>
-                <RunFileViewer file={viewingFile} />
-              </div>
-            )}
           </div>
         )}
       </div>
 
+      {bodyHtml && (
+        <div
+          className="markdown-body mt-6 max-w-none rounded-lg border border-ivory-linen bg-ivory p-5"
+          // bodyHtml is produced by renderMarkdown, which sanitizes via isomorphic-dompurify before this component ever receives it
+          dangerouslySetInnerHTML={{ __html: bodyHtml }}
+        />
+      )}
+
+      <CommentSection
+        apiBasePath={`/api/community/orgs/${org.id}/comments`}
+        initialComments={initialComments}
+        canModerate={canModerate}
+        currentUserId={currentUserId}
+      />
+
       {selectedRole && <RoleModal role={toModalRole(selectedRole)} onClose={() => setSelectedRoleId(null)} />}
+      {viewingFile && <OutputPreviewModal file={viewingFile} onClose={() => setViewingFile(null)} />}
     </div>
   );
 }

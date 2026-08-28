@@ -35,7 +35,7 @@ export function RunFileViewer({ file }: { file: RunFile }) {
       <iframe
         src={`/api/community/org-run-files/${file.id}`}
         sandbox="allow-scripts"
-        className="h-96 w-full rounded-lg border border-ivory-linen bg-ivory"
+        className="h-full min-h-[60vh] w-full rounded-lg border border-ivory-linen bg-ivory"
         title={file.filename}
       />
     );
@@ -55,7 +55,7 @@ export function RunFileViewer({ file }: { file: RunFile }) {
 
   return (
     <div
-      className="prose prose-sm max-w-none rounded-lg border border-ivory-linen bg-ivory p-5"
+      className="markdown-body max-w-none rounded-lg border border-ivory-linen bg-ivory p-5"
       // markdownHtml is produced by renderMarkdown, which sanitizes via isomorphic-dompurify before this component ever receives it
       dangerouslySetInnerHTML={{ __html: markdownHtml }}
     />

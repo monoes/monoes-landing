@@ -235,6 +235,28 @@ export const orgRunFile = sqliteTable("org_run_file", {
   createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
 });
 
+export const orgComment = sqliteTable("org_comment", {
+  id: text("id").primaryKey(),
+  orgUploadId: text("org_upload_id")
+    .notNull()
+    .references(() => orgUpload.id, { onDelete: "cascade" }),
+  authorId: text("author_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  body: text("body").notNull(),
+  createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
+});
+
+export const blogComment = sqliteTable("blog_comment", {
+  id: text("id").primaryKey(),
+  postSlug: text("post_slug").notNull(),
+  authorId: text("author_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  body: text("body").notNull(),
+  createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
+});
+
 // Below: tables owned by the better-auth "jwt" and "@better-auth/oauth-provider"
 // plugins (src/lib/auth.ts), generated via
 // `npx @better-auth/cli generate --config scripts/better-auth-schema-config.ts`.

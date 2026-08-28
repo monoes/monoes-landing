@@ -147,7 +147,7 @@ export function OrgEditForm({ orgId, initial }: { orgId: string; initial: FormVa
         </div>
         {preview ? (
           <div
-            className="prose prose-sm max-w-none rounded-md border border-ivory-linen bg-ivory p-3"
+            className="markdown-body max-w-none rounded-md border border-ivory-linen bg-ivory p-3"
             // previewHtml is produced by renderMarkdown, which sanitizes via isomorphic-dompurify before this component ever receives it
             dangerouslySetInnerHTML={{ __html: previewHtml }}
           />

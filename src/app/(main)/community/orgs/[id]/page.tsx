@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { desc, eq } from "drizzle-orm";
 import { getAuth } from "@/lib/auth";
 import { getDb } from "@/lib/db";
-import { orgUpload, orgRun, orgRunFile, user } from "@/lib/db/schema";
+import { orgUpload, orgRun, orgRunFile, orgComment, user } from "@/lib/db/schema";
 import { OrgDetail } from "@/components/community/orgs/OrgDetail";
 import { canDeleteOrgUpload } from "@/lib/community/can-delete-org-upload";
 import { canEditOrgUpload } from "@/lib/community/can-edit-org-upload";
@@ -45,14 +45,25 @@ export default async function OrgDetailPage({ params }: { params: Promise<{ id: 
 
   const canDelete = !!sessionUser && canDeleteOrgUpload(sessionUser, row.uploaderId);
   const canEdit = !!sessionUser && canEditOrgUpload(sessionUser, row.uploaderId);
+  const canModerate = sessionUser?.role === "admin" || sessionUser?.role === "moderator";
 
-  const [runRows, fileRows, authors] = await Promise.all([
+  const [runRows, fileRows, authors, commentRows] = await Promise.all([
     db.select().from(orgRun).where(eq(orgRun.orgUploadId, id)).orderBy(desc(orgRun.createdAt)),
     db.select().from(orgRunFile),
     db.select({ id: user.id, username: user.username }).from(user),
+    db.select().from(orgComment).where(eq(orgComment.orgUploadId, id)),
   ]);
 
   const authorMap = new Map(authors.map((a) => [a.id, a.username]));
+  const comments = commentRows
+    .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime())
+    .map((c) => ({
+      id: c.id,
+      authorId: c.authorId,
+      authorUsername: authorMap.get(c.authorId) ?? null,
+      body: c.body,
+      createdAt: c.createdAt.toISOString(),
+    }));
   const filesByRun = new Map<string, typeof fileRows>();
   for (const f of fileRows) {
     const list = filesByRun.get(f.orgRunId) ?? [];
@@ -94,6 +105,9 @@ export default async function OrgDetailPage({ params }: { params: Promise<{ id: 
             runs,
             currentUsername: sessionUser?.username ?? null,
           }}
+          initialComments={comments}
+          canModerate={canModerate}
+          currentUserId={sessionUser?.id ?? null}
         />
       </div>
     </main>
