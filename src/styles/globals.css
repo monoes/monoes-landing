@@ -57,6 +57,19 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Site is light-only; prevent browsers from applying dark-mode UA styles
+   (transparent/near-white text) to form controls that don't set explicit colors. */
+html {
+  color-scheme: light;
+}
+
+input,
+textarea,
+select {
+  background-color: var(--color-ivory);
+  color: var(--color-espresso);
+}
+
 /* Restore pointer cursor on interactive elements (links, buttons) */
 a, button, [role="button"], summary, [tabindex]:not([tabindex="-1"]) {
   cursor: pointer;

@@ -37,6 +37,7 @@ export default async function OrgEditPage({ params }: { params: Promise<{ id: st
             tagline: row.tagline ?? "",
             description: row.description ?? "",
             body: row.body ?? "",
+            bannerUrl: row.bannerUrl,
           }}
         />
       </div>

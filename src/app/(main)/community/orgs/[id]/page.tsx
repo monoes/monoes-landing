@@ -96,6 +96,7 @@ export default async function OrgDetailPage({ params }: { params: Promise<{ id: 
             tagline: row.tagline,
             description: row.description,
             body: row.body,
+            bannerUrl: row.bannerUrl,
             topology: row.topology,
             roles,
             communication,

@@ -53,6 +53,10 @@ export function isValidBody(value: string): boolean {
   return value.length <= 20000;
 }
 
+export function isValidBannerUrl(value: string): boolean {
+  return value.startsWith("/api/images/org/");
+}
+
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await getAuthenticatedUser(request, "community:write");
   if (!session) {
@@ -73,10 +77,16 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   }
 
   const body = (await request.json().catch(() => null)) as
-    | { name?: unknown; tagline?: unknown; description?: unknown; body?: unknown }
+    | { name?: unknown; tagline?: unknown; description?: unknown; body?: unknown; bannerUrl?: unknown }
     | null;
 
-  const updates: { name?: string; tagline?: string | null; description?: string | null; body?: string | null } = {};
+  const updates: {
+    name?: string;
+    tagline?: string | null;
+    description?: string | null;
+    body?: string | null;
+    bannerUrl?: string | null;
+  } = {};
 
   if (body?.name !== undefined) {
     if (typeof body.name !== "string" || !isValidName(body.name)) {
@@ -101,6 +111,13 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
       return NextResponse.json({ error: "Body must be 20000 characters or fewer." }, { status: 400 });
     }
     updates.body = body.body.trim() || null;
+  }
+
+  if (body?.bannerUrl !== undefined) {
+    if (body.bannerUrl !== null && (typeof body.bannerUrl !== "string" || !isValidBannerUrl(body.bannerUrl))) {
+      return NextResponse.json({ error: "Invalid banner image." }, { status: 400 });
+    }
+    updates.bannerUrl = body.bannerUrl;
   }
 
   if (Object.keys(updates).length === 0) {

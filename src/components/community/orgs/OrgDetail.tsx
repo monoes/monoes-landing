@@ -42,6 +42,7 @@ export type OrgDetailData = {
   tagline: string | null;
   description: string | null;
   body: string | null;
+  bannerUrl: string | null;
   topology: string | null;
   roles: Role[];
   communication: CommEdge[];
@@ -173,6 +174,14 @@ export function OrgDetail({
 
   return (
     <div>
+      {org.bannerUrl && (
+        // eslint-disable-next-line @next/next/no-img-element -- external R2-backed URL, next/image adds no value here
+        <img
+          src={org.bannerUrl}
+          alt=""
+          className="mb-4 h-48 w-full rounded-lg border border-ivory-linen object-cover sm:h-64"
+        />
+      )}
       <p className="font-medium text-espresso text-lg">{org.name}</p>
       {org.tagline && <p className="mt-1 text-sm font-medium text-gold-dark">{org.tagline}</p>}
       {(org.description || org.goal) && (

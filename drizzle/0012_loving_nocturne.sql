@@ -1,0 +1,1 @@
+ALTER TABLE `org_upload` ADD `banner_url` text;

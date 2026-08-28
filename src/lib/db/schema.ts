@@ -143,6 +143,7 @@ export const orgUpload = sqliteTable("org_upload", {
   tagline: text("tagline"),
   description: text("description"),
   body: text("body"),
+  bannerUrl: text("banner_url"),
   topology: text("topology"),
   roleCount: integer("role_count").notNull(),
   orgJson: text("org_json").notNull(),

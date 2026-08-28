@@ -8,6 +8,7 @@ type FormValues = {
   tagline: string;
   description: string;
   body: string;
+  bannerUrl: string | null;
 };
 
 export function OrgEditForm({ orgId, initial }: { orgId: string; initial: FormValues }) {
@@ -16,6 +17,7 @@ export function OrgEditForm({ orgId, initial }: { orgId: string; initial: FormVa
   const [values, setValues] = useState(initial);
   const [saving, setSaving] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [bannerError, setBannerError] = useState<string | null>(null);
   const [preview, setPreview] = useState(false);
   const [previewHtml, setPreviewHtml] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -34,6 +36,7 @@ export function OrgEditForm({ orgId, initial }: { orgId: string; initial: FormVa
     if (!file) return;
 
     setError(null);
+    setBannerError(null);
     setUploadingImage(true);
     try {
       const formData = new FormData();
@@ -50,7 +53,17 @@ export function OrgEditForm({ orgId, initial }: { orgId: string; initial: FormVa
       setValues((v) => ({
         ...v,
         body: v.body.slice(0, cursor) + markdownImage + v.body.slice(cursor),
+        bannerUrl: data.url,
       }));
+
+      const bannerRes = await fetch(`/api/community/orgs/${orgId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ bannerUrl: data.url }),
+      });
+      if (!bannerRes.ok) {
+        setBannerError("Image was uploaded but couldn't be set as the banner. Please try again.");
+      }
     } catch {
       setError("Something went wrong. Please try again.");
     } finally {
@@ -90,6 +103,30 @@ export function OrgEditForm({ orgId, initial }: { orgId: string; initial: FormVa
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
+        <p className="mb-1 block text-sm font-medium text-espresso">Banner</p>
+        <p className="mb-2 text-xs text-espresso/55">
+          Shown at the top of the org page. Uploading an image below sets this too.
+        </p>
+        {values.bannerUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element -- external R2-backed URL, next/image adds no value here
+          <img
+            src={values.bannerUrl}
+            alt=""
+            className="h-32 w-full rounded-lg border border-ivory-linen object-cover"
+          />
+        ) : (
+          <div className="flex h-32 w-full items-center justify-center rounded-lg border border-dashed border-ivory-linen text-xs text-espresso/55">
+            No banner yet
+          </div>
+        )}
+        {bannerError && (
+          <p role="alert" className="mt-2 text-xs text-red-700">
+            {bannerError}
+          </p>
+        )}
+      </div>
+
+      <div>
         <label htmlFor="name" className="mb-1 block text-sm font-medium text-espresso">
           Name
         </label>
@@ -99,7 +136,7 @@ export function OrgEditForm({ orgId, initial }: { orgId: string; initial: FormVa
           maxLength={100}
           value={values.name}
           onChange={(e) => setValues((v) => ({ ...v, name: e.target.value }))}
-          className="w-full rounded-md border border-espresso/30 px-3 py-2 text-sm"
+          className="w-full rounded-md border border-espresso/30 px-3 py-2 text-sm text-espresso"
         />
       </div>
 
@@ -114,7 +151,7 @@ export function OrgEditForm({ orgId, initial }: { orgId: string; initial: FormVa
           placeholder="One sentence — what does this org do?"
           value={values.tagline}
           onChange={(e) => setValues((v) => ({ ...v, tagline: e.target.value }))}
-          className="w-full rounded-md border border-espresso/30 px-3 py-2 text-sm"
+          className="w-full rounded-md border border-espresso/30 px-3 py-2 text-sm text-espresso"
         />
       </div>
 
@@ -128,7 +165,7 @@ export function OrgEditForm({ orgId, initial }: { orgId: string; initial: FormVa
           rows={3}
           value={values.description}
           onChange={(e) => setValues((v) => ({ ...v, description: e.target.value }))}
-          className="w-full rounded-md border border-espresso/30 px-3 py-2 text-sm"
+          className="w-full rounded-md border border-espresso/30 px-3 py-2 text-sm text-espresso"
         />
       </div>
 
@@ -160,7 +197,7 @@ export function OrgEditForm({ orgId, initial }: { orgId: string; initial: FormVa
             placeholder="Write your org's story in Markdown. Use the button below to insert images."
             value={values.body}
             onChange={(e) => setValues((v) => ({ ...v, body: e.target.value }))}
-            className="w-full rounded-md border border-espresso/30 px-3 py-2 font-mono text-sm"
+            className="w-full rounded-md border border-espresso/30 px-3 py-2 font-mono text-sm text-espresso"
           />
         )}
         {!preview && (
