@@ -30,7 +30,7 @@ landing*.css
 landing*.js
 
 # Docs / research drafts
-docs/
+/docs/
 GRAPH_REPORT.md
 
 # macOS

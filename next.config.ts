@@ -47,7 +47,7 @@ const nextConfig: NextConfig = {
             value: [
               '</.well-known/api-catalog>; rel="api-catalog"',
               '</api/openapi.json>; rel="service-desc"',
-              '</community/api-docs>; rel="service-doc"',
+              '</docs>; rel="service-doc"',
             ].join(", "),
           },
         ],
@@ -56,6 +56,11 @@ const nextConfig: NextConfig = {
   },
   async redirects() {
     return [
+      {
+        source: "/community/api-docs",
+        destination: "/docs",
+        permanent: true,
+      },
       {
         source: "/projects/monobrain",
         destination: "/projects/monomind",

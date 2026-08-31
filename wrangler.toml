@@ -5,7 +5,8 @@ main = ".open-next/worker.js"
 
 routes = [
   { pattern = "monoes.me/*", zone_name = "monoes.me" },
-  { pattern = "www.monoes.me/*", zone_name = "monoes.me" }
+  { pattern = "www.monoes.me/*", zone_name = "monoes.me" },
+  { pattern = "docs.monoes.me/*", zone_name = "monoes.me" }
 ]
 
 [assets]

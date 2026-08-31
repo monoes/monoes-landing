@@ -3,7 +3,7 @@ const CATALOG = {
     {
       anchor: "https://monoes.me/api/community",
       "service-desc": [{ href: "https://monoes.me/api/openapi.json", type: "application/vnd.oai.openapi+json" }],
-      "service-doc": [{ href: "https://monoes.me/community/api-docs", type: "text/html" }],
+      "service-doc": [{ href: "https://monoes.me/docs", type: "text/html" }],
     },
   ],
 };

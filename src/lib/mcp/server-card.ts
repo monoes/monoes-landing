@@ -17,7 +17,7 @@ export function mcpServerCard() {
     title: "Monoes Community MCP Server",
     description:
       "MCP tools for the monoes.me community: feature requests, bug reports, forum posts, and org uploads.",
-    websiteUrl: `${baseUrl()}/community/api-docs`,
+    websiteUrl: `${baseUrl()}/docs/mcp`,
     remotes: [{ type: "streamable-http", url: `${baseUrl()}/api/mcp` }],
   };
 }

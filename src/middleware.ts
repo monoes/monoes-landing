@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const PUBLIC_PATHS = new Set(["/community", "/community/login", "/community/register", "/community/api-docs"]);
+const PUBLIC_PATHS = new Set(["/community", "/community/login", "/community/register"]);
 // Better Auth prefixes the cookie with "__Secure-" whenever the connection is
 // https (production), but not over plain http (local dev) — clear both names
 // since we can't know which one is active without importing better-auth's
@@ -159,8 +159,23 @@ export async function renderAsMarkdown(request: NextRequest, doFetch: DoFetch = 
   });
 }
 
+// docs.monoes.me is served by this same Worker/app rather than a separate
+// deployment — it's the same content just reachable under its own hostname,
+// so a plain path rewrite to /docs is enough; no new infra to run.
+const DOCS_HOSTNAME = "docs.monoes.me";
+
+export function isDocsHost(hostHeader: string | null): boolean {
+  return (hostHeader ?? "").split(":")[0] === DOCS_HOSTNAME;
+}
+
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  if (isDocsHost(request.headers.get("host")) && !pathname.startsWith("/docs")) {
+    const url = request.nextUrl.clone();
+    url.pathname = pathname === "/" ? "/docs" : `/docs${pathname}`;
+    return NextResponse.rewrite(url);
+  }
 
   if (pathname.startsWith("/community")) {
     return runMiddleware(request);

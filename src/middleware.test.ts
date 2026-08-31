@@ -16,8 +16,15 @@ register(
 );
 
 const { NextRequest } = await import("next/server");
-const { middleware, runMiddleware, isMarkdownEligiblePath, wantsMarkdown, markdownAssetPath, renderAsMarkdown } =
-  await import("./middleware.ts");
+const {
+  middleware,
+  runMiddleware,
+  isMarkdownEligiblePath,
+  wantsMarkdown,
+  markdownAssetPath,
+  renderAsMarkdown,
+  isDocsHost,
+} = await import("./middleware.ts");
 
 const getSessionMock = mock.fn<GetSession>(async () => null);
 
@@ -168,5 +175,39 @@ describe("markdown negotiation", () => {
     // Regression guard for the boundary this feature must not cross: /community
     // paths go through runMiddleware's own auth flow, not disableEdgeCache.
     assert.equal(isMarkdownEligiblePath("/community/u/someone"), false);
+  });
+});
+
+describe("docs.monoes.me hostname rewrite", () => {
+  it("isDocsHost matches the bare hostname and strips a port", () => {
+    assert.equal(isDocsHost("docs.monoes.me"), true);
+    assert.equal(isDocsHost("docs.monoes.me:8787"), true);
+    assert.equal(isDocsHost("monoes.me"), false);
+    assert.equal(isDocsHost("www.monoes.me"), false);
+    assert.equal(isDocsHost(null), false);
+  });
+
+  it("rewrites the root path to /docs on the docs host", async () => {
+    const req = new NextRequest("http://localhost/", { headers: { host: "docs.monoes.me" } });
+    const res = await middleware(req);
+    assert.equal(res.headers.get("x-middleware-rewrite")?.endsWith("/docs"), true);
+  });
+
+  it("rewrites a sub-path to /docs/<path> on the docs host", async () => {
+    const req = new NextRequest("http://localhost/authentication", { headers: { host: "docs.monoes.me" } });
+    const res = await middleware(req);
+    assert.equal(res.headers.get("x-middleware-rewrite")?.endsWith("/docs/authentication"), true);
+  });
+
+  it("does not double-prefix a path that already starts with /docs", async () => {
+    const req = new NextRequest("http://localhost/docs/api", { headers: { host: "docs.monoes.me" } });
+    const res = await middleware(req);
+    assert.equal(res.headers.get("x-middleware-rewrite"), null);
+  });
+
+  it("leaves the main hostname's routing untouched", async () => {
+    const req = new NextRequest("http://localhost/workforce", { headers: { host: "monoes.me" } });
+    const res = await middleware(req);
+    assert.equal(res.headers.get("x-middleware-rewrite"), null);
   });
 });
