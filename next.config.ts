@@ -16,6 +16,9 @@ const CSP = [
 const nextConfig: NextConfig = {
   /* config options here */
   reactCompiler: true,
+  images: {
+    unoptimized: true,
+  },
   async headers() {
     return [
       {
