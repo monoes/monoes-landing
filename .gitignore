@@ -15,6 +15,12 @@ node_modules/
 .agents/
 .playwright-mcp/
 .mcp.json
+.codex/
+.gemini/
+GEMINI.md
+.mail/
+.monograph/
+.tmp-audit/
 
 # Claude Code config (local dev tooling)
 .claude/agents/
@@ -46,36 +52,20 @@ tsconfig.tsbuildinfo
 # Backup files
 *.bak
 
-# Data / sessions
-data/sessions/
-data/mastermind-*.json
-data/mastermind-*.jsonl
+# Data / sessions (monomind dashboard/loop state — not app data, nothing in src/ reads this)
+/data/
 # macOS AppleDouble files
 ._*
-
-# monomind runtime
 
 # Secrets / env files
 .env
 .env.local
 .env.*.local
-# monomind runtime — exclude sensitive and machine-specific data
-.monomind/sessions/
-.monomind/security/
-.monomind/*.tmp
-.monomind/*.log
-.monomind/daemon.pid
-.monomind/*.db
-.monomind/*.db-wal
-.monomind/*.db-shm
-
-# monomind runtime state
-.monomind/data/
-.monomind/metrics/
-.monomind/knowledge/
-.monomind/*.json
-.monomind/*.jsonl
-**/.monomind/*.json
+# monomind runtime — entirely local tool state (config, caches, DBs, and a
+# live dashboard-token secret); the narrow per-subpath rules this replaced
+# kept missing new files as the tool evolved, which is how dashboard-token
+# ended up untracked-but-unignored.
+.monomind/
 
 # Community auth secrets
 .dev.vars
@@ -87,6 +77,3 @@ data/mastermind-*.jsonl
 /playwright-report/
 /blob-report/
 /playwright/.cache/
-
-# taskdev scratch (briefs, reports, review diffs — process notes, not source)
-.monomind/taskdev/
