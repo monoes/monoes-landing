@@ -100,12 +100,16 @@ Local secrets are read by Wrangler / Cloudflare from `.dev.vars`.
 | `ADMIN_USERNAME` | Optional | Admin username for `seed:admin` | `admin` |
 | `ADMIN_PASSWORD` | Optional | Admin password for `seed:admin` | `SuperSecretPassword123` |
 | `RESEND_API_KEY` | Optional | Resend API key for password reset emails | `re_123456...` |
+| `GOOGLE_CLIENT_ID` | Optional | Google OAuth client ID (enables "Continue with Google") | from Google Cloud Console |
+| `GOOGLE_CLIENT_SECRET` | Optional | Google OAuth client secret | from Google Cloud Console |
 | `NEXT_PUBLIC_PLAUSIBLE_DOMAIN` | Optional | Plausible Analytics domain | `monoes.me` |
 
 For production deployments on Cloudflare:
 ```bash
 npx wrangler secret put BETTER_AUTH_SECRET
 npx wrangler secret put RESEND_API_KEY
+npx wrangler secret put GOOGLE_CLIENT_ID
+npx wrangler secret put GOOGLE_CLIENT_SECRET
 ```
 
 ---

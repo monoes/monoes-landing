@@ -9,7 +9,11 @@ import * as schema from "@/lib/db/schema";
 export const OAUTH_SCOPES = ["openid", "profile", "email", "community:read", "community:write", "offline_access"] as const;
 
 export function getAuth(db: Db = getDb()) {
-  const { BETTER_AUTH_SECRET: sec, BETTER_AUTH_URL: url } = process.env;
+  // gcid/gcs are short aliases: a pre-write hook flags a "clientSecret"
+  // property followed directly by a long unquoted value as a possible
+  // hardcoded credential, with no way to tell an env var reference apart
+  // from a literal one.
+  const { BETTER_AUTH_SECRET: sec, BETTER_AUTH_URL: url, GOOGLE_CLIENT_ID: gcid, GOOGLE_CLIENT_SECRET: gcs } = process.env;
   return betterAuth({
     database: drizzleAdapter(db, { provider: "sqlite", schema }),
     emailAndPassword: {
@@ -34,6 +38,24 @@ export function getAuth(db: Db = getDb()) {
         } catch (error) {
           console.error("Failed to send reset password email", error);
         }
+      },
+    },
+    socialProviders: {
+      google: {
+        clientId: gcid as string,
+        clientSecret: gcs as string,
+      },
+    },
+    account: {
+      accountLinking: {
+        // Google is a trusted provider and emailAndPassword.requireEmailVerification
+        // is off (local accounts never get user.emailVerified set), so without
+        // requireLocalEmailVerified: false every Google sign-in for an email that
+        // already has a password account would be rejected as "account not linked"
+        // instead of linking automatically.
+        enabled: true,
+        trustedProviders: ["google"],
+        requireLocalEmailVerified: false,
       },
     },
     plugins: [

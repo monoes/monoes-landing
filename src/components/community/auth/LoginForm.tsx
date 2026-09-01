@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
+import { GoogleSignInButton } from "@/components/community/auth/GoogleSignInButton";
 
 export function LoginForm() {
   const router = useRouter();
@@ -39,56 +40,64 @@ export function LoginForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="mx-auto max-w-sm space-y-4">
-      {blocked && (
-        <p role="alert" className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">
-          This account has been blocked. Contact an administrator if you believe this is a mistake.
-        </p>
-      )}
-      <div>
-        <label htmlFor="email" className="mb-1 block text-sm font-medium text-espresso">
-          Email
-        </label>
-        <input
-          id="email"
-          type="email"
-          required
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="w-full rounded-md border border-espresso/30 px-3 py-2 text-sm"
-        />
+    <div className="mx-auto max-w-sm space-y-4">
+      <GoogleSignInButton />
+      <div className="flex items-center gap-3 text-xs text-espresso/45">
+        <span className="h-px flex-1 bg-ivory-linen" />
+        or
+        <span className="h-px flex-1 bg-ivory-linen" />
       </div>
-      <div>
-        <div className="mb-1 flex items-center justify-between">
-          <label htmlFor="password" className="block text-sm font-medium text-espresso">
-            Password
+      <form onSubmit={handleSubmit} className="space-y-4">
+        {blocked && (
+          <p role="alert" className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">
+            This account has been blocked. Contact an administrator if you believe this is a mistake.
+          </p>
+        )}
+        <div>
+          <label htmlFor="email" className="mb-1 block text-sm font-medium text-espresso">
+            Email
           </label>
-          <Link href="/community/forgot-password" className="text-xs text-espresso/55 underline">
-            Forgot password?
-          </Link>
+          <input
+            id="email"
+            type="email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full rounded-md border border-espresso/30 px-3 py-2 text-sm"
+          />
         </div>
-        <input
-          id="password"
-          type="password"
-          required
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="w-full rounded-md border border-espresso/30 px-3 py-2 text-sm"
-        />
-      </div>
-      {error && (
-        <p role="alert" className="text-sm text-red-700">
-          {error}
-        </p>
-      )}
-      <button
-        type="submit"
-        disabled={submitting}
-        aria-busy={submitting}
-        className="w-full rounded-md bg-espresso px-5 py-2 text-sm font-medium text-ivory transition-opacity hover:opacity-80 disabled:opacity-50"
-      >
-        {submitting ? "Signing in…" : "Sign in"}
-      </button>
-    </form>
+        <div>
+          <div className="mb-1 flex items-center justify-between">
+            <label htmlFor="password" className="block text-sm font-medium text-espresso">
+              Password
+            </label>
+            <Link href="/community/forgot-password" className="text-xs text-espresso/55 underline">
+              Forgot password?
+            </Link>
+          </div>
+          <input
+            id="password"
+            type="password"
+            required
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full rounded-md border border-espresso/30 px-3 py-2 text-sm"
+          />
+        </div>
+        {error && (
+          <p role="alert" className="text-sm text-red-700">
+            {error}
+          </p>
+        )}
+        <button
+          type="submit"
+          disabled={submitting}
+          aria-busy={submitting}
+          className="w-full rounded-md bg-espresso px-5 py-2 text-sm font-medium text-ivory transition-opacity hover:opacity-80 disabled:opacity-50"
+        >
+          {submitting ? "Signing in…" : "Sign in"}
+        </button>
+      </form>
+    </div>
   );
 }

@@ -17,5 +17,11 @@ ADMIN_PASSWORD="ChooseAStrongPassword123!"
 # Email Service (Optional - used for password resets and agent claim notifications)
 RESEND_API_KEY=""
 
+# Google OAuth (Optional - enables "Continue with Google" on login/register)
+# Create a client at https://console.cloud.google.com/apis/credentials
+# Authorized redirect URI: <BETTER_AUTH_URL>/api/auth/callback/google
+GOOGLE_CLIENT_ID=""
+GOOGLE_CLIENT_SECRET=""
+
 # Analytics (Optional)
 NEXT_PUBLIC_PLAUSIBLE_DOMAIN="monoes.me"
