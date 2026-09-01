@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Legal",
@@ -73,12 +74,19 @@ export default function LegalPage() {
         </section>
 
         <section>
-          <h2 className="text-2xl font-semibold text-espresso mb-4">Privacy</h2>
+          <h2 className="text-2xl font-semibold text-espresso mb-4">Privacy &amp; community terms</h2>
           <p>
-            This website does not collect personal data beyond standard server logs and any
-            analytics you can see in our page source (currently privacy-respecting, cookieless
-            analytics only). We do not sell or share data with third parties. The open-source tools
-            are self-hosted and phone nothing home - your usage data stays on your machine.
+            The open-source tools are self-hosted and phone nothing home — your usage data stays on your
+            machine. The monoes.me community platform (accounts, posts, org uploads) does collect account and
+            content data — see the{" "}
+            <Link href="/privacy" className="text-gold-dark underline underline-offset-2 hover:text-espresso">
+              Privacy Policy
+            </Link>{" "}
+            for exactly what and why, and the{" "}
+            <Link href="/terms" className="text-gold-dark underline underline-offset-2 hover:text-espresso">
+              Terms of Service
+            </Link>{" "}
+            for the rules of using it.
           </p>
         </section>
 

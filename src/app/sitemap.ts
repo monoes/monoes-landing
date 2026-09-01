@@ -16,6 +16,8 @@ const staticRoutes: MetadataRoute.Sitemap = [
   { url: `${BASE_URL}/about`, changeFrequency: "yearly", priority: 0.5, lastModified: new Date() },
   { url: `${BASE_URL}/security`, changeFrequency: "yearly", priority: 0.5, lastModified: new Date() },
   { url: `${BASE_URL}/legal`, changeFrequency: "yearly", priority: 0.3, lastModified: new Date() },
+  { url: `${BASE_URL}/privacy`, changeFrequency: "yearly", priority: 0.3, lastModified: new Date() },
+  { url: `${BASE_URL}/terms`, changeFrequency: "yearly", priority: 0.3, lastModified: new Date() },
   { url: `${BASE_URL}/projects/monomind`, changeFrequency: "monthly", priority: 0.8, lastModified: new Date() },
   { url: `${BASE_URL}/projects/mono-agent`, changeFrequency: "monthly", priority: 0.8, lastModified: new Date() },
   { url: `${BASE_URL}/projects/mono-clip`, changeFrequency: "monthly", priority: 0.7, lastModified: new Date() },
