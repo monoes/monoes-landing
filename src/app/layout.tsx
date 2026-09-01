@@ -4,6 +4,13 @@ import { WebMcpRegistration } from "@/components/WebMcpRegistration";
 import "@/styles/globals.css";
 
 const SITE_URL = "https://monoes.me";
+// GA4 measurement IDs aren't secret — they're visible in every page's client
+// bundle and network requests regardless — so this is hardcoded rather than
+// routed through a NEXT_PUBLIC_* env var. (NEXT_PUBLIC_PLAUSIBLE_DOMAIN below
+// went through exactly that env-var path and, as a result, was never actually
+// set anywhere real — not in .dev.vars, not in CI — so Plausible has silently
+// never loaded in production.)
+const GA_MEASUREMENT_ID = "G-6XTPLKPLFD";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -70,6 +77,13 @@ export default function RootLayout({
             src="https://plausible.io/js/script.js"
           />
         )}
+        <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`} />
+        <script
+          id="ga4-init"
+          dangerouslySetInnerHTML={{
+            __html: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${GA_MEASUREMENT_ID}');`,
+          }}
+        />
       </body>
     </html>
   );

@@ -86,13 +86,36 @@ export default function PrivacyPage() {
               <strong className="text-espresso">Plausible Analytics</strong> — privacy-respecting, cookieless
               page-view analytics. No cross-site tracking, no personal identifiers.
             </li>
+            <li>
+              <strong className="text-espresso">Google Analytics</strong> — page-view and usage analytics.
+              Unlike Plausible, it sets its own cookies and is governed by{" "}
+              <a
+                href="https://policies.google.com/privacy"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gold-dark underline underline-offset-2 hover:text-espresso"
+              >
+                Google&apos;s privacy policy
+              </a>
+              . You can opt out with the{" "}
+              <a
+                href="https://tools.google.com/dlpage/gaoptout"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gold-dark underline underline-offset-2 hover:text-espresso"
+              >
+                Google Analytics Opt-out Browser Add-on
+              </a>
+              .
+            </li>
           </ul>
         </section>
 
         <section>
           <h2 className="text-2xl font-semibold text-espresso mb-4">Cookies</h2>
           <p>
-            One session cookie, used to keep you signed in. No third-party advertising or tracking cookies.
+            A session cookie to keep you signed in, plus cookies set by Google Analytics (see above). No
+            third-party advertising cookies.
           </p>
         </section>
 
