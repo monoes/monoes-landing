@@ -1,6 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const PUBLIC_PATHS = new Set(["/community", "/community/login", "/community/register"]);
+const PUBLIC_PATHS = new Set([
+  "/community",
+  "/community/login",
+  "/community/register",
+  "/community/forgot-password",
+  "/community/reset-password",
+]);
 // Better Auth prefixes the cookie with "__Secure-" whenever the connection is
 // https (production), but not over plain http (local dev) — clear both names
 // since we can't know which one is active without importing better-auth's

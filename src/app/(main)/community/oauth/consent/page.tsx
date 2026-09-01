@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function OAuthConsentPage() {
   return (
-    <main className="flex min-h-[70vh] items-center justify-center bg-ivory-warm px-8 py-16">
+    <main className="flex min-h-[70vh] items-center justify-center bg-ivory-warm px-8 pt-24 pb-16">
       <Suspense>
         <OAuthConsentForm />
       </Suspense>

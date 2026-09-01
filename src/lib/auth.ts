@@ -6,7 +6,7 @@ import { eq } from "drizzle-orm";
 import { getDb, type Db } from "@/lib/db";
 import * as schema from "@/lib/db/schema";
 
-export const OAUTH_SCOPES = ["openid", "profile", "email", "community:read", "community:write"] as const;
+export const OAUTH_SCOPES = ["openid", "profile", "email", "community:read", "community:write", "offline_access"] as const;
 
 export function getAuth(db: Db = getDb()) {
   const { BETTER_AUTH_SECRET: sec, BETTER_AUTH_URL: url } = process.env;
@@ -16,6 +16,25 @@ export function getAuth(db: Db = getDb()) {
       enabled: true,
       requireEmailVerification: false,
       minPasswordLength: 8,
+      sendResetPassword: async ({ user, url }) => {
+        try {
+          await fetch("https://api.resend.com/emails", {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              from: "monoes.me <noreply@monoes.me>",
+              to: user.email,
+              subject: "Reset your monoes.me password",
+              text: `We received a request to reset your password.\n\nReset it here: ${url}\n\nThis link expires in 1 hour. If you didn't request this, ignore this email.`,
+            }),
+          });
+        } catch (error) {
+          console.error("Failed to send reset password email", error);
+        }
+      },
     },
     plugins: [
       jwt(),
@@ -58,5 +77,10 @@ export function getAuth(db: Db = getDb()) {
     // always sets BETTER_AUTH_URL; this fallback only ever applies to local
     // dev / CI, where it was previously unset without consequence.
     baseURL: url ?? "http://localhost:3000",
+    // The site is reachable at both the apex and "www" host (see wrangler.toml
+    // routes), but better-auth only trusts the single configured baseURL by
+    // default — requests from the other host were being rejected outright
+    // with INVALID_ORIGIN before a credential check ever ran.
+    trustedOrigins: ["https://monoes.me", "https://www.monoes.me"],
   });
 }

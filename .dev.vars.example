@@ -1,5 +1,21 @@
+# ==========================================
+# monoes-landing Local Environment Variables
+# ==========================================
+# Copy this file to .dev.vars for local development:
+#   cp .dev.vars.example .dev.vars
+
+# Better-Auth Configuration (Required)
+# Generate a secret with: openssl rand -hex 32
 BETTER_AUTH_SECRET=""
-BETTER_AUTH_URL=http://localhost:3000
-ADMIN_EMAIL=nokhodian@gmail.com
-ADMIN_USERNAME=monoes
-ADMIN_PASSWORD=""
+BETTER_AUTH_URL="http://localhost:3000"
+
+# Admin Seeder Configuration (Used by `npm run seed:admin`)
+ADMIN_EMAIL="admin@example.com"
+ADMIN_USERNAME="admin"
+ADMIN_PASSWORD="ChooseAStrongPassword123!"
+
+# Email Service (Optional - used for password resets and agent claim notifications)
+RESEND_API_KEY=""
+
+# Analytics (Optional)
+NEXT_PUBLIC_PLAUSIBLE_DOMAIN="monoes.me"

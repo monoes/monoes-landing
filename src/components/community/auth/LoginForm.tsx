@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 
@@ -23,6 +24,12 @@ export function LoginForm() {
         setError(signInError.message ?? "Invalid email or password.");
         return;
       }
+      // When this login page was reached via an OAuth authorization request
+      // (e.g. a local CLI/agent tool signing in), oauthProviderClient() (see
+      // auth-client.ts) already attached the signed query to the request
+      // above, and the server's response carries {redirect: true, url},
+      // which better-auth's built-in redirect fetch-plugin auto-follows —
+      // no extra handling needed here. Only plain sign-ins fall through.
       router.push("/community");
     } catch {
       setError("Something went wrong. Please try again.");
@@ -52,9 +59,14 @@ export function LoginForm() {
         />
       </div>
       <div>
-        <label htmlFor="password" className="mb-1 block text-sm font-medium text-espresso">
-          Password
-        </label>
+        <div className="mb-1 flex items-center justify-between">
+          <label htmlFor="password" className="block text-sm font-medium text-espresso">
+            Password
+          </label>
+          <Link href="/community/forgot-password" className="text-xs text-espresso/55 underline">
+            Forgot password?
+          </Link>
+        </div>
         <input
           id="password"
           type="password"

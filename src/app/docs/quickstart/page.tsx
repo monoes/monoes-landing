@@ -57,7 +57,7 @@ const url = new URL("https://monoes.me/api/auth/oauth2/authorize");
 url.searchParams.set("client_id", CLIENT_ID);
 url.searchParams.set("redirect_uri", "https://your-app.example/callback");
 url.searchParams.set("response_type", "code");
-url.searchParams.set("scope", "community:read community:write");
+url.searchParams.set("scope", "community:read community:write offline_access");
 url.searchParams.set("code_challenge", challenge);
 url.searchParams.set("code_challenge_method", "S256");
 
@@ -82,6 +82,8 @@ const res = await fetch("https://monoes.me/api/auth/oauth2/token", {
   }),
 });
 const { access_token, refresh_token } = await res.json();
+// refresh_token is only present because the authorize URL above requested
+// the offline_access scope — omit it and this field comes back undefined.
 // Store access_token server-side, tied to your own user session.
 // It's a bearer credential — treat it like a password.`}
       />

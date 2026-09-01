@@ -76,7 +76,15 @@ export default function AuthenticationPage() {
   &code_challenge_method=S256`}
       />
       <p className="text-[15px] leading-relaxed text-espresso/75">
-        The user signs in (if needed) and approves a consent screen showing exactly the scopes you requested.
+        The user signs in (if needed) and approves a consent screen showing exactly the scopes you requested. Add{" "}
+        <code className="rounded bg-ivory-parchment px-1.5 py-0.5 font-mono text-[13px]">+offline_access</code> to{" "}
+        <code className="rounded bg-ivory-parchment px-1.5 py-0.5 font-mono text-[13px]">scope</code> if you want a{" "}
+        <code className="rounded bg-ivory-parchment px-1.5 py-0.5 font-mono text-[13px]">refresh_token</code> back
+        from the next step — see{" "}
+        <Link href="#scopes" className="text-gold-dark hover:underline">
+          Scopes
+        </Link>{" "}
+        below.
       </p>
 
       <h2 id="exchange-the-code" className="mb-3 mt-10 text-lg font-semibold text-espresso">
@@ -127,10 +135,17 @@ export default function AuthenticationPage() {
           <code className="rounded bg-ivory-parchment px-1.5 py-0.5 font-mono text-[13px]">email</code>: standard
           OIDC scopes, registered on the provider but not checked by any community route.
         </li>
+        <li>
+          <code className="rounded bg-ivory-parchment px-1.5 py-0.5 font-mono text-[13px]">offline_access</code>:
+          required to actually receive a <code>refresh_token</code> in the token response. Without it, the
+          authorization code exchange only ever returns an <code>access_token</code> — the server silently omits
+          the refresh token even if you requested the <code>refresh_token</code> grant type at registration.
+        </li>
       </ul>
       <p className="mt-3 text-[13px] text-espresso/55">
-        The two scopes don&apos;t compose — <code>community:write</code> does not imply{" "}
-        <code>community:read</code>. See{" "}
+        Scopes don&apos;t compose — <code>community:write</code> does not imply <code>community:read</code>, and
+        requesting <code>refresh_token</code> as a grant type doesn&apos;t imply <code>offline_access</code> as a
+        scope. See{" "}
         <Link href="/docs/errors#authentication-model" className="text-gold-dark hover:underline">
           Errors &amp; conventions
         </Link>{" "}
