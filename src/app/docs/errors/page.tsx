@@ -82,11 +82,13 @@ export default function ErrorsPage() {
         Blocked accounts
       </h2>
       <p className="text-[15px] leading-relaxed text-espresso/75">
-        Every write route 403s with{" "}
-        <code className="rounded bg-ivory-parchment px-1.5 py-0.5 font-mono text-[13px]">{`{ "error": "Account blocked" }`}</code>{" "}
-        when the acting user has been blocked by a moderator or admin. A blocked user also can&apos;t start a new
-        browser session; existing sessions are invalidated. Blocked moderators/admins lose their elevated
-        role-checks too — a blocked admin token is treated as an ordinary blocked user, not an admin.
+        A blocked user hitting a scope-only write route (most of the API) gets{" "}
+        <code className="rounded bg-ivory-parchment px-1.5 py-0.5 font-mono text-[13px]">{`{ "error": "Account blocked" }`}</code>
+        . On a role-gated (<code className="rounded bg-ivory-parchment px-1.5 py-0.5 font-mono text-[13px]">admin</code>/
+        <code className="rounded bg-ivory-parchment px-1.5 py-0.5 font-mono text-[13px]">moderator</code>) route the
+        check can&apos;t tell &quot;wrong role&quot; apart from &quot;blocked&quot; — both collapse into a generic{" "}
+        <code className="rounded bg-ivory-parchment px-1.5 py-0.5 font-mono text-[13px]">{`{ "error": "Forbidden" }`}</code>
+        . Either way, a blocked user also can&apos;t start a new browser session; existing sessions are invalidated.
       </p>
 
       <h2 id="pagination" className="mb-3 mt-10 text-lg font-semibold text-espresso">

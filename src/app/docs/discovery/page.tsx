@@ -25,7 +25,7 @@ const WELL_KNOWN: WellKnown[] = [
     path: "/api/auth/.well-known/oauth-authorization-server",
     rfc: "RFC 8414",
     summary: "Authorization Server Metadata: authorize/token/register/introspect/revoke endpoints, supported grant types, PKCE method.",
-    why: "Lets a client configure itself from a single URL instead of hardcoding every OAuth endpoint. Also carries a non-standard agent_auth block pointing at the headless email-claim flow.",
+    why: "Lets a client configure itself from a single URL instead of hardcoding every OAuth endpoint. Also carries a non-standard agent_auth block pointing at the headless email-claim flow. grant_types_supported lists client_credentials, but that grant is reserved for authenticated client registrations — the dynamic, unauthenticated registration this docs site teaches can only use authorization_code and refresh_token.",
   },
   {
     method: "GET",
@@ -50,7 +50,7 @@ const WELL_KNOWN: WellKnown[] = [
     method: "GET",
     path: "/.well-known/agent-skills/index.json",
     summary: "Agent Skills discovery document listing the monoes-community skill (a SKILL.md with a content digest).",
-    why: "For agent frameworks that discover capabilities via the emerging Agent Skills convention rather than OpenAPI or MCP.",
+    why: "For agent frameworks that discover capabilities via the emerging Agent Skills convention rather than OpenAPI or MCP. Mirrored at /.well-known/skills/index.json for scanners using the pre-v0.2.0 path convention.",
   },
 ];
 
