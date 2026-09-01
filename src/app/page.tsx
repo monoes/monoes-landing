@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { gsap } from 'gsap';
+import { Footer } from '@/components/layout/Footer';
 import './landing.css';
 
 declare global {
@@ -1356,6 +1357,7 @@ export default function LandingPage() {
         </section>
 
       </div>{/* /#snapWrap */}
+      <Footer />
     </>
   );
 }

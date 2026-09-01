@@ -34,6 +34,8 @@ const footerSections = [
       { label: "GitHub", href: "https://github.com/monoes", external: true },
       { label: "Community", href: "/community" },
       { label: "Legal", href: "/legal" },
+      { label: "Privacy", href: "/privacy" },
+      { label: "Terms", href: "/terms" },
     ],
   },
 ];
