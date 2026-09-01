@@ -57,6 +57,12 @@
   -ms-overflow-style: none;
 }
 #snapWrap::-webkit-scrollbar { display: none; }
+/* The footer isn't a full-height slide, but with scroll-snap-type: y
+   mandatory it still needs to be a valid snap point of its own —
+   otherwise a mandatory snap has nowhere to land past the last slide
+   and springs back to #slide-close's start, making the footer
+   unreachable by scrolling even though it's the next element in flow. */
+#snapWrap > footer { scroll-snap-align: start; }
 
 /* ═══════════════════════════════════════════════════
    SLIDE BASE

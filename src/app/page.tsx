@@ -1354,8 +1354,9 @@ export default function LandingPage() {
               </div>
             </div>
           </div>
-          <Footer />
         </section>
+
+        <Footer />
 
       </div>{/* /#snapWrap */}
     </>
