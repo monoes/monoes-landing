@@ -907,7 +907,7 @@ export default function LandingPage() {
               <div className="slide-in">
                 <div className="hero-kicker">
                   <span className="hero-kicker-dot"></span>
-                  Open source · Apache-2.0 License · v2.9.2
+                  Open source · Apache-2.0 License · v2.10.11
                 </div>
                 <h1 className="hero-headline">
                   Not a copilot.<br />
@@ -1350,7 +1350,7 @@ export default function LandingPage() {
                 <span className="oss-pill">BYOK from zero</span>
                 <span className="oss-pill">No usage caps</span>
                 <span className="oss-pill">TypeScript</span>
-                <span className="oss-pill">v2.9.2</span>
+                <span className="oss-pill">v2.10.11</span>
               </div>
             </div>
           </div>

@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 const accent = "#C8A97E";
 
 const heroStats = [
-  { value: "73", label: "Node Types" },
+  { value: "90+", label: "Node Types" },
   { value: "52K+", label: "Lines of Go" },
   { value: "6", label: "Social Platforms" },
   { value: "40+", label: "DB Tables" },
@@ -184,14 +184,14 @@ export default function MonoAgentArchitecturePage() {
         <div className="mx-auto max-w-6xl">
           <div className="inline-block mb-6 text-xs font-semibold uppercase tracking-label px-3 py-1 rounded-full border"
             style={{ color: accent, borderColor: `${accent}40`, background: `${accent}10` }}>
-            Go 1.25 · Rod CDP · DAG Engine
+            Go 1.26.0 · Rod CDP · DAG Engine
           </div>
           <h1 className="text-5xl md:text-6xl lg:text-7xl font-semibold text-espresso tracking-tight leading-none mb-6">
             How <span style={{ color: accent }}>Mono Agent</span>
             <br />Orchestrates Workflows
           </h1>
           <p className="text-lg md:text-xl text-espresso/55 font-light leading-relaxed max-w-2xl mb-16">
-            52K+ lines of Go. A DAG workflow engine with 73 node types, Rod browser automation across 6 social platforms, multi-provider AI, and a Wails desktop UI.
+            52K+ lines of Go. A DAG workflow engine with 90+ node types, Rod browser automation across 6 social platforms, multi-provider AI, and a Wails desktop UI.
           </p>
           <div className="inline-flex flex-wrap gap-px overflow-hidden rounded-xl border border-espresso/10 bg-espresso/5">
             {heroStats.map(({ value, label }) => (
@@ -392,7 +392,7 @@ export default function MonoAgentArchitecturePage() {
       <section id="nodes" className="px-8 py-20 bg-ivory-warm border-b border-ivory-linen">
         <div className="mx-auto max-w-6xl">
           <p className="text-xs uppercase tracking-label font-semibold mb-3" style={{ color: accent }}>Node Registry</p>
-          <h2 className="text-3xl md:text-4xl font-semibold text-espresso mb-4">73 Node Types</h2>
+          <h2 className="text-3xl md:text-4xl font-semibold text-espresso mb-4">90+ Node Types</h2>
           <p className="text-espresso/55 font-light leading-relaxed max-w-2xl mb-12">
             Every node registers with NodeTypeRegistry → factory function mapping. Each loads its JSON Schema from workflow/schemas/. Plugins can register new types at runtime without recompiling.
           </p>
@@ -524,7 +524,7 @@ export default function MonoAgentArchitecturePage() {
 
       <footer className="border-t border-ivory-linen bg-ivory-parchment px-8 py-10 text-center">
         <p className="text-xs text-espresso/35">
-          Mono Agent · Go 1.25 · Rod · Wails · Architecture 2026-04-15 ·{" "}
+          Mono Agent · Go 1.26.0 · Rod · Wails · Architecture 2026-09-04 ·{" "}
           <Link href="/projects/mono-agent" className="hover:text-espresso/60 transition-colors">← Back to Mono Agent</Link>
         </p>
       </footer>

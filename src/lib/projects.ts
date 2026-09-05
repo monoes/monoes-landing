@@ -79,7 +79,7 @@ export const projects: Project[] = [
     install: [
       {
         command: "npm install -g monomind",
-        output: "✓ Monomind installed (@monoes/monomindcli v2.9.2)",
+        output: "✓ Monomind installed (@monoes/monomindcli v2.10.11)",
       },
       {
         command: "npm install -g @monoes/monomindcli",
@@ -97,7 +97,7 @@ export const projects: Project[] = [
     slug: "mono-agent",
     tagline: "n8n meets Playwright. Self-hosted, multi-profile automation.",
     description:
-      "70+ workflow nodes. Stealth Chrome via Rod. Multi-profile isolation. A production-grade automation platform with a visual DAG editor, real browser automation, AI integrations, and Human-in-Loop controls. Fully self-hosted, zero cloud.",
+      "90+ workflow nodes. Stealth Chrome via Rod. Multi-profile isolation. A production-grade automation platform with a visual DAG editor, real browser automation, AI integrations, and Human-in-Loop controls. Fully self-hosted, zero cloud.",
     repo: "monoes/mono-agent",
     language: "Go",
     accent: "#C8A97E",
@@ -105,7 +105,7 @@ export const projects: Project[] = [
     features: [
       {
         icon: "⚡",
-        title: "70+ Workflow Nodes",
+        title: "90+ Workflow Nodes",
         description:
           "DAG-based execution across triggers, browser, AI, social, image, and data nodes.",
       },
@@ -154,7 +154,7 @@ export const projects: Project[] = [
     cli: {
       binary: "monoagentcli",
       intro:
-        "70+ commands for scripting social actions, browser automation, workflow execution, and AI-powered content generation. Every command accepts --profile <name> to scope all data to a fully isolated workspace.",
+        "90+ commands for scripting social actions, browser automation, workflow execution, and AI-powered content generation. Every command accepts --profile <name> to scope all data to a fully isolated workspace.",
       aiNote:
         "Wire mono-agent into any AI pipeline: define a workflow in JSON, import it, schedule it with cron, and pipe structured output to the next step. The --profile flag lets multiple AI agents operate in parallel without touching each other's data.",
       groups: [
@@ -181,7 +181,7 @@ export const projects: Project[] = [
         },
         {
           title: "Node Execution",
-          description: "Run any of the 70+ node types directly from the CLI.",
+          description: "Run any of the 90+ node types directly from the CLI.",
           commands: [
             "monoagentcli node list",
             "monoagentcli node run \\",
@@ -321,7 +321,7 @@ export const projects: Project[] = [
             "",
             "# Available MCP tools:",
             "# list_clips · add_clip · get_clip",
-            "# remove_clip · pin_clip",
+            "# remove_clip · pin_clip · unpin_clip",
             "# list_folders · create_folder · delete_folder",
           ],
         },
