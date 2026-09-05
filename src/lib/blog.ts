@@ -51,6 +51,432 @@ export interface BlogPost {
 }
 
 export const BLOG_POSTS: BlogPost[] = [
+  // --- CONTENT OPS RUN 2026-09-05: cross-product story + first posts for mono-agent/mono-clip ---
+  {
+    slug: "agent-exec-protocol-v1",
+    title: "Agent Exec Protocol v1: When Two Products Ship the Same Integration on the Same Day",
+    subtitle: "How monomind 2.10.0 introduced Agent Exec Protocol server-side and mono-agent 0.31.0 adopted it client-side—same day release with public spec, Go client, and golden fixtures",
+    excerpt: "On August 25, 2026, monomind released Agent Exec Protocol v1, a public subprocess contract exposing its agent runtime to external callers. The same day, mono-agent shipped 0.31.0 adopting it as its sole AI delegation path. This is the story of a real cross-product integration.",
+    date: "August 25, 2026",
+    readTime: "7 min read",
+    featured: true,
+    tags: ["Architecture", "Cross-Product", "monomind", "mono-agent", "Integration"],
+    author: {
+      name: "Monoes Team",
+      role: "Monomind Core",
+      avatar: "/images/monkey/welcoming-arms.png",
+    },
+    coverImage: {
+      src: "/images/blog/gemini_1788597011_0.png",
+      alt: "Two products releasing same-day integration - monomind and mono-agent connected via Agent Exec Protocol",
+      caption: "August 25, 2026: monomind 2.10.0 shipped Agent Exec Protocol v1 server-side, mono-agent 0.31.0 adopted it client-side, same day.",
+    },
+    content: {
+      introduction: [
+        "Most cross-product integrations are announced months after the work is done, once both sides have shipped and the integration is safely in production. The Agent Exec Protocol v1 story is different: on August 25, 2026, monomind released version 2.10.0 introducing Agent Exec Protocol server-side, and mono-agent released version 0.31.0 adopting it client-side as its sole AI delegation path—the same day, with a public spec, a Go client implementation, and golden test fixtures.",
+        "This isn't a conceptual integration or a future roadmap item. It's a real, working subprocess contract that went live simultaneously across both products. This post walks through what the protocol actually is, how it works, and what same-day cross-product delivery required.",
+      ],
+      sections: [
+        {
+          id: "what-is-agent-exec-protocol",
+          heading: "1. What Agent Exec Protocol Actually Is",
+          subheading: "A versioned subprocess contract exposing monomind's AgentRunner engine to external callers",
+          paragraphs: [
+            "Agent Exec Protocol v1 is a public, versioned subprocess contract that exposes monomind's AgentRunner engine—13 local agent CLI runners including Claude Code, Aider, OpenHands, and others—to external callers via stable NDJSON streams over stdio. It's documented in doc/agent-exec-protocol.md (294 lines, revision 4 as of the v2.10.0 release) and shipped with six golden test fixtures in doc/agent-exec-protocol/fixtures/ as contract-testing artifacts.",
+            "The protocol's surface is deliberately minimal: monomind agent exec --runtime <id> --prompt <text> for one-shot agent turns over NDJSON stdout, monomind agent scan --json for parallel runner detection across all installed agent CLIs, and monomind --version --json for capability handshake (declaring agent-exec, agent-scan, and org-json-v1 capabilities). The protocol version is 1, and it requires monomind 2.10.0 or later.",
+            "Beyond agent execution, monomind 2.10.0 added --format json to existing org commands and introduced monomind org events --ndjson [--follow] [--since] to live-tail the org event bus (bus.jsonl) as NDJSON. The agent exec surface also supports --tools-file for bridging JSON-Schema tool definitions to caller-side handlers over stdio, making it possible for an external caller to extend an agent's tooling without modifying monomind's internals.",
+          ],
+          image: {
+            src: "/images/blog/gemini_1788597012_0.png",
+            alt: "Protocol handshake diagram showing monomind subprocess communicating with mono-agent via NDJSON over stdio",
+            caption: "Agent Exec Protocol: monomind exposes its AgentRunner engine via NDJSON streams over subprocess stdio, with capability handshake and error codes.",
+          },
+          codeBlock: {
+            filename: "terminal",
+            language: "bash",
+            code: `# Capability handshake - what does this monomind install support?
+monomind --version --json
+# {"v": 1, "version": "2.10.0", "capabilities": ["agent-exec", "agent-scan", "org-json-v1"]}
+
+# Scan for available agent runtimes
+monomind agent scan --json
+# [{"id": "claude", "installed": true, "binary": "/usr/local/bin/claude", ...}, ...]
+
+# Execute a one-shot agent turn over NDJSON stdout
+monomind agent exec --runtime claude --prompt "What files changed in the last commit?"
+# {"type": "start", ...}
+# {"type": "session", ...}
+# {"type": "assistant", "text": "Let me check the git log...", ...}
+# {"type": "result", "output": "...", ...}
+# {"type": "done", "stop_reason": "end_turn", ...}`,
+          },
+          keyTakeaways: [
+            "Agent Exec Protocol v1 exposes monomind's 13 agent CLI runners via NDJSON over subprocess stdio (source: doc/agent-exec-protocol.md rev 4, 294 lines)",
+            "Protocol spec with golden fixtures in doc/agent-exec-protocol/fixtures/ (6 NDJSON test files: bad-frame, cancel, fatal-auth, success, timeout, tool-loop)",
+            "Three core commands: agent exec (run a turn), agent scan (detect runtimes), --version --json (capability handshake)",
+            "--tools-file bridges JSON-Schema tool definitions to caller-side handlers, enabling external tool extension",
+          ],
+        },
+        {
+          id: "same-day-adoption",
+          heading: "2. Same-Day Adoption: mono-agent 0.31.0",
+          subheading: "2,364 lines added in commit 83aee33, implementing the protocol as mono-agent's sole AI delegation path",
+          paragraphs: [
+            "mono-agent v0.31.0, released August 25, 2026 at 21:37:32 UTC (same day as monomind 2.10.0's 21:22:43 UTC release), adopted Agent Exec Protocol v1 as its sole AI delegation path. The implementation landed in commit 83aee33 (2026-08-25 10:43:47+02:00), titled 'feat(monomind): Phase 1 — delegate AI chat to local agent runtimes via monomind', adding +2,364 lines including a 179-line protocol type layer in internal/monomind/types.go, CLI commands, and Wails bindings.",
+            "The commit message explicitly states: 'Implements the Phase-1 gate of docs/plans/local-agent-monomind-delegation.md against monomind 2.10.0's Agent Exec Protocol v1.' The protocol type layer at internal/monomind/types.go (179 lines) defines the contract's structured event types, error codes, and tool specs. The full internal/monomind/ directory implementation (1,357 lines of production Go code) includes the discovery ladder (checking MONOMIND_BIN environment variable, then PATH, then npm global/local roots), capability handshake with actionable install errors, subprocess NDJSON event stream parsing, and bidirectional stdio tool bridge via --tools-file.",
+            "What makes this adoption notable is the exclusivity: mono-agent never learns the wire formats of individual agent CLIs (Claude Code's JSON-RPC, Aider's message format, etc.)—it only speaks Agent Exec Protocol. The entire client implementation is devoted to one contract: protocol handshake, event parsing (start, session, assistant, tool_call, tool_result, usage, result, error, done per protocol §3.2), error-code handling (auth, quota, missing-binary, no-runner, budget, runner-error, timeout, cancelled, bad-frame per §3.4), and tool-schema bridging per §4.1.",
+          ],
+          image: {
+            src: "/images/blog/gemini_1788597013_0.png",
+            alt: "NDJSON event stream showing protocol event types flowing from monomind to mono-agent",
+            caption: "Protocol events (start, session, assistant, tool_call, usage, result, done) flow as NDJSON over subprocess stdio—mono-agent parses them without knowing individual agent CLI wire formats.",
+          },
+          quote: {
+            text: "mono-agent never learns agent-CLI wire formats—only this protocol. The internal/monomind/ client (1,357 LOC production code, 179-line type layer) is a pure protocol implementation: discovery, handshake, NDJSON event stream, bidirectional stdio tool bridge.",
+            author: "mono-agent commit 83aee33 implementation",
+          },
+          keyTakeaways: [
+            "mono-agent v0.31.0 (Aug 25, 2026, 21:37:32 UTC) adopted Agent Exec Protocol as its sole AI delegation path (source: commit 83aee33, CHANGELOG.md)",
+            "Commit 83aee33 added +2,364 lines: 179-line protocol type layer (internal/monomind/types.go), full client (1,357 LOC production Go), CLI commands, Wails bindings",
+            "Protocol type layer defines structured event types (§3.2), error codes (§3.4), tool specs (§4.1); discovery ladder (MONOMIND_BIN → PATH → npm roots)",
+            "mono-agent never learns individual agent CLI wire formats—only Agent Exec Protocol (source: internal/monomind/types.go:1-6, commit message)",
+          ],
+        },
+        {
+          id: "what-same-day-required",
+          heading: "3. What Same-Day Cross-Product Delivery Actually Required",
+          subheading: "Public spec, golden fixtures, and a contract-first integration pattern",
+          paragraphs: [
+            "Shipping a cross-product integration on the same day isn't a coordination accident—it requires deliberate contract design. The Agent Exec Protocol v1 spec (doc/agent-exec-protocol.md, rev 4, 294 lines) is a public, versioned document that both products build against. The six golden fixtures in doc/agent-exec-protocol/fixtures/ are executable contract tests: concrete NDJSON sequences (bad-frame, cancel, fatal-auth, success, timeout, tool-loop) representing success cases, error cases, and edge cases that both the server-side (monomind) and client-side (mono-agent) implementations must handle identically.",
+            "The protocol's error handling is not advisory—it's structural. When monomind's agent exec encounters an error, it emits a {\"type\": \"error\", \"code\": \"<error-code>\", \"message\": \"...\", \"fatal\": true|false} event per §3.4, and mono-agent's Go client (internal/monomind/types.go) parses that into a typed ProtocolError with Code, Message, Fatal, and ExitCode fields. Error codes like missing-binary, no-runner, quota, and auth map to actionable install hints that mono-agent surfaces to users without hard-coding agent-CLI-specific messages.",
+            "The integration is also forward-compatible by design: monomind's --version --json handshake returns a capabilities array (agent-exec, agent-scan, org-json-v1 as of 2.10.0), and mono-agent checks for required capabilities before attempting execution. If a future monomind version introduces agent-exec-v2 or a new capability, mono-agent's handshake can gracefully detect it and either adopt the new feature or fail with a clear version-mismatch error instead of a cryptic subprocess crash.",
+          ],
+          image: {
+            src: "/images/blog/gemini_1788597014_0.png",
+            alt: "Go client implementation showing discovery ladder, capability handshake, and error handling",
+            caption: "mono-agent's Go client: discovery ladder (MONOMIND_BIN → PATH → npm), capability handshake, typed error handling with actionable install hints.",
+          },
+          codeBlock: {
+            filename: "internal/monomind/types.go (mono-agent)",
+            language: "go",
+            code: `// Agent Exec Protocol v1/rev 4 - protocol version and capabilities
+const ProtocolVersion = 1
+const MinMonomindVersion = "2.10.0"
+var RequiredCapabilities = []string{"agent-exec", "agent-scan", "org-json-v1"}
+
+// Event types per §3.2 (179-line type layer defines full contract)
+type Event struct {
+    V    int    \`json:"v"\`
+    Type string \`json:"type"\` // start, session, assistant, tool_call, result, done, error
+    // ... event-specific fields
+}
+
+// Error codes per §3.4
+type ProtocolError struct {
+    Code     string \`json:"code"\`     // auth, quota, missing-binary, no-runner, ...
+    Message  string \`json:"message"\`
+    Fatal    bool   \`json:"fatal"\`
+    ExitCode int    \`json:"exit_code,omitempty"\`
+}`,
+          },
+          keyTakeaways: [
+            "Public spec (doc/agent-exec-protocol.md rev 4, 294 lines) + golden fixtures (6 NDJSON files) = contract-first integration",
+            "Typed error handling: monomind emits {\"type\": \"error\", \"code\": \"...\"}, mono-agent parses into ProtocolError with actionable install hints",
+            "Forward-compatible handshake: --version --json returns capabilities array; mono-agent checks for required capabilities before exec",
+            "Same-day release: monomind 2.10.0 (Aug 25, 21:22:43 UTC) server-side, mono-agent 0.31.0 (Aug 25, 21:37:32 UTC) client-side",
+          ],
+        },
+      ],
+      conclusion: [
+        "Agent Exec Protocol v1 is not a future integration roadmap or a conceptual API—it's a working, versioned subprocess contract that shipped simultaneously across monomind 2.10.0 and mono-agent 0.31.0 on August 25, 2026. The public spec (doc/agent-exec-protocol.md rev 4, 294 lines), golden fixtures (6 NDJSON test files), and a 179-line protocol type layer in mono-agent's internal/monomind/types.go prove it's a real, contract-first integration, not a coordination accident.",
+        "What makes this integration pattern work is the deliberate contract design: typed events, structured error codes, capability handshake, and forward compatibility built in from day one. mono-agent never learns individual agent CLI wire formats—it only speaks this protocol, which means monomind's 13 agent runners (Claude Code, Aider, OpenHands, and more) are available to mono-agent as a stable abstraction, not a collection of bespoke integrations.",
+        "Both monomind and mono-agent are open source. The protocol spec is in monomind's repository at doc/agent-exec-protocol.md, and mono-agent's Go client implementation is at internal/monomind/types.go.",
+      ],
+    },
+  },
+  {
+    slug: "introducing-mono-agent",
+    title: "Introducing mono-agent: A Local-First n8n Alternative in a Single Go Binary",
+    subtitle: "121 releases in 6 months, human-in-loop as a platform primitive, encrypted secrets vault, MCP server, REST API, and Linux/arm64 support—mono-agent is a visual workflow automation platform with zero CGO and no Docker required",
+    excerpt: "mono-agent is a local-first workflow automation platform: 90+ built-in node types, embedded SQLite, browser automation via Chrome extension, human-in-loop approvals, encrypted secrets vault, and first-class AI agent access through an MCP server—all in a single Go binary with zero CGO.",
+    date: "September 5, 2026",
+    readTime: "9 min read",
+    featured: true,
+    tags: ["Release", "mono-agent", "Workflows", "Local-First"],
+    author: {
+      name: "Monoes Team",
+      role: "mono-agent Core",
+      avatar: "/images/monkey/welcoming-arms.png",
+    },
+    coverImage: {
+      src: "/images/blog/gemini_1788597021_0.png",
+      alt: "Visual workflow canvas editor showing DAG execution with multiple node types",
+      caption: "mono-agent: a local-first workflow automation platform with 90+ built-in node types, zero CGO, and human-in-loop as a platform primitive.",
+    },
+    content: {
+      introduction: [
+        "Most workflow automation platforms are either cloud SaaS products that require uploading your data to their servers, or self-hosted Docker stacks with heavy infrastructure dependencies. mono-agent is neither: it's a single static Go binary (zero CGO, no Docker, no Node.js runtime) with an embedded SQLite database, 90+ built-in node types, a visual canvas editor (Wails desktop GUI), and a 70+-command CLI with JSON output everywhere.",
+        "Born March 3, 2026, mono-agent shipped 121 tagged releases across 6 months, culminating in v0.37.0 (September 4, 2026) with Linux/arm64 support. This post walks through the product's major milestones: human-in-loop as a platform primitive (v0.8.0), encrypted secrets vault (v0.20.0), Agent Exec Protocol adoption (v0.31.0), trust & hygiene hardening (v0.32.0), REST HTTP API (v0.33.0-v0.35.0), and cross-platform release artifacts.",
+      ],
+      sections: [
+        {
+          id: "human-in-loop-platform-primitive",
+          heading: "1. Human-in-Loop as a Platform Primitive (v0.8.0, July 2026)",
+          subheading: "Durable DB-backed queue, edit-before-approve, optional timeout with auto-reject",
+          paragraphs: [
+            "Most workflow tools treat human approval as an afterthought—a notification webhook or a Slack message. mono-agent makes it a first-class platform primitive: the core.human_in_loop node, introduced in v0.8.0 (July 2026, commit 84a2fc4 dated 2026-07-02), is a durable, DB-backed queue where workflows pause execution and wait for a human to review and approve (or reject) before continuing.",
+            "The node supports two modes: readonly fields (display context the user can't change as an array of field names) and editable fields (the user can modify values before approving, also as an array). It also supports optional timeout_minutes with automatic rejection: if a human doesn't respond within the configured duration, the workflow continues with a rejection status instead of hanging indefinitely. Approvals are handled via CLI (monoagentcli hil list / hil approve <id>) or the GUI review panel (documented in README:142-148).",
+            "What makes this a platform primitive rather than a one-off feature is that human-in-loop is a node type like any other—it can be wired into any workflow, composed with conditional branches (on_error: error_branch routes approval rejections to a fallback path), and logged in the same execution history as every other node. The approval itself is a real pause in the workflow's state machine, not a fire-and-forget webhook that hopes someone is listening.",
+          ],
+          image: {
+            src: "/images/blog/gemini_1788597022_0.png",
+            alt: "Human-in-loop approval queue showing pending reviews in CLI and GUI",
+            caption: "core.human_in_loop node: durable DB-backed queue, edit-before-approve, timeout with auto-reject—approve via CLI (hil approve) or GUI review panel.",
+          },
+          codeBlock: {
+            filename: "workflow-with-human-approval.json",
+            language: "json",
+            code: `{
+  "nodes": [
+    {
+      "id": "send-invoice",
+      "type": "service.stripe",
+      "action": "create_invoice",
+      "config": { "customer_id": "{{customer.id}}", "amount": "{{invoice.total}}" }
+    },
+    {
+      "id": "approval-gate",
+      "type": "core.human_in_loop",
+      "config": {
+        "readonly_fields": ["customer", "amount"],
+        "editable_fields": ["send_date"],
+        "timeout_minutes": 60
+      },
+      "on_error": "error_branch"
+    },
+    {
+      "id": "send-email",
+      "type": "service.gmail",
+      "action": "send_email",
+      "depends_on": ["approval-gate"]
+    }
+  ]
+}`,
+          },
+          keyTakeaways: [
+            "core.human_in_loop introduced in v0.8.0 (July 2026, commit 84a2fc4 dated 2026-07-02) as a platform primitive, not an afterthought",
+            "Durable DB-backed queue: workflows genuinely pause until monoagentcli hil approve <id> or GUI review panel approves/rejects",
+            "Supports readonly/editable field arrays, timeout_minutes with automatic rejection after timeout, and on_error: error_branch for rejection routing",
+            "Human-in-loop is a node type like any other—composable, logged, and part of the workflow's state machine (source: README:142-148)",
+          ],
+        },
+        {
+          id: "encrypted-secrets-vault",
+          heading: "2. Encrypted Secrets Vault (v0.20.0, July 13, 2026)",
+          subheading: "17 commits in one day: AES-256-GCM, OS keychain, auto-migration, @secret:<name> resolution",
+          paragraphs: [
+            "v0.20.0 (July 13, 2026) shipped a complete encrypted secrets vault in a single day: 17 commits between 17:12 and 19:37 local time (+02:00 timezone, ending at 17:37:37 UTC). The vault uses AES-256-GCM for encryption (commit 67cb605), stores the key-encryption-key (KEK) in OS keychain via go-keyring (macOS Keychain, Windows Credential Manager, Linux Secret Service per commit a207b63), and wraps data-encryption-keys (DEKs) with the KEK (commit 9415688).",
+            "The CRUD surface landed in commit ab2509a: vault_secrets.Add / DecryptEntry / List / Delete, with a CLI (monoagentcli secret add/list/rm/update per commit 224e173) and stdin support for --value (commit c0b6125). Integration was immediate: commit 9c7ace0 auto-migrated plaintext connections.data on every CLI/GUI startup, commit 151f43c added the Vault page in the GUI, and commit 7c91a65 enabled @secret:<name> resolution in workflow node configs, with commit 377efd9 caching KEK/DEK in memory instead of re-fetching per call.",
+            "The design spec is documented at docs/superpowers/specs/2026-07-13-secrets-vault-design.md (referenced in SECURITY.md:52). As of v0.32.0's security hardening (August-September 2026), the file-based keyring fallback (MONOAGENT_ALLOW_FILE_KEYRING=1) wraps the KEK with AES-256-GCM under an argon2id-derived key from an operator passphrase read via stdin only, never CLI flag or env var (SECURITY.md:61-96).",
+          ],
+          image: {
+            src: "/images/blog/gemini_1788597023_0.png",
+            alt: "Encrypted secrets vault architecture showing OS keychain integration and AES-256-GCM encryption",
+            caption: "Encrypted Secrets Vault: AES-256-GCM crypto core, KEK in OS keychain (macOS Keychain, Windows Credential Manager, Linux Secret Service), DEK lifecycle, @secret:<name> resolution in workflows.",
+          },
+          quote: {
+            text: "17 commits on 2026-07-13 (17:12 to 19:37 local time, ending 17:37:37 UTC): AES-256-GCM core, OS keyring, CRUD, CLI, auto-migrate plaintext connections, Vault GUI, @secret:<name> workflow resolution. A complete encrypted vault in one day.",
+            author: "mono-agent git log v0.19.0..v0.20.0",
+          },
+          keyTakeaways: [
+            "v0.20.0 (July 13, 2026) shipped encrypted secrets vault in 17 commits in one day (source: git log v0.19.0..v0.20.0)",
+            "AES-256-GCM crypto (commit 67cb605), KEK in OS keychain via go-keyring (a207b63), DEK wrapped by KEK (9415688)",
+            "Auto-migrated plaintext connections.data on startup (commit 9c7ace0); @secret:<name> resolves in workflow node configs (commit 7c91a65), KEK/DEK cached (377efd9)",
+            "File-keyring fallback (v0.32.0+) wraps KEK with argon2id-derived key from stdin passphrase, never CLI flag (SECURITY.md:61-96)",
+          ],
+        },
+        {
+          id: "trust-hygiene-rest-api",
+          heading: "3. Trust & Hygiene Hardening, REST API, and Linux/arm64 (v0.32.0-v0.37.0)",
+          subheading: "MIT license, CI, governance, REST HTTP API in 3 releases (1h 37m), Linux/arm64 support",
+          paragraphs: [
+            "v0.32.0 (September 1, 2026) was a trust and hygiene release: commit b8e6da0 (Aug 29, 00:25:52) titled 'Harden local-first platform: license, CI, agent tooling, opt-in social build' added LICENSE (MIT, 21 lines per CHANGELOG.md:75-76), SECURITY.md (416 lines total), CONTRIBUTING.md, and CHANGELOG.md itself (follows Keep a Changelog format per CHANGELOG.md:5). CI infrastructure landed with .github/workflows/ci.yml: build, vet, race-enabled tests in default + social build modes, with release pipeline gated on tests passing (CHANGELOG.md:229).",
+            "The release included four review waves (commits b8e6da0, b4dcfd3, 45546a3, e939192) and remediation commit 772b3bc (Sept 1, 12:10) addressing findings MA-01, 03, 04, 05, 06, 09, 11, 13, 14. Key fixes: social bots moved behind opt-in social build tag (CHANGELOG.md:67, 143-144), MCP server for AI agents (stdio JSON-RPC 2.0 at cmd/monoagentcli/mcp.go, 11 tools: workflow_list/get/validate/run/status, node_list/schema, hil_list/approve/reject, docs per CHANGELOG.md:82-83), CLI agent-experience tooling (workflow run --json / --dry-run / --no-wait, workflow validate, node schema per CHANGELOG.md:83-91), sandbox resource caps (HTTP bodies 64 MB, core.code 30s timeout, system.execute_command 10 MB per channel per CHANGELOG.md:94-100), and assistant tools explicit opt-in (chat --tools monoagent, off by default, vault tools return metadata only per CHANGELOG.md:129-136, SECURITY.md:37-38).",
+            "v0.33.0-v0.35.0 (all September 1, 2026, 1h 37m span from 14:55:16 to 16:32:41) completed the REST HTTP API for external agents: v0.33.0 (commit ac61a77) foundation, v0.35.0 (commit 54af9b5) closed gaps with real e2e test + OpenAPI validation + reference API docs (issue #20). The HTTP API is launched with monoagentcli httpapi. v0.37.0 (September 4, 12:05:11) shipped Linux/arm64 binary (commit 08fb4c5) and webkit2gtk-4.1 compatibility for the Wails GUI (commit 54e2fb8).",
+          ],
+          image: {
+            src: "/images/blog/gemini_1788597024_0.png",
+            alt: "REST API documentation showing endpoints for workflows, secrets, and execution",
+            caption: "REST HTTP API (v0.33.0-v0.35.0, Sept 1, 2026): read/mutating surface for external agents, OpenAPI validation, real e2e tests—3 releases in 1h 37m.",
+          },
+          codeBlock: {
+            filename: "terminal",
+            language: "bash",
+            code: `# CLI agent-experience tooling (v0.32.0+)
+monoagentcli workflow run my-workflow --json --dry-run  # preview execution plan
+monoagentcli workflow run my-workflow --no-wait          # fire-and-forget, exit 0 immediately
+monoagentcli workflow validate my-workflow.json          # validate before run
+monoagentcli node schema service.stripe                  # inspect node schema (75 of 110 types)
+
+# MCP server for AI agents (stdio JSON-RPC 2.0, 11 tools)
+monoagentcli mcp  # workflow_list/get/validate/run/status, node_list/schema, hil_list/approve/reject, docs
+
+# REST HTTP API (v0.33.0-v0.35.0, launched with dedicated command)
+monoagentcli httpapi  # starts HTTP API server for external agents`,
+          },
+          keyTakeaways: [
+            "v0.32.0 (Sept 1, 2026): MIT license, SECURITY.md (416 lines), CI (.github/workflows/ci.yml), 4 review waves + remediation (source: CHANGELOG.md:8-191)",
+            "MCP server (cmd/monoagentcli/mcp.go, stdio JSON-RPC 2.0): 11 tools including workflow_list/get/validate/run/status, node_list/schema, hil_list/approve/reject, docs",
+            "REST HTTP API: v0.33.0-v0.35.0 (Sept 1, 14:55-16:32, 1h 37m)—read/mutating surface via monoagentcli httpapi, OpenAPI validation, e2e tests (issue #20)",
+            "v0.37.0 (Sept 4, 2026): Linux/arm64 binary (commit 08fb4c5), webkit2gtk-4.1 Wails GUI support (commit 54e2fb8)",
+          ],
+        },
+        {
+          id: "whats-next",
+          heading: "4. What mono-agent Actually Is Today",
+          subheading: "90+ node types, zero CGO, three interfaces, cross-platform, and 121 releases in 6 months",
+          paragraphs: [
+            "As of v0.37.0 (September 4, 2026), mono-agent is a single static Go binary (zero CGO, no Docker, no Node.js runtime) with 90+ built-in node types (150 with -tags social opt-in build): services like GitHub, Google (Sheets/Gmail/Drive), Stripe, Salesforce, HubSpot, Jira, Linear, Notion, Airtable; databases, HTTP, data transforms; and comms like Gmail, Outlook, Slack, Telegram, Discord (source: README:24).",
+            "The workflow engine is a DAG executor with Kahn topological sort cycle detection, template expressions {{variable.path}} with dot notation, per-node on_error semantics (stop, continue, skip, error_branch), honest run statuses (partial failures surface as SUCCESS_WITH_ERRORS, never green), and webhook/cron/manual triggers. Hybrid storage: JSON workflow files + SQLite, with full execution history (source: README:24, 132-138).",
+            "Three interfaces: visual canvas editor (Wails desktop GUI), 70+-command CLI with JSON output everywhere, and built-in MCP server for AI agent safe operation (source: README:26). Browser automation via bundled Chrome extension bridge to drive logged-in sessions (social platform nodes opt-in via -tags social per README:28-29). All data stays on machine; crash reports default to local files under ~/.monoagent/crashes/, filing to GitHub requires MONOAGENT_CRASH_REPORT=1 and monomind CLI on PATH (CHANGELOG.md:148-150).",
+            "Release cadence: first commit March 3, 2026 (2026-03-03T00:26:17+01:00); first release (v0.1.0 annotated tag) April 2, 2026 (2026-04-02T16:13:53+02:00); v0.37.0 September 4, 2026—121 tagged versions across 6 months. Notable bursts: v0.33.0-v0.35.0 (3 releases in 1h 37m), v0.20.0 (17-commit vault in 1 day), v0.31.0-v0.37.0 (7 major releases in 10 days) (source: git tag -l, git log).",
+          ],
+          image: {
+            src: "/images/blog/gemini_1788597025_0.png",
+            alt: "Cross-platform release artifacts showing Linux arm64, macOS, Windows binaries",
+            caption: "v0.37.0 (Sept 4, 2026): Linux/arm64 + webkit2gtk-4.1 support. Single static Go binary, zero CGO, no Docker—runs on macOS, Windows, Linux x64/arm64.",
+          },
+          keyTakeaways: [
+            "90+ built-in node types (150 with -tags social); zero CGO, no Docker, no Node.js runtime (source: README:24-25)",
+            "Three interfaces: Wails GUI (visual canvas), 70+-command CLI (JSON everywhere), MCP server (11 tools for AI agents) (README:26)",
+            "121 tagged releases from March 3 to Sept 4, 2026 (6 months)—velocity story, not vaporware (source: git tag -l, git log)",
+            "mono-agent is open source; usage policy at docs/USAGE_POLICY.md (own accounts only, approval gates, platform ToS apply per README:34-42)",
+          ],
+        },
+      ],
+      conclusion: [
+        "mono-agent isn't a future roadmap or a conceptual prototype—it's a shipping product with 121 tagged releases across 6 months, live integrations (Agent Exec Protocol adoption v0.31.0 same day as monomind 2.10.0), and production-ready trust features (MIT license, SECURITY.md, CI, encrypted vault, MCP server, REST API). The velocity is real: v0.20.0 shipped a complete encrypted vault in 17 commits in one day, v0.33.0-v0.35.0 shipped a REST API in 3 releases over 1h 37m, and v0.32.0 hardened the platform with four review waves and 9 security remediations.",
+        "What makes mono-agent different from cloud workflow platforms is the local-first posture: single static Go binary, zero CGO, embedded SQLite, no Docker, no telemetry, all data stays on your machine. What makes it different from self-hosted n8n is the deployment simplicity: download one binary, run it, no Node.js runtime or container orchestration required.",
+        "mono-agent is open source. The repository is at github.com/monoes/mono-agent, the usage policy is at docs/USAGE_POLICY.md, and the full architectural docs are in the docs/ directory.",
+      ],
+    },
+  },
+  {
+    slug: "introducing-monoclip",
+    title: "MonoClip: The Clipboard Manager That Speaks MCP",
+    subtitle: "AI-native clipboard manager with mclip CLI + MCP server, cross-platform (macOS/Windows/Linux with Wayland), Tauri 2, and monomind crash reporting integration",
+    excerpt: "MonoClip is an AI-native clipboard manager: mclip CLI for any AI, mclip mcp for Claude Desktop/Cursor/Windsurf, cross-platform (macOS/Windows/Linux with Wayland support), fully automatic updates, and Tauri 2 for small binaries and fast startup.",
+    date: "September 5, 2026",
+    readTime: "6 min read",
+    featured: false,
+    tags: ["Release", "mono-clip", "AI Integration", "MCP"],
+    author: {
+      name: "Monoes Team",
+      role: "mono-clip Core",
+      avatar: "/images/monkey/welcoming-arms.png",
+    },
+    coverImage: {
+      src: "/images/blog/gemini_1788597031_0.png",
+      alt: "MonoClip UI showing grid of clipboard items with thumbnails and AI integration",
+      caption: "MonoClip: AI-native clipboard manager with mclip CLI, MCP server, and cross-platform support (macOS/Windows/Linux with Wayland).",
+    },
+    content: {
+      introduction: [
+        "Most clipboard managers are either platform-locked utilities or heavy Electron apps. MonoClip is different: it's an AI-native clipboard manager built with Tauri 2 (README states roughly 8 MB binary, 30 MB RAM, sub-200ms startup compared to typical Electron apps), with a mclip CLI that generates markdown context for any AI and a mclip mcp MCP server for Claude Desktop, Cursor, and Windsurf.",
+        "Starting as a macOS-only app (v0.1.0), MonoClip evolved to full cross-platform support: Windows (v0.2.10), Linux (v0.2.12) with Wayland support via XDG Desktop Portal. This post walks through the product's evolution: v0.2.0's AI integration (mclip context + mclip mcp with 8 tools), cross-platform journey, v0.2.9's fully automatic updates, and v0.2.12's monomind crash reporting integration.",
+      ],
+      sections: [
+        {
+          id: "ai-native-clipboard",
+          heading: "1. AI-Native from Day One: mclip context and mclip mcp (v0.2.0)",
+          subheading: "CLI for markdown context blocks, MCP server with 8 tools for Claude Desktop/Cursor/Windsurf",
+          paragraphs: [
+            "v0.2.0 introduced mclip CLI bundled with the app, installing to ~/.local/bin with commands for list, add, remove, pin, unpin, and folder operations (commit 6c734f0 'feat: add mclip CLI bundled with the app'). The same release added AI integration via commit 4e9b2ed 'feat: add mclip context and mclip mcp for AI integration': mclip context generates a markdown context block for any AI (not just MCP-compatible ones), and mclip mcp runs a JSON-RPC stdio MCP server with 8 tools.",
+            "The 8 MCP tools (documented in README:262-292, verified in src-tauri/src/bin/mclip.rs:433-675) are: list_clips, add_clip, get_clip, remove_clip, pin_clip (boolean parameter covers pin/unpin), list_folders, create_folder, delete_folder. This makes MonoClip among the first Monoes products with native MCP support. Integration is documented with setup instructions for Claude Desktop, Cursor, and Windsurf—each editor's MCP config points to mclip mcp as a stdio server.",
+            "The CLI implementation is at src-tauri/src/bin/mclip.rs (currently 831 lines). Beyond text, v0.2.0 also added image and file clipboard support via commit 83ea5f6 'feat: add image and file/folder clipboard support + reliability fixes', documented in README:51-52: 'Copy an image—see the thumbnail. Copy a file or folder in Finder—get the full path.'",
+          ],
+          image: {
+            src: "/images/blog/gemini_1788597032_0.png",
+            alt: "mclip CLI and MCP server integration diagram showing connection to Claude Desktop, Cursor, Windsurf",
+            caption: "mclip CLI (markdown context for any AI) + mclip mcp (JSON-RPC stdio MCP server with 8 tools for Claude Desktop/Cursor/Windsurf)—v0.2.0.",
+          },
+          codeBlock: {
+            filename: "terminal",
+            language: "bash",
+            code: `# Generate markdown context block for any AI (not MCP-specific)
+mclip context
+
+# Run MCP server (stdio JSON-RPC) for Claude Desktop/Cursor/Windsurf
+mclip mcp
+
+# CLI commands: list, add, remove, pin, folders
+mclip list --limit 10
+mclip add "text to save"
+mclip pin <clip-id>
+mclip folder create "AI Prompts"`,
+          },
+          keyTakeaways: [
+            "v0.2.0: mclip CLI + mclip context (markdown for any AI) + mclip mcp (MCP server) (source: commits 6c734f0, 4e9b2ed)",
+            "8 MCP tools: list_clips, add_clip, get_clip, remove_clip, pin_clip (boolean covers pin/unpin), list_folders, create_folder, delete_folder (README:262-292, mclip.rs:433-675)",
+            "Among the first Monoes products with native MCP support—integrates with Claude Desktop, Cursor, Windsurf",
+            "Image and file clipboard support: thumbnails for images, full paths for files/folders (commit 83ea5f6, README:51-52)",
+          ],
+        },
+        {
+          id: "cross-platform-evolution",
+          heading: "2. Cross-Platform Evolution: macOS → Windows → Linux with Wayland",
+          subheading: "Windows support (v0.2.10), Linux with Wayland via XDG Desktop Portal (v0.2.12)",
+          paragraphs: [
+            "MonoClip started macOS-only: v0.1.0 shipped only for Apple Silicon (aarch64.dmg per gh release asset list). v0.2.10 added Windows support via commit 9a239fc 'feat: add Windows release target and cross-platform build support', with full implementation in commit 90e58be: HOME → USERPROFILE fallback for DB/images/crash reports, Win32 SendInput for Ctrl+V auto-paste and Ctrl+C selection capture, mclip installs to %USERPROFILE%\\.monoclip\\bin + user PATH via registry, platform-aware UI (Ctrl vs Cmd shortcuts), and updater picking .exe/.msi assets.",
+            "v0.2.12 brought Linux support via commit a5f3824 'feat: add Linux release support (AppImage, deb, rpm)' with all three bundle formats for x86_64 (AppImage self-updates; deb/rpm point to release page). The same release added Wayland global shortcuts via commit cd52078 'fix: make master shortcut changes take effect live, add Wayland support': XDG Desktop Portal GlobalShortcuts interface via ashpd library (src-tauri/src/shortcuts/portal.rs:18, Cargo.toml shows ashpd 0.13), requiring compositor backend support (GNOME 48+, KDE Plasma 6.4+ documented in README:136-137; COSMIC not yet supported). X11 path unchanged via tauri-plugin-global-shortcut. Known limitation: folder shortcuts still X11-only (README:136-137).",
+            "Cross-platform clipboard specifics: macOS uses NSPasteboard changeCount polling (reliability fixed in v0.2.7/v0.2.8 via commits 7ffa94f, 52e25d4); Windows uses Win32 SendInput for auto-paste and Ctrl+C for selection capture; Linux X11 works fully, Wayland master shortcut via XDG portal (folder shortcuts X11-only), no auto-paste (user must Ctrl+V manually). Linux system deps documented at README:153-159.",
+          ],
+          image: {
+            src: "/images/blog/gemini_1788597033_0.png",
+            alt: "Cross-platform evolution timeline showing macOS, Windows, Linux with Wayland support",
+            caption: "Platform evolution: macOS-only (v0.1.0) → Windows (v0.2.10) → Linux with Wayland (v0.2.12).",
+          },
+          quote: {
+            text: "Wayland support via XDG Desktop Portal GlobalShortcuts (ashpd)—requires GNOME 48+, KDE Plasma 6.4+; COSMIC not yet supported. Folder shortcuts still X11-only. We're being explicit about the gaps.",
+            author: "README:136-137",
+          },
+          keyTakeaways: [
+            "v0.1.0: macOS-only (Apple Silicon aarch64.dmg) (source: gh release asset list)",
+            "v0.2.10: Windows support (commit 9a239fc)—USERPROFILE fallback, Win32 SendInput, registry PATH, .exe/.msi updater",
+            "v0.2.12: Linux (AppImage/deb/rpm for x86_64, commit a5f3824) + Wayland (XDG Portal GlobalShortcuts via ashpd, commit cd52078)",
+            "Wayland limitation: GNOME 48+, KDE Plasma 6.4+ required; folder shortcuts X11-only; COSMIC not supported (README:136-137)",
+          ],
+        },
+        {
+          id: "automatic-updates-and-reliability",
+          heading: "3. Fully Automatic Updates and Cross-Product Integration",
+          subheading: "Zero-touch updates (v0.2.9), monomind crash reporting (v0.2.12), and critical reliability fixes",
+          paragraphs: [
+            "v0.2.9 introduced fully automatic updates via commit 061359a 'feat: fully automatic update—download, install, relaunch without user intervention'. The updater supports both Homebrew and direct-install paths, downloads the DMG, mounts it, copies to /Applications, unmounts, and relaunches—showing progress toasts to the user but requiring no manual steps.",
+            "v0.2.12 added monomind integration for crash reporting via commit f27dc43 'feat: auto-report uncaught panics as GitHub issues'. The panic hook implementation at src-tauri/src/crash_report.rs (110 lines, registered from lib.rs) attempts to shell out to monomind report-crash --repo monoes/mono-clip --title <title> --body <body>, trying monomind on PATH first with a 20-second timeout, then falling back to npx -y monomind report-crash, and finally saving crashes to ~/.monoclip/crashes/{timestamp}.md locally if monomind isn't installed—no data leaves the machine without monomind present. The real implementation uses std::env::var_os(\"HOME\").or_else(|| USERPROFILE) for cross-platform path handling, not literal tilde expansion.",
+            "Earlier reliability fixes were critical for clipboard capture: v0.2.7 rewrote NSPasteboard changeCount handling via commit 7ffa94f 'fix: reliable clipboard capture using NSPasteboard changeCount', and v0.2.8 prevented watcher thread death via commit 52e25d4 'fix: prevent watcher thread death causing permanent clipboard capture loss'. v0.2.13 (current version) fixed a critical mclip executable issue: commit 3c70ca1 'fix: mclip shipped non-executable in every release bundle'—the bundled mclip binary was 644 (not executable) in all prior Unix releases because the build step creates a 644 placeholder, then cp preserves destination mode. Fixed with explicit chmod +x after copy, affecting all platforms (macOS, Linux)—v0.2.12 and earlier had broken mclip.",
+          ],
+          image: {
+            src: "/images/blog/gemini_1788597034_0.png",
+            alt: "monomind crash reporting integration showing panic hook and fallback to local crash files",
+            caption: "monomind crash reporting (v0.2.12): panic hook → monomind report-crash (if on PATH) → npx fallback → local ~/.monoclip/crashes/*.md if monomind absent.",
+          },
+          keyTakeaways: [
+            "v0.2.9: Fully automatic updates—download, install, relaunch without user intervention (commit 061359a)",
+            "v0.2.12: monomind crash reporting integration (commit f27dc43, src-tauri/src/crash_report.rs 110 lines)—monomind on PATH → npx fallback → local file if absent",
+            "Critical reliability fixes: v0.2.7 NSPasteboard changeCount (commit 7ffa94f), v0.2.8 watcher thread death prevention (commit 52e25d4)",
+            "v0.2.13: Fixed mclip non-executable in all prior Unix releases (commit 3c70ca1)—v0.2.12 and earlier had broken mclip",
+          ],
+        },
+      ],
+      conclusion: [
+        "MonoClip isn't a future roadmap or a platform-locked niche tool—it's a shipping, cross-platform, AI-native clipboard manager with 15 tagged releases. The evolution is real: macOS-only (v0.1.0) → Windows support (v0.2.10) → Linux with Wayland (v0.2.12), with AI integration (mclip CLI + MCP server with 8 tools) shipping in v0.2.0 and monomind crash reporting integration in v0.2.12.",
+        "The honest gaps: Wayland support requires GNOME 48+ or KDE Plasma 6.4+ (COSMIC not yet supported), folder shortcuts are still X11-only on Linux, and Linux has no auto-paste (user must Ctrl+V manually). v0.2.13 fixed a critical bug where mclip shipped non-executable in all prior Unix releases—so v0.2.12 and earlier had broken CLI on macOS/Linux.",
+        "MonoClip is built with Tauri 2: README states roughly 8 MB binary vs typical 150 MB Electron, 30 MB RAM vs 300 MB, sub-200ms startup vs typical 2s. Tech stack: Svelte 5 (runes) + Vite + Tailwind CSS 3 frontend, Rust backend, SQLite (rusqlite, WAL mode), tauri-plugin-clipboard-manager, tauri-plugin-global-shortcut, tauri-plugin-autostart (README:295-322). Repository at github.com/monoes/mono-clip.",
+      ],
+    },
+  },
+
   // --- GRAPH ENGINEERING DEEP DIVE (Andrew Ng playbook adaptation) ---
   {
     slug: "graph-engineering-multi-agent-systems",
