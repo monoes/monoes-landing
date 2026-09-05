@@ -8,6 +8,7 @@ const CSP = [
   "img-src 'self' data: https://www.google-analytics.com",
   "font-src 'self'",
   "connect-src 'self' https://plausible.io https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com",
+  "frame-src https://cal.com",
   "frame-ancestors 'none'",
   "base-uri 'self'",
   "form-action 'self'",
