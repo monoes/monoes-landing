@@ -37,7 +37,7 @@ export default function MonomindPage() {
       "Open-source autonomous AI agent orchestration with persistent memory, self-coordinating agent orgs, and a codebase knowledge graph.",
     url: "https://monoes.me/projects/monomind",
     downloadUrl: "https://github.com/monoes/monomind",
-    softwareVersion: "2.9.2",
+    softwareVersion: "2.10.11",
     applicationSubCategory: "AI Agent Orchestration",
     license: "https://www.apache.org/licenses/LICENSE-2.0",
     author: {

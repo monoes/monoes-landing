@@ -7,7 +7,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "MonoClip: Your clipboard, with a memory",
   description:
-    "Native macOS clipboard manager with AI integration via MCP server. 8MB binary, ~30MB RAM, blazing-fast search across your entire clip history.",
+    "Cross-platform clipboard manager (macOS, Windows, Linux) with AI integration via MCP server. ~8MB binary, ~30MB RAM, blazing-fast search across your entire clip history.",
   alternates: { canonical: "/projects/mono-clip" },
 };
 
@@ -20,14 +20,14 @@ export default function MonoClipPage() {
     "@type": "SoftwareApplication",
     name: "MonoClip",
     applicationCategory: "UtilitiesApplication",
-    operatingSystem: "macOS",
+    operatingSystem: "macOS, Windows, Linux",
     offers: {
       "@type": "Offer",
       price: "0",
       priceCurrency: "USD",
     },
     description:
-      "Native macOS clipboard manager with AI integration via MCP server. 8MB binary, ~30MB RAM, blazing-fast search across your entire clip history.",
+      "Cross-platform clipboard manager (macOS, Windows, Linux) with AI integration via MCP server. ~8MB binary, ~30MB RAM, blazing-fast search across your entire clip history.",
     url: "https://monoes.me/projects/mono-clip",
     downloadUrl: "https://github.com/monoes/mono-clip",
     applicationSubCategory: "Clipboard Manager",

@@ -229,7 +229,7 @@ export const projects: Project[] = [
     slug: "mono-clip",
     tagline: "Your clipboard, with a memory",
     description:
-      "Native macOS. AI-ready. 8MB binary. A blazing-fast clipboard manager that lives in your menu bar with AI integration via MCP server.",
+      "Cross-platform (macOS, Windows, Linux). AI-ready. ~8MB binary. A blazing-fast clipboard manager that lives in your menu bar with AI integration via MCP server.",
     repo: "monoes/mono-clip",
     language: "Rust",
     accent: "#B8956A",

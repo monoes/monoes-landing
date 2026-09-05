@@ -7,7 +7,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Mono Agent: Self-hosted browser & workflow automation",
   description:
-    "n8n meets Playwright. 70+ workflow nodes, stealth Chrome via Rod, multi-profile isolation, and a visual DAG editor. Fully self-hosted, zero cloud.",
+    "n8n meets Playwright. 90+ workflow nodes, stealth Chrome via Rod, multi-profile isolation, and a visual DAG editor. Fully self-hosted, zero cloud.",
   alternates: { canonical: "/projects/mono-agent" },
 };
 
@@ -27,11 +27,11 @@ export default function MonoAgentPage() {
       priceCurrency: "USD",
     },
     description:
-      "Self-hosted browser and workflow automation. 70+ workflow nodes, stealth Chrome via Rod, multi-profile isolation, and a visual DAG editor.",
+      "Self-hosted browser and workflow automation. 90+ workflow nodes, stealth Chrome via Rod, multi-profile isolation, and a visual DAG editor.",
     url: "https://monoes.me/projects/mono-agent",
     downloadUrl: "https://github.com/monoes/mono-agent",
     applicationSubCategory: "Workflow Automation",
-    license: "https://www.apache.org/licenses/LICENSE-2.0",
+    license: "https://opensource.org/licenses/MIT",
     author: {
       "@type": "Organization",
       name: "Monoes",
