@@ -1,16 +1,24 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { RunFile } from "./OrgDetail";
 import { RunFileViewer } from "./RunFileViewer";
 
 export function OutputPreviewModal({ file, onClose }: { file: RunFile; onClose: () => void }) {
   const panelRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const [copied, setCopied] = useState(false);
   const newTabHref =
     file.fileType === "html"
       ? `/api/community/org-run-files/${file.id}`
       : `/community/org-run-files/${file.id}`;
+  const shareHref = `/community/org-run-files/${file.id}`;
+
+  async function handleCopyLink() {
+    await navigator.clipboard.writeText(`${window.location.origin}${shareHref}`);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
+  }
 
   useEffect(() => {
     closeButtonRef.current?.focus();
@@ -62,6 +70,22 @@ export function OutputPreviewModal({ file, onClose }: { file: RunFile; onClose: 
             {file.filename}
           </p>
           <div className="flex shrink-0 items-center gap-1">
+            <button
+              type="button"
+              onClick={handleCopyLink}
+              className="flex items-center gap-1.5 rounded px-2 py-1.5 text-xs font-medium text-espresso/70 hover:bg-ivory-linen hover:text-espresso"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="none" className="h-4 w-4">
+                <path
+                  d="M8.5 11.5 11.5 8.5M9 6l.94-.94a3 3 0 0 1 4.24 4.24L13 10.5M11 14l-.94.94a3 3 0 0 1-4.24-4.24L7 9.5"
+                  stroke="currentColor"
+                  strokeWidth="1.4"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+              {copied ? "Copied" : "Copy link"}
+            </button>
             <a
               href={newTabHref}
               target="_blank"
