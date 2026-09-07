@@ -81,6 +81,28 @@ describe("community middleware", () => {
     assert.equal(res.status, 200);
   });
 
+  it("allows logged-out visitors through to the org gallery", async () => {
+    getSessionMock.mock.mockImplementationOnce(async () => null);
+    const req = new NextRequest("http://localhost/community/orgs");
+    const res = await runMiddleware(req, getSessionMock);
+    assert.equal(res.status, 200);
+  });
+
+  it("allows logged-out visitors through to an org's view page", async () => {
+    getSessionMock.mock.mockImplementationOnce(async () => null);
+    const req = new NextRequest("http://localhost/community/orgs/abc-123");
+    const res = await runMiddleware(req, getSessionMock);
+    assert.equal(res.status, 200);
+  });
+
+  it("still redirects logged-out visitors away from an org's /edit page", async () => {
+    getSessionMock.mock.mockImplementationOnce(async () => null);
+    const req = new NextRequest("http://localhost/community/orgs/abc-123/edit");
+    const res = await runMiddleware(req, getSessionMock);
+    assert.equal(res.status, 307);
+    assert.match(res.headers.get("location") ?? "", /\/community\/login$/);
+  });
+
   it("exports `middleware` with exactly one parameter, matching Next.js's (request, event) call signature", () => {
     // Regression guard: Next.js invokes middleware as `middleware(request, event)`.
     // If `getSession` ever moves back onto `middleware` itself as a second

@@ -17,6 +17,10 @@ export function RunUploadForm({
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
+  if (!currentUsername) {
+    return <p className="mb-4 text-sm text-espresso/55">Log in to upload a run.</p>;
+  }
+
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError(null);

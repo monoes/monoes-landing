@@ -41,13 +41,26 @@ const defaultGetSession: GetSession = async (args) => {
 // `middleware(request, event)` — a second, non-optional NextFetchEvent
 // argument — which would silently clobber a `getSession` default parameter
 // if it lived directly on `middleware` itself.
+// The org gallery and an individual org's view page (not /edit or deeper)
+// are public content, same as /community/u/<username> profiles - readable
+// without an account so they're actually crawlable and link-preview-able.
+// Mutating actions (upload, vote, comment, delete, edit) still require auth,
+// enforced independently by their own API routes regardless of this gate.
+function isPublicOrgViewPath(pathname: string): boolean {
+  return pathname === "/community/orgs" || /^\/community\/orgs\/[^/]+$/.test(pathname);
+}
+
 export async function runMiddleware(
   request: NextRequest,
   getSession: GetSession = defaultGetSession,
 ) {
   const { pathname } = request.nextUrl;
 
-  if (PUBLIC_PATHS.has(pathname) || pathname.startsWith("/community/u/")) {
+  if (
+    PUBLIC_PATHS.has(pathname) ||
+    pathname.startsWith("/community/u/") ||
+    isPublicOrgViewPath(pathname)
+  ) {
     return NextResponse.next();
   }
 
