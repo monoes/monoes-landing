@@ -115,6 +115,35 @@ export function OrgDetail({
     import("@/lib/community/render-markdown").then(({ renderMarkdown }) => setBodyHtml(renderMarkdown(org.body!)));
   }, [org.body]);
 
+  // Deep-link support: ?output=<fileId> opens that file's preview on load, and
+  // opening/closing a file updates the URL (via history.replaceState, not a
+  // Next.js navigation, so it never re-fetches this force-dynamic page) so the
+  // address bar itself is a link that reopens the same output elsewhere.
+  useEffect(() => {
+    const fileId = new URLSearchParams(window.location.search).get("output");
+    if (!fileId) return;
+    for (const run of org.runs) {
+      const file = run.files.find((f) => f.id === fileId);
+      if (file) {
+        setViewingFile(file);
+        setTab("outputs");
+        setExpandedRunIds((prev) => new Set(prev).add(run.id));
+        break;
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- read once on mount, from the initial org.runs
+  }, []);
+
+  function openFile(file: RunFile) {
+    setViewingFile(file);
+    window.history.replaceState(null, "", `${window.location.pathname}?output=${file.id}`);
+  }
+
+  function closeFile() {
+    setViewingFile(null);
+    window.history.replaceState(null, "", window.location.pathname);
+  }
+
   function toggleRunExpanded(runId: string) {
     setExpandedRunIds((prev) => {
       const next = new Set(prev);
@@ -317,7 +346,7 @@ export function OrgDetail({
                         <li key={file.id}>
                           <button
                             type="button"
-                            onClick={() => setViewingFile(file)}
+                            onClick={() => openFile(file)}
                             className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm text-espresso/80 transition-colors hover:bg-ivory-warm hover:text-espresso"
                           >
                             <FileTypeBadge fileType={file.fileType} />
@@ -354,7 +383,7 @@ export function OrgDetail({
       />
 
       {selectedRole && <RoleModal role={toModalRole(selectedRole)} onClose={() => setSelectedRoleId(null)} />}
-      {viewingFile && <OutputPreviewModal file={viewingFile} onClose={() => setViewingFile(null)} />}
+      {viewingFile && <OutputPreviewModal file={viewingFile} onClose={closeFile} />}
     </div>
   );
 }

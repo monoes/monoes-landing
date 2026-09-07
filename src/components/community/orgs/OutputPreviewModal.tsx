@@ -12,10 +12,11 @@ export function OutputPreviewModal({ file, onClose }: { file: RunFile; onClose: 
     file.fileType === "html"
       ? `/api/community/org-run-files/${file.id}`
       : `/community/org-run-files/${file.id}`;
-  const shareHref = `/community/org-run-files/${file.id}`;
 
   async function handleCopyLink() {
-    await navigator.clipboard.writeText(`${window.location.origin}${shareHref}`);
+    // OrgDetail keeps the address bar in sync (?output=<fileId>) whenever this
+    // modal is open, so the current URL is already the right link to copy.
+    await navigator.clipboard.writeText(window.location.href);
     setCopied(true);
     setTimeout(() => setCopied(false), 1500);
   }
