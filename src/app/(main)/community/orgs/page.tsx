@@ -6,8 +6,16 @@ import { orgUpload, user, orgVote } from "@/lib/db/schema";
 import { OrgGallery } from "@/components/community/orgs/OrgGallery";
 
 export const metadata: Metadata = {
-  title: "Org gallery",
+  title: "Org Gallery · Monoes Community",
+  description:
+    "Browse Monomind agent orgs shared by the community: goals, roles, communication topology, and uploaded run outputs.",
   alternates: { canonical: "/community/orgs" },
+  openGraph: {
+    title: "Org Gallery · Monoes Community",
+    description:
+      "Browse Monomind agent orgs shared by the community: goals, roles, communication topology, and uploaded run outputs.",
+    type: "website",
+  },
 };
 
 export const dynamic = "force-dynamic";

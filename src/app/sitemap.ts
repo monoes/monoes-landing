@@ -1,6 +1,12 @@
 import type { MetadataRoute } from "next";
 import { BLOG_POSTS } from "@/lib/blog";
 import { ENDPOINT_GROUPS } from "@/lib/docs/endpoint-registry";
+import { getDb } from "@/lib/db";
+import { orgUpload } from "@/lib/db/schema";
+
+// Org pages are D1-backed and change as runs/comments are added - generate
+// this per-request rather than baking a stale list in at build time.
+export const dynamic = "force-dynamic";
 
 const BASE_URL = "https://monoes.me";
 
@@ -49,6 +55,23 @@ const blogRoutes: MetadataRoute.Sitemap = BLOG_POSTS.map((post) => ({
   lastModified: new Date(post.date),
 }));
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  return [...staticRoutes, ...blogRoutes, ...docsReferenceRoutes];
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const db = getDb();
+  const orgs = await db
+    .select({ id: orgUpload.id, createdAt: orgUpload.createdAt })
+    .from(orgUpload);
+  const orgRoutes: MetadataRoute.Sitemap = orgs.map((o) => ({
+    url: `${BASE_URL}/community/orgs/${o.id}`,
+    changeFrequency: "weekly" as const,
+    priority: 0.4,
+    lastModified: o.createdAt,
+  }));
+
+  return [
+    ...staticRoutes,
+    { url: `${BASE_URL}/community/orgs`, changeFrequency: "weekly", priority: 0.6, lastModified: new Date() },
+    ...orgRoutes,
+    ...blogRoutes,
+    ...docsReferenceRoutes,
+  ];
 }

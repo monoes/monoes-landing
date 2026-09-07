@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { cache } from "react";
 import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import { desc, eq } from "drizzle-orm";
@@ -10,23 +11,55 @@ import { canDeleteOrgUpload } from "@/lib/community/can-delete-org-upload";
 import { canEditOrgUpload } from "@/lib/community/can-edit-org-upload";
 import { canDeleteOrgRun } from "@/lib/community/can-delete-org-run";
 
-export const metadata: Metadata = {
-  title: "Org detail",
-  robots: { index: false, follow: false },
-};
-
 export const dynamic = "force-dynamic";
+
+// Shared between generateMetadata and the page component so the org row is
+// only fetched once per request (React dedupes calls to the same cache()'d
+// function within a single render).
+const getOrgUpload = cache(async (id: string) => {
+  const db = getDb();
+  const [row] = await db.select().from(orgUpload).where(eq(orgUpload.id, id)).limit(1);
+  return row ?? null;
+});
+
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const { id } = await params;
+  const row = await getOrgUpload(id);
+  if (!row) {
+    return { title: "Org not found" };
+  }
+
+  const description = (row.description || row.tagline || row.goal || "").slice(0, 200);
+  const title = row.tagline ? `${row.name} — ${row.tagline}` : row.name;
+
+  return {
+    title: `${title} · Monoes Community`,
+    description,
+    alternates: { canonical: `/community/orgs/${id}` },
+    openGraph: {
+      title,
+      description,
+      type: "website",
+      ...(row.bannerUrl ? { images: [{ url: row.bannerUrl, alt: row.name }] } : {}),
+    },
+    twitter: {
+      card: row.bannerUrl ? "summary_large_image" : "summary",
+      title,
+      description,
+    },
+  };
+}
 
 export default async function OrgDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const session = await getAuth().api.getSession({ headers: await headers() });
   const sessionUser = session?.user as { id: string; role?: string; username?: string | null } | undefined;
 
-  const db = getDb();
-  const [row] = await db.select().from(orgUpload).where(eq(orgUpload.id, id)).limit(1);
+  const row = await getOrgUpload(id);
   if (!row) {
     notFound();
   }
+  const db = getDb();
 
   type ParsedRole = {
     id: string;
