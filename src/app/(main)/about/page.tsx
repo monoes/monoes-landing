@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { SOCIAL_LINKS } from "@/lib/social-links";
+import { socialIcons } from "@/components/icons/social-icons";
 
 export const metadata: Metadata = {
   title: "About Monoes",
@@ -129,6 +131,24 @@ export default function AboutPage() {
           </a>
           .
         </p>
+
+        <div className="not-prose mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3">
+          {SOCIAL_LINKS.map((link) => {
+            const Icon = socialIcons[link.id];
+            return (
+              <a
+                key={link.id}
+                href={link.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2.5 rounded-xl border border-ivory-linen bg-ivory-warm px-4 py-3 text-sm font-medium text-gold-bronze transition-colors hover:border-gold/40 hover:text-espresso"
+              >
+                <Icon className="h-4 w-4 shrink-0 text-gold-dark" />
+                {link.name}
+              </a>
+            );
+          })}
+        </div>
       </div>
     </main>
   );

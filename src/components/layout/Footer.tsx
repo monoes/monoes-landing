@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { FooterSocialLinks } from "@/components/layout/FooterSocialLinks";
 
 const footerSections = [
   {
@@ -67,7 +68,7 @@ export function Footer() {
             </div>
           ))}
         </div>
-        <div className="flex flex-col items-center justify-between gap-4 border-t border-gold/15 pt-8 sm:flex-row">
+        <div className="flex flex-col items-center justify-between gap-6 border-t border-gold/15 pt-8 sm:flex-row">
           <div className="flex items-center gap-3">
             <Image
               src="/images/logo.png"
@@ -80,6 +81,7 @@ export function Footer() {
               &copy; {new Date().getFullYear()} Monoes. All rights reserved.
             </span>
           </div>
+          <FooterSocialLinks />
           <p className="text-xs text-gold/40">
             Built on the open-source Monomind engine · Apache-2.0
           </p>

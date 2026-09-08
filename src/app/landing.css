@@ -253,6 +253,23 @@ nav {
   transition: all 0.2s;
 }
 .nav-cta-link:hover { background: var(--gold-dark); color: white; }
+.nav-social-links {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.nav-social-link {
+  display: inline-flex;
+  color: var(--espresso-light);
+  transition: color 0.2s;
+}
+.nav-social-link:hover { color: var(--gold-dark); }
+.nav-mobile-socials {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 14px 4px 6px;
+}
 .nav-hamburger {
   display: none;
   flex-direction: column;
@@ -986,6 +1003,7 @@ nav {
   nav { padding: 0 16px; }
   .nav-links { gap: 10px; }
   .nav-link { display: none; }
+  .nav-social-links { display: none; }
   .nav-cta-link { font-size: 10px; padding: 6px 12px; }
   .nav-hamburger { display: flex; }
   .system-status { top: calc(var(--nav-h) + 8px); right: 8px; padding: 3px 8px 3px 6px; }

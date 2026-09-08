@@ -5,6 +5,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { UserMenu } from "@/components/community/UserMenu";
+import { SOCIAL_LINKS } from "@/lib/social-links";
+import { socialIcons } from "@/components/icons/social-icons";
 
 const navLinks = [
   { label: "Community", href: "/community" },
@@ -12,8 +14,9 @@ const navLinks = [
   { label: "Workforce", href: "/workforce" },
   { label: "Whitepaper", href: "/whitepaper" },
   { label: "Blog", href: "/blog" },
-  { label: "GitHub", href: "https://github.com/monoes", external: true },
 ];
+
+const navSocialLinks = SOCIAL_LINKS.filter((link) => link.id === "github" || link.id === "x");
 
 export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -58,17 +61,30 @@ export function Navbar() {
             <Link
               key={link.href}
               href={link.href}
-              target={link.external ? "_blank" : undefined}
-              rel={link.external ? "noopener noreferrer" : undefined}
               className="group relative text-sm text-ivory/75 transition-colors hover:text-gold"
             >
               {link.label}
-              {link.external && (
-                <span className="ml-1 text-xs opacity-50">↗</span>
-              )}
               <span className="absolute -bottom-1 left-0 h-px w-0 bg-gold transition-all duration-300 ease-out group-hover:w-full" />
             </Link>
           ))}
+          <div className="flex items-center gap-3">
+            {navSocialLinks.map((link) => {
+              const Icon = socialIcons[link.id];
+              return (
+                <a
+                  key={link.id}
+                  href={link.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`Monoes on ${link.name}`}
+                  title={link.name}
+                  className="text-ivory/75 transition-colors hover:text-gold"
+                >
+                  <Icon className="h-4 w-4" />
+                </a>
+              );
+            })}
+          </div>
           <Link
             href="https://github.com/monoes/monomind"
             target="_blank"
@@ -120,6 +136,24 @@ export function Navbar() {
                 {link.label}
               </Link>
             ))}
+            <div className="flex items-center gap-4 pt-2">
+              {navSocialLinks.map((link) => {
+                const Icon = socialIcons[link.id];
+                return (
+                  <a
+                    key={link.id}
+                    href={link.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`Monoes on ${link.name}`}
+                    title={link.name}
+                    className="text-ivory/75 transition-colors hover:text-gold"
+                  >
+                    <Icon className="h-5 w-5" />
+                  </a>
+                );
+              })}
+            </div>
           </div>
         </div>
       )}

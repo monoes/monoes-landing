@@ -5,6 +5,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { gsap } from 'gsap';
 import { Footer } from '@/components/layout/Footer';
+import { SOCIAL_LINKS } from '@/lib/social-links';
+import { socialIcons } from '@/components/icons/social-icons';
 import './landing.css';
 
 declare global {
@@ -13,6 +15,8 @@ declare global {
     MM6: any;
   }
 }
+
+const navSocialLinks = SOCIAL_LINKS.filter((link) => link.id === 'github' || link.id === 'x');
 
 export default function LandingPage() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -867,7 +871,24 @@ export default function LandingPage() {
           <Link href="/workforce" className="nav-link">Workforce</Link>
           <Link href="/whitepaper" className="nav-link">Whitepaper</Link>
           <Link href="/blog" className="nav-link">Blog</Link>
-          <a href="https://github.com/monoes" className="nav-link" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+          <div className="nav-social-links">
+            {navSocialLinks.map((link) => {
+              const Icon = socialIcons[link.id];
+              return (
+                <a
+                  key={link.id}
+                  href={link.href}
+                  className="nav-social-link"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`Monoes on ${link.name}`}
+                  title={link.name}
+                >
+                  <Icon width={16} height={16} />
+                </a>
+              );
+            })}
+          </div>
           <a href="https://github.com/monoes/monomind" className="nav-cta-link" target="_blank" rel="noopener noreferrer">Get started →</a>
           <button
             className="nav-hamburger"
@@ -889,7 +910,25 @@ export default function LandingPage() {
           <Link href="/workforce" className="nav-mobile-link" onClick={() => setMobileOpen(false)}>Workforce</Link>
           <Link href="/whitepaper" className="nav-mobile-link" onClick={() => setMobileOpen(false)}>Whitepaper</Link>
           <Link href="/blog" className="nav-mobile-link" onClick={() => setMobileOpen(false)}>Blog</Link>
-          <a href="https://github.com/monoes" className="nav-mobile-link" target="_blank" rel="noopener noreferrer" onClick={() => setMobileOpen(false)}>GitHub ↗</a>
+          <div className="nav-mobile-socials">
+            {navSocialLinks.map((link) => {
+              const Icon = socialIcons[link.id];
+              return (
+                <a
+                  key={link.id}
+                  href={link.href}
+                  className="nav-social-link"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`Monoes on ${link.name}`}
+                  title={link.name}
+                  onClick={() => setMobileOpen(false)}
+                >
+                  <Icon width={18} height={18} />
+                </a>
+              );
+            })}
+          </div>
           <a href="https://github.com/monoes/monomind" className="nav-mobile-link" target="_blank" rel="noopener noreferrer" onClick={() => setMobileOpen(false)}>Get started →</a>
         </div>
       )}

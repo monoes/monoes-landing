@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { satoshi, jetbrainsMono } from "@/lib/fonts";
 import { WebMcpRegistration } from "@/components/WebMcpRegistration";
+import { SOCIAL_LINKS } from "@/lib/social-links";
 import "@/styles/globals.css";
 
 const SITE_URL = "https://monoes.me";
@@ -40,6 +41,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary",
+    site: "@monoes_me",
     title: "Monoes",
     description: "Open-source AI agents you run yourself, or hire us to run.",
   },
@@ -53,7 +55,7 @@ const organizationSchema = {
   logo: `${SITE_URL}/images/logo-512.png`,
   description:
     "Open-source AI agent tooling (Monomind, Mono Agent, MonoClip, MonoTask) and a paid Workforce service that automates business processes end-to-end.",
-  sameAs: ["https://github.com/monoes"],
+  sameAs: SOCIAL_LINKS.map((link) => link.href),
 };
 
 export default function RootLayout({
