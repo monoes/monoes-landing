@@ -1,5 +1,5 @@
 import { betterAuth } from "better-auth";
-import { jwt } from "better-auth/plugins";
+import { jwt, oneTap } from "better-auth/plugins";
 import { oauthProvider } from "@better-auth/oauth-provider";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { eq } from "drizzle-orm";
@@ -60,6 +60,7 @@ export function getAuth(db: Db = getDb()) {
     },
     plugins: [
       jwt(),
+      oneTap(),
       oauthProvider({
         loginPage: "/community/login",
         consentPage: "/community/oauth/consent",

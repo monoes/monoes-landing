@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import { LoginForm } from "@/components/community/auth/LoginForm";
+import { GoogleOneTapPrompt } from "@/components/community/auth/GoogleOneTapPrompt";
 
 export const metadata: Metadata = {
   title: "Sign in",
@@ -17,6 +18,7 @@ export default function LoginPage() {
         <Suspense>
           <LoginForm />
         </Suspense>
+        <GoogleOneTapPrompt context="signin" />
         <p className="mt-6 text-center text-sm text-espresso/55">
           New here?{" "}
           <Link href="/community/register" className="text-espresso underline">

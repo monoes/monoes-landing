@@ -86,9 +86,7 @@ export function Navbar() {
             })}
           </div>
           <Link
-            href="https://github.com/monoes/monomind"
-            target="_blank"
-            rel="noopener noreferrer"
+            href="/community/login"
             className="rounded-full border border-gold/40 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-gold transition-all hover:bg-gold hover:text-espresso"
           >
             Get started →

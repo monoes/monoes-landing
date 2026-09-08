@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { RegisterForm } from "@/components/community/auth/RegisterForm";
+import { GoogleOneTapPrompt } from "@/components/community/auth/GoogleOneTapPrompt";
 
 export const metadata: Metadata = {
   title: "Create your account",
@@ -14,6 +15,7 @@ export default function RegisterPage() {
         <p className="mb-2 text-xs uppercase tracking-label text-gold-dark font-medium">Community</p>
         <h1 className="mb-6 text-2xl font-semibold text-espresso tracking-tight">Create your account</h1>
         <RegisterForm />
+        <GoogleOneTapPrompt context="signup" />
         <p className="mt-6 text-center text-sm text-espresso/55">
           Already have an account?{" "}
           <Link href="/community/login" className="text-espresso underline">

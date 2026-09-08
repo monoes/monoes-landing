@@ -889,7 +889,7 @@ export default function LandingPage() {
               );
             })}
           </div>
-          <a href="https://github.com/monoes/monomind" className="nav-cta-link" target="_blank" rel="noopener noreferrer">Get started →</a>
+          <Link href="/community/login" className="nav-cta-link">Get started →</Link>
           <button
             className="nav-hamburger"
             aria-label="Toggle menu"
@@ -929,7 +929,7 @@ export default function LandingPage() {
               );
             })}
           </div>
-          <a href="https://github.com/monoes/monomind" className="nav-mobile-link" target="_blank" rel="noopener noreferrer" onClick={() => setMobileOpen(false)}>Get started →</a>
+          <Link href="/community/login" className="nav-mobile-link" onClick={() => setMobileOpen(false)}>Get started →</Link>
         </div>
       )}
 
