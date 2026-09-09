@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { gsap } from 'gsap';
 import { Footer } from '@/components/layout/Footer';
+import { useCurrentUser } from '@/lib/community/use-current-user';
 import { SOCIAL_LINKS } from '@/lib/social-links';
 import { socialIcons } from '@/components/icons/social-icons';
 import './landing.css';
@@ -19,6 +20,7 @@ declare global {
 const navSocialLinks = SOCIAL_LINKS.filter((link) => link.id === 'github' || link.id === 'x');
 
 export default function LandingPage() {
+  const me = useCurrentUser();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
@@ -889,7 +891,7 @@ export default function LandingPage() {
               );
             })}
           </div>
-          <Link href="/community/login" className="nav-cta-link">Get started →</Link>
+          {!me && <Link href="/community/login" className="nav-cta-link">Get started →</Link>}
           <button
             className="nav-hamburger"
             aria-label="Toggle menu"
@@ -929,7 +931,7 @@ export default function LandingPage() {
               );
             })}
           </div>
-          <Link href="/community/login" className="nav-mobile-link" onClick={() => setMobileOpen(false)}>Get started →</Link>
+          {!me && <Link href="/community/login" className="nav-mobile-link" onClick={() => setMobileOpen(false)}>Get started →</Link>}
         </div>
       )}
 

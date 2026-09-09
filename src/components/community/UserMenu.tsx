@@ -4,12 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
-
-type Me = {
-  username: string | null;
-  name: string | null;
-  avatarUrl: string | null;
-};
+import { useCurrentUser } from "@/lib/community/use-current-user";
 
 function initials(name: string | null, username: string | null): string {
   const source = name?.trim() || username?.trim() || "";
@@ -23,24 +18,9 @@ function initials(name: string | null, username: string | null): string {
 
 export function UserMenu() {
   const router = useRouter();
-  const [me, setMe] = useState<Me | null | undefined>(undefined);
+  const me = useCurrentUser();
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    let cancelled = false;
-    fetch("/api/community/me")
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => {
-        if (!cancelled) setMe(data);
-      })
-      .catch(() => {
-        if (!cancelled) setMe(null);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, []);
 
   useEffect(() => {
     if (!open) return;

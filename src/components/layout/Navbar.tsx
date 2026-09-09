@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { UserMenu } from "@/components/community/UserMenu";
+import { useCurrentUser } from "@/lib/community/use-current-user";
 import { SOCIAL_LINKS } from "@/lib/social-links";
 import { socialIcons } from "@/components/icons/social-icons";
 
@@ -19,6 +20,7 @@ const navLinks = [
 const navSocialLinks = SOCIAL_LINKS.filter((link) => link.id === "github" || link.id === "x");
 
 export function Navbar() {
+  const me = useCurrentUser();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -85,12 +87,14 @@ export function Navbar() {
               );
             })}
           </div>
-          <Link
-            href="/community/login"
-            className="rounded-full border border-gold/40 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-gold transition-all hover:bg-gold hover:text-espresso"
-          >
-            Get started →
-          </Link>
+          {!me && (
+            <Link
+              href="/community/login"
+              className="rounded-full border border-gold/40 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-gold transition-all hover:bg-gold hover:text-espresso"
+            >
+              Get started →
+            </Link>
+          )}
         </div>
 
         <div className="flex items-center gap-4">
