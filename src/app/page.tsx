@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { gsap } from 'gsap';
 import { Footer } from '@/components/layout/Footer';
+import { UserMenu } from '@/components/community/UserMenu';
 import { useCurrentUser } from '@/lib/community/use-current-user';
 import { SOCIAL_LINKS } from '@/lib/social-links';
 import { socialIcons } from '@/components/icons/social-icons';
@@ -892,6 +893,7 @@ export default function LandingPage() {
             })}
           </div>
           {!me && <Link href="/community/login" className="nav-cta-link">Get started →</Link>}
+          <UserMenu theme="light" />
           <button
             className="nav-hamburger"
             aria-label="Toggle menu"

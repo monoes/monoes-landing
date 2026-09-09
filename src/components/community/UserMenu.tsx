@@ -16,7 +16,7 @@ function initials(name: string | null, username: string | null): string {
     .join("");
 }
 
-export function UserMenu() {
+export function UserMenu({ theme = "dark" }: { theme?: "dark" | "light" }) {
   const router = useRouter();
   const me = useCurrentUser();
   const [open, setOpen] = useState(false);
@@ -49,12 +49,22 @@ export function UserMenu() {
   }
 
   if (me === undefined) {
-    return <div className="h-8 w-8 rounded-full bg-ivory/10" aria-hidden="true" />;
+    return (
+      <div
+        className={`h-8 w-8 rounded-full ${theme === "dark" ? "bg-ivory/10" : "bg-espresso/10"}`}
+        aria-hidden="true"
+      />
+    );
   }
 
   if (me === null) {
     return (
-      <Link href="/community/login" className="text-sm text-ivory/75 transition-colors hover:text-gold">
+      <Link
+        href="/community/login"
+        className={`text-sm transition-colors ${
+          theme === "dark" ? "text-ivory/75 hover:text-gold" : "text-gold-bronze hover:text-gold-dark"
+        }`}
+      >
         Log in
       </Link>
     );
