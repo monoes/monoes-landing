@@ -160,7 +160,7 @@ export function OrgChart({
           const leader = isLeaderRole(role);
           const displayName = role.title || role.id;
           const subType = role.agent_type || "";
-          const maxLbl = Math.max(12, Math.floor(R / 3));
+          const maxLbl = 50;
           const nameText = displayName.length > maxLbl ? `${displayName.slice(0, maxLbl - 1)}…` : displayName;
           const subTypeText = subType.length > maxLbl ? `${subType.slice(0, maxLbl - 1)}…` : subType;
           const nameY = R + 14;
