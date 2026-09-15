@@ -27,6 +27,21 @@ function isLeaderRole(r: ChartRole): boolean {
   return !r.reports_to || r.reports_to === r.id;
 }
 
+// Greedy word-wrap: once a line reaches minLineLen characters, break at the
+// next space and start a new line, repeating for the remainder.
+function wrapLabel(text: string, minLineLen: number): string[] {
+  const lines: string[] = [];
+  let remaining = text;
+  while (remaining.length > minLineLen) {
+    const spaceIdx = remaining.indexOf(" ", minLineLen);
+    if (spaceIdx === -1) break;
+    lines.push(remaining.slice(0, spaceIdx));
+    remaining = remaining.slice(spaceIdx + 1);
+  }
+  lines.push(remaining);
+  return lines;
+}
+
 export function OrgChart({
   roles,
   topology,
@@ -163,11 +178,15 @@ export function OrgChart({
           const maxLbl = 50;
           const nameText = displayName.length > maxLbl ? `${displayName.slice(0, maxLbl - 1)}…` : displayName;
           const subTypeText = subType.length > maxLbl ? `${subType.slice(0, maxLbl - 1)}…` : subType;
+          const nameLines = wrapLabel(nameText, 20);
+          const subTypeLines = subTypeText ? wrapLabel(subTypeText, 20) : [];
+          const LINE_H = 11;
           const nameY = R + 14;
           const avR = Math.round(R * 0.88);
           const avatarSrc = roleAvatar(role, avatarMap);
-          const lblW = Math.max(nameText.length, subTypeText.length) * 6.5 + 12;
-          const lblH = subTypeText ? 26 : 15;
+          const allLines = [...nameLines, ...subTypeLines];
+          const lblW = Math.max(...allLines.map((l) => l.length)) * 6.5 + 12;
+          const lblH = 15 + (allLines.length - 1) * LINE_H;
 
           return (
             <g
@@ -197,14 +216,16 @@ export function OrgChart({
                 className="pointer-events-none"
               />
               <rect x={(-lblW / 2).toFixed(0)} y={nameY - 11} width={lblW.toFixed(0)} height={lblH} rx={3} fill="oklch(12% 0.008 55 / 0.85)" className="pointer-events-none" />
-              <text textAnchor="middle" y={nameY} fontSize={9} fontWeight={leader ? 600 : 500} className="pointer-events-none fill-[oklch(85%_0.01_75)] font-sans">
-                {nameText}
-              </text>
-              {subTypeText && (
-                <text textAnchor="middle" y={nameY + 11} fontSize={7.5} className="pointer-events-none fill-[oklch(58%_0.005_75)] font-sans">
-                  {subTypeText}
+              {nameLines.map((line, idx) => (
+                <text key={`name-${idx}`} textAnchor="middle" y={nameY + LINE_H * idx} fontSize={9} fontWeight={leader ? 600 : 500} className="pointer-events-none fill-[oklch(85%_0.01_75)] font-sans">
+                  {line}
                 </text>
-              )}
+              ))}
+              {subTypeLines.map((line, idx) => (
+                <text key={`sub-${idx}`} textAnchor="middle" y={nameY + LINE_H * (nameLines.length + idx)} fontSize={7.5} className="pointer-events-none fill-[oklch(58%_0.005_75)] font-sans">
+                  {line}
+                </text>
+              ))}
             </g>
           );
         })}
