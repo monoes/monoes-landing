@@ -7,6 +7,9 @@ export const metadata: Metadata = {
   title: "Blog & Research - Monoes Autonomous Operations",
   description:
     "Technical articles, agentic architecture deep-dives, and research insights on autonomous workforce orchestration and local-first AI systems.",
+  alternates: {
+    types: { "application/rss+xml": "/blog/rss.xml" },
+  },
 };
 
 export default function BlogIndexPage() {
