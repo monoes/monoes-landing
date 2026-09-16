@@ -3,11 +3,11 @@ import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
 
 const CSP = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline' https://plausible.io https://www.googletagmanager.com https://accounts.google.com",
+  "script-src 'self' 'unsafe-inline' https://plausible.io https://www.googletagmanager.com https://accounts.google.com https://*.clarity.ms https://c.bing.com",
   "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data: https://www.google-analytics.com",
+  "img-src 'self' data: https://www.google-analytics.com https://*.clarity.ms https://c.bing.com",
   "font-src 'self'",
-  "connect-src 'self' https://plausible.io https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com https://accounts.google.com",
+  "connect-src 'self' https://plausible.io https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com https://accounts.google.com https://*.clarity.ms https://c.bing.com",
   "frame-src 'self' https://cal.com https://accounts.google.com",
   "frame-ancestors 'none'",
   "base-uri 'self'",

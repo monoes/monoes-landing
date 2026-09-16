@@ -108,13 +108,27 @@ export default function PrivacyPage() {
               </a>
               .
             </li>
+            <li>
+              <strong className="text-espresso">Microsoft Clarity</strong> — records how visitors interact with
+              pages (clicks, scrolling, mouse movement, session replays and heatmaps) so we can improve the site.
+              It sets its own cookies and is governed by the{" "}
+              <a
+                href="https://privacy.microsoft.com/privacystatement"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gold-dark underline underline-offset-2 hover:text-espresso"
+              >
+                Microsoft Privacy Statement
+              </a>
+              .
+            </li>
           </ul>
         </section>
 
         <section>
           <h2 className="text-2xl font-semibold text-espresso mb-4">Cookies</h2>
           <p>
-            A session cookie to keep you signed in, plus cookies set by Google Analytics (see above). No
+            A session cookie to keep you signed in, plus cookies set by Google Analytics and Microsoft Clarity (see above). No
             third-party advertising cookies.
           </p>
         </section>
