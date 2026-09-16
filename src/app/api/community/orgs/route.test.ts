@@ -19,7 +19,7 @@ register(
       return { url: "data:text/javascript,export const orgUpload = {};", shortCircuit: true };
     }
     if (specifier === "@/lib/org-schema") {
-      return next("file:///Volumes/SD1/projects/monoes/monoes-landing/src/lib/org-schema.ts", context);
+      return next("${new URL("../../../../lib/org-schema.ts", import.meta.url).href}", context);
     }
     return next(specifier, context);
   }`,

@@ -31,7 +31,7 @@ register(
 
 const { PATCH, isValidName, isValidTagline, isValidDescription, isValidBody } = await import("./route.ts");
 
-function req(body) {
+function req(body: Record<string, unknown>) {
   return new Request("http://localhost/api/community/orgs/org-1", {
     method: "PATCH",
     body: JSON.stringify(body),
@@ -42,8 +42,8 @@ function ctx() {
   return { params: Promise.resolve({ id: "org-1" }) };
 }
 
-function stubDb(orgRow) {
-  const setMock = mock.fn(() => ({ where: async () => {} }));
+function stubDb(orgRow: { uploaderId: string } | null) {
+  const setMock = mock.fn((_values: Record<string, unknown>) => ({ where: async () => {} }));
   globalThis.__stubDb = () => ({
     select: () => ({ from: () => ({ where: () => ({ limit: async () => (orgRow ? [orgRow] : []) }) }) }),
     update: () => ({ set: setMock }),

@@ -46,7 +46,7 @@ export default function SecurityPage() {
       </h1>
       <p className="text-lg text-gold-bronze leading-relaxed font-light mb-12">
         Workforce touches your ERP, CRM, and email - systems that hold the financial and personal
-        data your business runs on. Here is exactly how that works: what's built into monomind's
+        data your business runs on. Here is exactly how that works: what&apos;s built into monomind&apos;s
         open-source engine, and what we configure per engagement on top of it.
       </p>
 

@@ -22,7 +22,7 @@ register(
 
 const { getAuthenticatedUser } = await import("./get-authenticated-user.ts");
 
-function selectChain(rows) {
+function selectChain(rows: unknown[]) {
   return { from: () => ({ where: () => ({ limit: async () => rows }) }) };
 }
 

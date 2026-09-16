@@ -20,6 +20,8 @@ const eslintConfig = defineConfig([
     ".swarm/**",
     ".agents/**",
     ".understand/**",
+    ".gemini/**",
+    ".codex/**",
     // macOS AppleDouble files (regenerate on non-HFS+ volumes):
     "._*",
     "**/._*",

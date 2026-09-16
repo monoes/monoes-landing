@@ -35,13 +35,13 @@ function ctx() {
   return { params: Promise.resolve({ id: "org-1" }) };
 }
 
-function stubDb(orgRow) {
+function stubDb(orgRow: { uploaderId: string } | null) {
   globalThis.__stubDb = () => ({
     select: () => ({ from: () => ({ where: () => ({ limit: async () => (orgRow ? [orgRow] : []) }) }) }),
   });
 }
 
-function reqWithImage(file) {
+function reqWithImage(file: File | null) {
   const formData = new FormData();
   if (file) formData.append("image", file);
   return new Request("http://localhost/api/community/orgs/org-1/images", { method: "POST", body: formData });
@@ -102,7 +102,7 @@ describe("POST /api/community/orgs/[id]/images", () => {
   it("uploads a valid image to ORG_FILES under org-body-images/<orgId>/ and returns its URL", async () => {
     globalThis.__stubSession = { user: { id: "u1", role: "member", blockedAt: null } };
     stubDb({ uploaderId: "u1" });
-    const putMock = mock.fn(async () => {});
+    const putMock = mock.fn(async (_key: string, _value: unknown) => {});
     globalThis.__stubCloudflareContext = () => ({ env: { ORG_FILES: { put: putMock } } });
 
     const file = new File(["png-bytes"], "pic.png", { type: "image/png" });

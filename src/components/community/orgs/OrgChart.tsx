@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 import { computeLayout, type LayoutRole } from "@/lib/org-layout";
 import { buildChartEdges, type CommEdge } from "@/lib/org-chart-edges";
 import { avatarMapFor, roleAvatar } from "@/lib/org-avatars";
@@ -42,6 +42,10 @@ function wrapLabel(text: string, minLineLen: number): string[] {
   return lines;
 }
 
+function subscribeNoop() {
+  return () => {};
+}
+
 export function OrgChart({
   roles,
   topology,
@@ -64,8 +68,11 @@ export function OrgChart({
   // snapshot and the now-animated DOM trips a hydration mismatch. Mounting
   // particles only after hydration completes avoids the browser ever seeing
   // them in the pre-hydration markup.
-  const [particlesMounted, setParticlesMounted] = useState(false);
-  useEffect(() => setParticlesMounted(true), []);
+  const particlesMounted = useSyncExternalStore(
+    subscribeNoop,
+    () => true,
+    () => false,
+  );
 
   if (roles.length === 0) {
     return (
