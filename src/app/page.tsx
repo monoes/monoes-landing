@@ -950,7 +950,7 @@ export default function LandingPage() {
               <div className="slide-in">
                 <div className="hero-kicker">
                   <span className="hero-kicker-dot"></span>
-                  Open source · Apache-2.0 License · v2.10.11
+                  Open source · Apache-2.0 License · v2.16.2
                 </div>
                 <h1 className="hero-headline">
                   Not a copilot.<br />
@@ -1001,13 +1001,13 @@ export default function LandingPage() {
               <div className="cap-card game-frame">
                 <span className="cap-num">02 · Memory</span>
                 <div className="cap-title">Local SQLite memory, no cloud vector DB</div>
-                <p className="cap-body">Local embeddings, local SQLite storage: every decision, pattern, and correction stored and retrieved on your own machine. A pure-JS HNSW index runs as an automatic fallback if native SQLite can&apos;t load.</p>
+                <p className="cap-body">Local embeddings, local SQLite storage: every decision, pattern, and correction stored and retrieved on your own machine. An HNSW index switches on automatically once memory passes 5,000 entries, and a pure-WASM SQLite fallback runs if the native driver can&apos;t load.</p>
                 <div className="cap-code">/mastermind:memory search &quot;auth patterns&quot;<br /><span style={{color:'rgba(200,220,200,0.7)'}}>↳ 12 results · top score 0.97 · 3ms</span></div>
               </div>
               <div className="cap-card game-frame">
                 <span className="cap-num">03 · Automation</span>
-                <div className="cap-title">29 hooks · 8 workers</div>
-                <p className="cap-body">Self-learning hook system that fires on every edit, commit, task, and session. 8 background workers handle health checks, security scanning, code mapping, and audit consolidation continuously.</p>
+                <div className="cap-title">28 hooks · 9 workers</div>
+                <p className="cap-body">Self-learning hook system that fires on every edit, commit, task, and session. 9 background workers handle health checks, security scanning, code mapping, and audit consolidation, refreshing at every session start.</p>
                 <div className="cap-code">/mastermind:review --tillend<br /><span style={{color:'rgba(200,220,200,0.7)'}}>→ 23 files · 0 secrets · 94% coverage</span><br /><span style={{color:'rgba(200,220,200,0.7)'}}>✓ spec → tests → impl → PR #47 · 28s</span></div>
               </div>
               <div className="cap-card game-frame">
@@ -1393,7 +1393,7 @@ export default function LandingPage() {
                 <span className="oss-pill">BYOK from zero</span>
                 <span className="oss-pill">No usage caps</span>
                 <span className="oss-pill">TypeScript</span>
-                <span className="oss-pill">v2.10.11</span>
+                <span className="oss-pill">v2.16.2</span>
               </div>
             </div>
           </div>

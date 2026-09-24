@@ -18,14 +18,14 @@ const heroMonkeys: Record<string, string> = {
 
 const heroStats: Record<string, { label: string; value: string }[]> = {
   "mono-agent": [
-    { label: "Workflow Nodes", value: "70+" },
-    { label: "AI Models",      value: "200+" },
-    { label: "Binary Size",    value: "~12MB" },
+    { label: "Workflow Nodes", value: "105" },
+    { label: "CLI Commands",   value: "180+" },
+    { label: "License",        value: "MIT" },
   ],
   "monomind": [
-    { label: "CLI Commands",       value: "32" },
-    { label: "Packages",           value: "8" },
-    { label: "Background Workers", value: "8" },
+    { label: "Coding Assistants", value: "5" },
+    { label: "Org Runtimes",      value: "14" },
+    { label: "MCP Tools",         value: "217" },
   ],
   "mono-clip": [
     { label: "Binary Size",    value: "~8MB" },

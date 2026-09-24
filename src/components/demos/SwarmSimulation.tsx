@@ -55,8 +55,8 @@ function dedup(edges: [number, number][]): [number, number][] {
 const TOPOS: Record<TopoKey, TopoDef> = {
   hierarchical: {
     label: "Hierarchical",
-    badge: "raft consensus",
-    note: "Leader-led. Boss coordinates sub-leads who coordinate workers. Anti-drift default for all Mastermind swarms.",
+    badge: "default",
+    note: "Leader-led: a lead coordinates workers. The default topology for `monomind monoswarm init`.",
     goodFor: "Complex projects needing clear ownership, accountability, and drift-free coordination.",
     bossIdx: 0,
     nodes: [
@@ -73,7 +73,7 @@ const TOPOS: Record<TopoKey, TopoDef> = {
   mesh: {
     label: "Mesh",
     badge: "p2p",
-    note: "Peer-to-peer: no single leader. Any node reaches any other in at most 2 hops. Resilient to individual failure.",
+    note: "Peer-to-peer: no single leader; agents share state through memory.",
     goodFor: "Research and discovery tasks where any agent may surface relevant context.",
     nodes: ring(8, CX, CY, 82),
     edges: dedup(
@@ -105,7 +105,7 @@ const TOPOS: Record<TopoKey, TopoDef> = {
   ring: {
     label: "Ring",
     badge: "sequential",
-    note: "Token passes node-to-node around the ring. Predictable delivery order; any single break can be rerouted.",
+    note: "Circular hand-off: each agent passes work to the next. Predictable order.",
     goodFor: "Ordered pipelines where each stage depends on the previous: reviews, approvals, sequential transforms.",
     nodes: ring(8, CX, CY, 82),
     edges: Array.from({ length: 8 }, (_, i) => [i, (i+1)%8] as [number,number]),
@@ -115,7 +115,7 @@ const TOPOS: Record<TopoKey, TopoDef> = {
   star: {
     label: "Star",
     badge: "hub-spoke",
-    note: "Hub broadcasts to all spokes simultaneously. Lowest fan-out latency; hub is the single point of failure.",
+    note: "Hub broadcasts to all spokes simultaneously. Hub is the single point of failure.",
     goodFor: "Fan-out broadcast tasks: distributing identical subtasks to many workers at once.",
     bossIdx: 6,
     nodes: [...ring(6, CX, CY, 84), { x: CX, y: CY }],
@@ -125,9 +125,9 @@ const TOPOS: Record<TopoKey, TopoDef> = {
 
   hybrid: {
     label: "Hybrid",
-    badge: "hub+ring",
-    note: "Hub connects to every spoke; spokes also form a ring. Combines star speed with ring-level fault resilience.",
-    goodFor: "Multi-layer workflows needing both central broadcast and fallback ring routing if the hub is slow.",
+    badge: "hierarchy+peers",
+    note: "Combines a hierarchy with peer-to-peer links between agents.",
+    goodFor: "Multi-layer workflows where a lead coordinates but peers also share state with each other.",
     bossIdx: 0,
     nodes: [{ x: CX, y: CY }, ...ring(6, CX, CY, 82)],
     edges: [
@@ -139,9 +139,9 @@ const TOPOS: Record<TopoKey, TopoDef> = {
 
   adaptive: {
     label: "Adaptive",
-    badge: "dynamic",
-    note: "Topology reconfigures under load. Starts as a ring; shortcut links emerge mid-run as hot paths are detected.",
-    goodFor: "Dynamic workloads where load patterns shift and the network should self-optimize over time.",
+    badge: "label",
+    note: "Recorded as a label in swarm state; your orchestrator decides how to interpret it. Monoswarm does not auto-reconfigure.",
+    goodFor: "Workloads where your orchestrator picks the coordination style per task instead of fixing one upfront.",
     nodes: ring(9, CX, 107, 78),
     edges: Array.from({ length: 9 }, (_, i) => [i, (i+1)%9] as [number,number]),
     peerEdges: [[0,3],[0,6],[3,6],[1,5],[2,7]],
@@ -378,6 +378,9 @@ export function SwarmSimulation() {
         <p className="text-[11px] font-mono leading-snug">
           <span className="text-gold font-medium">Good for:</span>{" "}
           <span className="text-ivory/60">{def.goodFor}</span>
+        </p>
+        <p className="text-[10px] font-mono text-ivory/40 leading-snug mt-1">
+          Visualization. Monoswarm records topology, roster and votes; the agents themselves run as your assistant&apos;s subagents.
         </p>
       </div>
 

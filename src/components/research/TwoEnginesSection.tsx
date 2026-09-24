@@ -15,7 +15,7 @@ const ENGINES = [
     label: "Engine B",
     name: "Mono Agent",
     scope: "Everything-else-shaped work",
-    desc: "Data entry, CRM updates, scheduled reports, browser tasks, outreach sequences. A visual DAG workflow engine with 70+ node types and real browser automation executes multi-step processes on a trigger, a schedule, or on demand, with a human-in-the-loop checkpoint on any step that needs one.",
+    desc: "Data entry, CRM updates, scheduled reports, browser tasks, outreach sequences. A visual DAG workflow engine with 100+ node types and real browser automation executes multi-step processes on a trigger, a schedule, or on demand, with a human-in-the-loop checkpoint on any step that needs one.",
     examples: ["Sync data between two systems", "Run a weekly report", "Qualify and route leads", "Automate a task in a tool with no API"],
   },
 ];

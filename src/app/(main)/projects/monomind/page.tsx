@@ -7,14 +7,14 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Monomind: Open-source autonomous AI agent orchestration",
+  title: "Monomind: Open-source memory, code graph and agent orgs for AI coding assistants",
   description:
-    "Hire an AI team. Set a goal. Walk away. Self-hosted autonomous Claude Code orchestration with persistent memory, self-coordinating agent orgs, and a codebase knowledge graph. Apache-2.0, $0.",
+    "Open-source (Apache-2.0) CLI and MCP server for Claude Code, Codex, OpenCode, Kimi Code and Antigravity: local SQLite memory, a tree-sitter code knowledge graph, local document search and policy-gated agent orgs.",
   alternates: { canonical: "/projects/monomind" },
   openGraph: {
-    title: "Monomind: Autonomous AI agent orchestration, $0",
+    title: "Monomind: local memory, code graph and agent orgs for AI coding assistants",
     description:
-      "Self-coordinating agent orgs, persistent local memory, and a codebase knowledge graph. Install once, tell it the outcome you want.",
+      "Persistent local memory, a codebase knowledge graph and background agent orgs. Works with Claude Code, Codex, OpenCode, Kimi Code and Antigravity.",
   },
 };
 
@@ -34,10 +34,10 @@ export default function MonomindPage() {
       priceCurrency: "USD",
     },
     description:
-      "Open-source autonomous AI agent orchestration with persistent memory, self-coordinating agent orgs, and a codebase knowledge graph.",
+      "Open-source CLI and MCP server that adds local SQLite memory, a codebase knowledge graph, local document search and policy-gated agent orgs to AI coding assistants.",
     url: "https://monoes.me/projects/monomind",
     downloadUrl: "https://github.com/monoes/monomind",
-    softwareVersion: "2.10.11",
+    softwareVersion: "2.16.2",
     applicationSubCategory: "AI Agent Orchestration",
     license: "https://www.apache.org/licenses/LICENSE-2.0",
     author: {

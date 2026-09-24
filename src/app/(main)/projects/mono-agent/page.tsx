@@ -5,9 +5,9 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Mono Agent: Self-hosted browser & workflow automation",
+  title: "Mono Agent: Local-first n8n alternative in a single Go binary",
   description:
-    "n8n meets Playwright. 100+ workflow nodes, stealth Chrome via Rod, multi-profile isolation, and a visual DAG editor. Fully self-hosted, zero cloud.",
+    "Open-source (MIT), local-first workflow automation in one Go binary: 100+ node types, human-in-the-loop approvals, an encrypted secrets vault, a visual editor, and an MCP server for AI agents. No Docker, no telemetry.",
   alternates: { canonical: "/projects/mono-agent" },
 };
 
@@ -27,9 +27,9 @@ export default function MonoAgentPage() {
       priceCurrency: "USD",
     },
     description:
-      "Self-hosted browser and workflow automation. 100+ workflow nodes, stealth Chrome via Rod, multi-profile isolation, and a visual DAG editor.",
+      "Open-source (MIT), local-first workflow automation in one Go binary: 100+ node types, human-in-the-loop approvals, an encrypted secrets vault, a visual editor, and an MCP server for AI agents. No Docker, no telemetry.",
     url: "https://monoes.me/projects/mono-agent",
-    downloadUrl: "https://github.com/monoes/mono-agent",
+    downloadUrl: "https://github.com/monoes/mono-agent/releases/latest",
     applicationSubCategory: "Workflow Automation",
     license: "https://opensource.org/licenses/MIT",
     author: {

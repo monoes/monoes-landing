@@ -8,31 +8,32 @@ interface Node {
   icon: string;
   x: number;
   y: number;
-  category: "trigger" | "browser" | "ai" | "output";
+  category: "trigger" | "input" | "control" | "ai" | "human" | "output";
 }
 
 const NODES: Node[] = [
-  { id: "cron",   label: "Cron Trigger",   icon: "⏰", x: 60,  y: 60,  category: "trigger"  },
-  { id: "chrome", label: "Open Chrome",    icon: "🌐", x: 260, y: 60,  category: "browser"  },
-  { id: "scrape", label: "Scrape Data",    icon: "🔍", x: 460, y: 60,  category: "browser"  },
-  { id: "ai",     label: "AI Generate",    icon: "✨", x: 260, y: 180, category: "ai"       },
-  { id: "filter", label: "Filter Results", icon: "⚡", x: 460, y: 180, category: "ai"       },
-  { id: "post",   label: "Post Content",   icon: "📤", x: 360, y: 300, category: "output"   },
+  { id: "schedule", label: "Schedule (cron)", icon: "⏰", x: 60,  y: 90,  category: "trigger" },
+  { id: "rss",      label: "RSS Read",        icon: "📰", x: 280, y: 90,  category: "input"   },
+  { id: "filter",   label: "Filter",          icon: "⚡", x: 500, y: 90,  category: "control" },
+  { id: "agent",    label: "Ask Agent",       icon: "✨", x: 500, y: 230, category: "ai"      },
+  { id: "review",   label: "Human Review",    icon: "👤", x: 280, y: 230, category: "human"   },
+  { id: "email",    label: "Send Email",      icon: "📤", x: 60,  y: 230, category: "output"  },
 ];
 
 const EDGES = [
-  { from: "cron",   to: "chrome" },
-  { from: "chrome", to: "scrape" },
-  { from: "chrome", to: "ai"     },
-  { from: "scrape", to: "filter" },
-  { from: "ai",     to: "filter" },
-  { from: "filter", to: "post"   },
+  { from: "schedule", to: "rss"    },
+  { from: "rss",      to: "filter" },
+  { from: "filter",   to: "agent"  },
+  { from: "agent",    to: "review" },
+  { from: "review",   to: "email"  },
 ];
 
 const CATEGORY_COLOR: Record<Node["category"], string> = {
   trigger: "#C8A97E",
-  browser: "#8B7355",
+  input:   "#8B7355",
+  control: "#A89070",
   ai:      "#B8956A",
+  human:   "#D4B896",
   output:  "#A07840",
 };
 
@@ -51,7 +52,7 @@ export function WorkflowBuilder() {
   const runTimer = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // execution path through the DAG
-  const RUN_SEQ = ["cron", "chrome", "scrape", "ai", "filter", "post"];
+  const RUN_SEQ = ["schedule", "rss", "filter", "agent", "review", "email"];
 
   // Update canvas width on mount and resize
   useEffect(() => {
@@ -176,7 +177,7 @@ export function WorkflowBuilder() {
             <span className="h-3 w-3 rounded-full bg-ivory/10" />
           </div>
           <p className="text-xs uppercase tracking-label text-ivory/40 font-medium ml-2">
-            Workflow DAG: Content Autopilot
+            Workflow DAG: Morning Briefing
           </p>
         </div>
         <button

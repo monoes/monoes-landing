@@ -4,19 +4,19 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "Mono Agent Architecture",
   description:
-    "Technical architecture of Mono Agent: 73 node types, 52K+ lines of Go, DAG-based workflow engine, and 40+ database tables. Workflow automation internals.",
+    "Technical architecture of Mono Agent: 105 node types, 130K+ lines of Go (excluding tests), a DAG workflow engine, and 50+ SQLite tables. Workflow automation internals.",
   alternates: { canonical: "/projects/mono-agent/architecture" },
 };
 
 const accent = "#C8A97E";
 
 const heroStats = [
-  { value: "90+", label: "Node Types" },
-  { value: "52K+", label: "Lines of Go" },
-  { value: "6", label: "Social Platforms" },
-  { value: "40+", label: "DB Tables" },
+  { value: "105", label: "Node Types" },
+  { value: "130K+", label: "Lines of Go" },
+  { value: "4", label: "Trigger Types" },
+  { value: "50+", label: "DB Tables" },
   { value: "20", label: "Max Workers" },
-  { value: "200+", label: "AI Models" },
+  { value: "10+", label: "Agent Runtimes" },
 ];
 
 const modules = [
@@ -24,64 +24,64 @@ const modules = [
     icon: "⚡",
     subtitle: "Workflow Engine",
     name: "internal/workflow/",
-    description: "DAG-based execution orchestrator. Kahn's algorithm for topological sort and cycle detection. BFS stack execution: branches run sequentially in a single goroutine, not parallel goroutines. Manages execution queue (default depth 1,000), worker pool (default 3, max 20), and trigger registry (manual, cron, webhook).",
-    tags: ["5,269 LOC", "DAG", "Kahn's algo", "BFS stack", "worker pool", "webhook"],
+    description: "DAG-based execution orchestrator. Kahn's algorithm for topological sort and cycle detection. BFS stack execution: branches run sequentially in a single goroutine, not parallel goroutines. Manages execution queue (default depth 1,000), worker pool (default 3, max 20), and trigger registry (manual, cron, webhook, org).",
+    tags: ["DAG", "Kahn's algo", "BFS stack", "worker pool", "webhook"],
     color: "#C8A97E",
   },
   {
     icon: "🎬",
     subtitle: "Action Executor",
     name: "internal/action/",
-    description: "Interprets 29 embedded JSON action definitions across 4 platforms (Instagram 8, LinkedIn 7, X 7, TikTok 7). Dispatches 17 step types: navigate, click, type, extract_text, extract_multiple, condition, loop, call_bot_method, save_data, mark_failed, and more. Supports nested loops with recursion guards.",
-    tags: ["5,236 LOC", "29 JSON defs", "17 step types", "go:embed", "{{template}}"],
+    description: "Interprets 64 embedded JSON action definitions across 7 platforms (Instagram 18, TikTok 16, LinkedIn 12, X 7, Gemini 4, Hacker News 4, Product Hunt 3). About 20 step types: navigate, click, type, upload, scroll, hover, extract_text, extract_multiple, condition, loop, call_bot_method, save_data, mark_failed, and more. Supports nested loops with recursion guards. Social platform actions compile only with -tags social.",
+    tags: ["64 JSON defs", "~20 step types", "go:embed", "{{template}}"],
     color: "#B8956A",
   },
   {
     icon: "🧩",
     subtitle: "Node Registry",
     name: "internal/nodes/",
-    description: "73 files implementing 50+ node types. NodeTypeRegistry maps type string → factory function, enabling runtime plugin registration. Each node loads its JSON Schema from workflow/schemas/. Control nodes: IF, Switch, Merge, Wait, Loop. Service nodes: HTTP, DB, Email, Slack, GitHub, Linear, Stripe, and 20+ more.",
-    tags: ["~3,200 LOC", "73 files", "78 schemas", "plugin registry", "JSON Schema"],
+    description: "About 190 files implementing 105 node types. NodeTypeRegistry maps type string → factory function; new types are Go code registered at build time. Each node loads its JSON Schema from workflow/schemas/. Control: IF, Switch, Merge, Wait, Split in Batches, Filter, Human-in-Loop. Services: HTTP, Postgres/MySQL/MongoDB/Redis, Email, Slack, GitHub, Linear, Stripe, and 20+ more.",
+    tags: ["~190 files", "127 schemas", "registry", "JSON Schema"],
     color: "#A07840",
   },
   {
     icon: "🌐",
     subtitle: "Browser Layer",
     name: "internal/browser/",
-    description: "Rod (Chrome DevTools Protocol via WebSocket). Stealth evasion via go-rod/stealth plugin. Humanized input: per-keystroke delays 20–150ms, 5% typo rate with auto-correct. 12+ Chromium flags for anti-detection. Page pool: one page per platform+session, reused to preserve login state.",
-    tags: ["~1,500 LOC", "Rod/CDP", "stealth", "humanized", "page pool"],
+    description: "Rod (Chrome DevTools Protocol). By default it drives your own logged-in Chrome through a paired, loopback-only extension bridge. Paced typing (50–250 ms per key) keeps long sessions stable. Page pool reuses one page per platform and session.",
+    tags: ["Rod/CDP", "extension bridge", "paced input", "page pool"],
     color: "#8B7355",
   },
   {
     icon: "🤖",
     subtitle: "Platform Bots",
     name: "internal/bot/",
-    description: "Platform-specific DOM navigators and data extractors for Instagram, LinkedIn, X/Twitter, TikTok, Telegram, and Email. Tier-1 in the 3-tier fallback: Go code (reliable, version-locked). Handles K/M number conversion (12.5K→12500), deduplication, and batch SQLite saves.",
-    tags: ["~2,800 LOC", "6 platforms", "K/M parse", "dedup", "batch saves"],
+    description: "Platform-specific DOM navigators and data extractors for Instagram, LinkedIn, X, TikTok, Hacker News, Product Hunt, Gemini, Telegram, and Email. Social platforms only with -tags social. Tier-1 in the 3-tier fallback: Go code (reliable, version-locked). Handles K/M number conversion (12.5K→12500), deduplication, and batch SQLite saves.",
+    tags: ["9 adapters", "K/M parse", "dedup", "batch saves"],
     color: "#C8A97E",
   },
   {
     icon: "🗄",
     subtitle: "Storage",
     name: "internal/storage/",
-    description: "SQLite via modernc.org/sqlite (pure Go, no CGO). 40+ tables covering workflows, executions, actions, people, lists, templates, threads, credentials, and platform sessions. Execution history pruning via cron (default: keep last 500 per workflow). JSON export for large-scale people data.",
-    tags: ["~2,200 LOC", "40+ tables", "pure Go", "no CGO", "JSON export"],
+    description: "SQLite via modernc.org/sqlite (pure Go, no CGO). 50+ tables covering workflows, executions, actions, people, lists, templates, threads, credentials, and platform sessions. Execution history pruning via cron (default: keep last 500 per workflow). JSON export for large-scale people data.",
+    tags: ["50+ tables", "pure Go", "no CGO", "JSON export"],
     color: "#B8956A",
   },
   {
     icon: "🔑",
     subtitle: "Auth & Connections",
     name: "internal/connections/",
-    description: "OAuth2 manager for 30+ cloud services (Google, GitHub, Linear, Stripe, Salesforce, HubSpot, etc.). Platform session cookies persisted in SQLite, auto-cleanup on expiry. Manual browser login flow captures cookies. Credential vault for API keys and tokens.",
-    tags: ["~1,600 LOC", "OAuth2", "30+ services", "session cookies", "vault"],
+    description: "Unified connections for 40+ platforms (API key, OAuth2, basic auth, browser session). Secrets live in an AES-256-GCM vault whose key is kept in the OS keyring. Platform session cookies persisted in SQLite, auto-cleanup on expiry. Manual browser login flow captures cookies.",
+    tags: ["OAuth2", "40+ platforms", "session cookies", "AES-256-GCM vault"],
     color: "#A07840",
   },
   {
     icon: "🧠",
     subtitle: "AI Integration",
-    name: "internal/ai/",
-    description: "Multi-provider LLM support: Anthropic (Claude Opus/Sonnet/Haiku), OpenAI (GPT-4/3.5), Google Gemini, AWS Bedrock. Prompt caching for Anthropic. Per-workflow chat history for multi-turn conversations. Token usage and cost tracking per provider per execution.",
-    tags: ["~1,800 LOC", "Anthropic", "OpenAI", "Gemini", "Bedrock", "prompt cache"],
+    name: "internal/monomind/ + internal/nodes/agent/",
+    description: "AI is handed off to agent CLIs on your machine (Claude Code, Codex, Kimi, Qwen, …) through monomind. agent.ask works as a workflow node, and agent 'orgs' can call workflows as tools. Gemini works through your own browser session, with no API key needed.",
+    tags: ["agent.ask", "Claude Code", "Codex", "orgs", "MCP"],
     color: "#8B7355",
   },
 ];
@@ -90,7 +90,7 @@ const executionFlow = [
   {
     num: "1", color: "#C8A97E",
     title: "Trigger Event",
-    body: "User fires monotask run <workflow-id>, clicks Run in Wails UI, a cron schedule fires (robfig/cron), or a webhook HTTP POST hits :9321/webhook/{id}. WorkflowEngine receives the trigger event and creates a WorkflowExecution record with QUEUED status.",
+    body: "User runs monoagentcli workflow run <id>, clicks Run in Wails UI, a cron schedule fires (robfig/cron), or a webhook HTTP POST hits :9321/webhook/{id} (127.0.0.1 by default). WorkflowEngine receives the trigger event and creates a WorkflowExecution record with QUEUED status.",
     code: null,
   },
   {
@@ -102,63 +102,53 @@ const executionFlow = [
   {
     num: "3", color: "#A07840",
     title: "BFS Execution Loop",
-    body: "Main loop pops (node, inputItems) from the BFS stack. If disabled, skip. ExpressionEngine.ResolveConfig() evaluates {{$json.*}}, {{$node[\"Name\"].*}}, {{env \"...\"}} in all string config fields. Node is dispatched to registry.Get(nodeType).Execute().",
+    body: "Main loop pops (node, inputItems) from the BFS stack. If disabled, skip. ExpressionEngine.ResolveConfig() evaluates {{$json.*}}, {{$node[\"Name\"].*}}, {{$env.NAME}} (only when MONOAGENT_ALLOW_ENV_TEMPLATES=1) in all string config fields. Node is dispatched to registry.Get(nodeType).Execute().",
     code: `// Expression examples:
 {{$json.username}}          → current item field
 {{$node["Search"].json[0]}} → named node output
-{{env "OPENAI_KEY"}}        → environment variable`,
+{{$env.API_BASE}}           → environment variable (opt-in)
+@secret:name                → credential from the vault`,
   },
   {
     num: "4", color: "#8B7355",
     title: "Node Execution",
-    body: "Each node type handles its logic. Browser action nodes wrap ActionExecutor (loads JSON defs, runs 17 step types). Control nodes implement IF/Switch/Merge/Loop/Wait. Transform nodes (Set, Code) use expression engine. Service nodes (HTTP, Slack, GitHub) make external API calls. AI nodes invoke LLM providers.",
+    body: "Each node type handles its logic. Browser action nodes wrap ActionExecutor (loads JSON defs, runs ~20 step types). Control nodes implement IF/Switch/Merge/Wait/Split in Batches. Transform nodes (Set, Code) use expression engine. Service nodes (HTTP, Slack, GitHub) make external API calls. AI nodes hand prompts to agent CLIs on your machine.",
     code: null,
   },
   {
     num: "5", color: "#C8A97E",
     title: "3-Tier DOM Fallback",
-    body: "For browser action nodes needing DOM elements: Tier 1 = call_bot_method (Go code, reliable). Tier 2 = XPath alternatives (human-written, brittle but fast). Tier 3 = AI-generated CSS selector via config manager (adaptive but slow). Each tier skippable with onError: skip.",
-    code: "call_bot_method → XPath → AI selector (config manager)",
+    body: "For browser action nodes needing DOM elements: Tier 1 = call_bot_method (Go code, reliable). Tier 2 = XPath alternatives (human-written, brittle but fast). Tier 3 = selector generated by a local AI agent, with a cached fallback. Each tier skippable with onError: skip.",
+    code: "call_bot_method → XPath → local agent selector (cached)",
   },
   {
     num: "6", color: "#B8956A",
     title: "Output Routing",
-    body: "Node emits outputs on named handles: main, error, true/false (IF), loop_item/done (Loop), or custom handles. Each connected downstream node is pushed onto the BFS stack. MERGE nodes accumulate inputs from multiple branches via sync.Mutex-guarded state map, releasing when all expected inputs arrive.",
+    body: "Node emits outputs on named handles: main, error, true/false (IF), switch outputs, or custom handles. Each connected downstream node is pushed onto the BFS stack. MERGE nodes accumulate inputs from multiple branches via sync.Mutex-guarded state map, releasing when all expected inputs arrive.",
     code: "outputs[\"main\"] → push connected nodes onto BFS stack",
   },
   {
     num: "7", color: "#A07840",
     title: "Error Handling",
-    body: "Per-node on_error policy: stop (mark execution FAILED, return immediately), continue (treat error as success, pass input through), error_branch (emit on error handle with structured NodeError). Execution history saved to workflow_execution_nodes table for debugging.",
+    body: "Per-node on_error: stop, continue, skip, error_branch (emit on error handle with structured NodeError). Partial failures show as SUCCESS_WITH_ERRORS, never green. Execution history saved to workflow_execution_nodes table for debugging.",
     code: null,
   },
   {
     num: "8", color: "#8B7355",
     title: "Execution Complete",
-    body: "Stack empties → COMPLETED. Stop-error node triggers → FAILED. WorkflowExecution record updated with final status, duration, error message. Result returned to caller (CLI prints summary, Wails UI refreshes, webhook HTTP response returned). History pruned to last 500 per workflow via background cron.",
+    body: "Stack empties → COMPLETED, or WAITING when paused at a human-in-the-loop node. Stop-error node triggers → FAILED. WorkflowExecution record updated with final status, duration, error message. Result returned to caller (CLI prints summary, Wails UI refreshes, webhook HTTP response returned). History pruned to last 500 per workflow via background cron.",
     code: null,
   },
 ];
 
 const nodeTypes = [
-  { category: "Control & Transform", count: 15, examples: ["IF", "Switch", "Merge", "Wait", "Loop", "Set", "Code", "NoOp"], color: "#C8A97E" },
-  { category: "Browser & Bots", count: 15, examples: ["Instagram", "LinkedIn", "X/Twitter", "TikTok", "Telegram", "Email", "Chrome"], color: "#B8956A" },
-  { category: "Service Integrations", count: 25, examples: ["HTTP Request", "Slack", "GitHub", "Linear", "Stripe", "Salesforce", "HubSpot"], color: "#A07840" },
-  { category: "AI Nodes", count: 8, examples: ["Anthropic Chat", "OpenAI Prompt", "Gemini", "Bedrock", "AI Extract"], color: "#8B7355" },
-  { category: "Data & Storage", count: 10, examples: ["SQLite Query", "JSON Parse", "CSV Export", "Excel Write", "HTML Extract"], color: "#C8A97E" },
+  { category: "Control & Transform", count: 15, examples: ["IF", "Switch", "Merge", "Wait", "Set", "Code (JS)", "Filter", "Human-in-Loop"], color: "#C8A97E" },
+  { category: "Social (opt-in build)", count: 60, examples: ["Instagram", "LinkedIn", "X", "TikTok", "Hacker News", "Product Hunt"], color: "#B8956A" },
+  { category: "Service Integrations", count: 24, examples: ["HTTP Request", "Slack", "GitHub", "Linear", "Stripe", "Salesforce", "HubSpot"], color: "#A07840" },
+  { category: "AI & Agents", count: 11, examples: ["agent.ask", "org.run", "gemini.generate_image", "ai.extract_page"], color: "#8B7355" },
+  { category: "Data & DB", count: 12, examples: ["Postgres", "MySQL", "MongoDB", "Redis", "Spreadsheet", "HTML", "XML", "Crypto"], color: "#C8A97E" },
 ];
 
-
-const perfStats = [
-  { op: "Node dispatch overhead", val: "<1ms", pct: 99, note: "Registry lookup + expression resolve" },
-  { op: "Browser action (click)", val: "50–500ms", pct: 60, note: "Includes humanization delays" },
-  { op: "DOM extraction (goquery)", val: "<10ms", pct: 95, note: "Per element set" },
-  { op: "AI LLM call (Anthropic)", val: "500ms–5s", pct: 30, note: "Network latency dominates" },
-  { op: "SQLite batch write", val: "<20ms", pct: 90, note: "Per 100 people rows" },
-  { op: "Workflow DAG build", val: "<5ms", pct: 97, note: "Kahn's sort on 100 nodes" },
-  { op: "Webhook trigger response", val: "<50ms", pct: 85, note: "Enqueue + HTTP 202 response" },
-  { op: "Cron schedule resolution", val: "<1ms", pct: 99, note: "robfig/cron v3 in-process" },
-];
 
 export default function MonoAgentArchitecturePage() {
   return (
@@ -191,7 +181,7 @@ export default function MonoAgentArchitecturePage() {
             <br />Orchestrates Workflows
           </h1>
           <p className="text-lg md:text-xl text-espresso/55 font-light leading-relaxed max-w-2xl mb-16">
-            52K+ lines of Go. A DAG workflow engine with 90+ node types, Rod browser automation across 6 social platforms, multi-provider AI, and a Wails desktop UI.
+            130K+ lines of Go. A DAG workflow engine with 105 node types, human-in-the-loop approvals, AI handed to agent CLIs on your machine, browser automation in your own Chrome, and a Wails desktop UI.
           </p>
           <div className="inline-flex flex-wrap gap-px overflow-hidden rounded-xl border border-espresso/10 bg-espresso/5">
             {heroStats.map(({ value, label }) => (
@@ -245,30 +235,30 @@ export default function MonoAgentArchitecturePage() {
               {/* ActionExecutor */}
               <rect x="420" y="95" width="200" height="65" rx="10" fill="rgba(184,149,106,0.1)" stroke="#B8956A" strokeWidth="1.5"/>
               <text x="520" y="118" textAnchor="middle" fill="#2A2318" fontSize="12" fontWeight="700">ActionExecutor</text>
-              <text x="520" y="135" textAnchor="middle" fill="#B8956A" fontSize="10">17 step types · go:embed</text>
-              <text x="520" y="150" textAnchor="middle" fill="rgba(42,35,24,0.4)" fontSize="9">29 JSON action defs</text>
+              <text x="520" y="135" textAnchor="middle" fill="#B8956A" fontSize="10">~20 step types · go:embed</text>
+              <text x="520" y="150" textAnchor="middle" fill="rgba(42,35,24,0.4)" fontSize="9">64 JSON action defs</text>
 
               {/* ExpressionEngine */}
               <rect x="640" y="95" width="220" height="65" rx="10" fill="rgba(160,120,64,0.1)" stroke="#A07840" strokeWidth="1.5"/>
               <text x="750" y="118" textAnchor="middle" fill="#2A2318" fontSize="12" fontWeight="700">ExpressionEngine</text>
               <text x="750" y="135" textAnchor="middle" fill="#A07840" fontSize="10">text/template · FuncMap</text>
-              <text x="750" y="150" textAnchor="middle" fill="rgba(42,35,24,0.4)" fontSize="9">{`{{$json.*}} · {{env "..."}} · {{$node[...]}}`}</text>
+              <text x="750" y="150" textAnchor="middle" fill="rgba(42,35,24,0.4)" fontSize="9">{`{{$json.*}} · {{$env.X}} · {{$node[...]}}`}</text>
 
               {/* Node Registry row */}
               <rect x="30" y="198" width="130" height="58" rx="9" fill="rgba(139,115,85,0.08)" stroke="#8B7355" strokeWidth="1.2"/>
               <text x="95" y="221" textAnchor="middle" fill="#2A2318" fontSize="11" fontWeight="700">Browser</text>
               <text x="95" y="238" textAnchor="middle" fill="#8B7355" fontSize="9">Rod · CDP</text>
-              <text x="95" y="250" textAnchor="middle" fill="rgba(42,35,24,0.4)" fontSize="8.5">stealth · human</text>
+              <text x="95" y="250" textAnchor="middle" fill="rgba(42,35,24,0.4)" fontSize="8.5">your Chrome · paired</text>
 
               <rect x="173" y="198" width="130" height="58" rx="9" fill="rgba(200,169,126,0.08)" stroke="#C8A97E" strokeWidth="1.2"/>
               <text x="238" y="221" textAnchor="middle" fill="#2A2318" fontSize="11" fontWeight="700">Bot Layer</text>
-              <text x="238" y="238" textAnchor="middle" fill="#C8A97E" fontSize="9">6 Platforms</text>
+              <text x="238" y="238" textAnchor="middle" fill="#C8A97E" fontSize="9">opt-in build</text>
               <text x="238" y="250" textAnchor="middle" fill="rgba(42,35,24,0.4)" fontSize="8.5">IG · LI · X · TikTok</text>
 
               <rect x="316" y="198" width="130" height="58" rx="9" fill="rgba(160,120,64,0.08)" stroke="#A07840" strokeWidth="1.2"/>
-              <text x="381" y="221" textAnchor="middle" fill="#2A2318" fontSize="11" fontWeight="700">AI Nodes</text>
-              <text x="381" y="238" textAnchor="middle" fill="#A07840" fontSize="9">4 Providers</text>
-              <text x="381" y="250" textAnchor="middle" fill="rgba(42,35,24,0.4)" fontSize="8.5">Claude · GPT · Gemini</text>
+              <text x="381" y="221" textAnchor="middle" fill="#2A2318" fontSize="11" fontWeight="700">Agents</text>
+              <text x="381" y="238" textAnchor="middle" fill="#A07840" fontSize="9">agent.ask</text>
+              <text x="381" y="250" textAnchor="middle" fill="rgba(42,35,24,0.4)" fontSize="8.5">Claude Code · Codex</text>
 
               <rect x="459" y="198" width="130" height="58" rx="9" fill="rgba(184,149,106,0.08)" stroke="#B8956A" strokeWidth="1.2"/>
               <text x="524" y="221" textAnchor="middle" fill="#2A2318" fontSize="11" fontWeight="700">Services</text>
@@ -277,7 +267,7 @@ export default function MonoAgentArchitecturePage() {
 
               <rect x="602" y="198" width="130" height="58" rx="9" fill="rgba(139,115,85,0.08)" stroke="#8B7355" strokeWidth="1.2"/>
               <text x="667" y="221" textAnchor="middle" fill="#2A2318" fontSize="11" fontWeight="700">Control</text>
-              <text x="667" y="238" textAnchor="middle" fill="#8B7355" fontSize="9">IF · Switch · Loop</text>
+              <text x="667" y="238" textAnchor="middle" fill="#8B7355" fontSize="9">IF · Switch · Filter</text>
               <text x="667" y="250" textAnchor="middle" fill="rgba(42,35,24,0.4)" fontSize="8.5">Merge · Wait · Set</text>
 
               {/* Config Manager */}
@@ -308,7 +298,7 @@ export default function MonoAgentArchitecturePage() {
 
               {/* Chrome browser external */}
               <rect x="30" y="375" width="150" height="40" rx="8" fill="rgba(42,35,24,0.03)" stroke="rgba(42,35,24,0.08)" strokeWidth="1"/>
-              <text x="105" y="391" textAnchor="middle" fill="rgba(42,35,24,0.4)" fontSize="10" fontWeight="600">Chrome (Headless)</text>
+              <text x="105" y="391" textAnchor="middle" fill="rgba(42,35,24,0.4)" fontSize="10" fontWeight="600">Your Chrome (extension)</text>
               <text x="105" y="407" textAnchor="middle" fill="rgba(42,35,24,0.25)" fontSize="9">Rod DevTools Protocol</text>
 
               <rect x="200" y="375" width="150" height="40" rx="8" fill="rgba(42,35,24,0.03)" stroke="rgba(42,35,24,0.08)" strokeWidth="1"/>
@@ -316,8 +306,8 @@ export default function MonoAgentArchitecturePage() {
               <text x="275" y="407" textAnchor="middle" fill="rgba(42,35,24,0.25)" fontSize="9">Slack · GitHub · Linear · ...</text>
 
               <rect x="370" y="375" width="150" height="40" rx="8" fill="rgba(42,35,24,0.03)" stroke="rgba(42,35,24,0.08)" strokeWidth="1"/>
-              <text x="445" y="391" textAnchor="middle" fill="rgba(42,35,24,0.4)" fontSize="10" fontWeight="600">AI APIs</text>
-              <text x="445" y="407" textAnchor="middle" fill="rgba(42,35,24,0.25)" fontSize="9">Anthropic · OpenAI · Gemini</text>
+              <text x="445" y="391" textAnchor="middle" fill="rgba(42,35,24,0.4)" fontSize="10" fontWeight="600">Agent CLIs</text>
+              <text x="445" y="407" textAnchor="middle" fill="rgba(42,35,24,0.25)" fontSize="9">via monomind</text>
 
               <line x1="95" y1="345" x2="95" y2="375" stroke="rgba(42,35,24,0.12)" strokeWidth="1" markerEnd="url(#arr3)"/>
               <line x1="238" y1="345" x2="270" y2="375" stroke="rgba(42,35,24,0.12)" strokeWidth="1" markerEnd="url(#arr3)"/>
@@ -340,7 +330,7 @@ export default function MonoAgentArchitecturePage() {
           <p className="text-xs uppercase tracking-label font-semibold mb-3" style={{ color: accent }}>Internal Packages</p>
           <h2 className="text-3xl md:text-4xl font-semibold text-espresso mb-4">8 Core Modules</h2>
           <p className="text-espresso/55 font-light leading-relaxed max-w-2xl mb-12">
-            52,000+ lines of Go across 251 files. Clean separation between engine, execution, browser, and storage layers.
+            130K+ lines of Go across 900+ files. Clean separation between engine, execution, browser, and storage layers.
           </p>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {modules.map((m) => (
@@ -392,9 +382,9 @@ export default function MonoAgentArchitecturePage() {
       <section id="nodes" className="px-8 py-20 bg-ivory-warm border-b border-ivory-linen">
         <div className="mx-auto max-w-6xl">
           <p className="text-xs uppercase tracking-label font-semibold mb-3" style={{ color: accent }}>Node Registry</p>
-          <h2 className="text-3xl md:text-4xl font-semibold text-espresso mb-4">90+ Node Types</h2>
+          <h2 className="text-3xl md:text-4xl font-semibold text-espresso mb-4">105 Node Types</h2>
           <p className="text-espresso/55 font-light leading-relaxed max-w-2xl mb-12">
-            Every node registers with NodeTypeRegistry → factory function mapping. Each loads its JSON Schema from workflow/schemas/. Plugins can register new types at runtime without recompiling.
+            Every node registers with NodeTypeRegistry → factory function mapping. Each loads its JSON Schema from workflow/schemas/. New node types are Go code registered at build time.
           </p>
           <div className="flex flex-col gap-4 mb-8">
             {nodeTypes.map((nt) => (
@@ -419,9 +409,9 @@ export default function MonoAgentArchitecturePage() {
             <p className="text-[10px] uppercase tracking-label font-semibold text-espresso/40 mb-4">3-Tier DOM Fallback (Browser Nodes)</p>
             <div className="flex flex-col gap-3">
               {[
-                { tier: "Tier 1", label: "call_bot_method", desc: "Go code in bot layer: reliable, version-locked, fastest", conf: "~100% reliable" },
-                { tier: "Tier 2", label: "XPath alternatives", desc: "Human-written selectors, faster than AI but brittle if platform changes UI", conf: "~85% reliable" },
-                { tier: "Tier 3", label: "AI-generated CSS", desc: "Config manager asks LLM for selector, adaptive but slow (~500ms extra)", conf: "~70% reliable" },
+                { tier: "Tier 1", label: "call_bot_method", desc: "Go code in bot layer: reliable, version-locked, fastest", conf: "most stable" },
+                { tier: "Tier 2", label: "XPath alternatives", desc: "Human-written selectors, faster than AI but brittle if platform changes UI", conf: "fallback" },
+                { tier: "Tier 3", label: "AI-generated CSS", desc: "Selector generated by a local AI agent, with a cached fallback", conf: "last resort" },
               ].map((t) => (
                 <div key={t.tier} className="grid grid-cols-[auto_1fr_auto] items-center gap-4">
                   <span className="text-[10px] font-bold px-2 py-1 rounded border" style={{ color: accent, borderColor: `${accent}40`, background: `${accent}0d` }}>{t.tier}</span>
@@ -443,7 +433,7 @@ export default function MonoAgentArchitecturePage() {
           <p className="text-xs uppercase tracking-label font-semibold mb-3" style={{ color: accent }}>Expression Engine</p>
           <h2 className="text-3xl md:text-4xl font-semibold text-espresso mb-4">Go text/template + FuncMap</h2>
           <p className="text-espresso/55 font-light leading-relaxed max-w-2xl mb-12">
-            All string config fields in every node are resolved through ExpressionEngine before execution. No JavaScript sandbox: pure Go templates with a controlled FuncMap.
+            All string config fields in every node are resolved through ExpressionEngine before execution. Expressions are Go templates with a fixed FuncMap. Custom logic goes in the core.code node (JavaScript via the embedded Goja engine).
           </p>
           <div className="grid gap-3 sm:grid-cols-2 mb-8">
             {[
@@ -451,9 +441,9 @@ export default function MonoAgentArchitecturePage() {
               { expr: '{{$node["Search"].json[0].title}}', desc: "Output of a specific named upstream node" },
               { expr: "{{$workflow.id}}", desc: "Workflow metadata (id, name, created_at)" },
               { expr: "{{$execution.id}}", desc: "Current execution runtime info" },
-              { expr: '{{env "OPENAI_KEY"}}', desc: "OS environment variable (secure, not stored in workflow)" },
+              { expr: "{{$env.API_BASE}}", desc: "OS environment variable (opt-in via MONOAGENT_ALLOW_ENV_TEMPLATES=1)" },
               { expr: "{{len $json.items}}", desc: "Array length: built-in template function" },
-              { expr: "{{now}}", desc: "Current timestamp as Go time.Time" },
+              { expr: "{{now}}", desc: "Current timestamp as an RFC3339 string" },
               { expr: "{{index $json.tags 0}}", desc: "Array index access via Go template built-in" },
             ].map((e) => (
               <div key={e.expr} className="rounded-xl border border-espresso/10 bg-white p-4 shadow-soft flex gap-3 items-start">
@@ -465,7 +455,7 @@ export default function MonoAgentArchitecturePage() {
           <div className="rounded-2xl border border-espresso/10 bg-white p-6 shadow-soft">
             <p className="text-[10px] uppercase tracking-label font-semibold text-espresso/40 mb-4">Key Architectural Decision</p>
             <p className="text-sm text-espresso/65 leading-relaxed">
-              <strong className="text-espresso">Go text/template instead of Lua or JavaScript</strong>: no eval sandboxing required. Expressions are limited by the FuncMap (no arbitrary Go access). Simple enough for non-technical users, composable for power users. Go&apos;s template engine is battle-tested with zero external runtime overhead.
+              <strong className="text-espresso">Go text/template for expressions</strong>: no eval sandboxing required. Custom logic goes in the core.code node (JavaScript via the embedded Goja engine). Expressions are limited by the FuncMap (no arbitrary Go access). Simple enough for non-technical users, composable for power users. Go&apos;s template engine is battle-tested with zero external runtime overhead.
             </p>
           </div>
         </div>
@@ -475,43 +465,16 @@ export default function MonoAgentArchitecturePage() {
       <section id="performance" className="px-8 py-20 bg-ivory-warm">
         <div className="mx-auto max-w-6xl">
           <p className="text-xs uppercase tracking-label font-semibold mb-3" style={{ color: accent }}>Performance</p>
-          <h2 className="text-3xl md:text-4xl font-semibold text-espresso mb-4">Execution Benchmarks</h2>
+          <h2 className="text-3xl md:text-4xl font-semibold text-espresso mb-4">Execution Design</h2>
           <p className="text-espresso/55 font-light leading-relaxed max-w-2xl mb-12">
-            Go + single-goroutine BFS execution eliminates race conditions. Bottlenecks are always network-bound (browser, AI, APIs) not engine-bound.
+            Go + single-goroutine BFS execution eliminates race conditions. In practice, run time is dominated by the network: browser, AI agents, and APIs.
           </p>
-          <div className="rounded-2xl border border-espresso/10 bg-white shadow-soft overflow-x-auto mb-8">
-            <table className="w-full border-collapse">
-              <thead>
-                <tr className="border-b border-espresso/8 bg-ivory-warm/50">
-                  <th className="py-3 px-5 text-left text-[11px] uppercase tracking-label font-semibold text-espresso/40">Operation</th>
-                  <th className="py-3 px-5 text-left text-[11px] uppercase tracking-label font-semibold text-espresso/40 w-52">Speed</th>
-                  <th className="py-3 px-5 text-left text-[11px] uppercase tracking-label font-semibold text-espresso/40">Notes</th>
-                </tr>
-              </thead>
-              <tbody>
-                {perfStats.map((row, i) => (
-                  <tr key={row.op} className={i < perfStats.length - 1 ? "border-b border-espresso/6" : ""}>
-                    <td className="py-3 px-5 text-sm text-espresso">{row.op}</td>
-                    <td className="py-3 px-5">
-                      <div className="flex items-center gap-3">
-                        <div className="flex-1 h-1.5 rounded-full bg-espresso/8 overflow-hidden">
-                          <div className="h-full rounded-full" style={{ width: `${row.pct}%`, background: `linear-gradient(90deg, ${accent}, #8B6914)` }} />
-                        </div>
-                        <span className="text-xs font-semibold whitespace-nowrap" style={{ color: accent }}>{row.val}</span>
-                      </div>
-                    </td>
-                    <td className="py-3 px-5 text-xs text-espresso/45">{row.note}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
 
           <div className="grid sm:grid-cols-3 gap-4">
             {[
               { title: "Why BFS, Not Goroutines?", body: "Browser actions are seconds-to-minutes. Spawning goroutines per branch adds overhead without benefit. Parallel execution uses the worker pool instead. Multiple workflows run concurrently, not multiple branches within one." },
-              { title: "Pure Go SQLite", body: "modernc.org/sqlite is a CGO-free port of SQLite. Zero C compilation, single static binary, no system SQLite dependency. Slightly slower than CGO builds (~10%) but enables cross-compilation and Docker-free deployment." },
-              { title: "Single Binary", body: "go:embed packages all 29 action JSONs and 78 workflow schemas. No external config files needed. Wails embeds the React UI. The entire system (CLI, Wails app, action engine) ships as one ~50MB executable." },
+              { title: "Pure Go SQLite", body: "modernc.org/sqlite is a CGO-free port of SQLite. Zero C compilation, single static binary, no system SQLite dependency. Trades some raw speed versus CGO builds for cross-compilation and Docker-free deployment." },
+              { title: "Single Binary", body: "go:embed packs all action definitions, node schemas, migrations, and templates into the CLI: one executable of about 65 MB. The desktop app is a separate download." },
             ].map((c) => (
               <div key={c.title} className="rounded-2xl border border-espresso/10 bg-white p-5 shadow-soft">
                 <h4 className="text-sm font-semibold text-espresso mb-2">{c.title}</h4>

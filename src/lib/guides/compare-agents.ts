@@ -34,7 +34,7 @@ export const agentComparisons: Guide[] = [
       {
         heading: "Where Monomind is stronger",
         bullets: [
-          "Zero-code: it plugs into the assistant you already use and adds 97 agent definitions, 90 skills and 40+ workflow commands.",
+          "Zero-code: it plugs into the assistant you already use and adds 88 agents, 86 skills and 40+ workflow commands.",
           "Knows your codebase: callers, callees and blast radius of a change before the assistant edits it.",
           "Local memory and document search (Markdown, PDF, DOCX) ready out of the box.",
           "Long-running orgs with per-role tool allow/deny lists, file scopes, token budgets, audit trails and human approval gates.",
@@ -100,7 +100,7 @@ export const agentComparisons: Guide[] = [
     description:
       "What Monomind adds on top of Claude Code's built-in subagents, skills and hooks, what it costs, and when plain Claude Code is enough.",
     summary:
-      "Claude Code already has subagents, custom agents, skills, slash commands, hooks and MCP support. Monomind adds what it lacks: memory that persists across sessions in local SQLite, a codebase knowledge graph for impact analysis, document retrieval injected into prompts, 97 ready-made agents and 40+ workflows, background agent orgs that keep running after you close the session, and a prompt-injection gate. Small projects often don't need it.",
+      "Claude Code already has subagents, custom agents, skills, slash commands, hooks and MCP support. Monomind adds what it lacks: memory that persists across sessions in local SQLite, a codebase knowledge graph for impact analysis, document retrieval injected into prompts, 88 ready-made agents and 40+ workflows, background agent orgs that keep running after you close the session, and a prompt-injection gate. Small projects often don't need it.",
     updated: UPDATED,
     sections: [
       {
