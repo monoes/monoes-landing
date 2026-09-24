@@ -23,6 +23,8 @@ const footerSections = [
   {
     title: "Company",
     links: [
+      { label: "Compare", href: "/compare" },
+      { label: "Guides", href: "/guides" },
       { label: "Whitepaper", href: "/whitepaper" },
       { label: "Blog", href: "/blog" },
       { label: "About", href: "/about" },

@@ -97,7 +97,7 @@ export const projects: Project[] = [
     slug: "mono-agent",
     tagline: "n8n meets Playwright. Self-hosted, multi-profile automation.",
     description:
-      "90+ workflow nodes. Stealth Chrome via Rod. Multi-profile isolation. A production-grade automation platform with a visual DAG editor, real browser automation, AI integrations, and Human-in-Loop controls. Fully self-hosted, zero cloud.",
+      "100+ workflow nodes. Stealth Chrome via Rod. Multi-profile isolation. A production-grade automation platform with a visual DAG editor, real browser automation, AI integrations, and Human-in-Loop controls. Fully self-hosted, zero cloud.",
     repo: "monoes/mono-agent",
     language: "Go",
     accent: "#C8A97E",
@@ -105,7 +105,7 @@ export const projects: Project[] = [
     features: [
       {
         icon: "⚡",
-        title: "90+ Workflow Nodes",
+        title: "100+ Workflow Nodes",
         description:
           "DAG-based execution across triggers, browser, AI, social, image, and data nodes.",
       },
@@ -131,7 +131,7 @@ export const projects: Project[] = [
         icon: "🤖",
         title: "AI Integrations",
         description:
-          "OpenRouter, HuggingFace, and Gemini. 200+ models accessible from any workflow node.",
+          "Hand AI steps to local agent CLIs like Claude Code and Codex, or use Gemini, OpenRouter, and HuggingFace nodes.",
       },
       {
         icon: "🎨",
@@ -181,7 +181,7 @@ export const projects: Project[] = [
         },
         {
           title: "Node Execution",
-          description: "Run any of the 90+ node types directly from the CLI.",
+          description: "Run any of the 100+ node types directly from the CLI.",
           commands: [
             "monoagentcli node list",
             "monoagentcli node run \\",

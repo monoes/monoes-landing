@@ -3,6 +3,7 @@ import { BLOG_POSTS } from "@/lib/blog";
 import { ENDPOINT_GROUPS } from "@/lib/docs/endpoint-registry";
 import { getDb } from "@/lib/db";
 import { orgUpload } from "@/lib/db/schema";
+import { COMPARISONS, GUIDES } from "@/lib/guides";
 
 // Org pages are D1-backed and change as runs/comments are added - generate
 // this per-request rather than baking a stale list in at build time.
@@ -48,6 +49,20 @@ const docsReferenceRoutes: MetadataRoute.Sitemap = ENDPOINT_GROUPS.map((group) =
   lastModified: new Date(),
 }));
 
+const guideRoutes: MetadataRoute.Sitemap = [
+  { url: `${BASE_URL}/compare`, changeFrequency: "monthly", priority: 0.7, lastModified: new Date() },
+  { url: `${BASE_URL}/guides`, changeFrequency: "monthly", priority: 0.7, lastModified: new Date() },
+  ...[
+    ...COMPARISONS.map((g) => ({ path: `/compare/${g.slug}`, updated: g.updated })),
+    ...GUIDES.map((g) => ({ path: `/guides/${g.slug}`, updated: g.updated })),
+  ].map(({ path, updated }) => ({
+    url: `${BASE_URL}${path}`,
+    changeFrequency: "monthly" as const,
+    priority: 0.7,
+    lastModified: new Date(updated),
+  })),
+];
+
 const blogRoutes: MetadataRoute.Sitemap = BLOG_POSTS.map((post) => ({
   url: `${BASE_URL}/blog/${post.slug}`,
   changeFrequency: "yearly" as const,
@@ -71,6 +86,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...staticRoutes,
     { url: `${BASE_URL}/community/orgs`, changeFrequency: "weekly", priority: 0.6, lastModified: new Date() },
     ...orgRoutes,
+    ...guideRoutes,
     ...blogRoutes,
     ...docsReferenceRoutes,
   ];

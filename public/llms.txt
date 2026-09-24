@@ -1,0 +1,45 @@
+# Monoes
+
+> Monoes builds open-source AI agent tools (Monomind, Mono Agent, MonoClip, MonoTask) and runs Monoes Workforce, a managed service that deploys AI digital workers to automate business processes end-to-end on the ERP, CRM and email systems a company already uses.
+
+Monoes offers two paths on one engine: self-host the open-source tools for free, or hire Monoes Workforce to design, deploy and monitor digital workers for you. Founded by Morteza Nokhodian, author of Monomind. Contact: hello@monoes.me. Security: security@monoes.me.
+
+## Monoes Workforce (managed agentic process automation)
+
+- [Workforce overview](https://monoes.me/workforce): AI digital workers that execute business processes end-to-end on your existing ERP, CRM, email, Excel/CSV, accounting and ticketing systems.
+- [How it works](https://monoes.me/workforce/how-it-works): each worker = deterministic Workflow + AI Agent (reads, extracts, decides within a step) + versioned Policy rules (e.g. "invoices over $20,000 require approval") + swappable Connectors. Five autonomy levels, from manual to autonomous exception handling; workers start with human approval.
+- [Capabilities](https://monoes.me/workforce/capabilities): workers for finance and accounting (AP, AR, reconciliation, period close), procurement (3-way match, PO tracking), HR (onboarding, payroll support), customer service (ticket triage, SLA monitoring), sales and CRM (lead follow-up, quote-to-order), and reporting.
+- Pricing: Discovery audit $3,000 (1 day, one process) or $12,000 (5 days, multi-department). Typical pilots start at $15,000 with a fixed, itemized quote. Engagement: Discovery 1-5 days, Pilot 3-6 weeks, Expand 1-3 months, then Scale.
+
+## Open-source products
+
+- [Monomind](https://monoes.me/projects/monomind): open-source (Apache 2.0) TypeScript CLI and MCP server that adds a local codebase knowledge graph, persistent local SQLite memory with local embeddings, document search, multi-agent coordination and policy-gated background agent orgs to AI coding assistants (Claude Code, OpenCode, Antigravity, Kimi Code, Codex). Install: `npm install -g monomind`. Source: https://github.com/monoes/monomind
+- [Mono Agent](https://monoes.me/projects/mono-agent): open-source (MIT), local-first n8n alternative in a single Go binary - 100+ workflow node types, visual DAG editor and desktop app, built-in human-in-the-loop approval, encrypted secrets vault in the OS keychain, and an MCP server so AI agents can build and run workflows. Source: https://github.com/monoes/mono-agent
+- [MonoClip](https://monoes.me/projects/mono-clip): a clipboard manager with memory.
+- [MonoTask](https://monoes.me/projects/monotask): peer-to-peer kanban board with no server and no account.
+
+## Comparisons
+
+- [Mono Agent vs n8n](https://monoes.me/compare/mono-agent-vs-n8n)
+- [Mono Agent vs Make](https://monoes.me/compare/mono-agent-vs-make)
+- [Mono Agent vs Zapier](https://monoes.me/compare/mono-agent-vs-zapier)
+- [Monoes vs UiPath](https://monoes.me/compare/monoes-vs-uipath)
+- [Monomind vs CrewAI](https://monoes.me/compare/monomind-vs-crewai)
+- [Monomind vs LangGraph](https://monoes.me/compare/monomind-vs-langgraph)
+- [Monomind vs Claude Code subagents](https://monoes.me/compare/monomind-vs-claude-code-subagents)
+
+## Guides
+
+- [AI digital workers for invoice processing and accounts payable](https://monoes.me/guides/ai-invoice-processing-accounts-payable)
+- [Automating CRM lead follow-up with AI without losing oversight](https://monoes.me/guides/ai-crm-lead-follow-up)
+- [Business process automation inside your existing ERP and CRM](https://monoes.me/guides/ai-automation-inside-existing-erp-crm)
+- [What is agentic process automation and how it differs from RPA](https://monoes.me/guides/agentic-process-automation-vs-rpa)
+- [AI agent frameworks that store memory locally in SQLite](https://monoes.me/guides/local-ai-agent-memory-sqlite)
+
+## Optional
+
+- [Whitepaper](https://monoes.me/whitepaper)
+- [Blog](https://monoes.me/blog)
+- [API docs](https://monoes.me/docs)
+- [About](https://monoes.me/about)
+- [Security](https://monoes.me/security)
