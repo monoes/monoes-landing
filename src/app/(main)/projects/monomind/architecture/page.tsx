@@ -4,7 +4,7 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "Monomind Architecture",
   description:
-    "Technical architecture of Monomind: 9 packages, 35 CLI commands, 9 background workers, and 46 Monograph MCP tools. Explore the monorepo structure.",
+    "Technical architecture of Monomind: 9 packages, 38 CLI commands, 9 background workers, and 46 Monograph MCP tools. Explore the monorepo structure.",
   alternates: { canonical: "/projects/monomind/architecture" },
   openGraph: {
     title: "Monomind Architecture - 9 packages, 46 Monograph tools",
@@ -16,7 +16,7 @@ const accent = "#8B6914";
 
 const stats = [
   { value: "9", label: "Packages" },
-  { value: "35", label: "CLI Commands" },
+  { value: "38", label: "CLI Commands" },
   { value: "9", label: "Background Workers" },
   { value: "46", label: "Monograph MCP Tools" },
 ];
@@ -28,8 +28,8 @@ const components = [
     name: "@monoes/monomindcli",
     path: "packages/@monomind/cli/",
     description:
-      "The published CLI package (installed as the `monomind` umbrella from repo root). 35 top-level commands, in-process agent/swarm lifecycle, and a hand-rolled stdio JSON-RPC MCP server: no separate MCP process required for the default transport.",
-    tags: ["35 commands", "stdio JSON-RPC", "in-process agents"],
+      "The published CLI package (installed as the `monomind` umbrella from repo root). 38 top-level commands, in-process agent/swarm lifecycle, and a hand-rolled stdio JSON-RPC MCP server: no separate MCP process required for the default transport.",
+    tags: ["38 commands", "stdio JSON-RPC", "in-process agents"],
     color: "#8B6914",
   },
   {
@@ -308,7 +308,7 @@ export default function MonomindArchitecturePage() {
               {/* CLI box */}
               <rect x="290" y="120" width="320" height="55" rx="12" fill="rgba(139,105,20,0.08)" stroke="#8B6914" strokeWidth="2" />
               <text x="450" y="145" textAnchor="middle" fill="#2A2318" fontSize="13" fontWeight="700">@monoes/monomindcli</text>
-              <text x="450" y="163" textAnchor="middle" fill="#8B6914" fontSize="10" fontWeight="600">35 commands · dynamically imports the packages below</text>
+              <text x="450" y="163" textAnchor="middle" fill="#8B6914" fontSize="10" fontWeight="600">38 commands · dynamically imports the packages below</text>
 
               {/* Lines from CLI to 4 package rows */}
               <path d="M 360 175 L 130 210" stroke="rgba(139,115,85,0.5)" strokeWidth="1.5" strokeDasharray="5,3" markerEnd="url(#arrow)" />
