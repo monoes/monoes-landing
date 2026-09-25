@@ -5,6 +5,7 @@ import { SwarmSimulation } from "@/components/demos/SwarmSimulation";
 import { MonographDemo } from "@/components/demos/MonographDemo";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
+import { getMonomindVersion } from "@/lib/versions";
 
 export const metadata: Metadata = {
   title: "Monomind: Open-source memory, code graph and agent orgs for AI coding assistants",
@@ -18,9 +19,10 @@ export const metadata: Metadata = {
   },
 };
 
-export default function MonomindPage() {
+export default async function MonomindPage() {
   const project = getProject("monomind");
   if (!project) notFound();
+  const version = await getMonomindVersion();
 
   const softwareSchema = {
     "@context": "https://schema.org",
@@ -37,7 +39,7 @@ export default function MonomindPage() {
       "Open-source CLI and MCP server that adds local SQLite memory, a codebase knowledge graph, local document search and policy-gated agent orgs to AI coding assistants.",
     url: "https://monoes.me/projects/monomind",
     downloadUrl: "https://github.com/monoes/monomind",
-    softwareVersion: "2.16.2",
+    ...(version && { softwareVersion: version }),
     applicationSubCategory: "AI Agent Orchestration",
     license: "https://www.apache.org/licenses/LICENSE-2.0",
     author: {

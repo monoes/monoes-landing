@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { getMonoClipVersion } from "@/lib/versions";
 import Link from "next/link";
 
 export const metadata: Metadata = {
@@ -194,7 +195,8 @@ const perfRows = [
   { op: "Image save to PNG", val: "<30 ms", pct: 80, note: "~/.monoclip/images/" },
 ];
 
-export default function MonoClipArchitecturePage() {
+export default async function MonoClipArchitecturePage() {
+  const version = await getMonoClipVersion();
   return (
     <div className="bg-ivory-warm min-h-screen">
       {/* Header */}
@@ -220,7 +222,7 @@ export default function MonoClipArchitecturePage() {
         <div className="mx-auto max-w-6xl">
           <div className="inline-block mb-6 text-xs font-semibold uppercase tracking-label px-3 py-1 rounded-full border"
             style={{ color: accent, borderColor: `${accent}40`, background: `${accent}10` }}>
-            v0.2.13 · Technical Architecture
+            {version && `v${version} · `}Technical Architecture
           </div>
           <h1 className="text-5xl md:text-6xl lg:text-7xl font-semibold text-espresso tracking-tight leading-none mb-6">
             How <span style={{ color: accent }}>MonoClip</span>
@@ -572,7 +574,7 @@ export default function MonoClipArchitecturePage() {
       {/* Footer */}
       <footer className="border-t border-ivory-linen bg-ivory-warm px-8 py-10 text-center">
         <p className="text-xs text-espresso/35">
-          MonoClip v0.2.13 · Architecture · 2026-09-04 ·{" "}
+          MonoClip{version && ` v${version}`} · Architecture · 2026-09-04 ·{" "}
           <Link href="/projects/mono-clip" className="hover:text-espresso/60 transition-colors">← Back to MonoClip</Link>
         </p>
       </footer>

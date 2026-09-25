@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { getMonomindVersion } from "@/lib/versions";
 import Link from "next/link";
 
 export const metadata: Metadata = {
@@ -211,7 +212,8 @@ const honestNotes = [
   "Exact secret-scanner / injection-detector rule counts are not published here. We'd rather say \"built-in secret and injection scanning\" than cite a number we haven't verified against the current source.",
 ];
 
-export default function MonomindArchitecturePage() {
+export default async function MonomindArchitecturePage() {
+  const version = await getMonomindVersion();
   return (
     <div className="bg-ivory-warm min-h-screen">
       {/* ── Header ── */}
@@ -248,7 +250,7 @@ export default function MonomindArchitecturePage() {
             className="inline-block mb-6 text-xs font-semibold uppercase tracking-label px-3 py-1 rounded-full border"
             style={{ color: accent, borderColor: `${accent}40`, background: `${accent}10` }}
           >
-            v2.16.2 · Technical Architecture
+            {version && `v${version} · `}Technical Architecture
           </div>
           <h1 className="text-5xl md:text-6xl lg:text-7xl font-semibold text-espresso tracking-tight leading-none mb-6">
             How <span style={{ color: accent }}>Monomind</span>
@@ -528,7 +530,7 @@ export default function MonomindArchitecturePage() {
       {/* ── Footer ── */}
       <footer className="border-t border-ivory-linen bg-ivory-parchment px-8 py-10 text-center">
         <p className="text-xs text-espresso/35">
-          Monomind v2.16.2 · Architecture · 2026-09-24 ·{" "}
+          Monomind{version && ` v${version}`} · Architecture · 2026-09-24 ·{" "}
           <Link href="/projects/monomind" className="hover:text-espresso/60 transition-colors">
             ← Back to Monomind
           </Link>
