@@ -48,6 +48,12 @@ register(
         shortCircuit: true,
       };
     }
+    if (specifier === "@/lib/community/org-listing") {
+      return {
+        url: "data:text/javascript,export const deriveOrgListing = () => ({}); export const uniqueSlug = (s) => s;",
+        shortCircuit: true,
+      };
+    }
     if (specifier === "@/lib/org-schema") {
       return {
         url: "data:text/javascript,export const OrgDefSchema = { safeParse: () => ({ success: false, error: { issues: [{ path: [], message: 'stub' }] } }) };",

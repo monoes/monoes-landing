@@ -74,10 +74,10 @@ const blogRoutes: MetadataRoute.Sitemap = BLOG_POSTS.map((post) => ({
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const db = getDb();
   const orgs = await db
-    .select({ id: orgUpload.id, createdAt: orgUpload.createdAt })
+    .select({ id: orgUpload.id, slug: orgUpload.slug, createdAt: orgUpload.createdAt })
     .from(orgUpload);
   const orgRoutes: MetadataRoute.Sitemap = orgs.map((o) => ({
-    url: `${BASE_URL}/community/orgs/${o.id}`,
+    url: `${BASE_URL}/community/orgs/${o.slug ?? o.id}`,
     changeFrequency: "weekly" as const,
     priority: 0.4,
     lastModified: o.createdAt,

@@ -1,8 +1,10 @@
 import { NextResponse } from "next/server";
+import { like } from "drizzle-orm";
 import { getAuthenticatedUser } from "@/lib/community/get-authenticated-user";
 import { getDb } from "@/lib/db";
 import { orgUpload } from "@/lib/db/schema";
 import { OrgDefSchema, type OrgDef } from "@/lib/org-schema";
+import { deriveOrgListing, uniqueSlug } from "@/lib/community/org-listing";
 
 const MAX_ORG_JSON_BYTES = 500_000;
 
@@ -70,26 +72,45 @@ export async function POST(request: Request) {
 
   const org = validated.data;
   const topology = extractTopology(org);
+  const listing = deriveOrgListing(org, topology);
 
   const db = getDb();
+  const taken = await db
+    .select({ slug: orgUpload.slug })
+    .from(orgUpload)
+    .where(like(orgUpload.slug, `${listing.slug}%`));
+  let slug = uniqueSlug(listing.slug, taken.flatMap((r) => (r.slug ? [r.slug] : [])));
   const now = new Date();
   const id = crypto.randomUUID();
-  await db.insert(orgUpload).values({
+  const row = {
     id,
-    name: org.name,
+    slug,
+    name: listing.name,
     goal: org.goal,
-    description: org.goal || null,
+    tagline: listing.tagline,
+    description: listing.description,
+    body: listing.body,
     topology,
     roleCount: org.roles.length,
     orgJson: orgJsonText,
     uploaderId: session.user.id,
     createdAt: now,
-  });
+  };
+  try {
+    await db.insert(orgUpload).values(row);
+  } catch {
+    // Another upload claimed the same slug between the lookup and the insert.
+    slug = `${slug}-${id.slice(0, 6)}`;
+    await db.insert(orgUpload).values({ ...row, slug });
+  }
 
   return NextResponse.json(
     {
       id,
-      name: org.name,
+      slug,
+      url: `/community/orgs/${slug}`,
+      name: listing.name,
+      tagline: listing.tagline,
       goal: org.goal,
       topology,
       roleCount: org.roles.length,

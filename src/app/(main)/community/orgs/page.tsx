@@ -43,6 +43,7 @@ export default async function OrgsPage() {
   const items = orgs
     .map((o) => ({
       id: o.id,
+      slug: o.slug,
       name: o.name,
       goal: o.goal,
       tagline: o.tagline,

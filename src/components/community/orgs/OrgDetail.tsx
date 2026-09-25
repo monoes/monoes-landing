@@ -47,6 +47,7 @@ export type OrgDetailData = {
   roles: Role[];
   communication: CommEdge[];
   orgJson: string;
+  fileName: string;
   canDelete: boolean;
   canEdit: boolean;
   runs: RunData[];
@@ -179,7 +180,7 @@ export function OrgDetail({
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `${org.name}.json`;
+    a.download = `${org.fileName}.json`;
     a.click();
     URL.revokeObjectURL(url);
   }

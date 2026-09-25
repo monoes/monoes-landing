@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import { cache } from "react";
 import { headers } from "next/headers";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import { desc, eq } from "drizzle-orm";
 import { getAuth } from "@/lib/auth";
 import { getDb } from "@/lib/db";
-import { orgUpload, orgRun, orgRunFile, orgComment, user } from "@/lib/db/schema";
+import { orgRun, orgRunFile, orgComment, user } from "@/lib/db/schema";
 import { OrgDetail } from "@/components/community/orgs/OrgDetail";
+import { findOrgUpload } from "@/lib/community/find-org-upload";
 import { canDeleteOrgUpload } from "@/lib/community/can-delete-org-upload";
 import { canEditOrgUpload } from "@/lib/community/can-edit-org-upload";
 import { canDeleteOrgRun } from "@/lib/community/can-delete-org-run";
@@ -16,11 +17,7 @@ export const dynamic = "force-dynamic";
 // Shared between generateMetadata and the page component so the org row is
 // only fetched once per request (React dedupes calls to the same cache()'d
 // function within a single render).
-const getOrgUpload = cache(async (id: string) => {
-  const db = getDb();
-  const [row] = await db.select().from(orgUpload).where(eq(orgUpload.id, id)).limit(1);
-  return row ?? null;
-});
+const getOrgUpload = cache(async (idOrSlug: string) => findOrgUpload(getDb(), idOrSlug));
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params;
@@ -35,7 +32,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   return {
     title: `${title} · Monoes Community`,
     description,
-    alternates: { canonical: `/community/orgs/${id}` },
+    alternates: { canonical: `/community/orgs/${row.slug ?? row.id}` },
     openGraph: {
       title,
       description,
@@ -59,6 +56,9 @@ export default async function OrgDetailPage({ params }: { params: Promise<{ id: 
   if (!row) {
     notFound();
   }
+  if (row.slug && id !== row.slug) {
+    permanentRedirect(`/community/orgs/${row.slug}`);
+  }
   const db = getDb();
 
   type ParsedRole = {
@@ -72,7 +72,7 @@ export default async function OrgDetailPage({ params }: { params: Promise<{ id: 
     policy?: { git?: string; allowTools?: string[]; denyTools?: string[] };
   };
   type ParsedCommEdge = { from: string; to: string; type: "command" | "report" | "feedback" | "handoff" };
-  const parsed = JSON.parse(row.orgJson) as { roles?: ParsedRole[]; communication?: ParsedCommEdge[] };
+  const parsed = JSON.parse(row.orgJson) as { name?: string; roles?: ParsedRole[]; communication?: ParsedCommEdge[] };
   const roles = Array.isArray(parsed.roles) ? parsed.roles : [];
   const communication = Array.isArray(parsed.communication) ? parsed.communication : [];
 
@@ -81,10 +81,10 @@ export default async function OrgDetailPage({ params }: { params: Promise<{ id: 
   const canModerate = sessionUser?.role === "admin" || sessionUser?.role === "moderator";
 
   const [runRows, fileRows, authors, commentRows] = await Promise.all([
-    db.select().from(orgRun).where(eq(orgRun.orgUploadId, id)).orderBy(desc(orgRun.createdAt)),
+    db.select().from(orgRun).where(eq(orgRun.orgUploadId, row.id)).orderBy(desc(orgRun.createdAt)),
     db.select().from(orgRunFile),
     db.select({ id: user.id, username: user.username }).from(user),
-    db.select().from(orgComment).where(eq(orgComment.orgUploadId, id)),
+    db.select().from(orgComment).where(eq(orgComment.orgUploadId, row.id)),
   ]);
 
   const authorMap = new Map(authors.map((a) => [a.id, a.username]));
@@ -134,6 +134,7 @@ export default async function OrgDetailPage({ params }: { params: Promise<{ id: 
             roles,
             communication,
             orgJson: row.orgJson,
+            fileName: typeof parsed.name === "string" && parsed.name ? parsed.name : row.slug ?? row.id,
             canDelete,
             canEdit,
             runs,

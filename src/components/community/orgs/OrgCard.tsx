@@ -3,6 +3,7 @@ import { VoteButtons } from "@/components/community/VoteButtons";
 
 export type Org = {
   id: string;
+  slug: string | null;
   name: string;
   goal: string;
   tagline: string | null;
@@ -43,7 +44,7 @@ export function OrgCard({
   return (
     <div className="rounded-lg border border-ivory-linen bg-ivory p-5 transition-colors hover:border-espresso/30">
       <div className="flex items-start justify-between gap-4">
-        <Link href={`/community/orgs/${org.id}`} className="min-w-0 flex-1">
+        <Link href={`/community/orgs/${org.slug ?? org.id}`} className="min-w-0 flex-1">
           <p className="font-medium text-espresso">{org.name}</p>
           {org.tagline && <p className="mt-1 text-sm font-medium text-gold-dark">{org.tagline}</p>}
           {displayedGoal && <p className="mt-1 text-sm text-espresso/70">{displayedGoal}</p>}

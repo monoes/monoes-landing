@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
 import { redirect, notFound } from "next/navigation";
 import { headers } from "next/headers";
-import { eq } from "drizzle-orm";
 import { getAuth } from "@/lib/auth";
 import { getDb } from "@/lib/db";
-import { orgUpload } from "@/lib/db/schema";
+import { findOrgUpload } from "@/lib/community/find-org-upload";
 import { canEditOrgUpload } from "@/lib/community/can-edit-org-upload";
 import { OrgEditForm } from "@/components/community/orgs/OrgEditForm";
 
@@ -16,13 +15,12 @@ export default async function OrgEditPage({ params }: { params: Promise<{ id: st
   const session = await getAuth().api.getSession({ headers: await headers() });
   if (!session) redirect("/community/login");
 
-  const db = getDb();
-  const [row] = await db.select().from(orgUpload).where(eq(orgUpload.id, id)).limit(1);
+  const row = await findOrgUpload(getDb(), id);
   if (!row) notFound();
 
   const sessionUser = session.user as { id: string; role?: string };
   if (!canEditOrgUpload(sessionUser, row.uploaderId)) {
-    redirect(`/community/orgs/${id}`);
+    redirect(`/community/orgs/${row.slug ?? row.id}`);
   }
 
   return (
@@ -31,7 +29,7 @@ export default async function OrgEditPage({ params }: { params: Promise<{ id: st
         <p className="mb-2 text-xs uppercase tracking-label text-gold-dark font-medium">Community</p>
         <h1 className="mb-6 text-3xl font-semibold text-espresso tracking-tight">Edit org</h1>
         <OrgEditForm
-          orgId={id}
+          orgId={row.id}
           initial={{
             name: row.name,
             tagline: row.tagline ?? "",

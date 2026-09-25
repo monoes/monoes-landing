@@ -64,7 +64,9 @@ export function OrgGallery({
       }
       const created = (await res.json()) as {
         id: string;
+        slug: string;
         name: string;
+        tagline: string | null;
         goal: string;
         topology: string | null;
         roleCount: number;
@@ -73,9 +75,10 @@ export function OrgGallery({
       setOrgs((prev) => [
         {
           id: created.id,
+          slug: created.slug,
           name: created.name,
           goal: created.goal,
-          tagline: null,
+          tagline: created.tagline,
           topology: created.topology,
           roleCount: created.roleCount,
           uploaderUsername: currentUsername,
