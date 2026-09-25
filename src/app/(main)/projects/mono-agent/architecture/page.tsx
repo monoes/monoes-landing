@@ -145,7 +145,7 @@ const nodeTypes = [
   { category: "Control & Transform", count: 15, examples: ["IF", "Switch", "Merge", "Wait", "Set", "Code (JS)", "Filter", "Human-in-Loop"], color: "#C8A97E" },
   { category: "Social (opt-in build)", count: 60, examples: ["Instagram", "LinkedIn", "X", "TikTok", "Hacker News", "Product Hunt"], color: "#B8956A" },
   { category: "Service Integrations", count: 24, examples: ["HTTP Request", "Slack", "GitHub", "Linear", "Stripe", "Salesforce", "HubSpot"], color: "#A07840" },
-  { category: "AI & Agents", count: 11, examples: ["agent.ask", "org.run", "gemini.generate_image", "ai.extract_page"], color: "#8B7355" },
+  { category: "AI & Agents", count: 10, examples: ["agent.ask", "org.run", "gemini.generate_image", "ai.extract_page"], color: "#8B7355" },
   { category: "Data & DB", count: 12, examples: ["Postgres", "MySQL", "MongoDB", "Redis", "Spreadsheet", "HTML", "XML", "Crypto"], color: "#C8A97E" },
 ];
 
@@ -487,7 +487,7 @@ export default function MonoAgentArchitecturePage() {
 
       <footer className="border-t border-ivory-linen bg-ivory-parchment px-8 py-10 text-center">
         <p className="text-xs text-espresso/35">
-          Mono Agent · Go 1.26.0 · Rod · Wails · Architecture 2026-09-04 ·{" "}
+          Mono Agent · Go 1.26.0 · Rod · Wails · Architecture 2026-09-25 ·{" "}
           <Link href="/projects/mono-agent" className="hover:text-espresso/60 transition-colors">← Back to Mono Agent</Link>
         </p>
       </footer>
