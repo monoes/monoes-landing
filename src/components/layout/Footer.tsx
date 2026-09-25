@@ -27,6 +27,7 @@ const footerSections = [
       { label: "Guides", href: "/guides" },
       { label: "Whitepaper", href: "/whitepaper" },
       { label: "Blog", href: "/blog" },
+      { label: "Changelog", href: "/changelog" },
       { label: "About", href: "/about" },
       { label: "Security", href: "/security" },
     ],

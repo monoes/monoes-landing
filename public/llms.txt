@@ -40,6 +40,7 @@ Monoes offers two paths on one engine: self-host the open-source tools for free,
 
 - [Whitepaper](https://monoes.me/whitepaper)
 - [Blog](https://monoes.me/blog)
+- [Changelog](https://monoes.me/changelog): release notes for Monomind, Mono Agent, MonoClip and MonoTask, pulled from GitHub Releases
 - [API docs](https://monoes.me/docs)
 - [About](https://monoes.me/about)
 - [Security](https://monoes.me/security)
