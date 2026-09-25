@@ -1,5 +1,5 @@
 import type { Release } from "@/lib/releases";
-import { renderMarkdown } from "@/lib/community/render-markdown";
+import { renderSafeMarkdown } from "@/lib/render-safe-markdown";
 
 function formatDate(iso: string): string {
   return new Date(iso).toLocaleDateString("en-US", {
@@ -11,7 +11,7 @@ function formatDate(iso: string): string {
 }
 
 export function ReleaseEntry({ release }: { release: Release }) {
-  const bodyHtml = release.body.trim() ? renderMarkdown(release.body) : "";
+  const bodyHtml = release.body.trim() ? renderSafeMarkdown(release.body) : "";
   const showName = release.name !== release.tag && release.name !== `v${release.version}`;
 
   return (
