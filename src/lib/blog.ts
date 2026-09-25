@@ -51,6 +51,201 @@ export interface BlogPost {
 }
 
 export const BLOG_POSTS: BlogPost[] = [
+  // --- HELIX ORG (2026-09-25): Shopify's Helix migration loop rebuilt as a monomind org ---
+  {
+    slug: "helix-org-checkpoints-and-gates",
+    title: "Helix as an Org: Rebuilding Shopify's Convergence Loop with Monomind",
+    subtitle: "Shopify's Helix migrates app screens through small checkpoints and four strict gates. We rebuilt that loop as a seven-role monomind org - GPT orchestrates, Gemini reviews the pixels, two Claude reviewers argue with the diff, and the engineer has the last word.",
+    excerpt: "Shopify's Helix doesn't expect the first attempt to be right. It breaks a migration into checkpoints and refuses to let any of them pass until behavior, UI, two adversarial code reviews and an engineer all agree. Here is how we mapped every piece of that loop onto monomind's org runtime, what we had to adapt for the web, and what we have not proven yet.",
+    date: "September 25, 2026",
+    readTime: "10 min read",
+    featured: true,
+    tags: ["Orgs", "Multi-Agent", "Code Review", "Monomind"],
+    author: {
+      name: "Monoes Team",
+      role: "Monomind Core",
+      avatar: "/images/monkey/welcoming-arms.png",
+    },
+    coverImage: {
+      src: "/images/blog/helix-cover.jpg",
+      alt: "A glowing double helix built from small stacked code checkpoint cards, passing through four luminous gold gate rings on a dark espresso background",
+      caption: "Every checkpoint passes through the same four gates, in order: behavior, UI, adversarial code review, engineer approval.",
+    },
+    content: {
+      introduction: [
+        "Shopify recently described Helix, the internal system it uses to move its mobile apps from React Native to native Swift and Kotlin. The article is short, but one line in it reframes how an agent system should be judged: \"We stopped optimizing for a perfect first attempt and started working towards reliable convergence. An attempt is allowed to be wrong. It is not allowed to ship until it isn't.\"",
+        "That is exactly the shape of problem monomind's org runtime is built for: several model sessions with distinct jobs, hard gates between them, evidence on disk, and a human who approves what matters. So we rebuilt Helix as an org - a single JSON file called helix that anyone can download from the monoes.me org gallery and run with monomind org run.",
+        "This post walks through Helix's design, how each piece maps onto a monomind primitive, where we had to adapt it (mostly because Helix targets mobile and we target the web), and - honestly - what we have not measured yet. All credit for the method goes to the Shopify engineering team; the article is at shopify.engineering/helix.",
+      ],
+      sections: [
+        {
+          id: "what-helix-does",
+          heading: "1. What Shopify Built",
+          subheading: "Checkpoints, four gates, memory, and autonomy that grows with trust",
+          paragraphs: [
+            "Helix starts with an engineer picking a screen or feature to migrate. Instead of generating the whole screen at once, the system proposes a sequence of checkpoints - small, ordered slices of work that grow in complexity. Early checkpoints build a skeleton layout; later ones add behavior. The engineer reviews that plan before anything is built, and every resulting diff is small enough to review at a glance.",
+            "Each checkpoint then has to clear four gates, strictly in order. A behavior gate runs user-perspective integration tests (written by a separate subagent) through a CLI against the reference app. A UI gate uses Gemini's spatial reasoning as a perfectionist design reviewer: it compares screenshots, reports each discrepancy by location and severity, treats anything fixable in code as a blocker, and only judges what the current checkpoint was supposed to build. An adversarial code review gate runs two independent reviewers against documented architecture guidelines - every finding is fixed, tests re-run, and the loop repeats until both approve. Finally, an engineer approves the working checkpoint.",
+            "Engineer feedback is recorded and fed into later checkpoints, so the system needs less oversight as approved code accumulates. Later checkpoints can skip approval in an autonomous mode, and engineers can leave several running overnight, coming back to a series of committed checkpoints - each with its archived UI reviews, passing tests and reviewer verdicts - instead of one huge diff. Helix spreads the work across vendors: GPT orchestrates and captures screenshots, Gemini handles visual review, and subagents write tests and review code.",
+          ],
+          quote: {
+            text: "An attempt is allowed to be wrong. It is not allowed to ship until it isn't.",
+            author: "Shopify Engineering, Helix",
+          },
+          keyTakeaways: [
+            "Small ordered checkpoints replace one large generated diff.",
+            "Four gates run in a fixed order: behavior, UI, two adversarial code reviewers, engineer.",
+            "Feedback is remembered, so oversight can shrink as trust grows.",
+          ],
+        },
+        {
+          id: "mapping",
+          heading: "2. One Role per Job, One Primitive per Idea",
+          subheading: "Why Helix maps cleanly onto an org instead of a script",
+          paragraphs: [
+            "Almost every Helix idea already has a matching primitive in monomind's org runtime. Checkpoints become tasks in the org's work graph, each depending on the one before. Gates become evidence files whose first line is a machine-checkable verdict pinned to a commit SHA, and completion_evidence makes the runtime refuse a task that claims success without that evidence. Engineer approval is org_gate, a hard-blocking human checkpoint. Memory is org_remember and org_recall, which persist across runs. Independent reviewers are artifact-only roles.",
+            "The helix org has seven roles. The orchestrator runs on OpenAI's GPT through the codex runtime (gpt-5.6-terra), mirroring Helix's GPT orchestrator. The UI reviewer runs on Gemini through the Antigravity runtime (gemini-3.1-pro-high). A test author and a builder run on Claude Sonnet 5, a behavior gate runs the tests, and two code reviewers run on different Claude models - Opus 5 and Sonnet 5 - so they do not share the same blind spots.",
+            "Every role except the orchestrator starts a fresh session per task (session_scope: task). That matches Helix's point about giving each agent the context window and expertise that fits its job: the builder never carries the UI reviewer's screenshots in its context, and a reviewer never carries the builder's reasoning.",
+          ],
+          codeBlock: {
+            filename: ".monomind/orgs/helix.json (roles and models)",
+            language: "text",
+            code: `role             job     runtime      model
+orchestrator     loop    codex        gpt-5.6-terra
+test-author      tests   claude       claude-sonnet-5
+builder          code    claude       claude-sonnet-5
+behavior-gate    gate 1  claude       claude-sonnet-5
+ui-reviewer      gate 2  antigravity  gemini-3.1-pro-high
+code-reviewer-a  gate 3  claude       claude-opus-5
+code-reviewer-b  gate 3  claude       claude-sonnet-5
+engineer (you)   gate 4  org_gate     -`,
+          },
+          keyTakeaways: [
+            "Checkpoints are tasks with dependencies; gates are verdict files the runtime can check.",
+            "Three vendors, as in Helix: GPT orchestrates, Gemini reviews the UI, Claude builds and reviews code.",
+            "Fresh sessions per task keep each role's context focused on its own job.",
+          ],
+        },
+        {
+          id: "checkpoints",
+          heading: "3. The Checkpoint Plan Is Approved Before Anything Is Built",
+          subheading: "Three to ten slices, each reviewable at a glance, each with its own UI scope",
+          paragraphs: [
+            "A run starts with an intake: the mode (migrate from a running reference app, build a feature from designs and product docs, or refactor), the target screen, the reference, the project's dev-server command, the documented guidelines reviewers should enforce, and an autonomy level. The orchestrator opens the reference with monobrowse, reads the target code, and proposes three to ten checkpoints ordered by increasing complexity.",
+            "Each checkpoint names what it builds, what the engineer should see, and its UI scope - the regions that must match the reference once it is done, cumulative with earlier checkpoints. That scope is what later lets the UI gate ignore the parts of the screen that a future checkpoint will build. The plan goes to the engineer through org_gate, and nothing is built until it is approved.",
+          ],
+          keyTakeaways: [
+            "Three modes, as in Helix: migrate, feature (designs and docs as reference), refactor (no UI gate).",
+            "Every checkpoint carries an explicit, cumulative UI scope.",
+            "The engineer approves the plan before the first line of code.",
+          ],
+        },
+        {
+          id: "behavior-gate",
+          heading: "4. Gate 1: Tests the Builder Did Not Write",
+          subheading: "User-perspective tests come first, and the builder may not touch them",
+          paragraphs: [
+            "Helix has a subagent write each checkpoint's test cases as integration tests from the user's point of view. The helix org makes that separation strict. For every checkpoint the test author writes the tests before any build code exists, proves they pass against the reference app (in migrate mode) and fail on the current branch, and commits only the tests. The builder then works on top of that commit.",
+            "The behavior gate starts with an integrity check: the diff of the test files since the test commit must be empty. If the builder edited, skipped or weakened a test, the gate fails before a single test runs. Then it runs every checkpoint's tests so far (earlier checkpoints must not regress), the project's lint and type checks, and re-runs failures in isolation to separate real failures from flaky ones.",
+          ],
+          keyTakeaways: [
+            "Tests are written by a different role, before the code, from the reference's behavior.",
+            "A diff check proves the builder never edited them.",
+            "Every earlier checkpoint's tests re-run, so progress cannot break what was already approved.",
+          ],
+        },
+        {
+          id: "ui-gate",
+          heading: "5. Gate 2: A Perfectionist Looking at Screenshots",
+          subheading: "monobrowse captures reference and build; Gemini judges only what this checkpoint built",
+          paragraphs: [
+            "Helix's UI gate is where the web adaptation matters most. Helix compares native mobile screenshots; the helix org compares web pages. The orchestrator starts the project's dev server at the checkpoint's commit and uses monobrowse, monomind's built-in Chrome DevTools client, to capture the reference and the build at a desktop (1440x900) and a mobile (390x844) viewport. The two browsers run on fixed, separate debugging ports, so a capture can never land in the wrong session.",
+            "The UI reviewer, running on Gemini, receives the screenshot paths and the checkpoint's cumulative UI scope. It compares region by region - layout, spacing, sizes, typography, colors, borders, icons, copy - and reports each discrepancy with a location, what the reference shows versus the build, and a severity. As in Helix, any difference that code can fix is a blocker; only differences code cannot fix (font rendering, operating-system chrome, live data) may pass as minor. Regions that a later checkpoint will build are out of scope and are never flagged.",
+          ],
+          image: {
+            src: "/images/blog/helix-ui-gate.jpg",
+            alt: "Two screen mockups side by side, a reference and a rebuilt copy, with small gold markers and callout lines pinpointing tiny visual differences",
+            caption: "Gate 2 compares reference and build screenshots region by region, and only inside the checkpoint's UI scope.",
+          },
+          codeBlock: {
+            filename: "gate 2 capture (one viewport)",
+            language: "bash",
+            code: `npx monomind browse open "$REFERENCE_URL" --port 9411
+npx monomind browse set viewport 390 844 --port 9411
+npx monomind browse screenshot "$RUN/checkpoints/03/screens/ref-mobile.png" --full --hide-scrollbars --port 9411
+
+npx monomind browse open "$BUILD_URL" --port 9412
+npx monomind browse set viewport 390 844 --port 9412
+npx monomind browse screenshot "$RUN/checkpoints/03/screens/build-mobile.png" --full --hide-scrollbars --port 9412`,
+          },
+          keyTakeaways: [
+            "monobrowse captures both sides at two viewports, each in its own browser session.",
+            "Gemini reports every discrepancy with a location and a severity.",
+            "Anything fixable in code blocks the checkpoint; out-of-scope regions are ignored.",
+          ],
+        },
+        {
+          id: "review-gate",
+          heading: "6. Gate 3: Two Reviewers Who Never See the Builder's Story",
+          subheading: "Artifact-only review, scoped to one checkpoint's diff",
+          paragraphs: [
+            "Helix runs two independent reviewers against documented architecture guidelines and requires every finding to be fixed. The helix org uses monomind's artifact-only reviewer mode for both. The orchestrator calls org_review with only a task id and a base commit; the runtime builds the review packet itself from the task, its own git diff, and the commands the builder ran with their exit codes. The builder's explanation of its work never reaches the reviewer, and each review starts in a brand-new session.",
+            "The base commit is the previous checkpoint's approved SHA, so each reviewer sees only the current checkpoint's diff - the code-review equivalent of the UI gate's scope. Both reviewers read the guideline files named at intake and cite the rule each finding breaks. There are no optional nits: a finding either must be fixed or should not be reported. After fixes, tests re-run and both reviewers review the new commit, until both approve the same SHA.",
+          ],
+          image: {
+            src: "/images/blog/helix-checkpoints.jpg",
+            alt: "A vertical stack of glowing code commit cards, each stamped with gold check seals, examined from opposite sides by two reviewer figures made of light",
+            caption: "Two independent reviewers, each seeing only the runtime-built packet for one checkpoint.",
+          },
+          codeBlock: {
+            filename: "orchestrator tool calls (gate 3)",
+            language: "json",
+            code: `{ "tool": "org_review",
+  "args": { "taskId": "cp-03-build", "reviewer": "code-reviewer-a", "base": "<checkpoint 2 SHA>" } }
+
+{ "tool": "org_review",
+  "args": { "taskId": "cp-03-build", "reviewer": "code-reviewer-b", "base": "<checkpoint 2 SHA>" } }`,
+          },
+          keyTakeaways: [
+            "Reviewers see the runtime's diff and evidence, never the builder's reasoning.",
+            "Each review covers one checkpoint's diff, based on the previous approved SHA.",
+            "The loop ends only when both reviewers approve the same commit.",
+          ],
+        },
+        {
+          id: "engineer-memory-autonomy",
+          heading: "7. Gate 4, Memory, and Autonomy That Is Earned",
+          subheading: "The engineer approves, the org remembers, and oversight shrinks as trust grows",
+          paragraphs: [
+            "The last gate is an org_gate to the engineer with the checkpoint's commits and every evidence path: tests, behavior results, screenshots, the UI review and both code reviews. Approval moves the loop to the next checkpoint; a rejection becomes a numbered revision and the checkpoint re-enters at gate 1. Either way, the orchestrator stores the engineer's feedback as a reusable rule with org_remember. The test author, the builder and the orchestrator call org_recall at the start of their tasks, so a correction made on checkpoint 2 shapes checkpoint 5 - and the next run.",
+            "Autonomy is chosen at intake: supervised (the engineer approves every checkpoint), after:N (approve the first N, then run on), or autonomous (only the plan is approved). Even in autonomous mode, the orchestrator stops and asks when a checkpoint took more than three rounds, touched files outside its plan, or changed shared configuration. The output is what Helix promises: a branch with a stack of committed checkpoints and an evidence folder for each one, never merged, pushed or published without the engineer.",
+          ],
+          keyTakeaways: [
+            "Engineer feedback becomes a stored rule that later checkpoints and later runs read.",
+            "Autonomy has three levels, with automatic stops for anything unusual.",
+            "The result is a reviewable commit stack with evidence, not a merged change.",
+          ],
+        },
+        {
+          id: "differences",
+          heading: "8. Where We Differ, and What We Have Not Proven",
+          subheading: "Adaptations, safety valves, and honest gaps",
+          paragraphs: [
+            "Helix migrates mobile apps; the helix org targets the web, because monobrowse drives Chrome. The behavior CLI Shopify uses is not public, so the org runs the project's own end-to-end setup, or monobrowse scripts when a project has none. Helix's review loop runs until both reviewers approve; we added a safety valve that hands a checkpoint back to the engineer after five rounds, so a disagreement between models cannot burn budget forever.",
+            "Most importantly: Helix has been used on real migrations at Shopify, and the helix org has not yet been measured on one. We validated the config against the runtime schema, confirmed that GPT can drive monobrowse inside the codex sandbox and that Gemini reads the captured screenshots, and uploaded it to the org gallery. We have not yet run it end to end on a real screen migration or measured cost and convergence rounds. When we do, we will publish the numbers, including the bad ones.",
+          ],
+          keyTakeaways: [
+            "Web instead of mobile; the project's own e2e tooling instead of Shopify's internal CLI.",
+            "A five-round safety valve per checkpoint instead of an unbounded loop.",
+            "Not yet measured on a real migration - results will follow.",
+          ],
+        },
+      ],
+      conclusion: [
+        "The most useful thing about Helix is not any single gate. It is the stance: expect the first attempt to be wrong, make every attempt cheap to check, and make passing depend on independent evidence rather than on the builder's word. Monomind's org runtime already had the parts - task graphs, evidence-gated completion, artifact-only reviewers, human gates, persistent memory - and Helix showed how to put them together.",
+        "The helix org is in the monoes.me org gallery. Save it as .monomind/orgs/helix.json in your project and start a run with npx monomind org run helix --task \"mode: migrate; target: settings screen; reference: <url>; dev: pnpm dev at http://localhost:3000; autonomy: supervised\". If you try it on a real screen, tell us how many rounds it took.",
+      ],
+    },
+  },
   // --- CONTENT OPS RUN 2026-09-05: cross-product story + first posts for mono-agent/mono-clip ---
   {
     slug: "agent-exec-protocol-v1",
