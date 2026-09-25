@@ -487,10 +487,10 @@ export default function MonomindArchitecturePage() {
       {/* ── Org Runtime ── */}
       <section id="org-runtime" className="px-8 py-20 bg-ivory-warm border-b border-ivory-linen">
         <div className="mx-auto max-w-6xl">
-          <p className="text-xs uppercase tracking-label font-semibold mb-3" style={{ color: accent }}>Org Runtime v2</p>
+          <p className="text-xs uppercase tracking-label font-semibold mb-3" style={{ color: accent }}>Org Runtime</p>
           <h2 className="text-3xl md:text-4xl font-semibold text-espresso mb-4">SDK-Backed Agent Orgs</h2>
           <p className="text-espresso/55 font-light leading-relaxed max-w-2xl mb-12">
-            monomind org run/serve replaces the older prompt-orchestrated runorg path. Each role is a live agent session, not a scripted prompt loop.
+            monomind org run/serve (or /mastermind:runorg) starts a background daemon. Each role is a live agent session, not a scripted prompt loop.
           </p>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {orgFacts.map((f) => (
