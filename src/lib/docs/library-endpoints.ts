@@ -1,9 +1,9 @@
 import type { AuthRequirement, EndpointGroup, Scope } from "./endpoint-registry";
 
 // The Library group of the API reference (/docs/reference/library, OpenAPI),
-// kept apart from endpoint-registry.ts for size. Every endpoint here needs a
-// login (session or Bearer token), official and public items included.
+// kept apart from endpoint-registry.ts for size.
 const scope = (s: Scope): AuthRequirement => ({ kind: "scope", scope: s });
+const publicAuth: AuthRequirement = { kind: "public" };
 
 export const LIBRARY_ENDPOINTS: EndpointGroup = {
   slug: "library",
@@ -15,20 +15,20 @@ export const LIBRARY_ENDPOINTS: EndpointGroup = {
       method: "GET",
       path: "/api/library/items",
       summary: "List library items.",
-      auth: scope("library:read"),
+      auth: publicAuth,
       request:
         "Query params: kind ('workflow'|'automation'|'org'), scope ('public' (default: public + official) | 'official' | 'mine'), q, tag, sort ('latest' (default, last updated first) | 'popular' (net votes first)), page (1-indexed), per_page (≤ 100, default 24)",
       response: "{ items: Item[], page, per_page, total }",
       notes:
-        "Needs a login: a session or a token with library:read, for every scope (official and public included); anonymous callers get 401 unauthorized, 'Log in to monoes.me to browse the library'. Item: { id, kind, slug, name, description, version, visibility, tags, owner: { id, username, name }, sha256, size, meta, score (net community votes), created_at, updated_at, url, artifact_url }. The community workflow and web automation galleries (/community/workflows, /community/automations) are this list with scope=public and sort=latest|popular. Community gallery orgs are listed as public kind=org items with meta.gallery = true.",
+        "scope=mine needs library:read (401 without credentials). Item: { id, kind, slug, name, description, version, visibility, tags, owner: { id, username, name }, sha256, size, meta, score (net community votes), created_at, updated_at, url, artifact_url }. The community workflow and web automation galleries (/community/workflows, /community/automations) are this list with scope=public and sort=latest|popular. Community gallery orgs are listed as public kind=org items with meta.gallery = true.",
     },
     {
       method: "GET",
       path: "/api/library/items/{ref}",
       summary: "Get one item by id, or by kind and slug (/api/library/items/automation/instagram).",
-      auth: scope("library:read"),
+      auth: publicAuth,
       response: "Item",
-      notes: "Needs a login (401 otherwise). A private item is 404 unless the caller is its owner.",
+      notes: "A private item is 404 unless the caller is its owner (session, or a token with library:read).",
     },
     {
       method: "GET",
@@ -38,13 +38,13 @@ export const LIBRARY_ENDPOINTS: EndpointGroup = {
       request: "Query params: version (optional; defaults to the current version)",
       response:
         "The bytes, with Content-Type, Content-Length, Content-Disposition, X-Content-SHA256 (hex) and X-Library-Version headers",
-      notes: "Needs a login (401 otherwise). Verify X-Content-SHA256 before installing. Same visibility rules as getting the item.",
+      notes: "Downloading needs a login (a session or a token with library:read); anonymous callers get 401 'Log in to monoes.me to download'. Browsing (list, item, versions) is open to everyone. Verify X-Content-SHA256 before installing.",
     },
     {
       method: "GET",
       path: "/api/library/items/{id}/versions",
       summary: "List an item's versions, newest first.",
-      auth: scope("library:read"),
+      auth: publicAuth,
       response: "{ versions: [{ version, sha256, size, created_at, artifact_url }] }",
     },
     {
@@ -113,9 +113,9 @@ export const LIBRARY_ENDPOINTS: EndpointGroup = {
       method: "GET",
       path: "/api/library/me",
       summary: "Who the token belongs to, and what it was granted.",
-      auth: scope("library:read"),
+      auth: publicAuth,
       response: "{ user: { id, name, username, email, image }, scopes: string[] }",
-      notes: "Accepts a session or any valid token (401 otherwise). MonoAgent uses it to show who is logged in.",
+      notes: "Requires a session or any valid token (401 otherwise). MonoAgent uses it to show who is logged in.",
     },
   ],
 };

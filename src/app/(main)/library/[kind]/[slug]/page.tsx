@@ -9,6 +9,7 @@ import { ItemVotes } from "@/components/library/ItemVotes";
 import { CommentSection } from "@/components/community/CommentSection";
 import { getPageViewer, loadDetail } from "@/lib/library/page-data";
 import { installRef } from "@/lib/library/serialize";
+import { loginUrlFor } from "@/lib/community/safe-next";
 import { KIND_LABEL, KIND_PATH, parseKind, type LibraryItem } from "@/lib/library/types";
 
 export const dynamic = "force-dynamic";
@@ -99,6 +100,8 @@ export default async function LibraryItemPage({ params }: { params: Params }) {
   if (!detail) notFound();
   const { item, versions, community } = detail;
   const viewer = await getPageViewer();
+  // Browsing is open; downloading needs a login (the artifact API answers 401 otherwise).
+  const loginToDownload = loginUrlFor(`/library/${KIND_PATH[item.kind]}/${item.slug}`);
 
   return (
     <main className="bg-ivory-warm px-4 pt-24 pb-16 sm:px-8">
@@ -133,10 +136,10 @@ export default async function LibraryItemPage({ params }: { params: Params }) {
         <div className="mt-6 flex flex-wrap items-start gap-3">
           <AddToMonoAgent kind={item.kind} installRef={installRef(item)} />
           <a
-            href={item.artifact_url}
+            href={viewer ? item.artifact_url : loginToDownload}
             className="rounded-md border border-espresso/20 px-4 py-2 text-sm text-espresso transition-colors hover:border-espresso/40"
           >
-            Download
+            {viewer ? "Download" : "Log in to download"}
           </a>
           {detail.gallery && (
             <Link
@@ -167,8 +170,8 @@ export default async function LibraryItemPage({ params }: { params: Params }) {
                     {v.sha256.slice(0, 12)}
                   </code>{" "}
                   ·{" "}
-                  <a href={v.artifact_url} className="text-gold-dark hover:underline">
-                    download
+                  <a href={viewer ? v.artifact_url : loginToDownload} className="text-gold-dark hover:underline">
+                    {viewer ? "download" : "log in to download"}
                   </a>
                 </span>
               </li>

@@ -53,7 +53,7 @@ export function LoginForm() {
       <form onSubmit={handleSubmit} className="space-y-4">
         {searchParams.get("next") && !blocked && (
           <p role="status" className="rounded-md bg-gold/10 px-3 py-2 text-sm text-espresso">
-            Log in to see orgs, workflows and web automations. You&apos;ll go straight back to the page you wanted.
+            Log in to vote, comment or download. You&apos;ll go straight back to the page you were on.
           </p>
         )}
         {blocked && (
