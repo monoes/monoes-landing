@@ -24,6 +24,7 @@ export interface ListQuery {
   tag: string | null;
   page: number;
   perPage: number;
+  sort: "latest" | "popular";
 }
 
 function positiveInt(value: string | null, name: string, fallback: number): number {
@@ -43,6 +44,10 @@ export function parseListQuery(params: URLSearchParams): ListQuery {
   const perPage = positiveInt(params.get("per_page"), "per_page", DEFAULT_PER_PAGE);
   if (perPage > MAX_PER_PAGE) throw new LibraryError(400, "invalid_request", `per_page can be at most ${MAX_PER_PAGE}.`);
   const tag = params.get("tag")?.trim().toLowerCase() || null;
+  const sort = params.get("sort") || "latest";
+  if (sort !== "latest" && sort !== "popular") {
+    throw new LibraryError(400, "invalid_request", "sort must be latest or popular.");
+  }
   return {
     kind,
     scope,
@@ -50,6 +55,7 @@ export function parseListQuery(params: URLSearchParams): ListQuery {
     tag,
     page: positiveInt(params.get("page"), "page", 1),
     perPage,
+    sort,
   };
 }
 

@@ -4,7 +4,8 @@ import type { Db } from "@/lib/db";
 import { orgUpload, user } from "@/lib/db/schema";
 import { libraryItem, libraryVersion } from "@/lib/db/library-schema";
 import { uniqueSlug } from "@/lib/community/org-listing";
-import { galleryOrgToApiItem, toApiItem, byUpdatedDesc, type GalleryOrgRow, type ItemRow } from "./serialize";
+import { galleryOrgToApiItem, toApiItem, byScoreDesc, byUpdatedDesc, type GalleryOrgRow, type ItemRow } from "./serialize";
+import { voteSummaries } from "./community-store";
 import { sha256Hex, type ValidatedArtifact } from "./validate";
 import { compareSemver } from "./semver";
 import type { ListQuery } from "./http";
@@ -59,14 +60,22 @@ async function galleryArtifact(row: GalleryOrgRow) {
 }
 
 export async function serialize(db: Db, found: Found[], origin: string): Promise<LibraryItem[]> {
-  const owners = await ownersById(
-    db,
-    found.map((f) => (f.source === "library" ? f.row.ownerId : f.row.uploaderId)),
-  );
+  const [owners, votes] = await Promise.all([
+    ownersById(
+      db,
+      found.map((f) => (f.source === "library" ? f.row.ownerId : f.row.uploaderId)),
+    ),
+    voteSummaries(
+      db,
+      found.map((f) => ({ id: f.row.id, source: f.source })),
+      null,
+    ),
+  ]);
   return Promise.all(
     found.map(async (f) => {
-      if (f.source === "library") return toApiItem(f.row as ItemRow, owners.get(f.row.ownerId), origin);
-      return galleryOrgToApiItem(f.row, owners.get(f.row.uploaderId), await galleryArtifact(f.row), origin);
+      const score = votes.get(f.row.id)?.score ?? 0;
+      if (f.source === "library") return toApiItem(f.row as ItemRow, owners.get(f.row.ownerId), origin, score);
+      return galleryOrgToApiItem(f.row, owners.get(f.row.uploaderId), await galleryArtifact(f.row), origin, score);
     }),
   );
 }
@@ -112,6 +121,26 @@ export async function listItems(db: Db, query: ListQuery, viewerId: string | nul
     galWhere === null ? Promise.resolve([{ n: 0 }]) : db.select({ n: count() }).from(orgUpload).where(galWhere),
   ]);
   const total = libTotal[0].n + galTotal[0].n;
+
+  // Popular: rank everything that matches by score in memory (bounded).
+  if (query.sort === "popular") {
+    if (total > MAX_MERGED_WINDOW) {
+      throw new LibraryError(400, "invalid_request", "Too many matches to rank; narrow the query with kind or q.");
+    }
+    const [libRows, galRows] = await Promise.all([
+      db.select().from(libraryItem).where(libWhere),
+      galWhere === null ? Promise.resolve([]) : db.select(galleryColumns).from(orgUpload).where(galWhere),
+    ]);
+    const all = await serialize(
+      db,
+      [
+        ...libRows.map((row) => ({ source: "library" as const, row })),
+        ...galRows.map((row) => ({ source: "gallery" as const, row })),
+      ],
+      origin,
+    );
+    return { items: all.sort(byScoreDesc).slice(offset, offset + query.perPage), total };
+  }
 
   let found: Found[];
   if (galWhere === null || galTotal[0].n === 0) {

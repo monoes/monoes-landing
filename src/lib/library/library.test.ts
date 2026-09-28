@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { bumpPatch, compareSemver, isSemver } from "./semver.ts";
 import { canDelete, canEdit, canSetVisibility, canView } from "./access.ts";
 import { contentDisposition, parseItemPath, parseListQuery, parseTags } from "./http.ts";
-import { byUpdatedDesc, galleryOrgToApiItem, installRef, toApiItem } from "./serialize.ts";
+import { byScoreDesc, byUpdatedDesc, galleryOrgToApiItem, installRef, toApiItem } from "./serialize.ts";
 import { LibraryError, parseKind } from "./types.ts";
 
 const status = (fn: () => unknown) => {
@@ -65,9 +65,9 @@ describe("access", () => {
 describe("http", () => {
   it("parses list queries with defaults", () => {
     const q = parseListQuery(new URLSearchParams(""));
-    assert.deepEqual(q, { kind: null, scope: "public", q: "", tag: null, page: 1, perPage: 24 });
-    const q2 = parseListQuery(new URLSearchParams("kind=automations&scope=official&q=%20insta%20&tag=Social&page=2&per_page=100"));
-    assert.deepEqual(q2, { kind: "automation", scope: "official", q: "insta", tag: "social", page: 2, perPage: 100 });
+    assert.deepEqual(q, { kind: null, scope: "public", q: "", tag: null, page: 1, perPage: 24, sort: "latest" });
+    const q2 = parseListQuery(new URLSearchParams("kind=automations&scope=official&q=%20insta%20&tag=Social&page=2&per_page=100&sort=popular"));
+    assert.deepEqual(q2, { kind: "automation", scope: "official", q: "insta", tag: "social", page: 2, perPage: 100, sort: "popular" });
   });
 
   it("rejects bad list queries with 400", () => {
@@ -75,6 +75,7 @@ describe("http", () => {
     assert.equal(status(() => parseListQuery(new URLSearchParams("page=0"))), 400);
     assert.equal(status(() => parseListQuery(new URLSearchParams("kind=plugin"))), 400);
     assert.equal(status(() => parseListQuery(new URLSearchParams("scope=all"))), 400);
+    assert.equal(status(() => parseListQuery(new URLSearchParams("sort=hot"))), 400);
   });
 
   it("normalizes tags", () => {
@@ -171,6 +172,12 @@ describe("serialize", () => {
     assert.equal(installRef({ ...base, slug: "instagram-2" }), "i1");
     assert.equal(installRef({ ...base, kind: "workflow", slug: "daily-digest", meta: {} }), "daily-digest");
     assert.equal(installRef({ ...base, kind: "org", slug: "growth-team-2", visibility: "public", meta: {} }), "i1");
+  });
+
+  it("ranks by score, then newest", () => {
+    const mk = (id: string, score: number, updated_at: string) => ({ id, score, updated_at }) as Parameters<typeof byScoreDesc>[0];
+    const sorted = [mk("a", 1, "2026-01-01"), mk("b", 3, "2026-01-01"), mk("c", 1, "2026-02-01")].sort(byScoreDesc);
+    assert.deepEqual(sorted.map((i) => i.id), ["b", "c", "a"]);
   });
 
   it("sorts newest first with a stable tiebreak", () => {

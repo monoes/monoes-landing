@@ -59,3 +59,37 @@ export const libraryVersion = sqliteTable(
     index("library_version_created_by_idx").on(table.createdBy, table.createdAt),
   ],
 );
+
+// Community votes and comments on library items, the same shape as
+// org_vote / org_comment (gallery orgs keep using those two tables).
+export const libraryVote = sqliteTable(
+  "library_vote",
+  {
+    id: text("id").primaryKey(),
+    itemId: text("item_id")
+      .notNull()
+      .references(() => libraryItem.id, { onDelete: "cascade" }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    value: integer("value").notNull(),
+    createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
+  },
+  (table) => [uniqueIndex("library_vote_item_user_unique").on(table.itemId, table.userId)],
+);
+
+export const libraryComment = sqliteTable(
+  "library_comment",
+  {
+    id: text("id").primaryKey(),
+    itemId: text("item_id")
+      .notNull()
+      .references(() => libraryItem.id, { onDelete: "cascade" }),
+    authorId: text("author_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    body: text("body").notNull(),
+    createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
+  },
+  (table) => [index("library_comment_item_idx").on(table.itemId)],
+);

@@ -55,7 +55,7 @@ function unknownOwner(id: string): ItemOwner {
   return { id, username: null, name: "Unknown" };
 }
 
-export function toApiItem(row: ItemRow, owner: ItemOwner | undefined, origin: string): LibraryItem {
+export function toApiItem(row: ItemRow, owner: ItemOwner | undefined, origin: string, score = 0): LibraryItem {
   const kind = row.kind as Kind;
   return {
     id: row.id,
@@ -70,6 +70,7 @@ export function toApiItem(row: ItemRow, owner: ItemOwner | undefined, origin: st
     sha256: row.sha256,
     size: row.size,
     meta: parseJson<Record<string, unknown>>(row.metaJson, {}),
+    score,
     created_at: row.createdAt.toISOString(),
     updated_at: row.updatedAt.toISOString(),
     ...itemUrls(origin, kind, row.slug, row.id),
@@ -81,6 +82,7 @@ export function galleryOrgToApiItem(
   owner: ItemOwner | undefined,
   artifact: { sha256: string; size: number },
   origin: string,
+  score = 0,
 ): LibraryItem {
   const slug = row.slug ?? row.id;
   return {
@@ -96,6 +98,7 @@ export function galleryOrgToApiItem(
     sha256: artifact.sha256,
     size: artifact.size,
     meta: { role_count: row.roleCount, topology: row.topology, gallery: true },
+    score,
     created_at: row.createdAt.toISOString(),
     updated_at: row.createdAt.toISOString(),
     ...itemUrls(origin, "org", slug, row.id),
@@ -112,6 +115,11 @@ export function installRef(item: Pick<LibraryItem, "id" | "kind" | "slug" | "vis
   if (item.visibility === "private") return item.id;
   if (item.kind === "automation") return item.slug === item.meta.automation_id ? item.slug : item.id;
   return /-\d+$/.test(item.slug) ? item.id : item.slug;
+}
+
+/** Highest score first, then newest. */
+export function byScoreDesc(a: LibraryItem, b: LibraryItem): number {
+  return b.score - a.score || byUpdatedDesc(a, b);
 }
 
 /** Newest first, then by id so pages are stable. */
