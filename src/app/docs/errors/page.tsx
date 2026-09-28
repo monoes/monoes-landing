@@ -106,7 +106,9 @@ export default function ErrorsPage() {
         <li>409 <code>version_conflict</code>, <code>gallery_org</code>; 413 <code>too_large</code>; 429 <code>rate_limited</code></li>
       </ul>
       <p className="mt-3 text-[13px] text-espresso/55">
-        Unlike the community endpoints, a library token without the needed scope gets 403{" "}
+        Every library read needs a login: anonymous callers get 401 <code>unauthorized</code> (&quot;Log in to
+        monoes.me to browse the library&quot;). Unlike the community endpoints, a library token without the needed
+        scope gets 403{" "}
         <code>insufficient_scope</code> rather than being treated as anonymous, and library lists use a{" "}
         <strong>1-indexed</strong> <code>page</code>.
       </p>

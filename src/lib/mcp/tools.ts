@@ -49,7 +49,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
     name: "list_library_items",
     title: "List library items",
     description:
-      "List MonoAgent library items (workflows, web automations, orgs), newest first or by community votes (sort 'popular'). scope 'public' (default) lists public and official items without authentication; 'mine' lists your own and needs library:read.",
+      "List MonoAgent library items (workflows, web automations, orgs), newest first or by community votes (sort 'popular'). Requires authentication (a token with library:read); scope 'public' (default) lists public and official items, 'mine' your own.",
     inputSchema: {
       kind: z.enum(["workflow", "automation", "org"]).optional(),
       scope: z.enum(["public", "official", "mine"]).optional(),
@@ -72,7 +72,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
     name: "get_library_item",
     title: "Get a library item",
     description:
-      "Get one MonoAgent library item by id, or by kind and slug. Includes its sha256, meta and artifact_url; install it locally with `monoagentcli library install <kind> <id|slug>`.",
+      "Get one MonoAgent library item by id, or by kind and slug. Requires authentication (a token with library:read). Includes its sha256, meta and artifact_url; install it locally with `monoagentcli library install <kind> <id|slug>`.",
     inputSchema: {
       id: z.string().optional(),
       kind: z.enum(["workflow", "automation", "org"]).optional(),
@@ -99,7 +99,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
     name: "get_feed",
     title: "Get community feed",
     description:
-      "List recent community activity (features, bugs, posts, orgs, public workflows and web automations), optionally sorted and paginated. No authentication required.",
+      "List recent community activity, optionally sorted and paginated. No authentication required for features, bugs and posts; orgs, workflows and web automations are only included for an authenticated caller (community:read).",
     inputSchema: {
       sort: z.enum(["latest", "popular"]).optional(),
       page: z.number().int().positive().optional(),

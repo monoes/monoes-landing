@@ -49,7 +49,7 @@ export const ENDPOINT_GROUPS: EndpointGroup[] = [
         response:
           "{ items: FeedItem[], hasMore: boolean }. FeedItem: { id, type: 'post'|'bug'|'feature'|'org'|'workflow'|'automation', title, preview, authorId, authorUsername, createdAt, score, myVote, url? }",
         notes:
-          "Session is read if present (to compute the viewer's own vote on each item) but not required. A Bearer token without community:read is silently treated as anonymous rather than rejected. Workflow and web automation items are public or official library items; their url points at /library/{workflows|automations}/{slug}, and votes on them go to /api/community/library/{id}/vote.",
+          "Session is read if present (to compute the viewer's own vote on each item) but not required. A Bearer token without community:read is silently treated as anonymous rather than rejected. Org, workflow and web automation items are only included for logged-in viewers (a session, or a token with community:read); anonymous callers get posts, bugs and features only. Workflow and web automation items are public or official library items; their url points at /library/{workflows|automations}/{slug}, and votes on them go to /api/community/library/{id}/vote.",
       },
     ],
   },

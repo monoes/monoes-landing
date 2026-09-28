@@ -130,9 +130,9 @@ export default function AuthenticationPage() {
           every POST, PATCH, and DELETE endpoint.
         </li>
         <li>
-          <code className="rounded bg-ivory-parchment px-1.5 py-0.5 font-mono text-[13px]">library:read</code>: your private
-          library items (<code>scope=mine</code> listings, private items and their downloads). Public and official
-          items need no token.
+          <code className="rounded bg-ivory-parchment px-1.5 py-0.5 font-mono text-[13px]">library:read</code>: every library
+          read (listing, item, versions, download), official and public items included; the library needs a login.
+          Private items stay visible to their owner only.
         </li>
         <li>
           <code className="rounded bg-ivory-parchment px-1.5 py-0.5 font-mono text-[13px]">library:write</code>: publishing,
