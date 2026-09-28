@@ -11,6 +11,8 @@ const VOTE_PATH: Record<FeedItem["type"], string> = {
   bug: "bugs",
   feature: "features",
   org: "orgs",
+  workflow: "library",
+  automation: "library",
 };
 
 export function FeedList({

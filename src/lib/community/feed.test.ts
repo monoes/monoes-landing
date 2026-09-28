@@ -11,6 +11,9 @@ register(
     if (specifier === "@/lib/db/schema") {
       return { url: "data:text/javascript,export const post = {}; export const postVote = {}; export const bug = {}; export const bugVote = {}; export const feature = {}; export const featureVote = {}; export const orgUpload = {}; export const orgVote = {}; export const user = {};", shortCircuit: true };
     }
+    if (specifier === "@/lib/db/library-schema") {
+      return { url: "data:text/javascript,export const libraryItem = {}; export const libraryVote = {};", shortCircuit: true };
+    }
     return next(specifier, context);
   }`,
   import.meta.url,

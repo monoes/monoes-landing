@@ -6,6 +6,8 @@ const TYPE_LABEL: Record<FeedItem["type"], string> = {
   bug: "Bug",
   feature: "Feature",
   org: "Org",
+  workflow: "Workflow",
+  automation: "Web automation",
 };
 
 const TYPE_COLOR: Record<FeedItem["type"], string> = {
@@ -13,6 +15,8 @@ const TYPE_COLOR: Record<FeedItem["type"], string> = {
   bug: "text-red-700",
   feature: "text-green-700",
   org: "text-espresso/70",
+  workflow: "text-gold-muted",
+  automation: "text-gold-warm",
 };
 
 const DETAIL_PATH: Partial<Record<FeedItem["type"], string>> = {
@@ -31,6 +35,7 @@ export function FeedCard({
   voting: boolean;
 }) {
   const detailSegment = DETAIL_PATH[item.type];
+  const href = item.url ?? (detailSegment ? `/community/${detailSegment}/${item.id}` : null);
   const titleContent = (
     <>
       <span className={`mr-2 rounded px-1.5 py-0.5 text-xs font-medium ${TYPE_COLOR[item.type]} bg-espresso/5`}>
@@ -44,8 +49,8 @@ export function FeedCard({
     <div className="rounded-lg border border-ivory-linen bg-ivory p-5">
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0">
-          {detailSegment ? (
-            <a href={`/community/${detailSegment}/${item.id}`} className="hover:underline">
+          {href ? (
+            <a href={href} className="hover:underline">
               {titleContent}
             </a>
           ) : (
