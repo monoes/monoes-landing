@@ -61,7 +61,9 @@ function MetaRows({ item }: { item: LibraryItem }) {
     if (m.publisher) rows.push(["Publisher", String(m.publisher)]);
     rows.push(["Policy tier", String(m.policy_tier ?? "standard")]);
     if (m.requires_native) {
-      const engine = typeof m.engine === "string" && m.engine ? m.engine.replace(/^>=\s*/, "≥ ") : null;
+      // ">=0.0.0" (the pack default) says nothing, so it isn't shown.
+      const engine =
+        typeof m.engine === "string" && m.engine && !/^>=\s*0\.0\.0$/.test(m.engine) ? m.engine.replace(/^>=\s*/, "≥ ") : null;
       rows.push([
         "Needs",
         `MonoAgent${engine ? ` ${engine}` : ""} with the built-in ${String(m.native ?? "")} bot`.replace(/\s+/g, " "),
