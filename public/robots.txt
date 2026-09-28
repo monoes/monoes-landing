@@ -1,5 +1,11 @@
 User-Agent: *
 Allow: /
+# Members-only (login required): orgs, the workflow and web automation galleries, and the library.
+Disallow: /library
+Disallow: /community/orgs
+Disallow: /community/org-run-files
+Disallow: /community/workflows
+Disallow: /community/automations
 Content-Signal: ai-train=yes, search=yes, ai-input=yes
 
 Host: https://monoes.me

@@ -10,6 +10,8 @@ const DESCRIPTION =
   "Workflows, web automations and agent orgs for MonoAgent: official packages from monoes and ones the community shares. Add any of them to your local MonoAgent in one command.";
 
 export const metadata: Metadata = {
+  // Members-only page (login required): keep it out of search results.
+  robots: { index: false, follow: false },
   title: "Library · monoes",
   description: DESCRIPTION,
   alternates: { canonical: "/library" },

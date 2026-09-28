@@ -7,6 +7,8 @@ import { orgUpload, user, orgVote } from "@/lib/db/schema";
 import { OrgGallery } from "@/components/community/orgs/OrgGallery";
 
 export const metadata: Metadata = {
+  // Members-only page (login required): keep it out of search results.
+  robots: { index: false, follow: false },
   title: "Org Gallery · Monoes Community",
   description:
     "Browse Monomind agent orgs shared by the community: goals, roles, communication topology, and uploaded run outputs.",

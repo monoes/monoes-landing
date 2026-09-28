@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   const { id } = await params;
   const row = await getOrgUpload(id);
   if (!row) {
-    return { title: "Org not found" };
+    return { title: "Org not found", robots: { index: false, follow: false } };
   }
 
   const description = (row.description || row.tagline || row.goal || "").slice(0, 200);
@@ -31,6 +31,8 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 
   return {
     title: `${title} · Monoes Community`,
+    // Org pages are members-only (login required): never indexed.
+    robots: { index: false, follow: false },
     description,
     alternates: { canonical: `/community/orgs/${row.slug ?? row.id}` },
     openGraph: {

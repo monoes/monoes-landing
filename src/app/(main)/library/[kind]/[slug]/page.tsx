@@ -26,14 +26,15 @@ const getDetail = cache(async (kindSegment: string, slug: string) => {
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
   const { kind, slug } = await params;
   const detail = await getDetail(kind, slug);
-  if (!detail) return { title: "Not found · Library" };
+  if (!detail) return { title: "Not found · Library", robots: { index: false, follow: false } };
   const { item } = detail;
   return {
     title: `${item.name} · ${KIND_LABEL[item.kind]} · monoes library`,
     description: item.description.slice(0, 200),
     // A gallery org's main page is its /community/orgs page.
     alternates: { canonical: detail.gallery ? `/community/orgs/${item.slug}` : `/library/${KIND_PATH[item.kind]}/${item.slug}` },
-    ...(item.visibility === "private" ? { robots: { index: false } } : {}),
+    // Library pages are members-only (login required): never indexed.
+    robots: { index: false, follow: false },
   };
 }
 
