@@ -97,7 +97,7 @@ function galleryWhere(query: ListQuery, viewerId: string | null): SQL | undefine
   if (query.scope === "mine") conds.push(eq(orgUpload.uploaderId, viewerId ?? ""));
   if (query.q) {
     const text = likeText(query.q);
-    conds.push(or(like(orgUpload.name, text), like(orgUpload.goal, text), like(orgUpload.tagline, text)));
+    conds.push(or(like(orgUpload.name, text), like(orgUpload.goal, text), like(orgUpload.tagline, text), like(orgUpload.slug, text)));
   }
   return and(...conds);
 }
