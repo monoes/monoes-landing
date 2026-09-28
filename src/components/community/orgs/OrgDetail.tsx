@@ -8,6 +8,7 @@ import { RoleModal, type ModalRole } from "./RoleModal";
 import { RunUploadForm } from "./RunUploadForm";
 import { OutputPreviewModal } from "./OutputPreviewModal";
 import { CommentSection, type Comment } from "../CommentSection";
+import { goToLogin } from "@/lib/community/go-to-login";
 
 type Role = {
   id: string;
@@ -235,10 +236,10 @@ export function OrgDetail({
         <div className="flex gap-2">
           <button
             type="button"
-            onClick={handleDownload}
+            onClick={org.currentUsername ? handleDownload : goToLogin}
             className="rounded-md border border-espresso/30 px-3 py-1.5 text-xs font-medium text-espresso hover:border-espresso"
           >
-            Download
+            {org.currentUsername ? "Download" : "Log in to download"}
           </button>
           {org.canEdit && (
             <Link

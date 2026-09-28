@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { goToLogin } from "@/lib/community/go-to-login";
 
 export type Comment = {
   id: string;
@@ -109,7 +110,9 @@ export function CommentSection({
           </button>
         </form>
       ) : (
-        <p className="mt-4 text-sm text-espresso/55">Log in to leave a comment.</p>
+        <button type="button" onClick={goToLogin} className="mt-4 text-sm font-medium text-gold-dark underline-offset-4 hover:underline">
+          Log in to leave a comment
+        </button>
       )}
     </div>
   );

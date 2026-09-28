@@ -5,6 +5,7 @@ import Link from "next/link";
 import { VoteButtons } from "@/components/community/VoteButtons";
 import type { GalleryItem } from "@/lib/library/page-data";
 import { KIND_PATH } from "@/lib/library/types";
+import { goToLogin } from "@/lib/community/go-to-login";
 
 const DESCRIPTION_TRUNCATE_LENGTH = 150;
 
@@ -66,7 +67,7 @@ export function LibraryGallery({ initialItems, loggedIn }: { initialItems: Galle
   async function handleVote(id: string, value: -1 | 0 | 1) {
     if (votingIds.has(id)) return;
     if (!loggedIn) {
-      setVoteError("Log in to vote.");
+      goToLogin();
       return;
     }
     setVoteError(null);
@@ -77,6 +78,10 @@ export function LibraryGallery({ initialItems, loggedIn }: { initialItems: Galle
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ value }),
       });
+      if (res.status === 401) {
+        goToLogin();
+        return;
+      }
       if (!res.ok) {
         setVoteError("Could not record your vote. Please try again.");
         return;

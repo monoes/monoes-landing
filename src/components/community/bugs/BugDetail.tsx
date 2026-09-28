@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { STATUS_LABEL, SEVERITY_LABEL } from "./BugCard";
+import { goToLogin } from "@/lib/community/go-to-login";
 
 type Status = "open" | "in_progress" | "resolved" | "wontfix";
 type Severity = "low" | "medium" | "high" | "critical";
@@ -325,6 +326,11 @@ export function BugDetail({
           ))}
         </div>
 
+        {!currentUserId ? (
+          <button type="button" onClick={goToLogin} className="mt-4 text-sm font-medium text-gold-dark underline-offset-4 hover:underline">
+            Log in to leave a comment
+          </button>
+        ) : (
         <form onSubmit={handleCommentSubmit} className="mt-4 space-y-2">
           <textarea
             required
@@ -349,6 +355,7 @@ export function BugDetail({
             {submittingComment ? "Posting…" : "Post comment"}
           </button>
         </form>
+        )}
       </div>
     </div>
   );

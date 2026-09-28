@@ -9,7 +9,7 @@ import {
   parseTags,
   type ItemPath,
 } from "./http";
-import { requireUser } from "./request-auth";
+import { LOGIN_TO_DOWNLOAD, optionalReader, requireUser } from "./request-auth";
 import { LENGTH_HINT_HEADER } from "./fixed-length";
 import { bumpPatch, isSemver } from "./semver";
 import { GALLERY_ORG_VERSION } from "./serialize";
@@ -105,10 +105,10 @@ function pickVersion(kind: Kind, given: string | undefined, fromArtifact: string
 }
 
 export async function handleList(request: Request): Promise<Response> {
-  // Every library read needs an account, official and public items included.
-  const viewer = await requireUser(request, "library:read");
+  // Browsing is open to everyone; only your own list (scope=mine) needs a login.
   const query = parseListQuery(new URL(request.url).searchParams);
-  const viewerId = query.scope === "mine" ? viewer.id : null;
+  let viewerId: string | null = null;
+  if (query.scope === "mine") viewerId = (await requireUser(request, "library:read")).id;
   const db = getDb();
   const { items, total } = await listItems(db, query, viewerId, origin(request));
   return Response.json({ items, page: query.page, per_page: query.perPage, total });
@@ -145,7 +145,9 @@ export async function handleCreate(request: Request): Promise<Response> {
 }
 
 export async function handleGet(request: Request, path: ItemPath): Promise<Response> {
-  const viewer = await requireUser(request, "library:read");
+  // Anyone can view items and their versions; downloading the artifact needs a login.
+  const viewer =
+    path.sub === "artifact" ? await requireUser(request, "library:read", LOGIN_TO_DOWNLOAD) : await optionalReader(request);
   const db = getDb();
   const found = await findVisible(db, path, viewer);
 

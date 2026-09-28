@@ -19,6 +19,7 @@ const { NextRequest } = await import("next/server");
 const {
   middleware,
   runMiddleware,
+  requiresLogin,
   isMarkdownEligiblePath,
   wantsMarkdown,
   markdownAssetPath,
@@ -81,14 +82,32 @@ describe("community middleware", () => {
     assert.equal(res.status, 200);
   });
 
-  it("sends logged-out visitors from the org, workflow and automation galleries and org pages to login", async () => {
+  it("lets logged-out visitors browse orgs, posts, bugs, features, galleries and the library", async () => {
     for (const path of [
       "/community/orgs",
       "/community/orgs/abc-123",
-      "/community/orgs/abc-123/edit",
       "/community/org-run-files/f1",
       "/community/workflows",
       "/community/automations",
+      "/community/bugs",
+      "/community/bugs/b1",
+      "/community/features",
+      "/community/posts/p1",
+      "/library",
+      "/library/automations/instagram",
+    ]) {
+      const res = await runMiddleware(new NextRequest(`http://localhost${path}`), getSessionMock);
+      assert.equal(res.status, 200, path);
+    }
+  });
+
+  it("sends logged-out visitors to login (and back) only from pages that act as them", async () => {
+    for (const path of [
+      "/community/admin",
+      "/community/settings/profile",
+      "/community/onboarding",
+      "/community/orgs/abc-123/edit",
+      "/library/upload?kind=workflow",
     ]) {
       getSessionMock.mock.mockImplementationOnce(async () => null);
       const res = await runMiddleware(new NextRequest(`http://localhost${path}`), getSessionMock);
@@ -97,21 +116,11 @@ describe("community middleware", () => {
     }
   });
 
-  it("sends logged-out visitors from any /library page to login, keeping the query", async () => {
-    for (const path of ["/library", "/library/automations/instagram", "/library/upload?kind=workflow"]) {
-      getSessionMock.mock.mockImplementationOnce(async () => null);
-      const res = await runMiddleware(new NextRequest(`http://localhost${path}`), getSessionMock);
-      assert.equal(res.status, 307, path);
-      assert.equal(new URL(res.headers.get("location") ?? "").searchParams.get("next"), path);
-    }
-  });
-
-  it("lets signed-in members into /library", async () => {
-    getSessionMock.mock.mockImplementationOnce(async () => ({
-      user: { id: "u1", username: "someone", role: "member", blockedAt: null },
-    }));
-    const res = await runMiddleware(new NextRequest("http://localhost/library"), getSessionMock);
-    assert.equal(res.status, 200);
+  it("requiresLogin covers exactly the acting pages", () => {
+    assert.equal(requiresLogin("/community/orgs/x/edit"), true);
+    assert.equal(requiresLogin("/community/orgs/x"), false);
+    assert.equal(requiresLogin("/library/upload"), true);
+    assert.equal(requiresLogin("/library"), false);
   });
 
   it("isMarkdownEligiblePath excludes /library", () => {

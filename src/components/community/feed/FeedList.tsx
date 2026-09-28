@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import type { FeedItem } from "@/lib/community/feed";
 import { FeedCard } from "./FeedCard";
+import { goToLogin } from "@/lib/community/go-to-login";
 
 type SortMode = "latest" | "popular";
 
@@ -93,6 +94,10 @@ export function FeedList({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ value }),
       });
+      if (res.status === 401) {
+        goToLogin();
+        return;
+      }
       if (!res.ok) {
         setFeedError("Could not record your vote. Please try again.");
         return;

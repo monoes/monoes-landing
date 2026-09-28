@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { VoteButtons } from "@/components/community/VoteButtons";
+import { goToLogin } from "@/lib/community/go-to-login";
 
 /** Up/down votes on a library item page (library or gallery-org vote endpoint). */
 export function ItemVotes({
@@ -22,7 +23,7 @@ export function ItemVotes({
 
   async function vote(value: -1 | 0 | 1) {
     if (!loggedIn) {
-      setError("Log in to vote.");
+      goToLogin();
       return;
     }
     setVoting(true);
@@ -33,6 +34,10 @@ export function ItemVotes({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ value }),
       });
+      if (res.status === 401) {
+        goToLogin();
+        return;
+      }
       if (!res.ok) {
         setError("Could not record your vote.");
         return;

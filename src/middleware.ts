@@ -42,11 +42,26 @@ const defaultGetSession: GetSession = async (args) => {
 // `middleware(request, event)` — a second, non-optional NextFetchEvent
 // argument — which would silently clobber a `getSession` default parameter
 // if it lived directly on `middleware` itself.
-// Everything else under /community, and all of /library (orgs, workflows,
-// web automations, official ones included), needs a logged-in account.
-// Anonymous visitors go to the login page, which returns them here after.
 function isLibraryPath(pathname: string): boolean {
   return pathname === "/library" || pathname.startsWith("/library/");
+}
+
+/**
+ * Browsing the community and the library is open to everyone: orgs, posts,
+ * bugs, features, workflows and web automations. Only pages that act as you
+ * need a login; voting, commenting and downloading are checked by their API
+ * routes and send logged-out visitors to login from the page.
+ */
+export function requiresLogin(pathname: string): boolean {
+  return (
+    pathname === "/community/admin" ||
+    pathname.startsWith("/community/admin/") ||
+    pathname.startsWith("/community/settings") ||
+    pathname === "/community/onboarding" ||
+    pathname.startsWith("/community/oauth") ||
+    /^\/community\/orgs\/[^/]+\/edit$/.test(pathname) ||
+    pathname === "/library/upload"
+  );
 }
 
 export async function runMiddleware(
@@ -55,10 +70,7 @@ export async function runMiddleware(
 ) {
   const { pathname } = request.nextUrl;
 
-  if (
-    PUBLIC_PATHS.has(pathname) ||
-    pathname.startsWith("/community/u/")
-  ) {
+  if (PUBLIC_PATHS.has(pathname) || !requiresLogin(pathname)) {
     return NextResponse.next();
   }
 
