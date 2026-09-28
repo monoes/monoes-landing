@@ -5,11 +5,14 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import { GoogleSignInButton } from "@/components/community/auth/GoogleSignInButton";
+import { safeNext } from "@/lib/community/safe-next";
 
 export function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const blocked = searchParams.get("blocked") === "1";
+  // Where the visitor was headed before being asked to log in (middleware sets ?next=).
+  const next = safeNext(searchParams.get("next"));
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -31,7 +34,7 @@ export function LoginForm() {
       // above, and the server's response carries {redirect: true, url},
       // which better-auth's built-in redirect fetch-plugin auto-follows —
       // no extra handling needed here. Only plain sign-ins fall through.
-      router.push("/community");
+      router.push(next);
     } catch {
       setError("Something went wrong. Please try again.");
     } finally {
@@ -41,13 +44,18 @@ export function LoginForm() {
 
   return (
     <div className="mx-auto max-w-sm space-y-4">
-      <GoogleSignInButton />
+      <GoogleSignInButton callbackURL={next} />
       <div className="flex items-center gap-3 text-xs text-espresso/45">
         <span className="h-px flex-1 bg-ivory-linen" />
         or
         <span className="h-px flex-1 bg-ivory-linen" />
       </div>
       <form onSubmit={handleSubmit} className="space-y-4">
+        {searchParams.get("next") && !blocked && (
+          <p role="status" className="rounded-md bg-gold/10 px-3 py-2 text-sm text-espresso">
+            Log in to see orgs, workflows and web automations. You&apos;ll go straight back to the page you wanted.
+          </p>
+        )}
         {blocked && (
           <p role="alert" className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">
             This account has been blocked. Contact an administrator if you believe this is a mistake.

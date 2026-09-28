@@ -29,12 +29,12 @@ const {
 const getSessionMock = mock.fn<GetSession>(async () => null);
 
 describe("community middleware", () => {
-  it("redirects unauthenticated users to /community/login", async () => {
+  it("redirects unauthenticated users to /community/login, remembering where they were going", async () => {
     getSessionMock.mock.mockImplementationOnce(async () => null);
     const req = new NextRequest("http://localhost/community/admin");
     const res = await runMiddleware(req, getSessionMock);
     assert.equal(res.status, 307);
-    assert.match(res.headers.get("location") ?? "", /\/community\/login$/);
+    assert.match(res.headers.get("location") ?? "", /\/community\/login\?next=%2Fcommunity%2Fadmin$/);
   });
 
   it("redirects users with no username to /community/onboarding", async () => {
@@ -81,34 +81,42 @@ describe("community middleware", () => {
     assert.equal(res.status, 200);
   });
 
-  it("allows logged-out visitors through to the org gallery", async () => {
-    getSessionMock.mock.mockImplementationOnce(async () => null);
-    const req = new NextRequest("http://localhost/community/orgs");
-    const res = await runMiddleware(req, getSessionMock);
-    assert.equal(res.status, 200);
-  });
-
-  it("allows logged-out visitors through to an org's view page", async () => {
-    getSessionMock.mock.mockImplementationOnce(async () => null);
-    const req = new NextRequest("http://localhost/community/orgs/abc-123");
-    const res = await runMiddleware(req, getSessionMock);
-    assert.equal(res.status, 200);
-  });
-
-  it("allows logged-out visitors through to the workflow and web automation galleries", async () => {
-    for (const path of ["/community/workflows", "/community/automations"]) {
+  it("sends logged-out visitors from the org, workflow and automation galleries and org pages to login", async () => {
+    for (const path of [
+      "/community/orgs",
+      "/community/orgs/abc-123",
+      "/community/orgs/abc-123/edit",
+      "/community/org-run-files/f1",
+      "/community/workflows",
+      "/community/automations",
+    ]) {
       getSessionMock.mock.mockImplementationOnce(async () => null);
       const res = await runMiddleware(new NextRequest(`http://localhost${path}`), getSessionMock);
-      assert.equal(res.status, 200, path);
+      assert.equal(res.status, 307, path);
+      assert.equal(new URL(res.headers.get("location") ?? "").searchParams.get("next"), path);
     }
   });
 
-  it("still redirects logged-out visitors away from an org's /edit page", async () => {
-    getSessionMock.mock.mockImplementationOnce(async () => null);
-    const req = new NextRequest("http://localhost/community/orgs/abc-123/edit");
-    const res = await runMiddleware(req, getSessionMock);
-    assert.equal(res.status, 307);
-    assert.match(res.headers.get("location") ?? "", /\/community\/login$/);
+  it("sends logged-out visitors from any /library page to login, keeping the query", async () => {
+    for (const path of ["/library", "/library/automations/instagram", "/library/upload?kind=workflow"]) {
+      getSessionMock.mock.mockImplementationOnce(async () => null);
+      const res = await runMiddleware(new NextRequest(`http://localhost${path}`), getSessionMock);
+      assert.equal(res.status, 307, path);
+      assert.equal(new URL(res.headers.get("location") ?? "").searchParams.get("next"), path);
+    }
+  });
+
+  it("lets signed-in members into /library", async () => {
+    getSessionMock.mock.mockImplementationOnce(async () => ({
+      user: { id: "u1", username: "someone", role: "member", blockedAt: null },
+    }));
+    const res = await runMiddleware(new NextRequest("http://localhost/library"), getSessionMock);
+    assert.equal(res.status, 200);
+  });
+
+  it("isMarkdownEligiblePath excludes /library", () => {
+    assert.equal(isMarkdownEligiblePath("/library"), false);
+    assert.equal(isMarkdownEligiblePath("/library/workflows/x"), false);
   });
 
   it("exports `middleware` with exactly one parameter, matching Next.js's (request, event) call signature", () => {

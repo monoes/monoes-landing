@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { loginUrlFor } from "./lib/community/safe-next.ts";
 
 const PUBLIC_PATHS = new Set([
   "/community",
@@ -41,18 +42,12 @@ const defaultGetSession: GetSession = async (args) => {
 // `middleware(request, event)` — a second, non-optional NextFetchEvent
 // argument — which would silently clobber a `getSession` default parameter
 // if it lived directly on `middleware` itself.
-// The org gallery and an individual org's view page (not /edit or deeper)
-// are public content, same as /community/u/<username> profiles - readable
-// without an account so they're actually crawlable and link-preview-able.
-// Mutating actions (upload, vote, comment, delete, edit) still require auth,
-// enforced independently by their own API routes regardless of this gate.
-function isPublicOrgViewPath(pathname: string): boolean {
-  return pathname === "/community/orgs" || /^\/community\/orgs\/[^/]+$/.test(pathname);
+// Everything else under /community, and all of /library (orgs, workflows,
+// web automations, official ones included), needs a logged-in account.
+// Anonymous visitors go to the login page, which returns them here after.
+function isLibraryPath(pathname: string): boolean {
+  return pathname === "/library" || pathname.startsWith("/library/");
 }
-
-// The workflow and web automation galleries are public too; their items'
-// pages live under /library.
-const PUBLIC_GALLERY_PATHS = new Set(["/community/workflows", "/community/automations"]);
 
 export async function runMiddleware(
   request: NextRequest,
@@ -62,9 +57,7 @@ export async function runMiddleware(
 
   if (
     PUBLIC_PATHS.has(pathname) ||
-    pathname.startsWith("/community/u/") ||
-    isPublicOrgViewPath(pathname) ||
-    PUBLIC_GALLERY_PATHS.has(pathname)
+    pathname.startsWith("/community/u/")
   ) {
     return NextResponse.next();
   }
@@ -72,7 +65,7 @@ export async function runMiddleware(
   const session = await getSession({ headers: request.headers });
 
   if (!session) {
-    return NextResponse.redirect(new URL("/community/login", request.url));
+    return NextResponse.redirect(new URL(loginUrlFor(pathname + request.nextUrl.search), request.url));
   }
 
   const user = session.user as unknown as SessionUser;
@@ -105,6 +98,7 @@ export async function runMiddleware(
 // fonts, sitemap.xml, favicon.ico) marks a non-page asset.
 export function isMarkdownEligiblePath(pathname: string): boolean {
   if (pathname.startsWith("/community")) return false;
+  if (isLibraryPath(pathname)) return false;
   if (pathname.startsWith("/api")) return false;
   if (pathname.startsWith("/_next")) return false;
   if (pathname.startsWith("/.well-known")) return false;
@@ -201,7 +195,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.rewrite(url);
   }
 
-  if (pathname.startsWith("/community")) {
+  if (pathname.startsWith("/community") || isLibraryPath(pathname)) {
     return runMiddleware(request);
   }
 
