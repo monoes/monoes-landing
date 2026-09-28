@@ -6,6 +6,7 @@ import { AddToMonoAgent } from "@/components/library/AddToMonoAgent";
 import { VisibilityBadge } from "@/components/library/LibraryCard";
 import { OwnerControls } from "@/components/library/OwnerControls";
 import { getPageViewer, loadDetail } from "@/lib/library/page-data";
+import { installRef } from "@/lib/library/serialize";
 import { KIND_LABEL, KIND_PATH, parseKind, type LibraryItem } from "@/lib/library/types";
 
 export const dynamic = "force-dynamic";
@@ -28,7 +29,8 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   return {
     title: `${item.name} · ${KIND_LABEL[item.kind]} · monoes library`,
     description: item.description.slice(0, 200),
-    alternates: { canonical: `/library/${KIND_PATH[item.kind]}/${item.slug}` },
+    // A gallery org's main page is its /community/orgs page.
+    alternates: { canonical: detail.gallery ? `/community/orgs/${item.slug}` : `/library/${KIND_PATH[item.kind]}/${item.slug}` },
     ...(item.visibility === "private" ? { robots: { index: false } } : {}),
   };
 }
@@ -118,7 +120,7 @@ export default async function LibraryItemPage({ params }: { params: Params }) {
         {item.description && <p className="mt-5 whitespace-pre-line text-espresso/80">{item.description}</p>}
 
         <div className="mt-6 flex flex-wrap items-start gap-3">
-          <AddToMonoAgent kind={item.kind} id={item.id} />
+          <AddToMonoAgent kind={item.kind} installRef={installRef(item)} />
           <a
             href={item.artifact_url}
             className="rounded-md border border-espresso/20 px-4 py-2 text-sm text-espresso transition-colors hover:border-espresso/40"

@@ -37,6 +37,9 @@ test("upload an automation on the web, see it in My library, get the install com
   await expect(page.getByRole("status")).toHaveText("Saved.");
   await page.goto(`/library?tab=automations&q=${id}`);
   await expect(page.getByText(`Web ${id}`)).toBeVisible();
+  await page.goto(`/library/automations/${id}`);
+  await page.getByRole("button", { name: "Add to MonoAgent" }).click();
+  await expect(page.getByTestId("install-command")).toHaveText(`monoagentcli library install automation ${id}`);
 
   await page.goto(`/library/automations/${id}`);
   page.once("dialog", (d) => d.accept());

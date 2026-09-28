@@ -102,6 +102,18 @@ export function galleryOrgToApiItem(
   };
 }
 
+/**
+ * The ref for `monoagentcli library install <kind> <ref>`: the slug when it
+ * is public and stable, else the id. Private items use the id, and so do
+ * slugs that got a collision suffix ("-2"): for an automation, a slug other
+ * than its automation id; for other kinds, a slug ending in "-<digits>".
+ */
+export function installRef(item: Pick<LibraryItem, "id" | "kind" | "slug" | "visibility" | "meta">): string {
+  if (item.visibility === "private") return item.id;
+  if (item.kind === "automation") return item.slug === item.meta.automation_id ? item.slug : item.id;
+  return /-\d+$/.test(item.slug) ? item.id : item.slug;
+}
+
 /** Newest first, then by id so pages are stable. */
 export function byUpdatedDesc(a: LibraryItem, b: LibraryItem): number {
   if (a.updated_at !== b.updated_at) return a.updated_at < b.updated_at ? 1 : -1;

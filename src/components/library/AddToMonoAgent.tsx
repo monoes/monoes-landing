@@ -4,8 +4,8 @@ import { useState } from "react";
 import type { Kind } from "@/lib/library/types";
 
 /** The "Add to MonoAgent" box: the exact CLI command, copyable, plus the monoagent:// link. */
-export function AddToMonoAgent({ kind, id }: { kind: Kind; id: string }) {
-  const command = `monoagentcli library install ${kind} ${id}`;
+export function AddToMonoAgent({ kind, installRef }: { kind: Kind; installRef: string }) {
+  const command = `monoagentcli library install ${kind} ${installRef}`;
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -50,7 +50,7 @@ export function AddToMonoAgent({ kind, id }: { kind: Kind; id: string }) {
           </div>
           <p className="mt-3 text-xs text-espresso/55">
             Or{" "}
-            <a href={`monoagent://library/install?kind=${kind}&id=${encodeURIComponent(id)}`} className="text-gold-dark hover:underline">
+            <a href={`monoagent://library/install?kind=${kind}&id=${encodeURIComponent(installRef)}`} className="text-gold-dark hover:underline">
               open it in MonoAgent
             </a>{" "}
             if your version handles monoagent:// links. Private items need <code className="font-mono">monoagentcli library login</code> first.

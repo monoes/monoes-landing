@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { bumpPatch, compareSemver, isSemver } from "./semver.ts";
 import { canDelete, canEdit, canSetVisibility, canView } from "./access.ts";
 import { contentDisposition, parseItemPath, parseListQuery, parseTags } from "./http.ts";
-import { byUpdatedDesc, galleryOrgToApiItem, toApiItem } from "./serialize.ts";
+import { byUpdatedDesc, galleryOrgToApiItem, installRef, toApiItem } from "./serialize.ts";
 import { LibraryError, parseKind } from "./types.ts";
 
 const status = (fn: () => unknown) => {
@@ -162,6 +162,15 @@ describe("serialize", () => {
     assert.equal(item.owner.id, "u9");
     assert.deepEqual(item.meta, { role_count: 3, topology: "mesh", gallery: true });
     assert.equal(item.url, "http://localhost:3100/library/orgs/growth-team");
+  });
+
+  it("installs public items by a stable slug and everything else by id", () => {
+    const base = { id: "i1", kind: "automation" as const, slug: "instagram", visibility: "official" as const, meta: { automation_id: "instagram" } };
+    assert.equal(installRef(base), "instagram");
+    assert.equal(installRef({ ...base, visibility: "private" }), "i1");
+    assert.equal(installRef({ ...base, slug: "instagram-2" }), "i1");
+    assert.equal(installRef({ ...base, kind: "workflow", slug: "daily-digest", meta: {} }), "daily-digest");
+    assert.equal(installRef({ ...base, kind: "org", slug: "growth-team-2", visibility: "public", meta: {} }), "i1");
   });
 
   it("sorts newest first with a stable tiebreak", () => {
