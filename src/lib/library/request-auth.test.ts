@@ -15,7 +15,7 @@ register(
   import.meta.url,
 );
 
-const { requireUser, LOGIN_REQUIRED } = await import("./request-auth.ts");
+const { requireUser, LOGIN_REQUIRED, LOGIN_TO_DOWNLOAD } = await import("./request-auth.ts");
 const { LibraryError } = await import("./types.ts");
 
 const member = { id: "u1", username: "someone", role: "member", blockedAt: null };
@@ -31,15 +31,19 @@ async function statusOf(p: Promise<unknown>): Promise<{ status: number; code: st
   }
 }
 
-describe("requireUser (every library read and write)", () => {
-  it("rejects anonymous callers with 401 and the log-in message", async () => {
+describe("requireUser (library downloads, your own list, and writes)", () => {
+  it("rejects anonymous callers with 401 and a log-in message (the caller's, when given)", async () => {
     globalThis.__stubSession = null;
     assert.deepEqual(await statusOf(requireUser(req, "library:read")), {
       status: 401,
       code: "unauthorized",
-      message: "Log in to monoes.me to browse the library",
+      message: LOGIN_REQUIRED,
     });
-    assert.equal(LOGIN_REQUIRED, "Log in to monoes.me to browse the library");
+    assert.deepEqual(await statusOf(requireUser(req, "library:read", LOGIN_TO_DOWNLOAD)), {
+      status: 401,
+      code: "unauthorized",
+      message: "Log in to monoes.me to download",
+    });
   });
 
   it("accepts a web session (no token scopes) and a token with library:read", async () => {

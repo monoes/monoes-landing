@@ -95,8 +95,10 @@ test("uploading an invalid org JSON shows a validation error", async ({ page }) 
   await expect(page.getByRole("alert")).toBeVisible();
 });
 
-test("logged-out visitor to /community/orgs is redirected to login", async ({ page }) => {
+test("logged-out visitors can browse the org gallery; uploading leads to login", async ({ page }) => {
   await page.goto("/community/orgs");
+  await expect(page).toHaveURL(/\/community\/orgs$/);
+  await page.getByRole("button", { name: "Log in to upload an org" }).click();
   await expect(page).toHaveURL(/\/community\/login\?next=%2Fcommunity%2Forgs$/);
 });
 

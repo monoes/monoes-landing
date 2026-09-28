@@ -49,13 +49,12 @@ test("upload an automation on the web, see it in My library, get the install com
   expect(gone.status()).toBe(404);
 });
 
-test("a logged-in member can browse the library tabs", async ({ page }) => {
-  await registerAndOnboard(page);
+test("the library is browsable without logging in", async ({ page }) => {
   await page.goto("/library");
   await expect(page.getByRole("heading", { name: "Library" })).toBeVisible();
-  await expect(page.getByRole("link", { name: "Upload", exact: true })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Log in to upload" })).toBeVisible();
   await page.getByRole("navigation", { name: "Library sections" }).getByRole("link", { name: "Orgs" }).click();
   await expect(page.getByRole("link", { name: "community org gallery" })).toBeVisible();
   await page.goto("/library?tab=mine");
-  await expect(page.getByText("You haven't uploaded anything yet.")).toBeVisible();
+  await expect(page.getByText("to see your private and published items")).toBeVisible();
 });

@@ -39,14 +39,10 @@ test("library API: create, visibility, versions, listing, gallery orgs, delete",
   const alice = await userToken(browser, baseURL!);
   const bob = await userToken(browser, baseURL!);
 
-  // Anonymous: nothing is readable or writable without a login.
-  // Anonymous callers can't read the library at all (login required).
+  // Anonymous: the public catalog lists; writes need a token.
   const anonList = await fetch(api("/items?per_page=5"));
-  expect(anonList.status).toBe(401);
-  expect(await anonList.json()).toEqual({ error: { code: "unauthorized", message: "Log in to monoes.me to browse the library" } });
-  const aliceList = await fetch(api("/items?per_page=5"), { headers: alice.auth });
-  expect(aliceList.status).toBe(200);
-  expect(await aliceList.json()).toMatchObject({ page: 1, per_page: 5 });
+  expect(anonList.status).toBe(200);
+  expect(await anonList.json()).toMatchObject({ page: 1, per_page: 5 });
   expect((await fetch(api("/items?scope=mine"))).status).toBe(401);
   expect((await fetch(api("/items"), { method: "POST", body: upload({ kind: "org" }, "{}", "x.json") })).status).toBe(401);
 
@@ -81,8 +77,8 @@ test("library API: create, visibility, versions, listing, gallery orgs, delete",
   expect(item.url).toMatch(new RegExp(`/library/automations/${automationId}$`));
 
   // Private: invisible to anonymous callers and other users, visible to the owner.
-  expect((await fetch(api(`/items/${item.id}`))).status).toBe(401);
-  expect((await fetch(api(`/items/${item.id}/artifact`))).status).toBe(401);
+  expect((await fetch(api(`/items/${item.id}`))).status).toBe(404);
+  expect((await fetch(api(`/items/${item.id}/artifact`))).status).toBe(401); // downloading needs a login
   expect((await fetch(api(`/items/${item.id}/artifact`), { headers: bob.auth })).status).toBe(404);
   expect((await fetch(api(`/items/${item.id}`), { headers: bob.auth })).status).toBe(404);
   expect((await fetch(api(`/items/automation/${automationId}`), { headers: alice.auth })).status).toBe(200);
@@ -96,7 +92,7 @@ test("library API: create, visibility, versions, listing, gallery orgs, delete",
 
   const mine = (await (await fetch(api("/items?scope=mine&kind=automation"), { headers: alice.auth })).json()) as { items: Item[] };
   expect(mine.items.map((i) => i.id)).toContain(item.id);
-  const publicList = (await (await fetch(api(`/items?q=${automationId}`), { headers: bob.auth })).json()) as { items: Item[] };
+  const publicList = (await (await fetch(api(`/items?q=${automationId}`))).json()) as { items: Item[] };
   expect(publicList.items).toHaveLength(0);
 
   // Only the owner edits; making it public shows it to everyone.
@@ -119,7 +115,7 @@ test("library API: create, visibility, versions, listing, gallery orgs, delete",
     body: JSON.stringify({ name: "Mine now" }),
   });
   expect(bobPatch2.status).toBe(403);
-  const listed = (await (await fetch(api(`/items?kind=automation&q=${automationId}&tag=e2e`), { headers: bob.auth })).json()) as { items: Item[]; total: number };
+  const listed = (await (await fetch(api(`/items?kind=automation&q=${automationId}&tag=e2e`))).json()) as { items: Item[]; total: number };
   expect(listed.items.map((i) => i.id)).toEqual([item.id]);
   expect(listed.total).toBe(1);
 
@@ -136,7 +132,7 @@ test("library API: create, visibility, versions, listing, gallery orgs, delete",
     body: upload({}, makeMpkg({ id: "someone-else", version: "2.0.0" }), "x.mpkg"),
   });
   expect(otherId.status).toBe(400);
-  const versions = (await (await fetch(api(`/items/${item.id}/versions`), { headers: bob.auth })).json()) as { versions: { version: string; artifact_url: string }[] };
+  const versions = (await (await fetch(api(`/items/${item.id}/versions`))).json()) as { versions: { version: string; artifact_url: string }[] };
   expect(versions.versions.map((v) => v.version)).toEqual(["1.1.0", "1.0.0"]);
   const old = await fetch(versions.versions[1].artifact_url, { headers: bob.auth });
   expect(old.headers.get("x-content-sha256")).toBe(item.sha256);
@@ -173,11 +169,11 @@ test("library API: create, visibility, versions, listing, gallery orgs, delete",
   });
   expect(gallery.status).toBe(201);
   const galleryRow = (await gallery.json()) as { id: string; slug: string };
-  const galleryItem = (await (await fetch(api(`/items/org/${galleryRow.slug}`), { headers: alice.auth })).json()) as Item;
+  const galleryItem = (await (await fetch(api(`/items/org/${galleryRow.slug}`))).json()) as Item;
   expect(galleryItem).toMatchObject({ id: galleryRow.id, kind: "org", visibility: "public", version: "1.0.0", meta: { gallery: true } });
-  const orgList = (await (await fetch(api(`/items?kind=org&q=${galleryName}`), { headers: alice.auth })).json()) as { items: Item[] };
+  const orgList = (await (await fetch(api(`/items?kind=org&q=${galleryName}`))).json()) as { items: Item[] };
   expect(orgList.items.map((i) => i.id)).toEqual([galleryRow.id]);
-  const galleryArtifact = await fetch(galleryItem.artifact_url, { headers: alice.auth });
+  const galleryArtifact = await fetch(galleryItem.artifact_url, { headers: bob.auth });
   expect(galleryArtifact.headers.get("x-content-sha256")).toBe(galleryItem.sha256);
   const galleryPut = await fetch(api(`/items/${galleryRow.id}/artifact`), { method: "PUT", headers: bob.auth, body: upload({}, "{}", "o.json") });
   expect(galleryPut.status).toBe(409);
@@ -185,6 +181,6 @@ test("library API: create, visibility, versions, listing, gallery orgs, delete",
   // Delete: other users can't; the owner can.
   expect((await fetch(api(`/items/${item.id}`), { method: "DELETE", headers: bob.auth })).status).toBe(403);
   expect((await fetch(api(`/items/${item.id}`), { method: "DELETE", headers: alice.auth })).status).toBe(200);
-  expect((await fetch(api(`/items/${item.id}`), { headers: alice.auth })).status).toBe(404);
+  expect((await fetch(api(`/items/${item.id}`))).status).toBe(404);
   expect((await fetch(api(`/items/${galleryRow.id}`), { method: "DELETE", headers: bob.auth })).status).toBe(200);
 });

@@ -55,8 +55,11 @@ test("submit a bug, comment on it, and see the comment appear", async ({ page })
   await expect(page.getByText("I can reproduce this too.")).toBeVisible();
 });
 
-test("logged-out visitor to /community/bugs is redirected to login", async ({ page }) => {
+test("logged-out visitors can read bug reports; reporting one leads to login", async ({ page }) => {
   await page.goto("/community/bugs");
+  await expect(page).toHaveURL(/\/community\/bugs$/);
+  await expect(page.getByRole("heading", { name: "Bug reports" })).toBeVisible();
+  await page.getByRole("button", { name: "Report a bug" }).click();
   await expect(page).toHaveURL(/\/community\/login\?next=%2Fcommunity%2Fbugs$/);
 });
 
