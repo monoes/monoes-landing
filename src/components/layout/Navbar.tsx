@@ -106,6 +106,8 @@ export function Navbar() {
             className="text-ivory/80 hover:text-gold md:hidden"
             onClick={() => setMobileOpen(!mobileOpen)}
             aria-label="Toggle menu"
+            aria-expanded={mobileOpen}
+            aria-controls="mobile-menu"
           >
             <svg
               width="24"
@@ -127,7 +129,7 @@ export function Navbar() {
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <div className="fixed inset-x-0 top-16 z-30 border-b border-gold/20 bg-espresso-deep/95 backdrop-blur-lg md:hidden">
+        <div id="mobile-menu" className="fixed inset-x-0 top-16 z-30 border-b border-gold/20 bg-espresso-deep/95 backdrop-blur-lg md:hidden">
           <div className="flex flex-col gap-4 px-8 py-6">
             {navLinks.map((link) => (
               <Link

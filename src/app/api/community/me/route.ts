@@ -20,6 +20,7 @@ export async function GET(request: Request) {
   return NextResponse.json({
     id: session.user.id,
     username: session.user.username,
+    role: session.user.role,
     name: row?.name ?? null,
     avatarUrl: row?.avatarKey ? `/api/images/avatar/${row.avatarKey}?v=${row.updatedAt.getTime()}` : null,
   });

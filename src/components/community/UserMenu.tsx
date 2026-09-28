@@ -77,6 +77,7 @@ export function UserMenu({ theme = "dark" }: { theme?: "dark" | "light" }) {
         onClick={() => setOpen((v) => !v)}
         aria-haspopup="menu"
         aria-expanded={open}
+        aria-label={`Account menu for ${me.username ?? me.name ?? "you"}`}
         className="block h-8 w-8 overflow-hidden rounded-full border border-gold/40 transition-colors hover:border-gold"
       >
         {me.avatarUrl ? (
@@ -102,6 +103,16 @@ export function UserMenu({ theme = "dark" }: { theme?: "dark" | "light" }) {
               className="block px-4 py-2 text-sm text-espresso hover:bg-ivory-warm"
             >
               My profile
+            </Link>
+          )}
+          {me.role === "admin" && (
+            <Link
+              href="/community/admin"
+              role="menuitem"
+              onClick={() => setOpen(false)}
+              className="block px-4 py-2 text-sm text-espresso hover:bg-ivory-warm"
+            >
+              Admin dashboard
             </Link>
           )}
           <Link
