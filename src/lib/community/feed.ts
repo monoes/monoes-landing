@@ -18,6 +18,13 @@ export type FeedItem = {
 };
 
 const PAGE_SIZE = 20;
+
+/** Feed item types from the galleries (orgs and the library); only logged-in viewers see them. */
+export const GALLERY_TYPES: readonly FeedItem["type"][] = ["org", "workflow", "automation"];
+
+export function visibleToViewer(type: FeedItem["type"], signedIn: boolean): boolean {
+  return signedIn || !GALLERY_TYPES.includes(type);
+}
 const PREVIEW_TRUNCATE_LENGTH = 200;
 
 function truncate(text: string): string {
@@ -71,6 +78,7 @@ export async function getFeedItems(opts: {
   currentUserId?: string;
 }): Promise<{ items: FeedItem[]; hasMore: boolean }> {
   const db = getDb();
+  const signedIn = !!opts.currentUserId;
   const [posts, postVotes, bugs, bugVotes, features, featureVotes, orgs, orgVotes, users, libraryItems, libraryVotes] = await Promise.all([
     db.select().from(post),
     db.select().from(postVote),
@@ -78,15 +86,18 @@ export async function getFeedItems(opts: {
     db.select().from(bugVote),
     db.select().from(feature),
     db.select().from(featureVote),
-    db.select().from(orgUpload),
-    db.select().from(orgVote),
+    // Galleries are for logged-in members: skip those tables for anonymous viewers.
+    signedIn ? db.select().from(orgUpload) : Promise.resolve([]),
+    signedIn ? db.select().from(orgVote) : Promise.resolve([]),
     db.select({ id: user.id, username: user.username, blockedAt: user.blockedAt }).from(user),
     // Public and official workflows and web automations; orgs are already in via org_upload.
-    db
-      .select()
-      .from(libraryItem)
-      .where(and(inArray(libraryItem.kind, ["workflow", "automation"]), inArray(libraryItem.visibility, ["public", "official"]))),
-    db.select().from(libraryVote),
+    signedIn
+      ? db
+          .select()
+          .from(libraryItem)
+          .where(and(inArray(libraryItem.kind, ["workflow", "automation"]), inArray(libraryItem.visibility, ["public", "official"])))
+      : Promise.resolve([]),
+    signedIn ? db.select().from(libraryVote) : Promise.resolve([]),
   ]);
 
   const userMap = new Map(users.map((u) => [u.id, u]));
@@ -111,6 +122,7 @@ export async function getFeedItems(opts: {
     url?: string;
   }) {
     if (opts.authorId && entry.authorId !== opts.authorId) return;
+    if (!visibleToViewer(entry.type, signedIn)) return;
     const author = userMap.get(entry.authorId);
     if (author?.blockedAt) return;
     items.push({

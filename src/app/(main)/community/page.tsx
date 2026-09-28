@@ -49,7 +49,7 @@ export default async function CommunityPage() {
   const session = await getAuth().api.getSession({ headers: await headers() });
   const [{ items, hasMore }, hub] = await Promise.all([
     getFeedItems({ sort: "latest", page: 0, currentUserId: session?.user.id }),
-    getHubData(),
+    getHubData(!!session),
   ]);
 
   return (
