@@ -16,7 +16,7 @@ export function mcpServerCard() {
     version: packageJson.version,
     title: "Monoes Community MCP Server",
     description:
-      "MCP tools for the monoes.me community: feature requests, bug reports, forum posts, and org uploads.",
+      "MCP tools for monoes.me: community feature requests, bug reports, forum posts and org uploads, and the MonoAgent library catalog.",
     websiteUrl: `${baseUrl()}/docs/mcp`,
     remotes: [{ type: "streamable-http", url: `${baseUrl()}/api/mcp` }],
   };

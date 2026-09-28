@@ -4,6 +4,7 @@ import { register } from "node:module";
 import { z } from "zod";
 
 // tools.ts unconditionally imports all 11 community route handler modules
+// (plus the two library routes, whose handlers are stubbed below)
 // at the top level. Their business logic is already covered by each
 // route's own route.test.ts, and the generic dispatch mechanics
 // (callJsonRoute/callFormRoute) are covered by call-route.test.ts — so
@@ -25,11 +26,22 @@ register(
     "@/app/api/community/orgs/[id]/runs/route": "../../app/api/community/orgs/[id]/runs/route.ts",
     "@/app/api/community/posts/route": "../../app/api/community/posts/route.ts",
     "@/app/api/community/posts/[id]/vote/route": "../../app/api/community/posts/[id]/vote/route.ts",
+    "@/app/api/library/items/route": "../../app/api/library/items/route.ts",
+    "@/app/api/library/items/[...ref]/route": "../../app/api/library/items/[...ref]/route.ts",
   };
   export function resolve(specifier, context, next) {
     if (specifier in ROUTE_SPECIFIERS) return next(ROUTE_SPECIFIERS[specifier], context);
     if (specifier === "./call-route") return next("./call-route.ts", context);
     if (specifier === "next/server") return next("next/server.js", context);
+    if (specifier === "@/lib/library/http") {
+      return next("${new URL("../library/http.ts", import.meta.url).href}", context);
+    }
+    if (specifier === "@/lib/library/handlers") {
+      return {
+        url: "data:text/javascript,const echo = async (req, path) => path.ref.id === 'missing' ? Response.json({ error: { code: 'not_found', message: 'No such library item.' } }, { status: 404 }) : Response.json({ url: req.url, path }); export const handleList = async (req) => Response.json({ items: [], page: 1, per_page: 24, total: 0, url: req.url }); export const handleCreate = handleList; export const handleGet = echo; export const handleNewVersion = echo; export const handlePatch = echo; export const handleDelete = echo;",
+        shortCircuit: true,
+      };
+    }
     if (specifier === "@/lib/community/get-authenticated-user") {
       return { url: "data:text/javascript,export const getAuthenticatedUser = async () => null;", shortCircuit: true };
     }
@@ -71,6 +83,8 @@ register(
 const { TOOL_DEFINITIONS } = await import("./tools.ts");
 
 const EXPECTED_TOOL_NAMES = [
+  "list_library_items",
+  "get_library_item",
   "get_feed",
   "create_feature",
   "vote_feature",
@@ -91,7 +105,7 @@ function findTool(name: string) {
 }
 
 describe("TOOL_DEFINITIONS", () => {
-  it("defines exactly the 11 tools matching the community OpenAPI surface", () => {
+  it("defines exactly the 13 tools: 11 community tools and 2 library tools", () => {
     assert.deepEqual(
       TOOL_DEFINITIONS.map((t) => t.name).sort(),
       [...EXPECTED_TOOL_NAMES].sort(),
@@ -160,6 +174,30 @@ describe("call() wiring", () => {
   it("vote_bug without authentication maps the REST 401 the same way", async () => {
     const result = await findTool("vote_bug").call({ id: "b1", value: 1 }, null);
     assert.equal(result.isError, true);
+  });
+
+  it("list_library_items forwards its filters as query params", async () => {
+    const result = await findTool("list_library_items").call({ kind: "automation", scope: "official", per_page: 5 }, null);
+    assert.notEqual(result.isError, true);
+    const body = JSON.parse((result.content[0] as { type: "text"; text: string }).text);
+    const url = new URL(body.url);
+    assert.equal(url.pathname, "/api/library/items");
+    assert.equal(url.searchParams.get("kind"), "automation");
+    assert.equal(url.searchParams.get("scope"), "official");
+    assert.equal(url.searchParams.get("per_page"), "5");
+  });
+
+  it("get_library_item routes by id or by kind/slug and maps library errors", async () => {
+    const byId = JSON.parse(((await findTool("get_library_item").call({ id: "i1" }, null)).content[0] as { text: string }).text);
+    assert.deepEqual(byId.path, { ref: { id: "i1" }, sub: null });
+    const bySlug = JSON.parse(
+      ((await findTool("get_library_item").call({ kind: "automation", slug: "instagram" }, null)).content[0] as { text: string }).text,
+    );
+    assert.deepEqual(bySlug.path, { ref: { kind: "automation", slug: "instagram" }, sub: null });
+    const missing = await findTool("get_library_item").call({ id: "missing" }, null);
+    assert.equal(missing.isError, true);
+    assert.equal((missing.content[0] as { text: string }).text, "No such library item.");
+    assert.equal((await findTool("get_library_item").call({}, null)).isError, true);
   });
 
   it("run_org without authentication maps the REST 401 the same way", async () => {

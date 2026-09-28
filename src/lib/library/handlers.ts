@@ -9,8 +9,6 @@ import {
   parseTags,
   type ItemPath,
 } from "./http";
-
-export { parseItemPath, type ItemPath } from "./http";
 import { optionalReader, requireUser } from "./request-auth";
 import { bumpPatch, isSemver } from "./semver";
 import { GALLERY_ORG_VERSION } from "./serialize";

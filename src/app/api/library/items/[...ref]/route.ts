@@ -1,12 +1,5 @@
-import { apiError, errorResponse } from "@/lib/library/http";
-import {
-  handleDelete,
-  handleGet,
-  handleNewVersion,
-  handlePatch,
-  parseItemPath,
-  type ItemPath,
-} from "@/lib/library/handlers";
+import { apiError, errorResponse, parseItemPath, type ItemPath } from "@/lib/library/http";
+import { handleDelete, handleGet, handleNewVersion, handlePatch } from "@/lib/library/handlers";
 
 type Ctx = { params: Promise<{ ref: string[] }> };
 
