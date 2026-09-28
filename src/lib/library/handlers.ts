@@ -9,7 +9,7 @@ import {
   parseTags,
   type ItemPath,
 } from "./http";
-import { optionalReader, requireUser } from "./request-auth";
+import { requireUser } from "./request-auth";
 import { LENGTH_HINT_HEADER } from "./fixed-length";
 import { bumpPatch, isSemver } from "./semver";
 import { GALLERY_ORG_VERSION } from "./serialize";
@@ -105,9 +105,10 @@ function pickVersion(kind: Kind, given: string | undefined, fromArtifact: string
 }
 
 export async function handleList(request: Request): Promise<Response> {
+  // Every library read needs an account, official and public items included.
+  const viewer = await requireUser(request, "library:read");
   const query = parseListQuery(new URL(request.url).searchParams);
-  let viewerId: string | null = null;
-  if (query.scope === "mine") viewerId = (await requireUser(request, "library:read")).id;
+  const viewerId = query.scope === "mine" ? viewer.id : null;
   const db = getDb();
   const { items, total } = await listItems(db, query, viewerId, origin(request));
   return Response.json({ items, page: query.page, per_page: query.perPage, total });
@@ -144,7 +145,7 @@ export async function handleCreate(request: Request): Promise<Response> {
 }
 
 export async function handleGet(request: Request, path: ItemPath): Promise<Response> {
-  const viewer = await optionalReader(request);
+  const viewer = await requireUser(request, "library:read");
   const db = getDb();
   const found = await findVisible(db, path, viewer);
 

@@ -4,12 +4,13 @@ import { getRequestAuth } from "@/lib/community/get-authenticated-user";
 import { getDb } from "@/lib/db";
 import { user } from "@/lib/db/schema";
 import { apiError } from "@/lib/library/http";
+import { LOGIN_REQUIRED } from "@/lib/library/request-auth";
 
 // Who MonoAgent is logged in as. Any valid token works; `scopes` is what
 // it was granted (a web session has them all).
 export async function GET(request: Request) {
   const auth = await getRequestAuth(request);
-  if (!auth) return apiError(401, "unauthorized", "Sign in or send a Bearer access token.");
+  if (!auth) return apiError(401, "unauthorized", LOGIN_REQUIRED);
   if (auth.user.blockedAt) return apiError(403, "blocked", "This account is blocked.");
 
   const [row] = await getDb()
