@@ -197,3 +197,36 @@ a, button, [role="button"], summary, [tabindex]:not([tabindex="-1"]) {
   padding: 0.375em 0.625em;
   text-align: left;
 }
+
+/* ---- Community ---- */
+
+/* Section menu: scrolls sideways on narrow screens, with faded edges and no scrollbar. */
+.community-nav-scroll {
+  scrollbar-width: none;
+  mask-image: linear-gradient(to right, transparent 0, #000 12px, #000 calc(100% - 24px), transparent 100%);
+}
+.community-nav-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* Feed cards settle in one after another (capped via --i). */
+@keyframes feed-card-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.feed-card {
+  animation: feed-card-in 520ms cubic-bezier(0.25, 1, 0.5, 1) both;
+  animation-delay: calc(var(--i, 0) * 45ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .feed-card {
+    animation: none;
+  }
+}

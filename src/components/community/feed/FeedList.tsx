@@ -112,14 +112,14 @@ export function FeedList({
 
   return (
     <div>
-      <div className="mb-6 flex gap-2">
+      <div role="group" aria-label="Sort the feed" className="mb-6 inline-flex rounded-full border border-ivory-linen bg-ivory p-1">
         {(["latest", "popular"] as const).map((mode) => (
           <button
             key={mode}
             onClick={() => handleSortChange(mode)}
             aria-pressed={sortMode === mode}
-            className={`rounded px-3 py-1 text-xs font-medium ${
-              sortMode === mode ? "bg-espresso text-ivory" : "border border-espresso/30 text-espresso"
+            className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-dark ${
+              sortMode === mode ? "bg-espresso text-ivory" : "text-espresso/70 hover:text-espresso"
             }`}
           >
             {mode === "latest" ? "Latest" : "Popular"}
@@ -134,10 +134,14 @@ export function FeedList({
       )}
 
       <div className="space-y-3">
-        {items.map((item) => (
-          <FeedCard key={`${item.type}-${item.id}`} item={item} onVote={handleVote} voting={votingIds.has(item.id)} />
+        {items.map((item, i) => (
+          <FeedCard key={`${sortMode}-${item.type}-${item.id}`} item={item} index={i % 20} onVote={handleVote} voting={votingIds.has(item.id)} />
         ))}
-        {items.length === 0 && <p className="text-sm text-espresso/55">Nothing here yet. Be the first!</p>}
+        {items.length === 0 && (
+          <p className="rounded-lg border border-dashed border-espresso/20 px-5 py-8 text-center text-sm text-espresso/70">
+            Nothing here yet. Be the first!
+          </p>
+        )}
       </div>
 
       {hasMore && (
@@ -146,7 +150,7 @@ export function FeedList({
             onClick={handleLoadMore}
             disabled={loadingMore}
             aria-busy={loadingMore}
-            className="rounded-md border border-espresso/30 px-5 py-2 text-sm font-medium text-espresso transition-colors hover:border-espresso disabled:opacity-50"
+            className="rounded-full border border-espresso/25 px-6 py-2 text-sm font-medium text-espresso transition-colors hover:border-espresso hover:bg-espresso hover:text-ivory disabled:opacity-50"
           >
             {loadingMore ? "Loading…" : "Load more"}
           </button>
