@@ -19,7 +19,7 @@ register(
   import.meta.url,
 );
 
-const { parseSort, parsePage, sortAndPaginate, visibleToViewer } = await import("./feed.ts");
+const { parseSort, parsePage, sortAndPaginate } = await import("./feed.ts");
 type FeedItem = import("./feed.ts").FeedItem;
 
 function item(overrides: Partial<FeedItem>): FeedItem {
@@ -86,17 +86,5 @@ describe("sortAndPaginate", () => {
     const page1 = sortAndPaginate(items, "latest", 1);
     assert.equal(page1.items.length, 5);
     assert.equal(page1.hasMore, false);
-  });
-});
-
-describe("visibleToViewer", () => {
-  it("hides gallery items (orgs, workflows, web automations) from anonymous viewers only", () => {
-    for (const type of ["org", "workflow", "automation"] as const) {
-      assert.equal(visibleToViewer(type, false), false, type);
-      assert.equal(visibleToViewer(type, true), true, type);
-    }
-    for (const type of ["post", "bug", "feature"] as const) {
-      assert.equal(visibleToViewer(type, false), true, type);
-    }
   });
 });

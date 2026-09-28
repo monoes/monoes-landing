@@ -7,8 +7,7 @@ export type HubEntry = { name: string; href: string };
 
 export type HubGallery = {
   key: "orgs" | "workflows" | "automations";
-  /** null when the viewer isn't logged in: gallery contents are for members only. */
-  count: number | null;
+  count: number;
   latest: HubEntry[];
 };
 
@@ -40,20 +39,9 @@ async function libraryGallery(kind: "workflow" | "automation"): Promise<HubGalle
   };
 }
 
-/** Counts and newest entries for the /community hub; gallery contents only for logged-in viewers. */
-export async function getHubData(signedIn: boolean): Promise<HubData> {
+/** Counts and newest entries for the /community hub. */
+export async function getHubData(): Promise<HubData> {
   const db = getDb();
-  if (!signedIn) {
-    const [[features], [bugs]] = await Promise.all([
-      db.select({ n: count() }).from(feature).where(eq(feature.status, "open")),
-      db.select({ n: count() }).from(bug).where(eq(bug.status, "open")),
-    ]);
-    return {
-      galleries: (["orgs", "workflows", "automations"] as const).map((key) => ({ key, count: null, latest: [] })),
-      openFeatures: features.n,
-      openBugs: bugs.n,
-    };
-  }
   const [[orgTotal], orgRows, workflows, automations, [features], [bugs]] = await Promise.all([
     db.select({ n: count() }).from(orgUpload),
     db

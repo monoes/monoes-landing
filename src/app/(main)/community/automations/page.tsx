@@ -4,8 +4,6 @@ import { GALLERY_COPY, LibraryGalleryPage, type GallerySearch } from "@/componen
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  // Members-only page (login required): keep it out of search results.
-  robots: { index: false, follow: false },
   title: "Web automation gallery · Monoes Community",
   description: GALLERY_COPY.automation.blurb,
   alternates: { canonical: "/community/automations" },

@@ -47,7 +47,7 @@ function Panel({ gallery, wide }: { gallery: HubGallery; wide: boolean }) {
           className={`${styles.panelImage} object-cover`}
         />
         <span className="absolute left-4 top-4 rounded-full bg-espresso-deep/85 px-3 py-1 font-mono text-xs text-ivory">
-          {gallery.count === null ? "Members only" : `${gallery.count} ${gallery.count === 1 ? g.noun[0] : g.noun[1]}`}
+          {gallery.count} {gallery.count === 1 ? g.noun[0] : g.noun[1]}
         </span>
       </div>
       <div className={`flex flex-col gap-3 p-6 ${wide ? "lg:justify-center lg:p-10" : ""}`}>
@@ -64,9 +64,6 @@ function Panel({ gallery, wide }: { gallery: HubGallery; wide: boolean }) {
           </Link>
         </h3>
         <p className="text-sm leading-relaxed text-espresso/75 text-pretty">{g.blurb}</p>
-        {gallery.count === null && (
-          <p className="text-sm font-medium text-gold-dark">Log in to browse and install.</p>
-        )}
         {gallery.latest.length > 0 && (
           <ul className="mt-1 flex flex-wrap gap-2" aria-label={`Newest in the ${g.title.toLowerCase()}`}>
             {gallery.latest.map((l) => (
