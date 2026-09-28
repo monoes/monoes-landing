@@ -40,9 +40,10 @@ export function UserDetail({ detail }: { detail: AdminUserDetail }) {
     { label: "Posts", value: counts.posts },
     { label: "Feature requests", value: counts.features },
     { label: "Bug reports", value: counts.bugs },
-    { label: "Comments", value: counts.bugComments + counts.orgComments + counts.blogComments },
+    { label: "Comments", value: counts.bugComments + counts.orgComments + counts.blogComments + counts.libraryComments },
     { label: "Orgs uploaded", value: counts.orgUploads },
     { label: "Org runs", value: counts.orgRuns },
+    { label: "Library items", value: counts.libraryItems },
     { label: "Votes cast", value: counts.votes },
     { label: "Storage used", value: formatBytes(counts.storageBytes) },
   ];

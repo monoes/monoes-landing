@@ -33,6 +33,8 @@ export type ActivityKind =
   | "org_run"
   | "org_comment"
   | "blog_comment"
+  | "library_item"
+  | "library_comment"
   | "vote";
 
 export type ActivityItem = {

@@ -22,6 +22,8 @@ import {
   session,
   user,
 } from "@/lib/db/schema";
+import { libraryComment, libraryItem, libraryVote } from "@/lib/db/library-schema";
+import { KIND_PATH, type Kind } from "@/lib/library/types";
 import {
   PROVIDER_LABEL,
   buildActivityTimeline,
@@ -49,6 +51,8 @@ type Counts = {
   orgRuns: number;
   orgComments: number;
   blogComments: number;
+  libraryItems: number;
+  libraryComments: number;
   votes: number;
 };
 
@@ -80,12 +84,16 @@ async function getCounts(db: Db, userId?: string): Promise<(id: string) => Count
     countByUser(db, orgRun, orgRun.uploaderId, userId),
     countByUser(db, orgComment, orgComment.authorId, userId),
     countByUser(db, blogComment, blogComment.authorId, userId),
+    countByUser(db, libraryItem, libraryItem.ownerId, userId),
+    countByUser(db, libraryComment, libraryComment.authorId, userId),
     countByUser(db, postVote, postVote.userId, userId),
     countByUser(db, featureVote, featureVote.userId, userId),
     countByUser(db, bugVote, bugVote.userId, userId),
     countByUser(db, orgVote, orgVote.userId, userId),
+    countByUser(db, libraryVote, libraryVote.userId, userId),
   ]);
-  const [posts, features, bugs, bugComments, orgUploads, orgRuns, orgComments, blogComments, ...votes] = maps;
+  const [posts, features, bugs, bugComments, orgUploads, orgRuns, orgComments, blogComments, libraryItems, libraryComments, ...votes] =
+    maps;
   return (id) => ({
     posts: posts.get(id) ?? 0,
     features: features.get(id) ?? 0,
@@ -95,12 +103,25 @@ async function getCounts(db: Db, userId?: string): Promise<(id: string) => Count
     orgRuns: orgRuns.get(id) ?? 0,
     orgComments: orgComments.get(id) ?? 0,
     blogComments: blogComments.get(id) ?? 0,
+    libraryItems: libraryItems.get(id) ?? 0,
+    libraryComments: libraryComments.get(id) ?? 0,
     votes: votes.reduce((total, m) => total + (m.get(id) ?? 0), 0),
   });
 }
 
 function contributionTotal(c: Counts): number {
-  return c.posts + c.features + c.bugs + c.bugComments + c.orgUploads + c.orgRuns + c.orgComments + c.blogComments;
+  return (
+    c.posts +
+    c.features +
+    c.bugs +
+    c.bugComments +
+    c.orgUploads +
+    c.orgRuns +
+    c.orgComments +
+    c.blogComments +
+    c.libraryItems +
+    c.libraryComments
+  );
 }
 
 const userColumns = {
@@ -220,6 +241,9 @@ export async function getAdminUserDetail(db: Db, id: string): Promise<AdminUserD
     orgRuns,
     orgComments,
     blogComments,
+    libraryItems,
+    libraryComments,
+    libraryVotes,
   ] = await Promise.all([
     db.select({ lastActiveAt: max(session.updatedAt), n: count() }).from(session).where(eq(session.userId, id)),
     row.blockedBy
@@ -268,7 +292,11 @@ export async function getAdminUserDetail(db: Db, id: string): Promise<AdminUserD
     db.select({ orgId: orgUpload.id, name: orgUpload.name, label: orgRun.label, createdAt: orgRun.createdAt }).from(orgRun).innerJoin(orgUpload, eq(orgRun.orgUploadId, orgUpload.id)).where(eq(orgRun.uploaderId, id)).orderBy(desc(orgRun.createdAt)).limit(PER_SOURCE_LIMIT),
     db.select({ orgId: orgUpload.id, name: orgUpload.name, body: orgComment.body, createdAt: orgComment.createdAt }).from(orgComment).innerJoin(orgUpload, eq(orgComment.orgUploadId, orgUpload.id)).where(eq(orgComment.authorId, id)).orderBy(desc(orgComment.createdAt)).limit(PER_SOURCE_LIMIT),
     db.select({ postSlug: blogComment.postSlug, body: blogComment.body, createdAt: blogComment.createdAt }).from(blogComment).where(eq(blogComment.authorId, id)).orderBy(desc(blogComment.createdAt)).limit(PER_SOURCE_LIMIT),
+    db.select({ kind: libraryItem.kind, slug: libraryItem.slug, name: libraryItem.name, visibility: libraryItem.visibility, createdAt: libraryItem.createdAt }).from(libraryItem).where(eq(libraryItem.ownerId, id)).orderBy(desc(libraryItem.createdAt)).limit(PER_SOURCE_LIMIT),
+    db.select({ kind: libraryItem.kind, slug: libraryItem.slug, name: libraryItem.name, body: libraryComment.body, createdAt: libraryComment.createdAt }).from(libraryComment).innerJoin(libraryItem, eq(libraryComment.itemId, libraryItem.id)).where(eq(libraryComment.authorId, id)).orderBy(desc(libraryComment.createdAt)).limit(PER_SOURCE_LIMIT),
+    db.select({ kind: libraryItem.kind, slug: libraryItem.slug, name: libraryItem.name, value: libraryVote.value, createdAt: libraryVote.createdAt }).from(libraryVote).innerJoin(libraryItem, eq(libraryVote.itemId, libraryItem.id)).where(eq(libraryVote.userId, id)).orderBy(desc(libraryVote.createdAt)).limit(PER_SOURCE_LIMIT),
   ]);
+  const libraryHref = (r: { kind: string; slug: string }) => `/library/${KIND_PATH[r.kind as Kind]}/${r.slug}`;
 
   const tokensByClient = new Map(tokens.map((t) => [t.clientId, t]));
   const clientIds = new Set([...consents.map((c) => c.clientId), ...tokens.map((t) => t.clientId)]);
@@ -305,6 +333,9 @@ export async function getAdminUserDetail(db: Db, id: string): Promise<AdminUserD
       ...orgRuns.map((r): ActivityItem => ({ kind: "org_run", label: `Uploaded a run for org "${r.name}"`, detail: r.label, href: `/community/orgs/${r.orgId}`, at: at(r.createdAt) })),
       ...orgComments.map((c): ActivityItem => ({ kind: "org_comment", label: `Commented on org "${c.name}"`, detail: preview(c.body), href: `/community/orgs/${c.orgId}`, at: at(c.createdAt) })),
       ...blogComments.map((c): ActivityItem => ({ kind: "blog_comment", label: `Commented on blog post "${c.postSlug}"`, detail: preview(c.body), href: `/blog/${c.postSlug}`, at: at(c.createdAt) })),
+      ...libraryItems.map((l): ActivityItem => ({ kind: "library_item", label: `Published ${l.kind} "${l.name}" to the library`, detail: `Visibility: ${l.visibility}`, href: libraryHref(l), at: at(l.createdAt) })),
+      ...libraryComments.map((c): ActivityItem => ({ kind: "library_comment", label: `Commented on ${c.kind} "${c.name}"`, detail: preview(c.body), href: libraryHref(c), at: at(c.createdAt) })),
+      ...libraryVotes.map((v): ActivityItem => ({ kind: "vote", label: voteLabel(v.value, `${v.kind} "${v.name}"`), detail: null, href: libraryHref(v), at: at(v.createdAt) })),
     ],
     TIMELINE_LIMIT,
   );
