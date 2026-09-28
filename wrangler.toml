@@ -1,7 +1,9 @@
 name = "monoes-landing"
 compatibility_date = "2025-04-17"
 compatibility_flags = ["nodejs_compat"]
-main = ".open-next/worker.js"
+# src/worker.ts wraps the OpenNext worker (.open-next/worker.js) to add
+# Content-Length to library downloads; run `npm run cf:build` before deploying.
+main = "src/worker.ts"
 
 routes = [
   { pattern = "monoes.me/*", zone_name = "monoes.me" },

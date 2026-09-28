@@ -10,6 +10,7 @@ import {
   type ItemPath,
 } from "./http";
 import { optionalReader, requireUser } from "./request-auth";
+import { LENGTH_HINT_HEADER } from "./fixed-length";
 import { bumpPatch, isSemver } from "./semver";
 import { GALLERY_ORG_VERSION } from "./serialize";
 import {
@@ -179,10 +180,12 @@ export async function handleGet(request: Request, path: ItemPath): Promise<Respo
     headers: {
       "Content-Type": artifact.contentType,
       "Content-Length": String(artifact.size),
+      [LENGTH_HINT_HEADER]: String(artifact.size),
       "Content-Disposition": contentDisposition(artifact.filename),
       "X-Content-SHA256": artifact.sha256,
       "X-Library-Version": artifact.version,
-      "Cache-Control": "private, no-cache",
+      // no-transform: edge compression would change the length and drop Content-Length.
+      "Cache-Control": "private, no-cache, no-transform",
     },
   });
 }
