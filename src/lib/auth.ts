@@ -114,5 +114,14 @@ export function getAuth(db: Db = getDb()) {
     // default — requests from the other host were being rejected outright
     // with INVALID_ORIGIN before a credential check ever ran.
     trustedOrigins: ["https://monoes.me", "https://www.monoes.me"],
+    // Rate limiting (on in production) keys buckets by client IP, which
+    // better-auth reads from x-forwarded-for by default. Requests reaching
+    // this Worker carry no x-forwarded-for, so every visitor fell into one
+    // shared bucket: 3 sign-ins per 10 s for the whole site ("Too many
+    // requests"). Cloudflare sets cf-connecting-ip on every request and
+    // overwrites any client-supplied value, so it's the trustworthy source.
+    advanced: {
+      ipAddress: { ipAddressHeaders: ["cf-connecting-ip", "x-real-ip", "x-forwarded-for"] },
+    },
   });
 }
