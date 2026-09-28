@@ -89,19 +89,25 @@ test("workflow and web automation galleries: listing, votes, comments, Popular s
   await bobCtx.close();
 });
 
-test("the galleries are public and linked from /community", async ({ page }) => {
+test("the galleries are linked from /community and lead logged-out visitors to login and back", async ({ page }) => {
   await page.goto("/community");
   for (const name of ["Org gallery", "Workflow gallery", "Web automation gallery"]) {
-    await expect(page.getByRole("link", { name, exact: true })).toBeVisible();
+    await expect(page.getByRole("link", { name, exact: true }).first()).toBeVisible();
   }
-  await page.getByRole("link", { name: "Web automation gallery", exact: true }).click();
+  await page.getByRole("link", { name: "Web automation gallery", exact: true }).first().click();
+  await expect(page).toHaveURL(/\/community\/login\?next=%2Fcommunity%2Fautomations$/);
+
+  // Register in another tab, then log in here: the login returns to the gallery.
+  const other = await page.context().browser()!.newPage();
+  const username = await registerAndOnboard(other);
+  await other.close();
+  await page.fill("#email", `${username}@example.com`);
+  await page.fill("#password", "TestPass1234");
+  await page.click('button[type="submit"]');
   await expect(page).toHaveURL(/\/community\/automations$/);
   await expect(page.getByRole("heading", { name: "Web automation gallery" })).toBeVisible();
-  await expect(page.getByRole("link", { name: "Log in to share" })).toBeVisible();
   await page.getByRole("link", { name: "Popular" }).click();
   await expect(page).toHaveURL(/sort=popular/);
-  await page.goto("/community/workflows");
-  await expect(page.getByRole("heading", { name: "Workflow gallery" })).toBeVisible();
 });
 
 test("sharing from a gallery opens the upload form with the kind and Public preselected", async ({ page }) => {

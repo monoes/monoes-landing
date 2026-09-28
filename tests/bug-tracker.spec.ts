@@ -57,7 +57,7 @@ test("submit a bug, comment on it, and see the comment appear", async ({ page })
 
 test("logged-out visitor to /community/bugs is redirected to login", async ({ page }) => {
   await page.goto("/community/bugs");
-  await expect(page).toHaveURL(/\/community\/login$/);
+  await expect(page).toHaveURL(/\/community\/login\?next=%2Fcommunity%2Fbugs$/);
 });
 
 test("admin changes status/severity and attaches a label", async ({ page, browser }) => {

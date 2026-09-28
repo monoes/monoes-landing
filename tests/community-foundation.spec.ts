@@ -43,7 +43,7 @@ test("non-admin is redirected away from /community/admin", async ({ page }) => {
 
 test("logged-out visitor to /community/admin is redirected to login", async ({ page }) => {
   await page.goto("/community/admin");
-  await expect(page).toHaveURL(/\/community\/login$/);
+  await expect(page).toHaveURL(/\/community\/login\?next=%2Fcommunity%2Fadmin$/);
   await expect(page.locator("#email")).toBeVisible();
   await expect(page.locator("#password")).toBeVisible();
 });

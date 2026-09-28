@@ -97,7 +97,7 @@ test("uploading an invalid org JSON shows a validation error", async ({ page }) 
 
 test("logged-out visitor to /community/orgs is redirected to login", async ({ page }) => {
   await page.goto("/community/orgs");
-  await expect(page).toHaveURL(/\/community\/login$/);
+  await expect(page).toHaveURL(/\/community\/login\?next=%2Fcommunity%2Forgs$/);
 });
 
 test("uploader deletes their own org upload", async ({ page }) => {

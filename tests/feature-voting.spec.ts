@@ -80,7 +80,7 @@ test("submit a feature, then upvote it and see the score update", async ({ page 
 
 test("logged-out visitor to /community/features is redirected to login", async ({ page }) => {
   await page.goto("/community/features");
-  await expect(page).toHaveURL(/\/community\/login$/);
+  await expect(page).toHaveURL(/\/community\/login\?next=%2Fcommunity%2Ffeatures$/);
 });
 
 test("admin changes a feature's status", async ({ page, browser }) => {

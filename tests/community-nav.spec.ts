@@ -1,8 +1,12 @@
 import { test, expect } from "@playwright/test";
+import { registerAndOnboard } from "./helpers/library-auth";
+
+// The galleries and the library need a login, so these tests sign in first.
 
 const SECTIONS = ["Home", "Orgs", "Workflows", "Web automations", "Library", "Feature requests", "Bug reports"];
 
 test("every community and library page carries the section menu, with the current section marked", async ({ page }) => {
+  await registerAndOnboard(page);
   for (const [path, current] of [
     ["/community", "Home"],
     ["/community/orgs", "Orgs"],
@@ -20,6 +24,7 @@ test("every community and library page carries the section menu, with the curren
 });
 
 test("moving between sections works from a section page, including by keyboard", async ({ page }) => {
+  await registerAndOnboard(page);
   await page.goto("/community/orgs");
   const nav = page.getByRole("navigation", { name: "Community sections" });
   await nav.getByRole("link", { name: "Web automations", exact: true }).click();
@@ -36,6 +41,7 @@ test("moving between sections works from a section page, including by keyboard",
 test("on a phone the section menu scrolls sideways and still reaches every section", async ({ browser }) => {
   const context = await browser.newContext({ viewport: { width: 390, height: 844 } });
   const page = await context.newPage();
+  await registerAndOnboard(page);
   await page.goto("/community/workflows");
   const nav = page.getByRole("navigation", { name: "Community sections" });
   const bugs = nav.getByRole("link", { name: "Bug reports", exact: true });
