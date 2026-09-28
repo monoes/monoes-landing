@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { headers } from "next/headers";
 import { getAuth } from "@/lib/auth";
 import { getDb } from "@/lib/db";
@@ -60,7 +61,14 @@ export default async function OrgsPage() {
     <main className="bg-ivory-warm px-8 pt-24 pb-16">
       <div className="mx-auto max-w-3xl">
         <p className="mb-2 text-xs uppercase tracking-label text-gold-dark font-medium">Community</p>
-        <h1 className="mb-6 text-3xl font-semibold text-espresso tracking-tight">Org gallery</h1>
+        <h1 className="mb-2 text-3xl font-semibold text-espresso tracking-tight">Org gallery</h1>
+        <p className="mb-6 text-sm text-espresso/70">
+          To add an org to MonoAgent, find it in the{" "}
+          <Link href="/library?tab=orgs" className="text-gold-dark underline-offset-2 hover:underline">
+            library&apos;s Orgs tab
+          </Link>
+          .
+        </p>
         <OrgGallery
           initialOrgs={items}
           currentUsername={(session?.user as { username?: string | null } | undefined)?.username ?? null}

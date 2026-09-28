@@ -11,6 +11,7 @@ import { socialIcons } from "@/components/icons/social-icons";
 
 const navLinks = [
   { label: "Community", href: "/community" },
+  { label: "Library", href: "/library" },
   { label: "Projects", href: "/product#projects" },
   { label: "Workforce", href: "/workforce" },
   { label: "Whitepaper", href: "/whitepaper" },
