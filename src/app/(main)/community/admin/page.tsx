@@ -5,6 +5,7 @@ import { getAuth } from "@/lib/auth";
 import { getDb } from "@/lib/db";
 import { user, feature, featureVote, bug, bugComment, bugLabel, bugLabelLink, orgUpload } from "@/lib/db/schema";
 import { AdminDashboard } from "@/components/community/admin/AdminDashboard";
+import { getAdminUserSummaries } from "@/lib/community/admin-user-data";
 
 export const metadata: Metadata = {
   title: "Admin dashboard",
@@ -21,17 +22,8 @@ export default async function AdminPage() {
   }
 
   const db = getDb();
-  const [rows, featureRows, votes, bugRows, commentRows, labelRows, labelLinkRows, orgRows, authors] = await Promise.all([
-    db
-      .select({
-        id: user.id,
-        email: user.email,
-        username: user.username,
-        role: user.role,
-        blockedAt: user.blockedAt,
-        createdAt: user.createdAt,
-      })
-      .from(user),
+  const [{ users, generatedAt }, featureRows, votes, bugRows, commentRows, labelRows, labelLinkRows, orgRows, authors] = await Promise.all([
+    getAdminUserSummaries(db),
     db.select().from(feature),
     db.select().from(featureVote),
     db.select().from(bug),
@@ -41,13 +33,6 @@ export default async function AdminPage() {
     db.select().from(orgUpload),
     db.select({ id: user.id, username: user.username }).from(user),
   ]);
-
-  const users = rows.map((u) => ({
-    ...u,
-    role: u.role as "member" | "moderator" | "admin",
-    blockedAt: u.blockedAt ? u.blockedAt.toISOString() : null,
-    createdAt: u.createdAt.toISOString(),
-  }));
 
   const authorMap = new Map(authors.map((a) => [a.id, a.username]));
   const scoreByFeature = new Map<string, number>();
@@ -101,7 +86,7 @@ export default async function AdminPage() {
       <div className="mx-auto max-w-5xl">
         <p className="mb-2 text-xs uppercase tracking-label text-gold-dark font-medium">Admin</p>
         <h1 className="mb-6 text-3xl font-semibold text-espresso tracking-tight">Dashboard</h1>
-        <AdminDashboard users={users} features={features} bugs={bugs} orgs={orgs} />
+        <AdminDashboard users={users} features={features} bugs={bugs} orgs={orgs} now={generatedAt} />
       </div>
     </main>
   );
