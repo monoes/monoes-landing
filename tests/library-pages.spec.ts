@@ -53,7 +53,7 @@ test("the library is browsable without logging in", async ({ page }) => {
   await page.goto("/library");
   await expect(page.getByRole("heading", { name: "Library" })).toBeVisible();
   await expect(page.getByRole("link", { name: "Log in to upload" })).toBeVisible();
-  await page.getByRole("link", { name: "Orgs" }).click();
+  await page.getByRole("navigation", { name: "Library sections" }).getByRole("link", { name: "Orgs" }).click();
   await expect(page.getByRole("link", { name: "community org gallery" })).toBeVisible();
   await page.goto("/library?tab=mine");
   await expect(page.getByText("to see your private and published items")).toBeVisible();

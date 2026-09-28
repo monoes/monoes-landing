@@ -59,7 +59,8 @@ test("workflow and web automation galleries: listing, votes, comments, Popular s
   await expect(card.getByText("1", { exact: true })).toBeVisible();
 
   // Detail page: votes and comments.
-  await bob.goto(`/library/automations/${auto.slug}`);
+  // Wait for hydration: text typed into the server-rendered textarea before React takes over is reset.
+  await bob.goto(`/library/automations/${auto.slug}`, { waitUntil: "networkidle" });
   const votes = bob.getByTestId("item-votes");
   await expect(votes.getByRole("button", { name: "Upvote" })).toHaveAttribute("aria-pressed", "true");
   await bob.getByPlaceholder("Add a comment…").fill(`Nice one ${tag}`);
@@ -76,7 +77,7 @@ test("workflow and web automation galleries: listing, votes, comments, Popular s
   expect(fromFeed.get(auto.id)).toMatchObject({ type: "automation", url: `/library/automations/${auto.slug}`, score: 1 });
   expect(fromFeed.has(hidden.id)).toBe(false);
   await bob.goto("/community");
-  const feedCard = bob.locator("div.rounded-lg", { hasText: `Gallery ${tag}` }).filter({ hasText: "Web automation" }).first();
+  const feedCard = bob.locator("section[aria-labelledby=feed-title] article", { hasText: `Gallery ${tag}` }).filter({ hasText: "Web automation" }).first();
   await expect(feedCard).toBeVisible();
   await expect(feedCard.getByRole("link")).toHaveAttribute("href", `/library/automations/${auto.slug}`);
 
