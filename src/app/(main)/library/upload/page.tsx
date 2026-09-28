@@ -3,6 +3,7 @@ import Link from "next/link";
 import { UploadForm } from "@/components/library/UploadForm";
 import { isAdmin } from "@/lib/library/access";
 import { getPageViewer } from "@/lib/library/page-data";
+import { parseKind } from "@/lib/library/types";
 
 export const dynamic = "force-dynamic";
 
@@ -11,8 +12,16 @@ export const metadata: Metadata = {
   robots: { index: false },
 };
 
-export default async function LibraryUploadPage() {
+// /library/upload?kind=workflow&visibility=public preselects both (the community galleries link here).
+export default async function LibraryUploadPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ kind?: string; visibility?: string }>;
+}) {
+  const sp = await searchParams;
   const viewer = await getPageViewer();
+  const initialKind = parseKind(sp.kind) ?? "";
+  const initialVisibility = sp.visibility === "public" ? "public" : "private";
 
   return (
     <main className="bg-ivory-warm px-4 pt-24 pb-16 sm:px-8">
@@ -29,7 +38,7 @@ export default async function LibraryUploadPage() {
           <code className="font-mono text-[13px]">monoagentcli library publish</code>.
         </p>
         {viewer && !viewer.blockedAt ? (
-          <UploadForm isAdmin={isAdmin(viewer)} />
+          <UploadForm isAdmin={isAdmin(viewer)} initialKind={initialKind} initialVisibility={initialVisibility} />
         ) : (
           <p className="mt-8 text-sm text-espresso/70">
             <Link href="/community/login" className="text-gold-dark underline-offset-2 hover:underline">

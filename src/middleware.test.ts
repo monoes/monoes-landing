@@ -95,6 +95,14 @@ describe("community middleware", () => {
     assert.equal(res.status, 200);
   });
 
+  it("allows logged-out visitors through to the workflow and web automation galleries", async () => {
+    for (const path of ["/community/workflows", "/community/automations"]) {
+      getSessionMock.mock.mockImplementationOnce(async () => null);
+      const res = await runMiddleware(new NextRequest(`http://localhost${path}`), getSessionMock);
+      assert.equal(res.status, 200, path);
+    }
+  });
+
   it("still redirects logged-out visitors away from an org's /edit page", async () => {
     getSessionMock.mock.mockImplementationOnce(async () => null);
     const req = new NextRequest("http://localhost/community/orgs/abc-123/edit");

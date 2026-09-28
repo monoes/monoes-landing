@@ -7,15 +7,38 @@ import { FeedList } from "@/components/community/feed/FeedList";
 
 export const metadata: Metadata = {
   title: "Community",
-  description: "Report bugs, request features, and browse the org gallery.",
+  description: "Report bugs, request features, and browse the org, workflow and web automation galleries.",
   alternates: { canonical: "/community" },
   openGraph: {
     title: "Monoes Community",
-    description: "Report bugs, request features, and browse the org gallery.",
+    description: "Report bugs, request features, and browse the org, workflow and web automation galleries.",
   },
 };
 
 export const dynamic = "force-dynamic";
+
+const GALLERIES = [
+  { href: "/community/orgs", label: "Org gallery" },
+  { href: "/community/workflows", label: "Workflow gallery" },
+  { href: "/community/automations", label: "Web automation gallery" },
+];
+
+// Public, so shown whether or not you're signed in.
+function GalleryLinks() {
+  return (
+    <>
+      {GALLERIES.map((g) => (
+        <Link
+          key={g.href}
+          href={g.href}
+          className="rounded-md border border-espresso/30 px-5 py-2 text-sm text-espresso font-medium transition-colors hover:border-espresso"
+        >
+          {g.label}
+        </Link>
+      ))}
+    </>
+  );
+}
 
 export default async function CommunityPage() {
   const session = await getAuth().api.getSession({ headers: await headers() });
@@ -29,7 +52,7 @@ export default async function CommunityPage() {
       <section className="bg-ivory-warm px-8 pt-24 pb-8 text-center">
         <p className="mb-4 text-xs uppercase tracking-label text-gold-dark font-medium">Community</p>
         <h1 className="mb-8 text-4xl font-semibold text-espresso md:text-5xl tracking-tight">
-          Report bugs. Request features.<br />Share your orgs.
+          Report bugs. Request features.<br />Share your orgs and workflows.
         </h1>
         <div className="flex flex-wrap justify-center gap-3">
           {session ? (
@@ -50,9 +73,7 @@ export default async function CommunityPage() {
               <Link href="/community/bugs" className="rounded-md border border-espresso/30 px-5 py-2 text-sm text-espresso font-medium transition-colors hover:border-espresso">
                 Bug reports
               </Link>
-              <Link href="/community/orgs" className="rounded-md border border-espresso/30 px-5 py-2 text-sm text-espresso font-medium transition-colors hover:border-espresso">
-                Org gallery
-              </Link>
+              <GalleryLinks />
             </>
           ) : (
             <>
@@ -62,6 +83,7 @@ export default async function CommunityPage() {
               <Link href="/community/login" className="rounded-md border border-espresso/30 px-5 py-2 text-sm text-espresso font-medium transition-colors hover:border-espresso">
                 Sign in
               </Link>
+              <GalleryLinks />
             </>
           )}
         </div>

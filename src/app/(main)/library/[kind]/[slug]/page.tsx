@@ -5,6 +5,8 @@ import { notFound } from "next/navigation";
 import { AddToMonoAgent } from "@/components/library/AddToMonoAgent";
 import { VisibilityBadge } from "@/components/library/LibraryCard";
 import { OwnerControls } from "@/components/library/OwnerControls";
+import { ItemVotes } from "@/components/library/ItemVotes";
+import { CommentSection } from "@/components/community/CommentSection";
 import { getPageViewer, loadDetail } from "@/lib/library/page-data";
 import { installRef } from "@/lib/library/serialize";
 import { KIND_LABEL, KIND_PATH, parseKind, type LibraryItem } from "@/lib/library/types";
@@ -95,7 +97,8 @@ export default async function LibraryItemPage({ params }: { params: Params }) {
   const { kind, slug } = await params;
   const detail = await getDetail(kind, slug);
   if (!detail) notFound();
-  const { item, versions } = detail;
+  const { item, versions, community } = detail;
+  const viewer = await getPageViewer();
 
   return (
     <main className="bg-ivory-warm px-4 pt-24 pb-16 sm:px-8">
@@ -109,14 +112,22 @@ export default async function LibraryItemPage({ params }: { params: Params }) {
             {KIND_LABEL[item.kind]}s
           </Link>
         </p>
-        <div className="mt-2 flex flex-wrap items-center gap-3">
-          <h1 className="text-3xl font-semibold tracking-tight text-espresso">{item.name}</h1>
-          <VisibilityBadge visibility={item.visibility} />
+        <div className="mt-2 flex items-start justify-between gap-4">
+          <div className="min-w-0">
+            <div className="flex flex-wrap items-center gap-3">
+              <h1 className="text-3xl font-semibold tracking-tight text-espresso">{item.name}</h1>
+              <VisibilityBadge visibility={item.visibility} />
+            </div>
+            <p className="mt-2 text-sm text-espresso/60">
+              v{item.version} · by {item.owner.username ?? item.owner.name} · updated{" "}
+              {new Date(item.updated_at).toLocaleDateString()}
+              {item.tags.length > 0 && <> · {item.tags.map((t) => `#${t}`).join(" ")}</>}
+            </p>
+          </div>
+          {community && (
+            <ItemVotes apiBase={community.apiBase} initialScore={item.score} initialMyVote={community.myVote} loggedIn={!!viewer} />
+          )}
         </div>
-        <p className="mt-2 text-sm text-espresso/60">
-          v{item.version} · by {item.owner.username ?? item.owner.name} · updated {new Date(item.updated_at).toLocaleDateString()}
-          {item.tags.length > 0 && <> · {item.tags.map((t) => `#${t}`).join(" ")}</>}
-        </p>
         {item.description && <p className="mt-5 whitespace-pre-line text-espresso/80">{item.description}</p>}
 
         <div className="mt-6 flex flex-wrap items-start gap-3">
@@ -164,6 +175,20 @@ export default async function LibraryItemPage({ params }: { params: Params }) {
             ))}
           </ul>
         </section>
+
+        {community && (
+          <section aria-labelledby="discussion" className="mt-10">
+            <h2 id="discussion" className="sr-only">
+              Discussion
+            </h2>
+            <CommentSection
+              apiBasePath={`${community.apiBase}/comments`}
+              initialComments={community.comments}
+              canModerate={community.canModerate}
+              currentUserId={viewer?.id ?? null}
+            />
+          </section>
+        )}
 
         {(detail.canEdit || detail.canDelete) && (
           <OwnerControls item={item} canEdit={detail.canEdit} canDelete={detail.canDelete} isAdmin={detail.isAdmin} />

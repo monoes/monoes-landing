@@ -50,6 +50,10 @@ function isPublicOrgViewPath(pathname: string): boolean {
   return pathname === "/community/orgs" || /^\/community\/orgs\/[^/]+$/.test(pathname);
 }
 
+// The workflow and web automation galleries are public too; their items'
+// pages live under /library.
+const PUBLIC_GALLERY_PATHS = new Set(["/community/workflows", "/community/automations"]);
+
 export async function runMiddleware(
   request: NextRequest,
   getSession: GetSession = defaultGetSession,
@@ -59,7 +63,8 @@ export async function runMiddleware(
   if (
     PUBLIC_PATHS.has(pathname) ||
     pathname.startsWith("/community/u/") ||
-    isPublicOrgViewPath(pathname)
+    isPublicOrgViewPath(pathname) ||
+    PUBLIC_GALLERY_PATHS.has(pathname)
   ) {
     return NextResponse.next();
   }

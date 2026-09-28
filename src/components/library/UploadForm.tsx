@@ -21,11 +21,19 @@ async function detectKind(file: File): Promise<Kind | null> {
   return null;
 }
 
-export function UploadForm({ isAdmin }: { isAdmin: boolean }) {
+export function UploadForm({
+  isAdmin,
+  initialKind = "",
+  initialVisibility = "private",
+}: {
+  isAdmin: boolean;
+  initialKind?: Kind | "";
+  initialVisibility?: Visibility;
+}) {
   const router = useRouter();
   const [file, setFile] = useState<File | null>(null);
-  const [kind, setKind] = useState<Kind | "">("");
-  const [visibility, setVisibility] = useState<Visibility>("private");
+  const [kind, setKind] = useState<Kind | "">(initialKind);
+  const [visibility, setVisibility] = useState<Visibility>(initialVisibility);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [tags, setTags] = useState("");
@@ -39,8 +47,8 @@ export function UploadForm({ isAdmin }: { isAdmin: boolean }) {
     if (!f) return;
     setFile(f);
     const detected = await detectKind(f);
-    setKind(detected ?? "");
-    if (!detected) setError("Couldn't tell what this file is. Pick its kind below.");
+    if (detected) setKind(detected);
+    else if (!kind) setError("Couldn't tell what this file is. Pick its kind below.");
   }
 
   async function submit(e: React.FormEvent) {

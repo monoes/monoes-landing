@@ -48,7 +48,7 @@ export default async function LibraryPage({ searchParams }: { searchParams: Sear
   const { items, total } =
     mine && !viewer
       ? { items: [], total: 0 }
-      : await loadList({ kind, scope: mine ? "mine" : "public", q, tag: null, page, perPage: PER_PAGE }, viewer);
+      : await loadList({ kind, scope: mine ? "mine" : "public", q, tag: null, page, perPage: PER_PAGE, sort: "latest" }, viewer);
   const pages = Math.max(1, Math.ceil(total / PER_PAGE));
 
   return (
