@@ -111,7 +111,6 @@ export function Constellation({ nodes }: { nodes: ConstellationNode[] }) {
               </g>
               <text
                 className={styles.label}
-                style={{ "--d": `${1200 + i * 120}ms` } as React.CSSProperties}
                 x="0"
                 y={p.above ? -24 : 34}
                 textAnchor="middle"
