@@ -58,6 +58,7 @@ export async function monoagentLogin(page: Page, baseURL: string, scope = LIBRAR
     }).toString();
     await page.goto(authorize.toString());
     await expect(page).toHaveURL(/\/community\/oauth\/consent/);
+    await expect(page.locator("span.font-medium", { hasText: /^MonoAgent$/ })).toBeVisible();
     await page.getByRole("button", { name: "Allow" }).click();
     const callback = await cb.received;
     expect(callback.pathname).toBe("/callback");

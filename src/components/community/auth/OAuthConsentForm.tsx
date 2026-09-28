@@ -25,7 +25,10 @@ export function OAuthConsentForm() {
     if (!clientId) return;
     authClient.oauth2
       .publicClient({ query: { client_id: clientId } })
-      .then(({ data }) => setClientName((data as { name?: string } | null)?.name ?? null))
+      .then(({ data }) => {
+        const client = data as { client_name?: string; name?: string } | null;
+        setClientName(client?.client_name ?? client?.name ?? null);
+      })
       .catch(() => setClientName(null));
   }, [clientId]);
 
