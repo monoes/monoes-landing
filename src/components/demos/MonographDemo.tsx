@@ -5,7 +5,6 @@ import { useRef, useEffect, useState, useCallback } from "react";
 type Phase = "idle" | "scanning" | "indexing" | "detecting" | "done";
 
 const GOLD    = "#C8A97E";
-const GOLD_F  = "rgba(200,169,126,0.30)";
 const ESPRESSO = "#2A2318";
 const DARK_BG = "#140e08";
 

@@ -40,6 +40,19 @@ const CATEGORY_COLOR: Record<Node["category"], string> = {
 const NODE_W = 140;
 const NODE_H = 60;
 const BASE_CANVAS_W = 700;
+// Canvas is inset-4 (16px from container left); subtract that offset so
+// drawn edges align with the absolutely-positioned node divs.
+const CANVAS_OFFSET_X = 16;
+
+// execution path through the DAG
+const RUN_SEQ = ["schedule", "rss", "filter", "agent", "review", "email"];
+
+function getCenter(node: Node, scale: number) {
+  return {
+    x: node.x * scale - CANVAS_OFFSET_X + (NODE_W * scale) / 2,
+    y: node.y + (NODE_H * scale) / 2,
+  };
+}
 const CANVAS_H = 380;
 
 export function WorkflowBuilder() {
@@ -50,9 +63,6 @@ export function WorkflowBuilder() {
   const [runIdx,      setRunIdx]      = useState(-1);
   const [canvasWidth, setCanvasWidth] = useState(BASE_CANVAS_W);
   const runTimer = useRef<ReturnType<typeof setInterval> | null>(null);
-
-  // execution path through the DAG
-  const RUN_SEQ = ["schedule", "rss", "filter", "agent", "review", "email"];
 
   // Update canvas width on mount and resize
   useEffect(() => {
@@ -72,13 +82,6 @@ export function WorkflowBuilder() {
   // Calculate scale factor for responsive node positioning
   const scale = canvasWidth / BASE_CANVAS_W;
 
-  // Canvas is inset-4 (16px from container left); subtract that offset so
-  // drawn edges align with the absolutely-positioned node divs.
-  const CANVAS_OFFSET_X = 16;
-  const getCenter = (node: Node) => ({
-    x: (node.x * scale) - CANVAS_OFFSET_X + (NODE_W * scale) / 2,
-    y: node.y + (NODE_H * scale) / 2,
-  });
 
   const drawCanvas = useCallback(() => {
     const canvas = canvasRef.current;
@@ -98,8 +101,8 @@ export function WorkflowBuilder() {
     EDGES.forEach((edge) => {
       const fn = NODES.find((n) => n.id === edge.from)!;
       const tn = NODES.find((n) => n.id === edge.to)!;
-      const fc = getCenter(fn);
-      const tc = getCenter(tn);
+      const fc = getCenter(fn, scale);
+      const tc = getCenter(tn, scale);
 
       const runningIdx = RUN_SEQ.indexOf(edge.from);
       const isLit = running && runIdx >= runningIdx && runIdx > RUN_SEQ.indexOf(edge.to) - 1;

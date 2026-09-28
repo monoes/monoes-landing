@@ -369,7 +369,7 @@ export default function LandingPage({ monomindVersion }: { monomindVersion: stri
       })();
 
       // ── 2. READING BAR ──
-      snapWrap && snapWrap.addEventListener('scroll', function(){
+      snapWrap?.addEventListener('scroll', function(){
         const bar = document.getElementById('rbar');
         if (!bar) return;
         const pct = (snapWrap!.scrollTop / (snapWrap!.scrollHeight - snapWrap!.clientHeight)) * 100;

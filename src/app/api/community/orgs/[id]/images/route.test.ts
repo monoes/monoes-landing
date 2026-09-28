@@ -102,7 +102,7 @@ describe("POST /api/community/orgs/[id]/images", () => {
   it("uploads a valid image to ORG_FILES under org-body-images/<orgId>/ and returns its URL", async () => {
     globalThis.__stubSession = { user: { id: "u1", role: "member", blockedAt: null } };
     stubDb({ uploaderId: "u1" });
-    const putMock = mock.fn(async (_key: string, _value: unknown) => {});
+    const putMock = mock.fn<(key: string, value: unknown) => Promise<void>>(async () => {});
     globalThis.__stubCloudflareContext = () => ({ env: { ORG_FILES: { put: putMock } } });
 
     const file = new File(["png-bytes"], "pic.png", { type: "image/png" });
