@@ -11,6 +11,7 @@ import { getPageViewer, loadDetail } from "@/lib/library/page-data";
 import { installRef } from "@/lib/library/serialize";
 import { loginUrlFor } from "@/lib/community/safe-next";
 import { KIND_LABEL, KIND_PATH, parseKind, type LibraryItem } from "@/lib/library/types";
+import { formatDate } from "@/lib/format-date";
 
 export const dynamic = "force-dynamic";
 
@@ -123,7 +124,7 @@ export default async function LibraryItemPage({ params }: { params: Params }) {
             </div>
             <p className="mt-2 text-sm text-espresso/60">
               v{item.version} · by {item.owner.username ?? item.owner.name} · updated{" "}
-              {new Date(item.updated_at).toLocaleDateString()}
+              {formatDate(item.updated_at)}
               {item.tags.length > 0 && <> · {item.tags.map((t) => `#${t}`).join(" ")}</>}
             </p>
           </div>
@@ -165,7 +166,7 @@ export default async function LibraryItemPage({ params }: { params: Params }) {
                   {v.version === item.version && <span className="ml-2 text-xs font-normal text-gold-dark">current</span>}
                 </span>
                 <span className="text-espresso/55">
-                  {new Date(v.created_at).toLocaleDateString()} · {formatSize(v.size)} ·{" "}
+                  {formatDate(v.created_at)} · {formatSize(v.size)} ·{" "}
                   <code className="font-mono text-[12px]" title={v.sha256}>
                     {v.sha256.slice(0, 12)}
                   </code>{" "}

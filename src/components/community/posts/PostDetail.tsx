@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { VoteButtons } from "@/components/community/VoteButtons";
 import { goToLogin } from "@/lib/community/go-to-login";
+import { formatDate } from "@/lib/format-date";
 
 export type PostDetailData = {
   id: string;
@@ -63,7 +64,7 @@ export function PostDetail({ post }: { post: PostDetailData }) {
             ) : (
               "unknown"
             )}{" "}
-            · {new Date(post.createdAt).toLocaleDateString()}
+            · {formatDate(post.createdAt)}
           </p>
           {voteError && (
             <p role="alert" className="mt-2 text-xs text-red-700">

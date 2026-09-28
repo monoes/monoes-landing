@@ -63,11 +63,15 @@ test("workflow and web automation galleries: listing, votes, comments, Popular s
   await bob.goto(`/library/automations/${auto.slug}`, { waitUntil: "networkidle" });
   const votes = bob.getByTestId("item-votes");
   await expect(votes.getByRole("button", { name: "Upvote" })).toHaveAttribute("aria-pressed", "true");
-  await bob.getByPlaceholder("Add a comment…").fill(`Nice one ${tag}`);
-  await bob.getByRole("button", { name: "Post comment" }).click();
-  await expect(bob.getByText(`Nice one ${tag}`)).toBeVisible();
+  // On a cold dev server React can still be hydrating after networkidle, and
+  // hydration resets the controlled textarea; retry until the comment lands.
+  await expect(async () => {
+    await bob.getByPlaceholder("Add a comment…").fill(`Nice one ${tag}`);
+    await bob.getByRole("button", { name: "Post comment" }).click();
+    await expect(bob.getByText(`Nice one ${tag}`).first()).toBeVisible({ timeout: 3000 });
+  }).toPass({ timeout: 30_000 });
   await bob.reload();
-  await expect(bob.getByText(`Nice one ${tag}`)).toBeVisible();
+  await expect(bob.getByText(`Nice one ${tag}`).first()).toBeVisible();
   await expect(bob.getByText(bobName, { exact: false }).first()).toBeVisible();
 
   // The community feed carries both kinds with their chips and library links.

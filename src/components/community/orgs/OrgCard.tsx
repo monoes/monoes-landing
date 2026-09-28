@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { VoteButtons } from "@/components/community/VoteButtons";
+import { formatDate } from "@/lib/format-date";
 
 export type Org = {
   id: string;
@@ -53,7 +54,7 @@ export function OrgCard({
             <span className={TOPOLOGY_COLOR[topologyKey] ?? "text-espresso/70"}>
               {TOPOLOGY_LABEL[topologyKey] ?? topologyKey}
             </span>{" "}
-            · {new Date(org.createdAt).toLocaleDateString()}
+            · {formatDate(org.createdAt)}
           </p>
         </Link>
         <VoteButtons score={org.score} myVote={org.myVote} onVote={(value) => onVote(org.id, value)} voting={voting} />

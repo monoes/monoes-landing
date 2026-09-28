@@ -11,6 +11,7 @@ import {
   type UserRole,
   type UserSort,
 } from "@/lib/community/admin-users";
+import { formatDate } from "@/lib/format-date";
 
 export function UsersPanel({ initialUsers, now }: { initialUsers: AdminUserSummary[]; now: number }) {
   const [users, setUsers] = useState(initialUsers);
@@ -109,7 +110,7 @@ export function UsersPanel({ initialUsers, now }: { initialUsers: AdminUserSumma
                 <td className="px-4 py-2 text-xs text-espresso/70">
                   {u.providers.map((p) => PROVIDER_LABEL[p] ?? p).join(", ") || "—"}
                 </td>
-                <td className="px-4 py-2 text-espresso/55">{new Date(u.createdAt).toLocaleDateString()}</td>
+                <td className="px-4 py-2 text-espresso/55">{formatDate(u.createdAt)}</td>
                 <td className="px-4 py-2 text-espresso/55">{formatRelativeTime(u.lastActiveAt, now)}</td>
                 <td className="px-4 py-2 text-right text-espresso">{u.contributionCount}</td>
                 <td className="px-4 py-2 text-right text-espresso/70">{u.voteCount}</td>

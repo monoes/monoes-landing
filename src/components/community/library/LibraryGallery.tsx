@@ -6,6 +6,7 @@ import { VoteButtons } from "@/components/community/VoteButtons";
 import type { GalleryItem } from "@/lib/library/page-data";
 import { KIND_PATH } from "@/lib/library/types";
 import { goToLogin } from "@/lib/community/go-to-login";
+import { formatDate } from "@/lib/format-date";
 
 const DESCRIPTION_TRUNCATE_LENGTH = 150;
 
@@ -49,7 +50,7 @@ function GalleryCard({
           {description && <p className="mt-1 text-sm text-espresso/70">{description}</p>}
           <p className="mt-2 text-xs text-espresso/55">
             {item.owner.username ?? item.owner.name} · v{item.version} · {summary(item)} ·{" "}
-            {new Date(item.created_at).toLocaleDateString()}
+            {formatDate(item.created_at)}
           </p>
         </Link>
         <VoteButtons score={item.score} myVote={item.myVote} onVote={(value) => onVote(item.id, value)} voting={voting} />

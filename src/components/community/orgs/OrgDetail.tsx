@@ -9,6 +9,7 @@ import { RunUploadForm } from "./RunUploadForm";
 import { OutputPreviewModal } from "./OutputPreviewModal";
 import { CommentSection, type Comment } from "../CommentSection";
 import { goToLogin } from "@/lib/community/go-to-login";
+import { formatDateTime } from "@/lib/format-date";
 
 type Role = {
   id: string;
@@ -328,7 +329,7 @@ export function OrgDetail({
                       className="text-left text-sm text-espresso hover:underline"
                     >
                       {run.label || "Untitled run"} · {run.uploaderUsername ?? "unknown"} ·{" "}
-                      {new Date(run.createdAt).toLocaleString()}
+                      {formatDateTime(run.createdAt)}
                     </button>
                     {run.canDelete && (
                       <button

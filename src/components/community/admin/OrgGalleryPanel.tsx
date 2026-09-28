@@ -1,3 +1,5 @@
+import { formatDate } from "@/lib/format-date";
+
 type Org = {
   id: string;
   name: string;
@@ -55,7 +57,7 @@ export function OrgGalleryPanel({ orgs }: { orgs: Org[] }) {
                 <td className="px-4 py-2 text-espresso/70">{o.uploaderUsername ?? "—"}</td>
                 <td className="px-4 py-2 text-espresso/70">{o.roleCount}</td>
                 <td className="px-4 py-2 text-espresso/70">{o.topology ?? "—"}</td>
-                <td className="px-4 py-2 text-espresso/55">{new Date(o.createdAt).toLocaleDateString()}</td>
+                <td className="px-4 py-2 text-espresso/55">{formatDate(o.createdAt)}</td>
               </tr>
             ))}
           </tbody>
