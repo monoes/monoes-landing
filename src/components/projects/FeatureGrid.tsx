@@ -41,8 +41,9 @@ export function FeatureGrid({ project }: { project: Project }) {
               Key Features
             </p>
             <h2 className="text-3xl font-semibold text-ivory md:text-4xl leading-tight">
-              Everything you need.
-              <br className="hidden md:block" /> Nothing you don&apos;t.
+              Everything you need.{" "}
+              <br className="hidden md:block" />
+              Nothing you don&apos;t.
             </h2>
           </div>
           <p className="font-mono text-sm text-gold/40">
