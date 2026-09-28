@@ -6,7 +6,7 @@ const tok = process.env.CLOUDFLARE_D1_TOKEN!;
 
 export default defineConfig({
   out: "./drizzle",
-  schema: "./src/lib/db/schema.ts",
+  schema: ["./src/lib/db/schema.ts", "./src/lib/db/library-schema.ts"],
   dialect: "sqlite",
   driver: "d1-http",
   dbCredentials: { accountId, databaseId, token: tok },

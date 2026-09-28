@@ -6,7 +6,16 @@ import { eq } from "drizzle-orm";
 import { getDb, type Db } from "@/lib/db";
 import * as schema from "@/lib/db/schema";
 
-export const OAUTH_SCOPES = ["openid", "profile", "email", "community:read", "community:write", "offline_access"] as const;
+export const OAUTH_SCOPES = [
+  "openid",
+  "profile",
+  "email",
+  "community:read",
+  "community:write",
+  "library:read",
+  "library:write",
+  "offline_access",
+] as const;
 
 export function getAuth(db: Db = getDb()) {
   // gcid/gcs are short aliases: a pre-write hook flags a "clientSecret"

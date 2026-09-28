@@ -33,11 +33,25 @@ export type AuthenticatedUser = {
  */
 export async function getAuthenticatedUser(
   request: Request,
-  requiredScope: "community:read" | "community:write",
+  requiredScope: "community:read" | "community:write" | "library:read" | "library:write",
 ): Promise<{ user: AuthenticatedUser } | null> {
+  const auth = await getRequestAuth(request, requiredScope);
+  return auth ? { user: auth.user } : null;
+}
+
+/**
+ * Like getAuthenticatedUser, but also says how the request authenticated:
+ * `scopes` is null for a session cookie (the web UI, which has every scope)
+ * and the token's granted scopes for a Bearer token. With no
+ * `requiredScope`, any valid token is accepted.
+ */
+export async function getRequestAuth(
+  request: Request,
+  requiredScope?: string,
+): Promise<{ user: AuthenticatedUser; scopes: string[] | null } | null> {
   const session = await getAuth().api.getSession({ headers: request.headers });
   if (session) {
-    return { user: session.user as unknown as AuthenticatedUser };
+    return { user: session.user as unknown as AuthenticatedUser, scopes: null };
   }
 
   const authHeader = request.headers.get("authorization");
@@ -77,7 +91,7 @@ export async function getAuthenticatedUser(
       scopes = [];
     }
   }
-  if (!scopes.includes(requiredScope)) return null;
+  if (requiredScope && !scopes.includes(requiredScope)) return null;
 
   const [row] = await db
     .select({ id: user.id, username: user.username, role: user.role, blockedAt: user.blockedAt })
@@ -86,5 +100,5 @@ export async function getAuthenticatedUser(
     .limit(1);
   if (!row) return null;
 
-  return { user: row as AuthenticatedUser };
+  return { user: row as AuthenticatedUser, scopes };
 }
