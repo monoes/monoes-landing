@@ -55,6 +55,8 @@ test("upload a run with a markdown and an HTML file, view both", async ({ page }
 
   await page.getByText("run-output.md").click();
   await expect(page.getByRole("heading", { name: "Run Summary" })).toBeVisible();
+  // Each output opens in a preview dialog; close it before opening the next.
+  await page.getByRole("button", { name: "Close preview" }).click();
 
   await page.getByText("run-output.html").click();
   const frame = page.frameLocator("iframe");

@@ -28,7 +28,7 @@ async function uploadFixtureOrg(page: import("@playwright/test").Page): Promise<
   );
   await fileInput.setInputFiles(path.join(__dirname, "fixtures", "valid-org.json"));
   const uploadResponse = await uploadResponsePromise;
-  const created = (await uploadResponse.json()) as { id: string };
+  const created = (await uploadResponse.json()) as { id: string; slug: string };
   return created.id;
 }
 
@@ -71,14 +71,16 @@ test("owner can edit tagline, description, body, and add an image", async ({ pag
   );
   await page.getByRole("button", { name: "Save org" }).click();
   await saveResponsePromise;
-  await expect(page).toHaveURL(`/community/orgs/${orgId}`);
+  // Org pages live at their slug; an id URL redirects there.
+  await expect(page).toHaveURL(/\/community\/orgs\/[^/]+$/);
 
-  await expect(page.getByText("Ships docs while you sleep")).toBeVisible();
+  await expect(page.getByText("Ships docs while you sleep").first()).toBeVisible();
   await expect(
     page.getByText("A team of agents that plan, write, and review documentation end to end."),
   ).toBeVisible();
   await expect(page.getByRole("heading", { name: "Why this org exists" })).toBeVisible();
-  await expect(page.locator(`img[src="${imageUrl}"]`)).toBeVisible();
+  // The first body image also becomes the page banner, so check the one in the body text.
+  await expect(page.getByRole("paragraph").locator(`img[src="${imageUrl}"]`)).toBeVisible();
 });
 
 test("a non-owner visiting the edit page directly is redirected away", async ({ page, browser }) => {
@@ -89,7 +91,7 @@ test("a non-owner visiting the edit page directly is redirected away", async ({ 
   const otherPage = await otherContext.newPage();
   await registerAndOnboard(otherPage, uniqueEmail(), uniqueUsername());
   await otherPage.goto(`/community/orgs/${orgId}/edit`);
-  await expect(otherPage).toHaveURL(`/community/orgs/${orgId}`);
+  await expect(otherPage).toHaveURL(/\/community\/orgs\/[^/]+$/);
   await expect(otherPage.getByRole("link", { name: "Edit" })).toHaveCount(0);
 
   await otherContext.close();

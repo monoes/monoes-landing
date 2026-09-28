@@ -29,7 +29,7 @@ test("register -> onboarding -> protected route roundtrip", async ({ page }) => 
 
   await expect(page.locator("text=Join the community")).toHaveCount(0);
   await expect(page.locator("text=Admin dashboard")).toHaveCount(0);
-  await expect(page.getByRole("link", { name: "View on GitHub ↗" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Share your work" })).toBeVisible();
 });
 
 test("non-admin is redirected away from /community/admin", async ({ page }) => {
