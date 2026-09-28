@@ -49,10 +49,11 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
     name: "list_library_items",
     title: "List library items",
     description:
-      "List MonoAgent library items (workflows, web automations, orgs). scope 'public' (default) lists public and official items without authentication; 'mine' lists your own and needs library:read.",
+      "List MonoAgent library items (workflows, web automations, orgs), newest first or by community votes (sort 'popular'). scope 'public' (default) lists public and official items without authentication; 'mine' lists your own and needs library:read.",
     inputSchema: {
       kind: z.enum(["workflow", "automation", "org"]).optional(),
       scope: z.enum(["public", "official", "mine"]).optional(),
+      sort: z.enum(["latest", "popular"]).optional(),
       q: z.string().max(100).optional(),
       tag: z.string().optional(),
       page: z.number().int().positive().optional(),
@@ -60,7 +61,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
     },
     call: async (args, authHeader) => {
       const url = new URL("/api/library/items", INTERNAL_ORIGIN);
-      for (const key of ["kind", "scope", "q", "tag", "page", "per_page"]) {
+      for (const key of ["kind", "scope", "sort", "q", "tag", "page", "per_page"]) {
         if (args[key] !== undefined) url.searchParams.set(key, String(args[key]));
       }
       const result = await callJsonRoute(listLibraryItems, { method: "GET", url: url.toString(), authHeader });
@@ -97,7 +98,8 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
   {
     name: "get_feed",
     title: "Get community feed",
-    description: "List recent community activity (features, bugs, posts, orgs), optionally sorted and paginated. No authentication required.",
+    description:
+      "List recent community activity (features, bugs, posts, orgs, public workflows and web automations), optionally sorted and paginated. No authentication required.",
     inputSchema: {
       sort: z.enum(["latest", "popular"]).optional(),
       page: z.number().int().positive().optional(),

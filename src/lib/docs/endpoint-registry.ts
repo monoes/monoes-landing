@@ -1,3 +1,5 @@
+import { LIBRARY_ENDPOINTS } from "./library-endpoints";
+
 export type Scope = "community:read" | "community:write" | "library:read" | "library:write";
 
 export type AuthRequirement =
@@ -41,12 +43,13 @@ export const ENDPOINT_GROUPS: EndpointGroup[] = [
       {
         method: "GET",
         path: "/api/community/feed",
-        summary: "List recent activity across posts, bugs, features, and org uploads.",
+        summary: "List recent activity across posts, bugs, features, org uploads, and public workflows and web automations.",
         auth: publicAuth,
         request: "Query params: sort ('latest' | 'popular'), page (number, 0-indexed), authorId (string, optional)",
-        response: "{ items: FeedItem[], hasMore: boolean }",
+        response:
+          "{ items: FeedItem[], hasMore: boolean }. FeedItem: { id, type: 'post'|'bug'|'feature'|'org'|'workflow'|'automation', title, preview, authorId, authorUsername, createdAt, score, myVote, url? }",
         notes:
-          "Session is read if present (to compute the viewer's own vote on each item) but not required. A Bearer token without community:read is silently treated as anonymous rather than rejected.",
+          "Session is read if present (to compute the viewer's own vote on each item) but not required. A Bearer token without community:read is silently treated as anonymous rather than rejected. Workflow and web automation items are public or official library items; their url points at /library/{workflows|automations}/{slug}, and votes on them go to /api/community/library/{id}/vote.",
       },
     ],
   },
@@ -393,96 +396,7 @@ export const ENDPOINT_GROUPS: EndpointGroup[] = [
       },
     ],
   },
-  {
-    slug: "library",
-    name: "Library",
-    description:
-      "Workflows, web automations (.mpkg) and orgs that MonoAgent installs: list, download, publish and version them.",
-    endpoints: [
-      {
-        method: "GET",
-        path: "/api/library/items",
-        summary: "List library items.",
-        auth: publicAuth,
-        request:
-          "Query params: kind ('workflow'|'automation'|'org'), scope ('public' (default: public + official) | 'official' | 'mine'), q, tag, page (1-indexed), per_page (≤ 100, default 24)",
-        response: "{ items: Item[], page, per_page, total }",
-        notes:
-          "scope=mine needs library:read (401 without credentials). Item: { id, kind, slug, name, description, version, visibility, tags, owner: { id, username, name }, sha256, size, meta, created_at, updated_at, url, artifact_url }. Community gallery orgs are listed as public kind=org items with meta.gallery = true.",
-      },
-      {
-        method: "GET",
-        path: "/api/library/items/{ref}",
-        summary: "Get one item by id, or by kind and slug (/api/library/items/automation/instagram).",
-        auth: publicAuth,
-        response: "Item",
-        notes: "A private item is 404 unless the caller is its owner (session, or a token with library:read).",
-      },
-      {
-        method: "GET",
-        path: "/api/library/items/{id}/artifact",
-        summary: "Download the artifact: an .mpkg for automations, JSON for workflows and orgs.",
-        auth: publicAuth,
-        request: "Query params: version (optional; defaults to the current version)",
-        response:
-          "The bytes, with Content-Type, Content-Length, Content-Disposition, X-Content-SHA256 (hex) and X-Library-Version headers",
-        notes: "Verify X-Content-SHA256 before installing. Same visibility rules as getting the item.",
-      },
-      {
-        method: "GET",
-        path: "/api/library/items/{id}/versions",
-        summary: "List an item's versions, newest first.",
-        auth: publicAuth,
-        response: "{ versions: [{ version, sha256, size, created_at, artifact_url }] }",
-      },
-      {
-        method: "POST",
-        path: "/api/library/items",
-        summary: "Publish a new item.",
-        auth: scope("library:write"),
-        requestType: "multipart",
-        request:
-          "multipart/form-data: kind, file, visibility ('private' default | 'public' | 'official' for admins), name?, description?, tags? (comma-separated), version? (semver)",
-        response: "201 Item",
-        notes:
-          "The server validates the file: automations are .mpkg zips with a valid automation.json (≤ 20 MB; the item version is automation.json's); workflows are MonoAgent workflow exports (≤ 20 MB); orgs must pass the org schema (≤ 500 KB). meta is derived from the file. At most 30 uploads per hour (429).",
-      },
-      {
-        method: "PUT",
-        path: "/api/library/items/{id}/artifact",
-        summary: "Publish a new version of an item you own.",
-        auth: scope("library:write"),
-        requestType: "multipart",
-        request: "multipart/form-data: file, version? (semver; default: next patch, or automation.json's version)",
-        response: "Item (with the new version)",
-        notes: "The version must be newer than the current one (409 version_conflict). Earlier versions stay downloadable.",
-      },
-      {
-        method: "PATCH",
-        path: "/api/library/items/{id}",
-        summary: "Edit an item you own.",
-        auth: scope("library:write"),
-        request: "{ name?, description?, tags?: string[] | string, visibility? }",
-        response: "Item",
-        notes: "Only admins move items into or out of 'official'. Gallery orgs are edited on the org gallery instead (409 gallery_org).",
-      },
-      {
-        method: "DELETE",
-        path: "/api/library/items/{id}",
-        summary: "Delete an item and all its versions (owner or admin).",
-        auth: scope("library:write"),
-        response: "{ id, deleted: true }",
-      },
-      {
-        method: "GET",
-        path: "/api/library/me",
-        summary: "Who the token belongs to, and what it was granted.",
-        auth: publicAuth,
-        response: "{ user: { id, name, username, email, image }, scopes: string[] }",
-        notes: "Requires a session or any valid token (401 otherwise). MonoAgent uses it to show who is logged in.",
-      },
-    ],
-  },
+  LIBRARY_ENDPOINTS,
 ];
 
 export function allEndpoints(): (Endpoint & { group: string })[] {

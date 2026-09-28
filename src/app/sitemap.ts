@@ -101,6 +101,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...staticRoutes,
     { url: `${BASE_URL}/community/orgs`, changeFrequency: "weekly", priority: 0.6, lastModified: new Date() },
     ...orgRoutes,
+    { url: `${BASE_URL}/community/workflows`, changeFrequency: "daily", priority: 0.6, lastModified: new Date() },
+    { url: `${BASE_URL}/community/automations`, changeFrequency: "daily", priority: 0.6, lastModified: new Date() },
     { url: `${BASE_URL}/library`, changeFrequency: "daily", priority: 0.7, lastModified: new Date() },
     ...libraryRoutes,
     ...guideRoutes,

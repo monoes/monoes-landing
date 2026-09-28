@@ -177,7 +177,7 @@ describe("call() wiring", () => {
   });
 
   it("list_library_items forwards its filters as query params", async () => {
-    const result = await findTool("list_library_items").call({ kind: "automation", scope: "official", per_page: 5 }, null);
+    const result = await findTool("list_library_items").call({ kind: "automation", scope: "official", sort: "popular", per_page: 5 }, null);
     assert.notEqual(result.isError, true);
     const body = JSON.parse((result.content[0] as { type: "text"; text: string }).text);
     const url = new URL(body.url);
@@ -185,6 +185,7 @@ describe("call() wiring", () => {
     assert.equal(url.searchParams.get("kind"), "automation");
     assert.equal(url.searchParams.get("scope"), "official");
     assert.equal(url.searchParams.get("per_page"), "5");
+    assert.equal(url.searchParams.get("sort"), "popular");
   });
 
   it("get_library_item routes by id or by kind/slug and maps library errors", async () => {
