@@ -33,7 +33,7 @@ export const projects: Project[] = [
     slug: "monomind",
     tagline: "Local memory, a code graph and agent teams for your AI coding assistant.",
     description:
-      "An open-source (Apache-2.0) CLI and MCP server for Claude Code, Codex, OpenCode, Kimi Code and Antigravity. It adds persistent memory stored locally in SQLite with on-device embeddings, a tree-sitter knowledge graph of your codebase, semantic search over your own documents, and autonomous agent orgs that run as a policy-gated background daemon. Your code, memory and documents stay on your machine.",
+      "An open-source (Apache-2.0) CLI and MCP server for Claude Code, Codex, OpenCode, Kimi Code and Antigravity. It adds persistent memory stored locally in SQLite with on-device embeddings, a tree-sitter knowledge graph of your codebase, semantic search over your own documents, and autonomous agent orgs that run as a policy-gated background daemon. Monomind itself runs locally and keeps its state on your machine; the AI runtimes you connect (Claude Code, Codex and others) send prompts and code to their model providers.",
     repo: "monoes/monomind",
     language: "TypeScript",
     accent: "#8B6914",
@@ -61,13 +61,13 @@ export const projects: Project[] = [
         icon: "📚",
         title: "Second Brain",
         description:
-          "Drop in Markdown, PDF or DOCX and the relevant excerpts are injected into every prompt by meaning, not keywords. Fully local, with a personal global brain shared across projects.",
+          "Drop in Markdown, PDF or DOCX and the relevant excerpts are injected into every prompt by meaning, not keywords. Indexing and search run locally, with a personal global brain shared across projects; the excerpts added to a prompt go to your AI provider with it.",
       },
       {
         icon: "⚡",
         title: "Mastermind Workflows",
         description:
-          "42 /mastermind slash commands (plan, execute, review, debug, release, research, worktree and more), plus 88 agents and 86 skills installed into your project. Add --tillend to repeat until nothing is left to do.",
+          "42 /mastermind slash commands (plan, execute, review, debug, release, research, worktree and more), plus {agents} and ready-made skills installed into your project. Add --tillend to repeat until nothing is left to do.",
       },
       {
         icon: "🛡️",

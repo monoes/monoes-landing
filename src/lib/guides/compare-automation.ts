@@ -84,14 +84,14 @@ export const automationComparisons: Guide[] = [
     description:
       "Compare Mono Agent and Make.com: pricing model, data residency, app coverage, human approvals and who each tool is for.",
     summary:
-      "Mono Agent is a free, MIT-licensed automation tool that runs on your own machine, so there are no per-operation charges and your data never passes through a vendor cloud. Make is a polished hosted SaaS with thousands of apps, instant triggers and team features, billed by usage. Pick Mono Agent for local, developer-driven automation with human approvals; pick Make for no-ops cloud automation that non-technical teammates can build.",
+      "Mono Agent is a free, MIT-licensed automation tool that runs on your own machine, so there are no per-operation charges and workflows don't run in a vendor's cloud; only the services and AI providers a workflow calls receive its data. Make is a polished hosted SaaS with thousands of apps, instant triggers and team features, billed by usage. Pick Mono Agent for local, developer-driven automation with human approvals; pick Make for no-ops cloud automation that non-technical teammates can build.",
     updated: UPDATED,
     table: {
       columns: ["", "Mono Agent", "Make"],
       rows: [
         ["Hosting", "Your laptop, desktop or server", "Vendor cloud (SaaS)"],
         ["Pricing", "Free, open source (MIT)", "Subscription plus usage-based operations"],
-        ["Data location", "Stays on your machine", "Processed in Make's cloud"],
+        ["Data location", "Your machine, plus the APIs a workflow calls", "Processed in Make's cloud"],
         ["App catalog", "105 node types, ~36 services", "Thousands of apps"],
         ["Always-on triggers", "Requires monoagentcli daemon running", "Runs 24/7 in the cloud"],
         ["Human approval", "Built-in, reviewer can edit before approving", "Via third-party or custom steps"],

@@ -20,7 +20,14 @@ declare global {
 
 const navSocialLinks = SOCIAL_LINKS.filter((link) => link.id === 'github' || link.id === 'x');
 
-export default function LandingPage({ monomindVersion }: { monomindVersion: string | null }) {
+export default function LandingPage({
+  monomindVersion,
+  agentCount,
+}: {
+  monomindVersion: string | null;
+  agentCount: number | null;
+}) {
+  const agentRoles = agentCount ? `${agentCount} agent roles` : 'Specialized agent roles';
   const me = useCurrentUser();
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -467,7 +474,7 @@ export default function LandingPage({ monomindVersion }: { monomindVersion: stri
 
       const ACHIEVEMENTS: Record<string, {title:string;desc:string;icon:string}> = {
         'slide-hero':     { title: 'INITIALIZED',       desc: 'System boot complete',           icon: '⚡' },
-        'slide-platform': { title: 'PLATFORM UNLOCKED',  desc: '90+ agent roles ready',          icon: '🛡' },
+        'slide-platform': { title: 'PLATFORM UNLOCKED',  desc: `${agentRoles} ready`,          icon: '🛡' },
         'slide-company':  { title: 'ORG ASSEMBLED',      desc: 'Every department loaded',         icon: '🏛' },
         'slide-close':    { title: 'MISSION READY',       desc: 'Your autonomous company awaits', icon: '🚀' },
       };
@@ -756,7 +763,7 @@ export default function LandingPage({ monomindVersion }: { monomindVersion: stri
           { type:'gold',    text:'→ spec → pseudocode → tests → implementation → review...' },
           { type:'out',     text:'✓ Feature complete · 12 tests passing · PR #47 opened' },
           { type:'dim',     text:'' },
-          { type:'out',     text:'✓ All systems nominal · 90+ agent roles · 24/7' },
+          { type:'out',     text:`✓ All systems nominal · ${agentRoles.toLowerCase()} · 24/7` },
         ];
         let lineIdx = 0, charIdx = 0;
         const termBody = termEl.parentElement;
@@ -832,7 +839,7 @@ export default function LandingPage({ monomindVersion }: { monomindVersion: stri
       // Cancel particle animation RAF
       cancelAnimationFrame(_rafId);
     };
-  }, []);
+  }, [agentRoles]);
 
   return (
     <>
@@ -994,7 +1001,7 @@ export default function LandingPage({ monomindVersion }: { monomindVersion: stri
             <div className="capabilities-grid slide-in">
               <div className="cap-card game-frame">
                 <span className="cap-num">01 · Orchestration</span>
-                <div className="cap-title">90+ specialized agent roles</div>
+                <div className="cap-title">{agentCount ? `${agentCount} specialized agent roles` : 'Specialized agent roles'}</div>
                 <p className="cap-body">Domain experts across engineering, security, architecture, DevOps, and QA, plus fully custom org roles you define. Hierarchical swarms fan out in parallel, not sequential pipelines that bottleneck.</p>
                 <div className="cap-code">/mastermind:createorg --name ai-intel-pod --auto \<br />  &quot;Track AI competitive landscape weekly&quot;<br /><span style={{color:'rgba(200,220,200,0.7)'}}>✓ 5 profiles · 1 matrix · 90KB report · 2m 14s</span></div>
               </div>
@@ -1007,7 +1014,7 @@ export default function LandingPage({ monomindVersion }: { monomindVersion: stri
               <div className="cap-card game-frame">
                 <span className="cap-num">03 · Automation</span>
                 <div className="cap-title">28 hooks · 9 workers</div>
-                <p className="cap-body">Self-learning hook system that fires on every edit, commit, task, and session. 9 background workers handle health checks, security scanning, code mapping, and audit consolidation, refreshing at every session start.</p>
+                <p className="cap-body">Hooks run on every prompt, edit, shell command, task, and session: they suggest the best-fit agent or skill for each prompt, block risky shell commands and file writes, and log edit and routing outcomes to a local pattern store that biases future agent picks. 9 background workers handle health checks, security scanning, code mapping, and audit consolidation, refreshing at every session start.</p>
                 <div className="cap-code">/mastermind:review --tillend<br /><span style={{color:'rgba(200,220,200,0.7)'}}>→ 23 files · 0 secrets · 94% coverage</span><br /><span style={{color:'rgba(200,220,200,0.7)'}}>✓ spec → tests → impl → PR #47 · 28s</span></div>
               </div>
               <div className="cap-card game-frame">

@@ -1603,7 +1603,7 @@ monomind init --kimicode`,
   {
     slug: "why-we-built-monomind-local-first-ai",
     title: "Why We Built Monomind: The Case for Local-First Open Source AI",
-    subtitle: "Your data should never leave your machine just to run an AI coding agent.",
+    subtitle: "Keep orchestration, memory and tooling on your machine; send only the model calls to the AI provider you choose.",
     excerpt: "Cloud AI platforms trade your data and your budget for convenience. Here's why we built Monomind as a local-first, open-source engine instead.",
     date: "August 2, 2026",
     readTime: "8 min read",

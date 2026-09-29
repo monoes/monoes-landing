@@ -13,7 +13,7 @@ Monoes offers two paths on one engine: self-host the open-source tools for free,
 
 ## Open-source products
 
-- [Monomind](https://monoes.me/projects/monomind): open-source (Apache 2.0) TypeScript CLI and MCP server that adds a local codebase knowledge graph, persistent local SQLite memory with local embeddings, document search, multi-agent coordination and policy-gated background agent orgs to AI coding assistants (Claude Code, OpenCode, Antigravity, Kimi Code, Codex). Install: `npm install -g monomind`. Source: https://github.com/monoes/monomind
+- [Monomind](https://monoes.me/projects/monomind): open-source (Apache 2.0) TypeScript CLI and MCP server that adds a local codebase knowledge graph, persistent local SQLite memory with local embeddings, document search, multi-agent coordination and policy-gated background agent orgs to AI coding assistants (Claude Code, OpenCode, Antigravity, Kimi Code, Codex). Monomind itself runs locally and stores its state locally; the AI runtimes it drives send prompts and code to their model providers. Install: `npm install -g monomind`. Source: https://github.com/monoes/monomind
 - [Mono Agent](https://monoes.me/projects/mono-agent): open-source (MIT), local-first n8n alternative in a single Go binary - 100+ workflow node types, visual DAG editor and desktop app, built-in human-in-the-loop approval, encrypted secrets vault in the OS keychain, and an MCP server so AI agents can build and run workflows. Source: https://github.com/monoes/mono-agent
 - [MonoClip](https://monoes.me/projects/mono-clip): a clipboard manager with memory.
 - [MonoTask](https://monoes.me/projects/monotask): peer-to-peer kanban board with no server and no account.

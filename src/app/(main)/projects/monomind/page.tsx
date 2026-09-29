@@ -6,6 +6,7 @@ import { MonographDemo } from "@/components/demos/MonographDemo";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getMonomindVersion } from "@/lib/versions";
+import { getMonomindAgentCount } from "@/lib/monomind-catalog";
 
 export const metadata: Metadata = {
   title: "Monomind: Open-source memory, code graph and agent orgs for AI coding assistants",
@@ -20,9 +21,15 @@ export const metadata: Metadata = {
 };
 
 export default async function MonomindPage() {
-  const project = getProject("monomind");
-  if (!project) notFound();
-  const version = await getMonomindVersion();
+  const baseProject = getProject("monomind");
+  if (!baseProject) notFound();
+  const [version, agentCount] = await Promise.all([getMonomindVersion(), getMonomindAgentCount()]);
+  // Feature copy says "{agents}"; fill in the count `monomind init` installs today.
+  const agents = agentCount ? `${agentCount} agents` : "agents";
+  const project = {
+    ...baseProject,
+    features: baseProject.features.map((f) => ({ ...f, description: f.description.replace("{agents}", agents) })),
+  };
 
   const softwareSchema = {
     "@context": "https://schema.org",
