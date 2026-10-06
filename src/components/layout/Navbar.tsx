@@ -87,6 +87,12 @@ export function Navbar() {
               );
             })}
           </div>
+          <Link
+            href="/workforce"
+            className="rounded-full bg-gold px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-espresso transition-all hover:bg-gold-warm"
+          >
+            Book Discovery
+          </Link>
           {!me && (
             <Link
               href="/community/login"
@@ -138,6 +144,13 @@ export function Navbar() {
                 {link.label}
               </Link>
             ))}
+            <Link
+              href="/workforce"
+              onClick={() => setMobileOpen(false)}
+              className="inline-block w-fit rounded-full bg-gold px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-espresso"
+            >
+              Book Discovery
+            </Link>
             <div className="flex items-center gap-4 pt-2">
               {navSocialLinks.map((link) => {
                 const Icon = socialIcons[link.id];
