@@ -38,8 +38,8 @@ describe(".github/workflows/deploy.yml", () => {
   it("deploys from the deploy job only, after check, and only for main", () => {
     assert.ok(deploy, "a `deploy` job exists");
     assert.match(deploy, /needs: check/);
-    const condition = deploy.match(/^\s+if: (.+)$/m)?.[1] ?? "";
-    for (const part of ["github.ref == 'refs/heads/main'", "github.event_name == 'push'", "github.event_name == 'workflow_dispatch'"]) assert.ok(condition.includes(part), part);
+    const condition = deploy.match(/^ {4}if: (.+)$/m)?.[1] ?? "";
+    assert.equal(condition, "github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')");
     assert.ok(!condition.includes("pull_request"));
     assert.equal(text.match(/wrangler deploy/g)?.length, 1);
     assert.equal(text.match(/secrets\.CLOUDFLARE_API_TOKEN/g)?.length, 1);
