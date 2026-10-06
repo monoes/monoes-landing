@@ -1,5 +1,9 @@
 name: Deploy to Cloudflare Pages
 
+# Pull requests build and test; they never deploy. Only a push to main, or a
+# manual run on main, reaches the deploy job. The Cloudflare token deploys code
+# to monoes.me, and what monoes.me signs is what every mono-agent install trusts,
+# so nothing but main may use it (see src/lib/deploy-workflow.test.ts).
 on:
   push:
     branches: [main]
@@ -7,8 +11,32 @@ on:
     branches: [main]
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - run: npm ci
+
+      - run: npm test
+
+      - run: npx @opennextjs/cloudflare build
+
+      - name: Generate Markdown-for-Agents assets
+        run: node scripts/generate-markdown-assets.mjs
+
   deploy:
+    needs: check
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-latest
     permissions:
       contents: read
