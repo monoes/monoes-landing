@@ -35,4 +35,25 @@ test.describe("homepage", () => {
     const firstNode = page.locator("svg [data-node]").first();
     await expect(firstNode).toHaveCSS("opacity", "1");
   });
+
+  test("the Monomind vs Mono Agent comparison renders", async ({ page }) => {
+    await page.goto("/");
+    await expect(page.getByText("Not either/or. Pick by what starts the work.")).toBeVisible();
+    await expect(page.getByText("A diff in your repo, reviewed before merge")).toBeVisible();
+  });
+
+  test("the transparency section renders before the plans section", async ({ page }) => {
+    await page.goto("/");
+    const transparency = page.getByText("Nothing here is fake. Some of it just isn't built yet.");
+    const plans = page.getByText("Run it yourself, or have us run it for you.");
+    await expect(transparency).toBeVisible();
+    await expect(plans).toBeVisible();
+    const order = await page.evaluate(() => {
+      const a = [...document.querySelectorAll("h2")].findIndex((h) => h.textContent?.includes("Nothing here is fake"));
+      const b = [...document.querySelectorAll("h2")].findIndex((h) => h.textContent?.includes("Run it yourself"));
+      return { a, b };
+    });
+    expect(order.a).toBeGreaterThanOrEqual(0);
+    expect(order.a).toBeLessThan(order.b);
+  });
 });

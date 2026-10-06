@@ -1,11 +1,13 @@
 import type { ReactNode } from "react";
 import { getAllRepoStats } from "@/lib/github";
 
-function Stat({ label, stars }: { label: string; stars: number }) {
+function StarTicker({ label, stars }: { label: string; stars: number }) {
   return (
-    <div className="flex items-center gap-2 font-mono text-sm text-ivory/70">
-      <span className="text-gold">★ {stars.toLocaleString()}</span>
-      <span className="text-ivory/40">{label}</span>
+    <div className="flex items-baseline gap-3">
+      <span className="font-mono text-4xl font-bold leading-none text-gold md:text-5xl">
+        {stars.toLocaleString()}
+      </span>
+      <span className="font-mono text-xs uppercase tracking-widest text-ivory/40">★ {label} stars</span>
     </div>
   );
 }
@@ -25,12 +27,14 @@ export async function HomeProofStrip() {
 
   return (
     <section className="border-y border-gold/15 bg-espresso-deep px-6 py-10 md:px-12">
-      <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-center gap-x-10 gap-y-5">
-        {monomindStars != null && <Stat label="Monomind" stars={monomindStars} />}
-        {monoAgentStars != null && <Stat label="Mono Agent" stars={monoAgentStars} />}
-        <Badge>Monomind · Apache-2.0</Badge>
-        <Badge>Mono Agent · MIT</Badge>
-        <Badge>Self-hosted · $0</Badge>
+      <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-center gap-x-14 gap-y-6">
+        {monomindStars != null && <StarTicker label="Monomind" stars={monomindStars} />}
+        {monoAgentStars != null && <StarTicker label="Mono Agent" stars={monoAgentStars} />}
+        <div className="flex flex-wrap items-center justify-center gap-2.5">
+          <Badge>Monomind · Apache-2.0</Badge>
+          <Badge>Mono Agent · MIT</Badge>
+          <Badge>Self-hosted · $0</Badge>
+        </div>
       </div>
     </section>
   );

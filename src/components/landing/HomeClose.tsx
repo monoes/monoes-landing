@@ -1,12 +1,13 @@
 import Link from "next/link";
+import { RevealHeading } from "./RevealHeading";
 
 export function HomeClose() {
   return (
     <section className="border-t border-gold/10 bg-espresso-deep px-6 py-24 text-center md:px-12">
       <div className="mx-auto max-w-2xl">
-        <h2 className="mb-8 text-3xl font-light leading-tight tracking-tight text-ivory md:text-5xl">
+        <RevealHeading as="h2" className="mb-8 text-3xl font-light leading-tight tracking-tight text-ivory md:text-5xl">
           Your company can run <em className="font-normal not-italic text-gold">itself.</em>
-        </h2>
+        </RevealHeading>
         <div className="flex flex-wrap items-center justify-center gap-4">
           <a
             href="https://github.com/monoes/monomind"

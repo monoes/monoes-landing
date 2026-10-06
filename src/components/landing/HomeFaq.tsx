@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { RevealHeading } from "./RevealHeading";
 
 const FAQS = [
   {
@@ -25,13 +26,16 @@ export function HomeFaq() {
   const [open, setOpen] = useState<number | null>(0);
 
   return (
-    <section className="bg-espresso px-6 py-20 md:px-12 md:py-28">
+    <section className="bg-ivory px-6 py-20 md:px-12 md:py-28">
       <div className="mx-auto max-w-3xl">
-        <p className="mb-3 font-mono text-[11px] uppercase tracking-[0.25em] text-gold">Questions</p>
-        <h2 className="mb-10 text-3xl font-light leading-tight tracking-tight text-ivory md:text-4xl">
+        <p className="mb-3 font-mono text-[11px] uppercase tracking-[0.25em] text-gold-dark">Questions</p>
+        <RevealHeading
+          as="h2"
+          className="mb-10 text-3xl font-light leading-tight tracking-tight text-espresso md:text-4xl"
+        >
           Before you ask.
-        </h2>
-        <div className="flex flex-col divide-y divide-gold/15 border-y border-gold/15">
+        </RevealHeading>
+        <div className="flex flex-col divide-y divide-espresso/10 border-y border-espresso/10">
           {FAQS.map((item, i) => {
             const isOpen = open === i;
             return (
@@ -41,11 +45,11 @@ export function HomeFaq() {
                   aria-expanded={isOpen}
                   className="flex w-full items-center justify-between gap-4 py-5 text-left"
                 >
-                  <span className="text-base font-medium text-ivory">{item.q}</span>
-                  <span className="shrink-0 font-mono text-gold">{isOpen ? "−" : "+"}</span>
+                  <span className="text-base font-medium text-espresso">{item.q}</span>
+                  <span className="shrink-0 font-mono text-gold-dark">{isOpen ? "−" : "+"}</span>
                 </button>
                 {isOpen && (
-                  <p className="pb-5 pr-8 text-sm leading-relaxed text-ivory/55">{item.a}</p>
+                  <p className="pb-5 pr-8 text-sm leading-relaxed text-espresso/55">{item.a}</p>
                 )}
               </div>
             );
