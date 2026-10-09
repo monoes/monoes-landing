@@ -5,6 +5,10 @@ declare global {
   var __stubUserRow: unknown;
   var __stubDb: () => unknown;
   var __stubCloudflareContext: () => unknown;
+  var __stubJwt: unknown;
+  var __jwtCalls: number;
+  var __jwks: unknown;
+  var __jwksError: boolean;
 }
 
 export {};
