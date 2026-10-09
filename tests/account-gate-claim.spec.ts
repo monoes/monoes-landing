@@ -143,3 +143,24 @@ test("the emailed code's chain is a family of its own: a replay after the window
   expect((await refresh(baseURL!, browser.body.refresh_token!, AUDIENCE)).status, "the browser sign-in keeps refreshing").toBe(200);
   expect(stored.key, "the family key").toBe(`email-claim:${stored.claimId}`);
 });
+
+test("the opaque access token the claim route issues goes with its family when the family ends", async ({ baseURL }) => {
+  // The route links the access token it inserts to the refresh row (refreshId); ending the family deletes
+  // access tokens by that link. Without it the token would outlive the sign-in it belongs to.
+  const account = await signUp(baseURL!);
+  await seedClaimRequest({ email: account.email, scope: MONOAGENT_SCOPES, code: "888888" });
+  const claimed = await verifyCode(baseURL!, account.email, "888888");
+  expect([claimed.status, isJwt(claimed.body.access_token), Boolean(claimed.body.refresh_token)]).toEqual([200, false, true]);
+  const me = () => fetch(new URL("/api/library/me", baseURL), { headers: bearer(claimed.body.access_token) });
+  expect((await me()).status, "the opaque token works").toBe(200);
+
+  const other = await login(baseURL!, { account }); // another sign-in of the account, with its own opaque token
+  const next = await refresh(baseURL!, claimed.body.refresh_token!);
+  expect(next.status).toBe(200);
+  expect((await me()).status, "rotating does not end it").toBe(200);
+
+  await withDb((db) => db.update(oauthRefreshToken).set({ rotationReplayExpiresAt: new Date(Date.now() - 1000) }).where(eq(oauthRefreshToken.userId, account.userId)));
+  expect((await refresh(baseURL!, claimed.body.refresh_token!)).status, "the replay ends the family").toBe(400);
+  expect((await me()).status, "the claim route's access token went with it").toBe(401);
+  expect((await fetch(new URL("/api/library/me", baseURL), { headers: bearer(other.body.access_token) })).status, "another sign-in's token stays").toBe(200);
+});

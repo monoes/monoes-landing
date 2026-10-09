@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 import { eq } from "drizzle-orm";
-import { user } from "../src/lib/db/schema";
-import { AUDIENCE, authorize, bearer, exchange, login, pkce, refresh, setUserRole, signIn, signUp, withDb } from "./helpers/oauth-api";
+import { oauthAccessToken, user } from "../src/lib/db/schema";
+import { AUDIENCE, authorize, bearer, exchange, login, pkce, refresh, seedClaimRequest, setUserRole, signIn, signUp, withDb } from "./helpers/oauth-api";
 
 // A refresh answered invalid_grant is, to mono-agent, "monoes.me said no": it
 // deletes its refresh token and locks. So a block must make exactly that the
@@ -24,6 +24,17 @@ test("blocking holds: refresh is invalid_grant, old tokens stop, unblocking lets
   const plain = await login(baseURL!, { account: target });
   expect((await refresh(baseURL!, bound.body.refresh_token!, AUDIENCE)).status, "not blocked yet").toBe(200);
   const live = await login(baseURL!, { resource: AUDIENCE, account: target });
+  // An opaque access token with no refresh token behind it (an emailed code without offline_access):
+  // deleting the refresh tokens cannot reach it, only the access-token delete can.
+  await seedClaimRequest({ email: target.email, scope: "library:read", code: "424242" });
+  const claimRes = await fetch(new URL("/api/auth/agent/claim/verify", baseURL), {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email: target.email, code: "424242", client_id: "monoagent" }),
+  });
+  const lone = ((await claimRes.json()) as { access_token: string }).access_token;
+  expect(claimRes.status).toBe(200);
+  expect((await fetch(new URL("/api/library/me", baseURL), { headers: bearer(lone) })).status, "works before the block").toBe(200);
 
   expect(await setBlocked(baseURL!, admin.cookie, target.userId, true)).toBe(200);
 
@@ -38,14 +49,16 @@ test("blocking holds: refresh is invalid_grant, old tokens stop, unblocking lets
     expect(refused.body.error, name).toBe("invalid_grant");
   }
 
-  // The JWT already issued lives out its hour, but no route serves a blocked account meanwhile. Until the
-  // routes accept the audience-bound JWT at all (Task 5) it is a 401; from Task 5 on it is 403 "blocked",
-  // and Task 5 tightens this assertion.
+  // The JWT already issued lives out its hour, but no route serves a blocked account meanwhile.
   const old = await fetch(new URL("/api/library/me", baseURL), { headers: bearer(live.body.access_token) });
-  expect([401, 403]).toContain(old.status);
-  if (old.status === 403) expect(((await old.json()) as { error: { code: string } }).error.code).toBe("blocked");
+  expect(old.status).toBe(403);
+  expect(((await old.json()) as { error: { code: string } }).error.code).toBe("blocked");
   // The opaque token's row is gone.
   expect((await fetch(new URL("/api/library/me", baseURL), { headers: bearer(plain.body.access_token) })).status).toBe(401);
+  expect((await fetch(new URL("/api/library/me", baseURL), { headers: bearer(lone) })).status, "the token with no refresh token behind it").toBe(401);
+  // Not merely refused: the block deleted the rows (the opaque tokens of the account), so nothing is left to be refused.
+  const left = await withDb((db) => db.select({ id: oauthAccessToken.id }).from(oauthAccessToken).where(eq(oauthAccessToken.userId, target.userId)));
+  expect(left, "the blocked user's access token rows").toHaveLength(0);
 
   // No new sign-in, and the web session that was alive can no longer authorize a token.
   expect((await signIn(baseURL!, target.email)).status).toBe(401);
