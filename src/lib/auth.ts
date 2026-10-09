@@ -85,7 +85,7 @@ export function getAuth(db: Db = getDb()) {
         // used token. mono-agent retries for as long as 240 seconds (pendingRetryWindow in
         // internal/account/guard.go, spec A24): lower this only together with it.
         refreshTokenReuseInterval: 300,
-        customAccessTokenClaims: () => accessTokenClaims(),
+        customAccessTokenClaims: ({ user }) => accessTokenClaims(user),
       }),
     ],
     // A MonoAgent refresh token presented after it was rotated away or revoked ends only the sign-in it
