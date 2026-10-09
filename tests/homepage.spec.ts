@@ -5,18 +5,18 @@ test.describe("homepage", () => {
     const context = await browser.newContext({ javaScriptEnabled: false });
     const page = await context.newPage();
     await page.goto("/");
-    await expect(page.getByRole("heading", { level: 1 })).toContainText("Automate the work");
+    await expect(page.getByRole("heading", { level: 1 })).toContainText("staffed");
     await context.close();
   });
 
   test("both CTAs are present and route correctly", async ({ page }) => {
     await page.goto("/");
 
-    const githubCta = page.getByRole("link", { name: /star on github/i }).first();
-    await expect(githubCta).toHaveAttribute("href", "https://github.com/monoes/monomind");
-
-    const discoveryCta = page.getByRole("link", { name: /book a discovery call/i }).first();
-    await expect(discoveryCta).toHaveAttribute("href", "/workforce");
+    const hireCta = page.getByRole("link", { name: /hire your ai team/i, includeHidden: true }).first();
+    await expect(hireCta).toHaveAttribute("href", "#hire");
+    const selfHostCta = page.getByRole("link", { name: /run it yourself, free/i, includeHidden: true }).first();
+    await expect(selfHostCta).toHaveAttribute("href", "/product#projects");
+    await expect(page.locator("#hire")).toHaveCount(1);
   });
 
   test("no horizontal scroll on a mobile viewport", async ({ page }) => {
@@ -29,31 +29,28 @@ test.describe("homepage", () => {
     expect(scrollWidth).toBeLessThanOrEqual(clientWidth + 1);
   });
 
-  test("respects prefers-reduced-motion by showing the hero diagram unanimated", async ({ page }) => {
+  test("respects prefers-reduced-motion by showing every desk staffed and no pinned scenes", async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
     await page.goto("/");
-    const firstNode = page.locator("svg [data-node]").first();
-    await expect(firstNode).toHaveCSS("opacity", "1");
+    const desks = page.locator(".hero-floor .desk:visible");
+    expect(await desks.count()).toBeGreaterThan(0);
+    await expect(page.locator(".hero-floor .desk.on:visible")).toHaveCount(await desks.count());
+    await expect(page.locator(".trace-track .step.active")).toHaveCount(5);
   });
 
-  test("the Monomind vs Mono Agent comparison renders", async ({ page }) => {
+  test("the roster reports the catalog size", async ({ page }) => {
     await page.goto("/");
-    await expect(page.getByText("Not either/or. Pick by what starts the work.")).toBeVisible();
-    await expect(page.getByText("A diff in your repo, reviewed before merge")).toBeVisible();
+    await expect(page.getByRole("heading", { level: 2, name: /23 departments\. 136 named workers\./, includeHidden: true })).toBeAttached();
   });
 
-  test("the transparency section renders before the plans section", async ({ page }) => {
+  test("the process switcher defaults to sales follow-up and swaps the flow", async ({ page }) => {
     await page.goto("/");
-    const transparency = page.getByText("Nothing here is fake. Some of it just isn't built yet.");
-    const plans = page.getByText("Run it yourself, or have us run it for you.");
-    await expect(transparency).toBeVisible();
-    await expect(plans).toBeVisible();
-    const order = await page.evaluate(() => {
-      const a = [...document.querySelectorAll("h2")].findIndex((h) => h.textContent?.includes("Nothing here is fake"));
-      const b = [...document.querySelectorAll("h2")].findIndex((h) => h.textContent?.includes("Run it yourself"));
-      return { a, b };
-    });
-    expect(order.a).toBeGreaterThanOrEqual(0);
-    expect(order.a).toBeLessThan(order.b);
+    const tabs = page.getByRole("tab", { includeHidden: true });
+    await expect(tabs).toHaveCount(5);
+    await expect(page.getByRole("tab", { name: "Sales follow-up", includeHidden: true })).toHaveAttribute("aria-selected", "true");
+    await expect(page.locator("#trace-title")).toContainText("A new lead comes in.");
+    await page.locator("#trace-tab-support").dispatchEvent("click");
+    await expect(page.locator("#trace-title")).toContainText("A ticket arrives.");
+    await expect(page.locator(".trace-track .step")).toHaveCount(5);
   });
 });
