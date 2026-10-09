@@ -5,6 +5,10 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { eq } from "drizzle-orm";
 import { getDb, type Db } from "@/lib/db";
 import * as schema from "@/lib/db/schema";
+import { accessTokenClaims } from "@/lib/access-token-claims";
+import { PREVIOUS_KEY_ENV, SIGNING_KEY_ENV, signingKeyAdapter } from "@/lib/signing-key";
+import { createAuthMiddleware } from "better-auth/api";
+import { endReplayedFamily } from "@/lib/refresh-family";
 
 export const OAUTH_SCOPES = [
   "openid",
@@ -23,6 +27,12 @@ export function getAuth(db: Db = getDb()) {
   // hardcoded credential, with no way to tell an env var reference apart
   // from a literal one.
   const { BETTER_AUTH_SECRET: sec, BETTER_AUTH_URL: url, GOOGLE_CLIENT_ID: gcid, GOOGLE_CLIENT_SECRET: gcs } = process.env;
+  // A public https base URL means a real deployment, which must not run without the pinned key.
+  const signingKey = signingKeyAdapter(
+    process.env[SIGNING_KEY_ENV],
+    (url ?? "").startsWith("https://"),
+    process.env[PREVIOUS_KEY_ENV] || undefined,
+  );
   return betterAuth({
     database: drizzleAdapter(db, { provider: "sqlite", schema }),
     emailAndPassword: {
@@ -68,7 +78,12 @@ export function getAuth(db: Db = getDb()) {
       },
     },
     plugins: [
-      jwt(),
+      jwt({
+        adapter: signingKey,
+        jwks: signingKey ? { disablePrivateKeyEncryption: true } : undefined,
+        // The plugin signs a session JWT on every get-session call by default; nothing reads it.
+        disableSettingJwtHeader: true,
+      }),
       oneTap(),
       oauthProvider({
         loginPage: "/community/login",
@@ -76,8 +91,21 @@ export function getAuth(db: Db = getDb()) {
         scopes: [...OAUTH_SCOPES],
         allowDynamicClientRegistration: true,
         allowUnauthenticatedClientRegistration: true,
+        accessTokenExpiresIn: 3600,
+        // A refresh whose answer was lost is retried with the same token; inside this many seconds the
+        // provider answers it again with the same response, where outside it the retry is a replay of a
+        // used token. mono-agent retries for as long as 240 seconds (pendingRetryWindow in
+        // internal/account/guard.go, spec A24): lower this only together with it.
+        refreshTokenReuseInterval: 300,
+        customAccessTokenClaims: ({ user }) => accessTokenClaims(user),
       }),
     ],
+    // A MonoAgent refresh token presented after it was rotated away or revoked ends only the sign-in it
+    // comes from, its refresh-token family, not every MonoAgent sign-in of the account (ruling R1 of
+    // 2026-10-07). It runs before the oauth-provider's endpoints; see src/lib/refresh-family.ts.
+    hooks: {
+      before: createAuthMiddleware((ctx) => endReplayedFamily(db, ctx)),
+    },
     user: {
       additionalFields: {
         username: { type: "string", required: false, input: false },
