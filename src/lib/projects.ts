@@ -33,7 +33,7 @@ export const projects: Project[] = [
     slug: "monomind",
     tagline: "Hire an AI team. Set a goal. Walk away. $0.",
     description:
-      "Autonomous Claude Code orchestration with persistent memory, self-coordinating agent orgs, and a codebase knowledge graph. Install once, wire into Claude Code, then tell it the outcome you want. It assembles the team, coordinates the work, and delivers.",
+      "An open-source CLI and MCP server that extends Claude Code, OpenCode, Antigravity, Kimi Code and Codex with a codebase knowledge graph, persistent memory and standing teams of AI agents. Install once, then tell it the outcome you want. It assembles the team, coordinates the work, and delivers.",
     repo: "monoes/monomind",
     language: "TypeScript",
     accent: "#8B6914",
@@ -43,43 +43,43 @@ export const projects: Project[] = [
         icon: "🏢",
         title: "Autonomous Orgs",
         description:
-          "Define a goal, assign roles, start the org. An SDK-backed daemon (Org Runtime v2) runs live per-role agent sessions that coordinate over a shared mailbox across sessions.",
+          "Define a goal and roles, then run the org. An SDK-backed daemon runs live per-role sessions with budgets, approvals, schedules and logs. Large orgs split into isolated sections with their own budgets, and documents are the only channel between them.",
       },
       {
         icon: "🧠",
-        title: "Persistent Memory",
+        title: "Memory and Code Graph",
         description:
-          "Local SQLite with local embeddings (no cloud vector DB) plus a separate Monograph knowledge graph for code structure. Context survives across sessions and agents.",
+          "A pattern store with episodic recall carries context across sessions. Monograph, a SQLite code knowledge graph, shows callers, imports and blast radius before you change anything.",
+      },
+      {
+        icon: "🧩",
+        title: "Agents and Skills",
+        description:
+          "83 agents, 82 skills and 560 org skills, ranked per task so the best fit is picked for you. Add your own as plain Markdown files.",
       },
       {
         icon: "⚡",
         title: "Mastermind Commands",
         description:
-          "autodev, build, review, release, debug. Autonomous loops that run until done.",
+          "40 /mastermind:* workflows for planning, executing, reviewing, debugging, releasing and researching. Autonomous loops that run until done.",
       },
       {
-        icon: "🏗️",
-        title: "Swarm Topologies",
+        icon: "🔌",
+        title: "Works With Your Tools",
         description:
-          "Hierarchical, mesh, hierarchical-mesh, and adaptive coordination out of the box.",
+          "Plugs into Claude Code, OpenCode, Antigravity, Kimi Code and Codex over MCP. Coder mode drives claude, codex, copilot, antigravity, opencode and more through one interface.",
       },
       {
-        icon: "🗳️",
-        title: "Consensus Strategies",
+        icon: "🔒",
+        title: "Local and Governed",
         description:
-          "Byzantine, Raft, and Quorum vote-counting for multi-agent decisions (single-process, not distributed). Gossip and CRDT are planned, not yet implemented.",
-      },
-      {
-        icon: "🪝",
-        title: "Hooks + Workers",
-        description:
-          "29 hook CLI subcommands plus 8 background workers (health, security, code mapping, audit consolidation, and more) for self-learning automation.",
+          "Runs on your machine and keeps its own state there. Use local models through Ollama or llama.cpp, even offline. Orgs run only when you sign them, and opt-in sandbox policies can deny a role exec, reads or writes.",
       },
     ],
     install: [
       {
         command: "npm install -g monomind",
-        output: "✓ Monomind installed (@monoes/monomindcli v2.10.11)",
+        output: "✓ Monomind installed",
       },
       {
         command: "npm install -g @monoes/monomindcli",
@@ -95,9 +95,9 @@ export const projects: Project[] = [
     id: "mono-agent",
     name: "Mono Agent",
     slug: "mono-agent",
-    tagline: "n8n meets Playwright. Self-hosted, multi-profile automation.",
+    tagline: "Local-first automation in one Go binary. Humans and AI agents, with approval gates.",
     description:
-      "90+ workflow nodes. Stealth Chrome via Rod. Multi-profile isolation. A production-grade automation platform with a visual DAG editor, real browser automation, AI integrations, and Human-in-Loop controls. Fully self-hosted, zero cloud.",
+      "A local-first n8n alternative in a single static Go binary: visual workflows, a 180+ command CLI and human-in-the-loop approvals. 160+ node types, your own logged-in Chrome for browser automation, and AI that runs on the agent runtimes you already have installed. All data stays on your machine.",
     repo: "monoes/mono-agent",
     language: "Go",
     accent: "#C8A97E",
@@ -105,56 +105,53 @@ export const projects: Project[] = [
     features: [
       {
         icon: "⚡",
-        title: "90+ Workflow Nodes",
+        title: "160+ Workflow Nodes",
         description:
-          "DAG-based execution across triggers, browser, AI, social, image, and data nodes.",
+          "A DAG engine across services (GitHub, Google Workspace, Stripe, Salesforce, HubSpot, Jira, Notion), databases, HTTP, data transforms, comms and social platforms.",
       },
       {
         icon: "🌐",
-        title: "Stealth Browser",
+        title: "Your Own Chrome",
         description:
-          "Rod-powered Chrome automation with human-like interaction patterns for social platforms.",
+          "Where no practical API exists, workflows drive your own logged-in Chrome through a bundled extension bridge to publish to and read your own accounts.",
       },
       {
         icon: "👤",
         title: "Multi-Profile Isolation",
         description:
-          "Named profiles with fully isolated DBs. Switch accounts without cross-contamination.",
+          "Named profiles with fully isolated databases, credentials and task boards. Switch accounts without cross-contamination.",
       },
       {
         icon: "🤝",
         title: "Human-in-Loop",
         description:
-          "Pause any workflow for human review or editing before continuing.",
+          "Pause any workflow for review, edit the payload, then approve or reject. The queue is durable and survives restarts.",
       },
       {
         icon: "🤖",
-        title: "AI Integrations",
+        title: "AI on Your Agent Runtimes",
         description:
-          "OpenRouter, HuggingFace, and Gemini. 200+ models accessible from any workflow node.",
+          "AI steps run on the agent CLIs you already have (claude, codex, opencode, antigravity and more) through monomind, using each runtime's own login. No text-AI keys stored, plus an OpenAI-compatible local API over those runtimes.",
       },
       {
-        icon: "🎨",
-        title: "Visual Workflow Editor",
+        icon: "🖥️",
+        title: "Canvas, CLI and MCP",
         description:
-          "Wails 2 + React canvas with AI chat, Image Vault, and drag-and-drop node builder.",
+          "A Wails desktop canvas editor, a CLI with JSON output everywhere, a built-in MCP server for AI agents, and a per-profile task board for people and agents.",
       },
     ],
     install: [
       {
-        command: "git clone https://github.com/monoes/mono-agent.git",
-        output: "✓ Cloned mono-agent",
+        command: "curl -fsSL https://raw.githubusercontent.com/monoes/mono-agent/master/install.sh | bash",
+        output: "✓ Installed monoagentcli (checksum verified)",
       },
-      {
-        command: "go build -o monoagentcli ./cmd/monoagentcli",
-        output: "✓ Built monoagentcli",
-      },
-      { command: "./monoagentcli init", output: "✓ Workspace initialized" },
+      { command: "monoagentcli node list", output: "✓ 160+ node types" },
+      { command: "monoagentcli ref", output: "✓ Built-in offline docs" },
     ],
     cli: {
       binary: "monoagentcli",
       intro:
-        "90+ commands for scripting social actions, browser automation, workflow execution, and AI-powered content generation. Every command accepts --profile <name> to scope all data to a fully isolated workspace.",
+        "180+ commands for scripting social actions, browser automation, workflow execution, and AI-powered content generation. Every command accepts --profile <name> to scope all data to a fully isolated workspace.",
       aiNote:
         "Wire mono-agent into any AI pipeline: define a workflow in JSON, import it, schedule it with cron, and pipe structured output to the next step. The --profile flag lets multiple AI agents operate in parallel without touching each other's data.",
       groups: [
@@ -181,7 +178,7 @@ export const projects: Project[] = [
         },
         {
           title: "Node Execution",
-          description: "Run any of the 90+ node types directly from the CLI.",
+          description: "Run any of the 160+ node types directly from the CLI.",
           commands: [
             "monoagentcli node list",
             "monoagentcli node run \\",

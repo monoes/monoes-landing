@@ -5,9 +5,9 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Mono Agent: Self-hosted browser & workflow automation",
+  title: "Mono Agent: Local-first browser & workflow automation",
   description:
-    "n8n meets Playwright. 90+ workflow nodes, stealth Chrome via Rod, multi-profile isolation, and a visual DAG editor. Fully self-hosted, zero cloud.",
+    "Local-first n8n alternative in a single Go binary. 160+ workflow nodes, your own logged-in Chrome, multi-profile isolation, human-in-the-loop approvals and a visual DAG editor. All data stays on your machine.",
   alternates: { canonical: "/projects/mono-agent" },
 };
 
@@ -27,7 +27,7 @@ export default function MonoAgentPage() {
       priceCurrency: "USD",
     },
     description:
-      "Self-hosted browser and workflow automation. 90+ workflow nodes, stealth Chrome via Rod, multi-profile isolation, and a visual DAG editor.",
+      "Local-first browser and workflow automation. 160+ workflow nodes, your own logged-in Chrome, multi-profile isolation, human-in-the-loop approvals and a visual DAG editor.",
     url: "https://monoes.me/projects/mono-agent",
     downloadUrl: "https://github.com/monoes/mono-agent",
     applicationSubCategory: "Workflow Automation",
