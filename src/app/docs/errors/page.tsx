@@ -91,6 +91,26 @@ export default function ErrorsPage() {
         . Either way, a blocked user also can&apos;t start a new browser session; existing sessions are invalidated.
       </p>
 
+      <h2 id="library-errors" className="mb-3 mt-10 text-lg font-semibold text-espresso">
+        Library API errors
+      </h2>
+      <p className="text-[15px] leading-relaxed text-espresso/75">
+        The <code className="rounded bg-ivory-parchment px-1.5 py-0.5 font-mono text-[13px]">/api/library/*</code> endpoints return a structured error,{" "}
+        <code className="rounded bg-ivory-parchment px-1.5 py-0.5 font-mono text-[13px]">{`{ "error": { "code": "...", "message": "..." } }`}</code>, so
+        clients can branch on <code>code</code> and show <code>message</code>:
+      </p>
+      <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-espresso/75">
+        <li>400 <code>invalid_request</code>, <code>invalid_artifact</code> (the file failed validation)</li>
+        <li>401 <code>unauthorized</code>; 403 <code>insufficient_scope</code>, <code>forbidden</code>, <code>blocked</code></li>
+        <li>404 <code>not_found</code> (also for private items you can&apos;t see)</li>
+        <li>409 <code>version_conflict</code>, <code>gallery_org</code>; 413 <code>too_large</code>; 429 <code>rate_limited</code></li>
+      </ul>
+      <p className="mt-3 text-[13px] text-espresso/55">
+        Unlike the community endpoints, a library token without the needed scope gets 403{" "}
+        <code>insufficient_scope</code> rather than being treated as anonymous, and library lists use a{" "}
+        <strong>1-indexed</strong> <code>page</code>.
+      </p>
+
       <h2 id="pagination" className="mb-3 mt-10 text-lg font-semibold text-espresso">
         Pagination
       </h2>

@@ -1,9 +1,11 @@
 import { getDb } from "@/lib/db";
+import { and, inArray } from "drizzle-orm";
 import { post, postVote, bug, bugVote, feature, featureVote, orgUpload, orgVote, user } from "@/lib/db/schema";
+import { libraryItem, libraryVote } from "@/lib/db/library-schema";
 
 export type FeedItem = {
   id: string;
-  type: "post" | "bug" | "feature" | "org";
+  type: "post" | "bug" | "feature" | "org" | "workflow" | "automation";
   title: string;
   preview: string;
   authorId: string;
@@ -11,6 +13,8 @@ export type FeedItem = {
   createdAt: string;
   score: number;
   myVote: -1 | 0 | 1;
+  /** Detail page, for items that don't live under /community/<type>/<id> (library items). */
+  url?: string;
 };
 
 const PAGE_SIZE = 20;
@@ -67,7 +71,7 @@ export async function getFeedItems(opts: {
   currentUserId?: string;
 }): Promise<{ items: FeedItem[]; hasMore: boolean }> {
   const db = getDb();
-  const [posts, postVotes, bugs, bugVotes, features, featureVotes, orgs, orgVotes, users] = await Promise.all([
+  const [posts, postVotes, bugs, bugVotes, features, featureVotes, orgs, orgVotes, users, libraryItems, libraryVotes] = await Promise.all([
     db.select().from(post),
     db.select().from(postVote),
     db.select().from(bug),
@@ -77,6 +81,12 @@ export async function getFeedItems(opts: {
     db.select().from(orgUpload),
     db.select().from(orgVote),
     db.select({ id: user.id, username: user.username, blockedAt: user.blockedAt }).from(user),
+    // Public and official workflows and web automations; orgs are already in via org_upload.
+    db
+      .select()
+      .from(libraryItem)
+      .where(and(inArray(libraryItem.kind, ["workflow", "automation"]), inArray(libraryItem.visibility, ["public", "official"]))),
+    db.select().from(libraryVote),
   ]);
 
   const userMap = new Map(users.map((u) => [u.id, u]));
@@ -85,6 +95,7 @@ export async function getFeedItems(opts: {
   const bugVoteMaps = buildVoteMaps(bugVotes, (v) => v.bugId, opts.currentUserId);
   const featureVoteMaps = buildVoteMaps(featureVotes, (v) => v.featureId, opts.currentUserId);
   const orgVoteMaps = buildVoteMaps(orgVotes, (v) => v.orgUploadId, opts.currentUserId);
+  const libraryVoteMaps = buildVoteMaps(libraryVotes, (v) => v.itemId, opts.currentUserId);
 
   const items: FeedItem[] = [];
 
@@ -97,6 +108,7 @@ export async function getFeedItems(opts: {
     createdAt: Date;
     scoreByItem: Map<string, number>;
     myVoteByItem: Map<string, number>;
+    url?: string;
   }) {
     if (opts.authorId && entry.authorId !== opts.authorId) return;
     const author = userMap.get(entry.authorId);
@@ -111,6 +123,7 @@ export async function getFeedItems(opts: {
       createdAt: entry.createdAt.toISOString(),
       score: entry.scoreByItem.get(entry.id) ?? 0,
       myVote: (entry.myVoteByItem.get(entry.id) ?? 0) as -1 | 0 | 1,
+      ...(entry.url ? { url: entry.url } : {}),
     });
   }
 
@@ -160,6 +173,21 @@ export async function getFeedItems(opts: {
       createdAt: o.createdAt,
       scoreByItem: orgVoteMaps.scoreByItem,
       myVoteByItem: orgVoteMaps.myVoteByItem,
+    });
+  }
+
+  for (const l of libraryItems) {
+    const kind = l.kind as "workflow" | "automation";
+    pushIfEligible({
+      id: l.id,
+      type: kind,
+      title: l.name,
+      preview: l.description,
+      authorId: l.ownerId,
+      createdAt: l.createdAt,
+      scoreByItem: libraryVoteMaps.scoreByItem,
+      myVoteByItem: libraryVoteMaps.myVoteByItem,
+      url: `/library/${kind === "workflow" ? "workflows" : "automations"}/${l.slug}`,
     });
   }
 

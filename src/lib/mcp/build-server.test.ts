@@ -16,12 +16,23 @@ register(
     "@/app/api/community/orgs/[id]/runs/route": "../../app/api/community/orgs/[id]/runs/route.ts",
     "@/app/api/community/posts/route": "../../app/api/community/posts/route.ts",
     "@/app/api/community/posts/[id]/vote/route": "../../app/api/community/posts/[id]/vote/route.ts",
+    "@/app/api/library/items/route": "../../app/api/library/items/route.ts",
+    "@/app/api/library/items/[...ref]/route": "../../app/api/library/items/[...ref]/route.ts",
   };
   export function resolve(specifier, context, next) {
     if (specifier in ROUTE_SPECIFIERS) return next(ROUTE_SPECIFIERS[specifier], context);
     if (specifier === "./tools") return next("./tools.ts", context);
     if (specifier === "./call-route") return next("./call-route.ts", context);
     if (specifier === "next/server") return next("next/server.js", context);
+    if (specifier === "@/lib/library/http") {
+      return next("${new URL("../library/http.ts", import.meta.url).href}", context);
+    }
+    if (specifier === "@/lib/library/handlers") {
+      return {
+        url: "data:text/javascript,const echo = async (req, path) => path.ref.id === 'missing' ? Response.json({ error: { code: 'not_found', message: 'No such library item.' } }, { status: 404 }) : Response.json({ url: req.url, path }); export const handleList = async (req) => Response.json({ items: [], page: 1, per_page: 24, total: 0, url: req.url }); export const handleCreate = handleList; export const handleGet = echo; export const handleNewVersion = echo; export const handlePatch = echo; export const handleDelete = echo;",
+        shortCircuit: true,
+      };
+    }
     if (specifier === "@/lib/community/get-authenticated-user") {
       return { url: "data:text/javascript,export const getAuthenticatedUser = async () => null;", shortCircuit: true };
     }
@@ -37,6 +48,12 @@ register(
     if (specifier === "@/lib/db/schema") {
       return {
         url: "data:text/javascript,export const feature = {}; export const featureVote = {}; export const bug = {}; export const bugVote = {}; export const bugComment = {}; export const user = {}; export const orgUpload = {}; export const orgVote = {}; export const orgRun = {}; export const orgRunFile = {}; export const post = {}; export const postVote = {};",
+        shortCircuit: true,
+      };
+    }
+    if (specifier === "@/lib/community/org-listing") {
+      return {
+        url: "data:text/javascript,export const deriveOrgListing = () => ({}); export const uniqueSlug = (s) => s;",
         shortCircuit: true,
       };
     }
@@ -57,12 +74,13 @@ register(
 const { buildMcpServer } = await import("./build-server.ts");
 
 describe("buildMcpServer", () => {
-  it("registers all 11 tools, each connected to a working callback", () => {
+  it("registers all 13 tools, each connected to a working callback", () => {
     const server = buildMcpServer(null);
     const registered = (server as unknown as { _registeredTools: Record<string, { handler: unknown }> })
       ._registeredTools;
     const names = Object.keys(registered);
-    assert.equal(names.length, 11);
+    assert.equal(names.length, 13);
+    assert.ok(names.includes("list_library_items"));
     assert.ok(names.includes("get_feed"));
     assert.ok(names.includes("create_post"));
     for (const name of names) {

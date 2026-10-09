@@ -8,6 +8,8 @@ import { RoleModal, type ModalRole } from "./RoleModal";
 import { RunUploadForm } from "./RunUploadForm";
 import { OutputPreviewModal } from "./OutputPreviewModal";
 import { CommentSection, type Comment } from "../CommentSection";
+import { goToLogin } from "@/lib/community/go-to-login";
+import { formatDateTime } from "@/lib/format-date";
 
 type Role = {
   id: string;
@@ -47,6 +49,7 @@ export type OrgDetailData = {
   roles: Role[];
   communication: CommEdge[];
   orgJson: string;
+  fileName: string;
   canDelete: boolean;
   canEdit: boolean;
   runs: RunData[];
@@ -179,7 +182,7 @@ export function OrgDetail({
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `${org.name}.json`;
+    a.download = `${org.fileName}.json`;
     a.click();
     URL.revokeObjectURL(url);
   }
@@ -234,10 +237,10 @@ export function OrgDetail({
         <div className="flex gap-2">
           <button
             type="button"
-            onClick={handleDownload}
+            onClick={org.currentUsername ? handleDownload : goToLogin}
             className="rounded-md border border-espresso/30 px-3 py-1.5 text-xs font-medium text-espresso hover:border-espresso"
           >
-            Download
+            {org.currentUsername ? "Download" : "Log in to download"}
           </button>
           {org.canEdit && (
             <Link
@@ -326,7 +329,7 @@ export function OrgDetail({
                       className="text-left text-sm text-espresso hover:underline"
                     >
                       {run.label || "Untitled run"} · {run.uploaderUsername ?? "unknown"} ·{" "}
-                      {new Date(run.createdAt).toLocaleString()}
+                      {formatDateTime(run.createdAt)}
                     </button>
                     {run.canDelete && (
                       <button

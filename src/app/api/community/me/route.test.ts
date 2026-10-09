@@ -44,6 +44,7 @@ describe("GET /api/community/me", () => {
     assert.deepEqual(json, {
       id: "u1",
       username: "someone",
+      role: "member",
       name: "Someone",
       avatarUrl: "/api/images/avatar/avatars/u1?v=1700000000000",
     });

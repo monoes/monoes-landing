@@ -168,7 +168,7 @@ export function OrgChart({
               {edge.type === "command" && particlesMounted && (
                 <circle r="3.5" fill={style.color} opacity={0.7}>
                   <animateMotion dur="2s" repeatCount="indefinite" begin={`${(i * 0.4).toFixed(2)}s`}>
-                    {/* eslint-disable-next-line react/no-unknown-property -- xlinkHref keeps older SVG UAs working alongside the modern href attribute */}
+                    {/* xlinkHref keeps older SVG UAs working alongside the modern href attribute */}
                     <mpath href={`#${pid}`} xlinkHref={`#${pid}`} />
                   </animateMotion>
                 </circle>

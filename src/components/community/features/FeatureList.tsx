@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { FeatureCard, type Feature } from "./FeatureCard";
+import { goToLogin } from "@/lib/community/go-to-login";
 
 type SortMode = "score" | "newest" | "oldest";
 
@@ -54,6 +55,10 @@ export function FeatureList({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ value }),
       });
+      if (res.status === 401) {
+        goToLogin();
+        return;
+      }
       if (!res.ok) {
         setVoteError("Could not record your vote. Please try again.");
         return;
@@ -145,7 +150,7 @@ export function FeatureList({
           ))}
         </div>
         <button
-          onClick={() => setShowForm((v) => !v)}
+          onClick={() => (currentUsername ? setShowForm((v) => !v) : goToLogin())}
           className="rounded-md bg-espresso px-4 py-2 text-sm font-medium text-ivory transition-opacity hover:opacity-80"
         >
           {showForm ? "Cancel" : "Suggest a feature"}

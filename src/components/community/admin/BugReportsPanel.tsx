@@ -1,4 +1,5 @@
 import { STATUS_LABEL, SEVERITY_LABEL } from "@/components/community/bugs/BugCard";
+import { formatDate } from "@/lib/format-date";
 
 type Bug = {
   id: string;
@@ -68,7 +69,7 @@ export function BugReportsPanel({ bugs }: { bugs: Bug[] }) {
                   </div>
                 </td>
                 <td className="px-4 py-2 text-espresso/70">{b.commentCount}</td>
-                <td className="px-4 py-2 text-espresso/55">{new Date(b.createdAt).toLocaleDateString()}</td>
+                <td className="px-4 py-2 text-espresso/55">{formatDate(b.createdAt)}</td>
               </tr>
             ))}
           </tbody>

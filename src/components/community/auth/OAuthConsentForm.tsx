@@ -7,6 +7,8 @@ import { authClient } from "@/lib/auth-client";
 const SCOPE_DESCRIPTIONS: Record<string, string> = {
   "community:read": "Read your feed, bugs, orgs, posts, and votes",
   "community:write": "Post, comment, vote, and upload on your behalf",
+  "library:read": "See your library, including your private workflows, automations and orgs",
+  "library:write": "Upload, update and delete items in your library",
 };
 
 export function OAuthConsentForm() {
@@ -23,7 +25,10 @@ export function OAuthConsentForm() {
     if (!clientId) return;
     authClient.oauth2
       .publicClient({ query: { client_id: clientId } })
-      .then(({ data }) => setClientName((data as { name?: string } | null)?.name ?? null))
+      .then(({ data }) => {
+        const client = data as { client_name?: string; name?: string } | null;
+        setClientName(client?.client_name ?? client?.name ?? null);
+      })
       .catch(() => setClientName(null));
   }, [clientId]);
 

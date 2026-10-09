@@ -130,6 +130,15 @@ export default function AuthenticationPage() {
           every POST, PATCH, and DELETE endpoint.
         </li>
         <li>
+          <code className="rounded bg-ivory-parchment px-1.5 py-0.5 font-mono text-[13px]">library:read</code>: your private
+          library items (<code>scope=mine</code> listings and private items) and every download, official items
+          included. Browsing public and official items needs no token.
+        </li>
+        <li>
+          <code className="rounded bg-ivory-parchment px-1.5 py-0.5 font-mono text-[13px]">library:write</code>: publishing,
+          versioning, editing and deleting library items.
+        </li>
+        <li>
           <code className="rounded bg-ivory-parchment px-1.5 py-0.5 font-mono text-[13px]">openid</code>,{" "}
           <code className="rounded bg-ivory-parchment px-1.5 py-0.5 font-mono text-[13px]">profile</code>,{" "}
           <code className="rounded bg-ivory-parchment px-1.5 py-0.5 font-mono text-[13px]">email</code>: standard
@@ -150,6 +159,64 @@ export default function AuthenticationPage() {
           Errors &amp; conventions
         </Link>{" "}
         for exactly how a token vs. a browser session is checked.
+      </p>
+
+      <h2 id="monoagent" className="mb-3 mt-10 text-lg font-semibold text-espresso">
+        Desktop apps: the MonoAgent client
+      </h2>
+      <p className="text-[15px] leading-relaxed text-espresso/75">
+        MonoAgent (desktop app and <code className="rounded bg-ivory-parchment px-1.5 py-0.5 font-mono text-[13px]">monoagentcli</code>) signs
+        in with a fixed public client, <code className="rounded bg-ivory-parchment px-1.5 py-0.5 font-mono text-[13px]">client_id=monoagent</code>, instead of registering one. It uses the
+        native-app pattern from RFC&nbsp;8252: authorization code + PKCE (S256, required, no client secret), with the
+        redirect going to a one-off listener on the loopback interface.
+      </p>
+      <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-espresso/75">
+        <li>
+          Redirect URI: <code className="rounded bg-ivory-parchment px-1.5 py-0.5 font-mono text-[13px]">http://127.0.0.1:&lt;any port&gt;/callback</code>{" "}
+          (or <code>[::1]</code>). The port can change on every login (RFC&nbsp;8252 §7.3); the host must be the
+          literal IP, not <code>localhost</code>, and the path must be <code>/callback</code>.
+        </li>
+        <li>
+          Scopes: <code>openid profile email offline_access library:read library:write</code>.{" "}
+          <code>offline_access</code> returns a refresh token; refresh with{" "}
+          <code>grant_type=refresh_token&amp;client_id=monoagent</code>.
+        </li>
+        <li>
+          After login, <code className="rounded bg-ivory-parchment px-1.5 py-0.5 font-mono text-[13px]">GET /api/library/me</code> returns the
+          account and granted scopes. Machines without a browser can use the{" "}
+          <Link href="#headless-agents-no-browser" className="text-gold-dark hover:underline">
+            email-code flow
+          </Link>{" "}
+          with <code>client_id=monoagent</code>.
+        </li>
+      </ul>
+      <CodeBlock
+        label="Authorization URL (MonoAgent)"
+        code={`https://monoes.me/api/auth/oauth2/authorize
+  ?client_id=monoagent
+  &redirect_uri=http://127.0.0.1:53682/callback
+  &response_type=code
+  &scope=openid+profile+email+offline_access+library:read+library:write
+  &code_challenge=YOUR_CODE_CHALLENGE
+  &code_challenge_method=S256
+  &state=RANDOM_STATE`}
+      />
+      <CodeBlock
+        label="curl"
+        code={`curl -X POST https://monoes.me/api/auth/oauth2/token \\
+  -d "grant_type=authorization_code" \\
+  -d "code=THE_CODE_FROM_THE_CALLBACK" \\
+  -d "redirect_uri=http://127.0.0.1:53682/callback" \\
+  -d "client_id=monoagent" \\
+  -d "code_verifier=YOUR_CODE_VERIFIER"
+# -> { "access_token": "...", "refresh_token": "...", "token_type": "Bearer", "scope": "..." }`}
+      />
+      <p className="text-[15px] leading-relaxed text-espresso/75">
+        The library endpoints are listed under{" "}
+        <Link href="/docs/reference/library" className="text-gold-dark hover:underline">
+          API reference → Library
+        </Link>
+        .
       </p>
 
       <h2 id="headless-agents-no-browser" className="mb-3 mt-10 text-lg font-semibold text-espresso">

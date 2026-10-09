@@ -7,15 +7,7 @@ import { FeatureRequestsPanel } from "./FeatureRequestsPanel";
 import { BugReportsPanel } from "./BugReportsPanel";
 import { OrgGalleryPanel } from "./OrgGalleryPanel";
 import { PlaceholderPanel } from "./PlaceholderPanel";
-
-type User = {
-  id: string;
-  email: string;
-  username: string | null;
-  role: "member" | "moderator" | "admin";
-  blockedAt: string | null;
-  createdAt: string;
-};
+import type { AdminUserSummary } from "@/lib/community/admin-users";
 
 type Feature = {
   id: string;
@@ -53,11 +45,13 @@ export function AdminDashboard({
   features,
   bugs,
   orgs,
+  now,
 }: {
-  users: User[];
+  users: AdminUserSummary[];
   features: Feature[];
   bugs: Bug[];
   orgs: Org[];
+  now: number;
 }) {
   const [tab, setTab] = useState<(typeof TABS)[number]>("Overview");
 
@@ -76,8 +70,8 @@ export function AdminDashboard({
           </button>
         ))}
       </div>
-      {tab === "Overview" && <OverviewPanel users={users} />}
-      {tab === "Users" && <UsersPanel initialUsers={users} />}
+      {tab === "Overview" && <OverviewPanel users={users} now={now} />}
+      {tab === "Users" && <UsersPanel initialUsers={users} now={now} />}
       {tab === "Feature requests" && <FeatureRequestsPanel initialFeatures={features} />}
       {tab === "Bug reports" && <BugReportsPanel bugs={bugs} />}
       {tab === "Forum" && <PlaceholderPanel title="Forum" phase={4} />}

@@ -5,7 +5,15 @@ import { CodeBlock } from "@/components/docs/CodeBlock";
 export const metadata: Metadata = { title: "MCP server" };
 
 const TOOLS = [
-  { name: "get_feed", desc: "List recent community activity, optionally sorted and paginated. No authentication required." },
+  {
+    name: "list_library_items",
+    desc: "List MonoAgent library items (workflows, web automations, orgs), latest or most voted (sort: 'popular'). Public and official items need no authentication; scope 'mine' needs library:read.",
+  },
+  { name: "get_library_item", desc: "Get one library item by id, or by kind and slug, with its sha256, meta and download URL." },
+  {
+    name: "get_feed",
+    desc: "List recent community activity (posts, bugs, features, orgs, workflows, web automations), optionally sorted and paginated. No authentication required.",
+  },
   { name: "create_feature", desc: "Submit a new feature request. Requires write authentication." },
   { name: "vote_feature", desc: "Upvote, downvote, or clear a vote on a feature request. Requires write authentication." },
   { name: "create_bug", desc: "File a new bug report. Requires write authentication." },

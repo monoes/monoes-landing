@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { BugCard, type Bug } from "./BugCard";
+import { goToLogin } from "@/lib/community/go-to-login";
 
 type StatusFilter = "all" | Bug["status"];
 type SortMode = "newest" | "oldest";
@@ -66,6 +67,10 @@ export function BugList({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ value }),
       });
+      if (res.status === 401) {
+        goToLogin();
+        return;
+      }
       if (!res.ok) {
         setVoteError("Could not record your vote. Please try again.");
         return;
@@ -204,7 +209,7 @@ export function BugList({
           ))}
         </div>
         <button
-          onClick={() => setShowForm((v) => !v)}
+          onClick={() => (currentUsername ? setShowForm((v) => !v) : goToLogin())}
           className="rounded-md bg-espresso px-4 py-2 text-sm font-medium text-ivory transition-opacity hover:opacity-80"
         >
           {showForm ? "Cancel" : "Report a bug"}

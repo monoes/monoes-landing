@@ -11,6 +11,7 @@ const navLinks = [
   { label: "Workforce", href: "/workforce" },
   { label: "Whitepaper", href: "/whitepaper" },
   { label: "Blog", href: "/blog" },
+  { label: "Library", href: "/library" },
   { label: "Community", href: "/community" },
 ];
 
@@ -66,6 +67,7 @@ export function Navbar() {
           onClick={() => setOpen((v) => !v)}
           aria-label="Toggle menu"
           aria-expanded={open}
+          aria-controls="mobile-menu"
         >
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
             {open ? <path d="M6 6l12 12M6 18L18 6" /> : <path d="M4 8h16M4 16h16" />}
@@ -73,7 +75,7 @@ export function Navbar() {
         </button>
 
         {open && (
-          <ul className="absolute inset-x-0 top-[calc(100%+8px)] flex flex-col rounded-3xl border border-gold/20 bg-espresso-deep p-2 md:hidden">
+          <ul id="mobile-menu" className="absolute inset-x-0 top-[calc(100%+8px)] flex flex-col rounded-3xl border border-gold/20 bg-espresso-deep p-2 md:hidden">
             {navLinks.map((link) => (
               <li key={link.href}>
                 <Link

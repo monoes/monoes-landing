@@ -8,37 +8,51 @@ interface Node {
   icon: string;
   x: number;
   y: number;
-  category: "trigger" | "browser" | "ai" | "output";
+  category: "trigger" | "input" | "control" | "ai" | "human" | "output";
 }
 
 const NODES: Node[] = [
-  { id: "cron",   label: "Cron Trigger",   icon: "⏰", x: 60,  y: 60,  category: "trigger"  },
-  { id: "chrome", label: "Open Chrome",    icon: "🌐", x: 260, y: 60,  category: "browser"  },
-  { id: "scrape", label: "Scrape Data",    icon: "🔍", x: 460, y: 60,  category: "browser"  },
-  { id: "ai",     label: "AI Generate",    icon: "✨", x: 260, y: 180, category: "ai"       },
-  { id: "filter", label: "Filter Results", icon: "⚡", x: 460, y: 180, category: "ai"       },
-  { id: "post",   label: "Post Content",   icon: "📤", x: 360, y: 300, category: "output"   },
+  { id: "schedule", label: "Schedule (cron)", icon: "⏰", x: 60,  y: 90,  category: "trigger" },
+  { id: "rss",      label: "RSS Read",        icon: "📰", x: 280, y: 90,  category: "input"   },
+  { id: "filter",   label: "Filter",          icon: "⚡", x: 500, y: 90,  category: "control" },
+  { id: "agent",    label: "Ask Agent",       icon: "✨", x: 500, y: 230, category: "ai"      },
+  { id: "review",   label: "Human Review",    icon: "👤", x: 280, y: 230, category: "human"   },
+  { id: "email",    label: "Send Email",      icon: "📤", x: 60,  y: 230, category: "output"  },
 ];
 
 const EDGES = [
-  { from: "cron",   to: "chrome" },
-  { from: "chrome", to: "scrape" },
-  { from: "chrome", to: "ai"     },
-  { from: "scrape", to: "filter" },
-  { from: "ai",     to: "filter" },
-  { from: "filter", to: "post"   },
+  { from: "schedule", to: "rss"    },
+  { from: "rss",      to: "filter" },
+  { from: "filter",   to: "agent"  },
+  { from: "agent",    to: "review" },
+  { from: "review",   to: "email"  },
 ];
 
 const CATEGORY_COLOR: Record<Node["category"], string> = {
   trigger: "#C8A97E",
-  browser: "#8B7355",
+  input:   "#8B7355",
+  control: "#A89070",
   ai:      "#B8956A",
+  human:   "#D4B896",
   output:  "#A07840",
 };
 
 const NODE_W = 140;
 const NODE_H = 60;
 const BASE_CANVAS_W = 700;
+// Canvas is inset-4 (16px from container left); subtract that offset so
+// drawn edges align with the absolutely-positioned node divs.
+const CANVAS_OFFSET_X = 16;
+
+// execution path through the DAG
+const RUN_SEQ = ["schedule", "rss", "filter", "agent", "review", "email"];
+
+function getCenter(node: Node, scale: number) {
+  return {
+    x: node.x * scale - CANVAS_OFFSET_X + (NODE_W * scale) / 2,
+    y: node.y + (NODE_H * scale) / 2,
+  };
+}
 const CANVAS_H = 380;
 
 export function WorkflowBuilder() {
@@ -49,9 +63,6 @@ export function WorkflowBuilder() {
   const [runIdx,      setRunIdx]      = useState(-1);
   const [canvasWidth, setCanvasWidth] = useState(BASE_CANVAS_W);
   const runTimer = useRef<ReturnType<typeof setInterval> | null>(null);
-
-  // execution path through the DAG
-  const RUN_SEQ = ["cron", "chrome", "scrape", "ai", "filter", "post"];
 
   // Update canvas width on mount and resize
   useEffect(() => {
@@ -71,13 +82,6 @@ export function WorkflowBuilder() {
   // Calculate scale factor for responsive node positioning
   const scale = canvasWidth / BASE_CANVAS_W;
 
-  // Canvas is inset-4 (16px from container left); subtract that offset so
-  // drawn edges align with the absolutely-positioned node divs.
-  const CANVAS_OFFSET_X = 16;
-  const getCenter = (node: Node) => ({
-    x: (node.x * scale) - CANVAS_OFFSET_X + (NODE_W * scale) / 2,
-    y: node.y + (NODE_H * scale) / 2,
-  });
 
   const drawCanvas = useCallback(() => {
     const canvas = canvasRef.current;
@@ -97,8 +101,8 @@ export function WorkflowBuilder() {
     EDGES.forEach((edge) => {
       const fn = NODES.find((n) => n.id === edge.from)!;
       const tn = NODES.find((n) => n.id === edge.to)!;
-      const fc = getCenter(fn);
-      const tc = getCenter(tn);
+      const fc = getCenter(fn, scale);
+      const tc = getCenter(tn, scale);
 
       const runningIdx = RUN_SEQ.indexOf(edge.from);
       const isLit = running && runIdx >= runningIdx && runIdx > RUN_SEQ.indexOf(edge.to) - 1;
@@ -176,7 +180,7 @@ export function WorkflowBuilder() {
             <span className="h-3 w-3 rounded-full bg-ivory/10" />
           </div>
           <p className="text-xs uppercase tracking-label text-ivory/40 font-medium ml-2">
-            Workflow DAG: Content Autopilot
+            Workflow DAG: Morning Briefing
           </p>
         </div>
         <button

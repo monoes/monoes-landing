@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { formatDate } from "@/lib/format-date";
 
 type Feature = {
   id: string;
@@ -131,7 +132,7 @@ export function FeatureRequestsPanel({ initialFeatures }: { initialFeatures: Fea
                     ))}
                   </select>
                 </td>
-                <td className="px-4 py-2 text-espresso/55">{new Date(f.createdAt).toLocaleDateString()}</td>
+                <td className="px-4 py-2 text-espresso/55">{formatDate(f.createdAt)}</td>
                 <td className="px-4 py-2">
                   <button
                     onClick={() => deleteFeature(f.id)}

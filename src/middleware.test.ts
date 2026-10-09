@@ -19,6 +19,7 @@ const { NextRequest } = await import("next/server");
 const {
   middleware,
   runMiddleware,
+  requiresLogin,
   isMarkdownEligiblePath,
   wantsMarkdown,
   markdownAssetPath,
@@ -29,12 +30,12 @@ const {
 const getSessionMock = mock.fn<GetSession>(async () => null);
 
 describe("community middleware", () => {
-  it("redirects unauthenticated users to /community/login", async () => {
+  it("redirects unauthenticated users to /community/login, remembering where they were going", async () => {
     getSessionMock.mock.mockImplementationOnce(async () => null);
     const req = new NextRequest("http://localhost/community/admin");
     const res = await runMiddleware(req, getSessionMock);
     assert.equal(res.status, 307);
-    assert.match(res.headers.get("location") ?? "", /\/community\/login$/);
+    assert.match(res.headers.get("location") ?? "", /\/community\/login\?next=%2Fcommunity%2Fadmin$/);
   });
 
   it("redirects users with no username to /community/onboarding", async () => {
@@ -81,26 +82,50 @@ describe("community middleware", () => {
     assert.equal(res.status, 200);
   });
 
-  it("allows logged-out visitors through to the org gallery", async () => {
-    getSessionMock.mock.mockImplementationOnce(async () => null);
-    const req = new NextRequest("http://localhost/community/orgs");
-    const res = await runMiddleware(req, getSessionMock);
-    assert.equal(res.status, 200);
+  it("lets logged-out visitors browse orgs, posts, bugs, features, galleries and the library", async () => {
+    for (const path of [
+      "/community/orgs",
+      "/community/orgs/abc-123",
+      "/community/org-run-files/f1",
+      "/community/workflows",
+      "/community/automations",
+      "/community/bugs",
+      "/community/bugs/b1",
+      "/community/features",
+      "/community/posts/p1",
+      "/library",
+      "/library/automations/instagram",
+    ]) {
+      const res = await runMiddleware(new NextRequest(`http://localhost${path}`), getSessionMock);
+      assert.equal(res.status, 200, path);
+    }
   });
 
-  it("allows logged-out visitors through to an org's view page", async () => {
-    getSessionMock.mock.mockImplementationOnce(async () => null);
-    const req = new NextRequest("http://localhost/community/orgs/abc-123");
-    const res = await runMiddleware(req, getSessionMock);
-    assert.equal(res.status, 200);
+  it("sends logged-out visitors to login (and back) only from pages that act as them", async () => {
+    for (const path of [
+      "/community/admin",
+      "/community/settings/profile",
+      "/community/onboarding",
+      "/community/orgs/abc-123/edit",
+      "/library/upload?kind=workflow",
+    ]) {
+      getSessionMock.mock.mockImplementationOnce(async () => null);
+      const res = await runMiddleware(new NextRequest(`http://localhost${path}`), getSessionMock);
+      assert.equal(res.status, 307, path);
+      assert.equal(new URL(res.headers.get("location") ?? "").searchParams.get("next"), path);
+    }
   });
 
-  it("still redirects logged-out visitors away from an org's /edit page", async () => {
-    getSessionMock.mock.mockImplementationOnce(async () => null);
-    const req = new NextRequest("http://localhost/community/orgs/abc-123/edit");
-    const res = await runMiddleware(req, getSessionMock);
-    assert.equal(res.status, 307);
-    assert.match(res.headers.get("location") ?? "", /\/community\/login$/);
+  it("requiresLogin covers exactly the acting pages", () => {
+    assert.equal(requiresLogin("/community/orgs/x/edit"), true);
+    assert.equal(requiresLogin("/community/orgs/x"), false);
+    assert.equal(requiresLogin("/library/upload"), true);
+    assert.equal(requiresLogin("/library"), false);
+  });
+
+  it("isMarkdownEligiblePath excludes /library", () => {
+    assert.equal(isMarkdownEligiblePath("/library"), false);
+    assert.equal(isMarkdownEligiblePath("/library/workflows/x"), false);
   });
 
   it("exports `middleware` with exactly one parameter, matching Next.js's (request, event) call signature", () => {

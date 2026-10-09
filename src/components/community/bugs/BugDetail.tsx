@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { STATUS_LABEL, SEVERITY_LABEL } from "./BugCard";
+import { goToLogin } from "@/lib/community/go-to-login";
+import { formatDate } from "@/lib/format-date";
 
 type Status = "open" | "in_progress" | "resolved" | "wontfix";
 type Severity = "low" | "medium" | "high" | "critical";
@@ -309,7 +311,7 @@ export function BugDetail({
           {comments.map((c) => (
             <div key={c.id} className="rounded-lg border border-ivory-linen bg-ivory p-4">
               <p className="text-xs text-espresso/55">
-                {c.authorUsername ?? "unknown"} · {new Date(c.createdAt).toLocaleDateString()}
+                {c.authorUsername ?? "unknown"} · {formatDate(c.createdAt)}
               </p>
               <p className="mt-1 text-sm text-espresso/70 whitespace-pre-wrap">{c.body}</p>
               {(canModerate || c.authorId === currentUserId) && (
@@ -325,6 +327,11 @@ export function BugDetail({
           ))}
         </div>
 
+        {!currentUserId ? (
+          <button type="button" onClick={goToLogin} className="mt-4 text-sm font-medium text-gold-dark underline-offset-4 hover:underline">
+            Log in to leave a comment
+          </button>
+        ) : (
         <form onSubmit={handleCommentSubmit} className="mt-4 space-y-2">
           <textarea
             required
@@ -349,6 +356,7 @@ export function BugDetail({
             {submittingComment ? "Posting…" : "Post comment"}
           </button>
         </form>
+        )}
       </div>
     </div>
   );

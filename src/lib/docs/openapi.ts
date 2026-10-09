@@ -3,6 +3,7 @@ import { ENDPOINT_GROUPS, type AuthRequirement, type Endpoint } from "./endpoint
 const METHOD_KEY: Record<Endpoint["method"], string> = {
   GET: "get",
   POST: "post",
+  PUT: "put",
   PATCH: "patch",
   DELETE: "delete",
 };
@@ -42,7 +43,12 @@ function buildOperation(endpoint: Endpoint, groupName: string) {
   if (endpoint.request) {
     operation.requestBody = {
       required: true,
-      content: { "application/json": { schema: { type: "object" }, description: endpoint.request } },
+      content: {
+        [endpoint.requestType === "multipart" ? "multipart/form-data" : "application/json"]: {
+          schema: { type: "object" },
+          description: endpoint.request,
+        },
+      },
     };
   }
 
@@ -58,7 +64,7 @@ export function buildOpenApiSpec() {
 
   for (const group of ENDPOINT_GROUPS) {
     for (const endpoint of group.endpoints) {
-      const relativePath = endpoint.path.replace(/^\/api\/community/, "");
+      const relativePath = endpoint.path.replace(/^\/api/, "");
       paths[relativePath] ??= {};
       paths[relativePath][METHOD_KEY[endpoint.method]] = buildOperation(endpoint, group.name);
     }
@@ -67,12 +73,12 @@ export function buildOpenApiSpec() {
   return {
     openapi: "3.0.3",
     info: {
-      title: "Monoes Community API",
+      title: "Monoes API",
       version: "1.0.0",
       description:
-        "REST API backing the monoes.me community: features, bugs, orgs, posts, and voting. Generated from the same registry that powers https://monoes.me/docs/reference.",
+        "REST API backing monoes.me: the community (features, bugs, orgs, posts, voting) and the MonoAgent library (workflows, web automations, orgs). Generated from the same registry that powers https://monoes.me/docs/reference.",
     },
-    servers: [{ url: "https://monoes.me/api/community" }],
+    servers: [{ url: "https://monoes.me/api" }],
     security: [{ oauth2: ["community:read", "community:write"] }],
     components: {
       securitySchemes: {
@@ -85,6 +91,8 @@ export function buildOpenApiSpec() {
               scopes: {
                 "community:read": "Read feed, bugs, orgs, posts, and votes",
                 "community:write": "Post, comment, vote, and upload",
+                "library:read": "Read your library, including private items",
+                "library:write": "Publish, update and delete library items",
               },
             },
           },

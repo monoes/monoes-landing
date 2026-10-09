@@ -5,7 +5,6 @@ import { useRef, useEffect, useState, useCallback } from "react";
 type Phase = "idle" | "scanning" | "indexing" | "detecting" | "done";
 
 const GOLD    = "#C8A97E";
-const GOLD_F  = "rgba(200,169,126,0.30)";
 const ESPRESSO = "#2A2318";
 const DARK_BG = "#140e08";
 
@@ -67,11 +66,11 @@ const SCAN_STEPS = [
 ];
 
 const DETECT_STEPS = [
-  "Running Louvain community detection…",
+  "Running Leiden community detection…",
   "Found 3 communities (modularity Q=0.41).",
   "Detected 3 god nodes: API · DB · UI",
-  "graphQuality = avgCohesion × ln(1 + avgDegree) = 2.87",
-  "Graph ready: impact paths and 46 MCP tools active (19 default + 27 advanced).",
+  "Community cohesion scores computed.",
+  "Graph ready: 19 Monograph MCP tools active (27 more with MONOGRAPH_MCP_ADVANCED=1).",
 ];
 
 export function MonographDemo() {

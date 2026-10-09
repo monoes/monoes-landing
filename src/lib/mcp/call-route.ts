@@ -17,7 +17,7 @@ export async function callJsonRoute(
     url: string;
     authHeader: string | null;
     json?: unknown;
-    params?: Record<string, string>;
+    params?: Record<string, string | string[]>;
   },
 ): Promise<RouteResult> {
   const headers = new Headers();

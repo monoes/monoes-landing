@@ -18,6 +18,9 @@ register(
     if (specifier === "@/lib/db/schema") {
       return { url: "data:text/javascript,export const orgUpload = {};", shortCircuit: true };
     }
+    if (specifier === "@/lib/community/org-listing") {
+      return next("${new URL("../../../../lib/community/org-listing.ts", import.meta.url).href}", context);
+    }
     if (specifier === "@/lib/org-schema") {
       return next("${new URL("../../../../lib/org-schema.ts", import.meta.url).href}", context);
     }

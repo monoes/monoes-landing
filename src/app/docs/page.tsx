@@ -89,7 +89,9 @@ export default function DocsOverviewPage() {
         few moderation endpoints additionally require the acting user to have the{" "}
         <code className="rounded bg-ivory-parchment px-1.5 py-0.5 font-mono text-[13px]">admin</code> or{" "}
         <code className="rounded bg-ivory-parchment px-1.5 py-0.5 font-mono text-[13px]">moderator</code> role;
-        those are marked on each endpoint below. See{" "}
+        those are marked on each endpoint below. The MonoAgent library uses its own pair,{" "}
+        <code className="rounded bg-ivory-parchment px-1.5 py-0.5 font-mono text-[13px]">library:read</code> and{" "}
+        <code className="rounded bg-ivory-parchment px-1.5 py-0.5 font-mono text-[13px]">library:write</code>; browsing its public catalog needs no token, downloading needs a login. See{" "}
         <Link href="/docs/errors" className="text-gold-dark hover:underline">
           Errors &amp; conventions
         </Link>{" "}

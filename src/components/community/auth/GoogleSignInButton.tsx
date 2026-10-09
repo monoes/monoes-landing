@@ -3,12 +3,12 @@
 import { useState } from "react";
 import { authClient } from "@/lib/auth-client";
 
-export function GoogleSignInButton() {
+export function GoogleSignInButton({ callbackURL = "/community" }: { callbackURL?: string }) {
   const [pending, setPending] = useState(false);
 
   async function handleClick() {
     setPending(true);
-    await authClient.signIn.social({ provider: "google", callbackURL: "/community" });
+    await authClient.signIn.social({ provider: "google", callbackURL });
     // On success this navigates away to Google; setPending is only ever
     // observed again if the request itself failed to even start.
     setPending(false);

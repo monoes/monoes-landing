@@ -13,6 +13,8 @@ import { POST as voteOrg } from "@/app/api/community/orgs/[id]/vote/route";
 import { POST as runOrg } from "@/app/api/community/orgs/[id]/runs/route";
 import { POST as createPost } from "@/app/api/community/posts/route";
 import { POST as votePost } from "@/app/api/community/posts/[id]/vote/route";
+import { GET as listLibraryItems } from "@/app/api/library/items/route";
+import { GET as getLibraryItem } from "@/app/api/library/items/[...ref]/route";
 
 const INTERNAL_ORIGIN = "http://mcp.internal";
 
@@ -31,18 +33,73 @@ function toToolResult(result: RouteResult): CallToolResult {
   if (result.status >= 200 && result.status < 300) {
     return { content: [{ type: "text", text }] };
   }
+  // Community routes send { error: "..." }; library routes { error: { code, message } }.
+  const error = result.body && typeof result.body === "object" && "error" in result.body ? result.body.error : null;
   const errorMessage =
-    result.body && typeof result.body === "object" && "error" in result.body && typeof result.body.error === "string"
-      ? result.body.error
-      : `Request failed with status ${result.status}`;
+    typeof error === "string"
+      ? error
+      : error && typeof error === "object" && "message" in error && typeof error.message === "string"
+        ? error.message
+        : `Request failed with status ${result.status}`;
   return { content: [{ type: "text", text: errorMessage }], isError: true };
 }
 
 export const TOOL_DEFINITIONS: ToolDefinition[] = [
   {
+    name: "list_library_items",
+    title: "List library items",
+    description:
+      "List MonoAgent library items (workflows, web automations, orgs), newest first or by community votes (sort 'popular'). scope 'public' (default) lists public and official items without authentication; 'mine' lists your own and needs library:read.",
+    inputSchema: {
+      kind: z.enum(["workflow", "automation", "org"]).optional(),
+      scope: z.enum(["public", "official", "mine"]).optional(),
+      sort: z.enum(["latest", "popular"]).optional(),
+      q: z.string().max(100).optional(),
+      tag: z.string().optional(),
+      page: z.number().int().positive().optional(),
+      per_page: z.number().int().positive().max(100).optional(),
+    },
+    call: async (args, authHeader) => {
+      const url = new URL("/api/library/items", INTERNAL_ORIGIN);
+      for (const key of ["kind", "scope", "sort", "q", "tag", "page", "per_page"]) {
+        if (args[key] !== undefined) url.searchParams.set(key, String(args[key]));
+      }
+      const result = await callJsonRoute(listLibraryItems, { method: "GET", url: url.toString(), authHeader });
+      return toToolResult(result);
+    },
+  },
+  {
+    name: "get_library_item",
+    title: "Get a library item",
+    description:
+      "Get one MonoAgent library item by id, or by kind and slug. Includes its sha256, meta and artifact_url; install it locally with `monoagentcli library install <kind> <id|slug>`.",
+    inputSchema: {
+      id: z.string().optional(),
+      kind: z.enum(["workflow", "automation", "org"]).optional(),
+      slug: z.string().optional(),
+    },
+    call: async (args, authHeader) => {
+      const ref =
+        typeof args.id === "string" && args.id
+          ? [args.id]
+          : typeof args.kind === "string" && typeof args.slug === "string"
+            ? [args.kind, args.slug]
+            : null;
+      if (!ref) return { content: [{ type: "text", text: "Pass id, or kind and slug." }], isError: true };
+      const result = await callJsonRoute(getLibraryItem, {
+        method: "GET",
+        url: `${INTERNAL_ORIGIN}/api/library/items/${ref.map(encodeURIComponent).join("/")}`,
+        authHeader,
+        params: { ref },
+      });
+      return toToolResult(result);
+    },
+  },
+  {
     name: "get_feed",
     title: "Get community feed",
-    description: "List recent community activity (features, bugs, posts, orgs), optionally sorted and paginated. No authentication required.",
+    description:
+      "List recent community activity (features, bugs, posts, orgs, public workflows and web automations), optionally sorted and paginated. No authentication required.",
     inputSchema: {
       sort: z.enum(["latest", "popular"]).optional(),
       page: z.number().int().positive().optional(),

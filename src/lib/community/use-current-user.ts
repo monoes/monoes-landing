@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 
 export type CurrentUser = {
   username: string | null;
+  role?: "member" | "moderator" | "admin";
   name: string | null;
   avatarUrl: string | null;
 };

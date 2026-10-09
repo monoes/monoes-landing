@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { loginUrlFor } from "./lib/community/safe-next.ts";
 
 const PUBLIC_PATHS = new Set([
   "/community",
@@ -41,13 +42,26 @@ const defaultGetSession: GetSession = async (args) => {
 // `middleware(request, event)` — a second, non-optional NextFetchEvent
 // argument — which would silently clobber a `getSession` default parameter
 // if it lived directly on `middleware` itself.
-// The org gallery and an individual org's view page (not /edit or deeper)
-// are public content, same as /community/u/<username> profiles - readable
-// without an account so they're actually crawlable and link-preview-able.
-// Mutating actions (upload, vote, comment, delete, edit) still require auth,
-// enforced independently by their own API routes regardless of this gate.
-function isPublicOrgViewPath(pathname: string): boolean {
-  return pathname === "/community/orgs" || /^\/community\/orgs\/[^/]+$/.test(pathname);
+function isLibraryPath(pathname: string): boolean {
+  return pathname === "/library" || pathname.startsWith("/library/");
+}
+
+/**
+ * Browsing the community and the library is open to everyone: orgs, posts,
+ * bugs, features, workflows and web automations. Only pages that act as you
+ * need a login; voting, commenting and downloading are checked by their API
+ * routes and send logged-out visitors to login from the page.
+ */
+export function requiresLogin(pathname: string): boolean {
+  return (
+    pathname === "/community/admin" ||
+    pathname.startsWith("/community/admin/") ||
+    pathname.startsWith("/community/settings") ||
+    pathname === "/community/onboarding" ||
+    pathname.startsWith("/community/oauth") ||
+    /^\/community\/orgs\/[^/]+\/edit$/.test(pathname) ||
+    pathname === "/library/upload"
+  );
 }
 
 export async function runMiddleware(
@@ -56,18 +70,14 @@ export async function runMiddleware(
 ) {
   const { pathname } = request.nextUrl;
 
-  if (
-    PUBLIC_PATHS.has(pathname) ||
-    pathname.startsWith("/community/u/") ||
-    isPublicOrgViewPath(pathname)
-  ) {
+  if (PUBLIC_PATHS.has(pathname) || !requiresLogin(pathname)) {
     return NextResponse.next();
   }
 
   const session = await getSession({ headers: request.headers });
 
   if (!session) {
-    return NextResponse.redirect(new URL("/community/login", request.url));
+    return NextResponse.redirect(new URL(loginUrlFor(pathname + request.nextUrl.search), request.url));
   }
 
   const user = session.user as unknown as SessionUser;
@@ -100,6 +110,7 @@ export async function runMiddleware(
 // fonts, sitemap.xml, favicon.ico) marks a non-page asset.
 export function isMarkdownEligiblePath(pathname: string): boolean {
   if (pathname.startsWith("/community")) return false;
+  if (isLibraryPath(pathname)) return false;
   if (pathname.startsWith("/api")) return false;
   if (pathname.startsWith("/_next")) return false;
   if (pathname.startsWith("/.well-known")) return false;
@@ -196,7 +207,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.rewrite(url);
   }
 
-  if (pathname.startsWith("/community")) {
+  if (pathname.startsWith("/community") || isLibraryPath(pathname)) {
     return runMiddleware(request);
   }
 

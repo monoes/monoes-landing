@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     template: "%s · Monoes",
   },
   description:
-    "One engine, two paths. Self-host Monomind, Mono Agent, MonoClip, and MonoTask for free under Apache-2.0 - or hire Monoes Workforce to deploy AI digital workers that run your real business processes end-to-end.",
+    "One engine, two paths. Self-host Monomind, Mono Agent, MonoClip, and MonoTask for free as open source - or hire Monoes Workforce to deploy AI digital workers that run your real business processes end-to-end.",
   alternates: { canonical: "/" },
   icons: {
     icon: [
@@ -56,7 +56,7 @@ const organizationSchema = {
   url: SITE_URL,
   logo: `${SITE_URL}/images/logo-512.png`,
   description:
-    "Open-source AI agent tooling (Monomind, Mono Agent, MonoClip, MonoTask) and a paid Workforce service that automates business processes end-to-end.",
+    "Monoes builds open-source AI agent tools (Monomind, Mono Agent, MonoClip, MonoTask) and runs Monoes Workforce, a managed service that deploys AI digital workers to automate business processes end-to-end on the ERP, CRM and email systems a company already uses.",
   sameAs: SOCIAL_LINKS.map((link) => link.href),
 };
 

@@ -49,8 +49,8 @@ test("upload a valid org, view its chart, click a role to see the modal, downloa
   // on a stale card instead of this test's own upload — wait for the upload
   // response and navigate to the exact org this test just created.
   const uploadResponse = await uploadResponsePromise;
-  const created = (await uploadResponse.json()) as { id: string };
-  await page.locator(`a[href="/community/orgs/${created.id}"]`).click();
+  const created = (await uploadResponse.json()) as { id: string; slug: string };
+  await page.locator(`a[href="/community/orgs/${created.slug}"]`).click();
   await expect(page).toHaveURL(/\/community\/orgs\/.+/);
   // On a cold dev-server hit, this dynamic route can take several seconds to
   // compile; the page can be Playwright-actionable before React finishes
@@ -95,9 +95,11 @@ test("uploading an invalid org JSON shows a validation error", async ({ page }) 
   await expect(page.getByRole("alert")).toBeVisible();
 });
 
-test("logged-out visitor to /community/orgs is redirected to login", async ({ page }) => {
+test("logged-out visitors can browse the org gallery; uploading leads to login", async ({ page }) => {
   await page.goto("/community/orgs");
-  await expect(page).toHaveURL(/\/community\/login$/);
+  await expect(page).toHaveURL(/\/community\/orgs$/);
+  await page.getByRole("button", { name: "Log in to upload an org" }).click();
+  await expect(page).toHaveURL(/\/community\/login\?next=%2Fcommunity%2Forgs$/);
 });
 
 test("uploader deletes their own org upload", async ({ page }) => {
@@ -115,8 +117,8 @@ test("uploader deletes their own org upload", async ({ page }) => {
   // uploaded by a different user (whose "Delete" button we can't see). Wait for the
   // upload response and navigate to the exact org this test just created instead.
   const uploadResponse = await uploadResponsePromise;
-  const created = (await uploadResponse.json()) as { id: string };
-  await page.locator(`a[href="/community/orgs/${created.id}"]`).click();
+  const created = (await uploadResponse.json()) as { id: string; slug: string };
+  await page.locator(`a[href="/community/orgs/${created.slug}"]`).click();
   // On a cold dev-server hit, this dynamic route can take several seconds to
   // compile; the "Delete" button is present in the server-rendered HTML (and
   // so is Playwright-actionable) before React finishes hydrating and attaches
@@ -130,7 +132,7 @@ test("uploader deletes their own org upload", async ({ page }) => {
   // "minimal-org" cards uploaded by other users/runs, so a bare text match
   // would be a strict-mode violation (or, worse, a false pass/fail on the
   // wrong card).
-  await expect(page.locator(`a[href="/community/orgs/${created.id}"]`)).not.toBeVisible();
+  await expect(page.locator(`a[href="/community/orgs/${created.slug}"]`)).not.toBeVisible();
 });
 
 test("moderator deletes someone else's org upload", async ({ page, browser }) => {
@@ -146,8 +148,8 @@ test("moderator deletes someone else's org upload", async ({ page, browser }) =>
   // response and navigate to the exact org this test just created rather than
   // racing a text match against accumulated stale cards.
   const uploadResponse = await uploadResponsePromise;
-  const created = (await uploadResponse.json()) as { id: string };
-  await page.locator(`a[href="/community/orgs/${created.id}"]`).click();
+  const created = (await uploadResponse.json()) as { id: string; slug: string };
+  await page.locator(`a[href="/community/orgs/${created.slug}"]`).click();
   await expect(page).toHaveURL(/\/community\/orgs\/.+/);
   const orgUrl = page.url();
 
@@ -177,8 +179,8 @@ test("a member who is neither uploader nor moderator cannot delete someone else'
   );
   await fileInput.setInputFiles(path.join(__dirname, "fixtures", "valid-org.json"));
   const uploadResponse = await uploadResponsePromise;
-  const created = (await uploadResponse.json()) as { id: string };
-  await page.locator(`a[href="/community/orgs/${created.id}"]`).click();
+  const created = (await uploadResponse.json()) as { id: string; slug: string };
+  await page.locator(`a[href="/community/orgs/${created.slug}"]`).click();
   await expect(page).toHaveURL(/\/community\/orgs\/.+/);
   const orgUrl = page.url();
 

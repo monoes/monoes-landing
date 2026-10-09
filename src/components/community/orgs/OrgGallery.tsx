@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { OrgCard, type Org } from "./OrgCard";
+import { goToLogin } from "@/lib/community/go-to-login";
 
 export function OrgGallery({
   initialOrgs,
@@ -26,6 +27,10 @@ export function OrgGallery({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ value }),
       });
+      if (res.status === 401) {
+        goToLogin();
+        return;
+      }
       if (!res.ok) {
         setVoteError("Could not record your vote. Please try again.");
         return;
@@ -64,7 +69,9 @@ export function OrgGallery({
       }
       const created = (await res.json()) as {
         id: string;
+        slug: string;
         name: string;
+        tagline: string | null;
         goal: string;
         topology: string | null;
         roleCount: number;
@@ -73,9 +80,10 @@ export function OrgGallery({
       setOrgs((prev) => [
         {
           id: created.id,
+          slug: created.slug,
           name: created.name,
           goal: created.goal,
-          tagline: null,
+          tagline: created.tagline,
           topology: created.topology,
           roleCount: created.roleCount,
           uploaderUsername: currentUsername,
@@ -95,6 +103,15 @@ export function OrgGallery({
   return (
     <div>
       <div className="mb-6 flex items-center justify-between gap-3">
+        {!currentUsername ? (
+          <button
+            type="button"
+            onClick={goToLogin}
+            className="rounded-md bg-espresso px-4 py-2 text-sm font-medium text-ivory transition-opacity hover:opacity-80"
+          >
+            Log in to upload an org
+          </button>
+        ) : (
         <label
           className="cursor-pointer rounded-md bg-espresso px-4 py-2 text-sm font-medium text-ivory transition-opacity hover:opacity-80 aria-disabled:opacity-50"
           aria-disabled={uploading}
@@ -108,6 +125,7 @@ export function OrgGallery({
             className="hidden"
           />
         </label>
+        )}
       </div>
 
       {uploadError && (

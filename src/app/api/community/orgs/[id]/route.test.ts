@@ -43,7 +43,7 @@ function ctx() {
 }
 
 function stubDb(orgRow: { uploaderId: string } | null) {
-  const setMock = mock.fn((_values: Record<string, unknown>) => ({ where: async () => {} }));
+  const setMock = mock.fn<(values: Record<string, unknown>) => { where: () => Promise<void> }>(() => ({ where: async () => {} }));
   globalThis.__stubDb = () => ({
     select: () => ({ from: () => ({ where: () => ({ limit: async () => (orgRow ? [orgRow] : []) }) }) }),
     update: () => ({ set: setMock }),

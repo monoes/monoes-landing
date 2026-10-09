@@ -10,8 +10,8 @@ export const hero = {
   sub: "AI workers that finish your real business processes, from invoices to onboarding. Hire us to run them for you, or run them yourself for free.",
   primary: { label: "Hire your AI team", href: "#hire" },
   secondary: { label: "Run it yourself, free", href: "/product#projects" },
-  claim: "Runs in your environment, on-prem or your own cloud. Your data, memory and audit trail stay with you.",
-  boundary: { label: "Your environment", finale: "Nothing left this boundary." },
+  claim: "Runs in your environment, on-prem or your own cloud. Your memory and audit trail stay with you, and only model calls leave, to a provider you choose or not at all with a local model.",
+  boundary: { label: "Your environment", finale: "Your memory and audit trail never left." },
   finale: {
     lead: "AI workers for",
     accent: "every department.",
@@ -40,7 +40,7 @@ export interface TraceCase {
 
 export const trace = {
   kicker: "Show the work",
-  boundary: "Inside your environment · nothing leaves",
+  boundary: "Inside your environment · you choose what leaves",
   defaultId: "sales",
   cases: [
     {
@@ -143,7 +143,7 @@ export const dialLevels = humanInLoopLevels;
 
 export const beliefs = [
   { title: "On-prem or your cloud", body: "Deployed on your on-prem servers or in your own cloud account. Nothing runs on ours." },
-  { title: "Your data stays put", body: "Documents, memory and the audit trail never leave your environment." },
+  { title: "Your data stays put", body: "Documents, memory and the audit trail stay in your environment. Only model calls go out, to the provider you choose, or none with a local model." },
   { title: "Your model, your call", body: "Use the model you already trust, or opt in to a local one that we install or fine-tune for you." },
   { title: "A human on the risky calls", body: "You set where approval is required, and every decision is logged on your side." },
 ];
@@ -156,7 +156,7 @@ export const where = {
   us: "Monoes",
   rows: [
     { label: "Where it runs", them: "Mostly the vendor's cloud", us: "Your on-prem servers or your own cloud" },
-    { label: "Who handles your data", them: "Processed on the vendor's servers, and often passed on to third-party model providers", us: "Stays inside your environment" },
+    { label: "Who handles your data", them: "Processed on the vendor's servers, and often passed on to third-party model providers", us: "Stays in your environment. Only model calls leave, to a provider you choose" },
     { label: "Which model", them: "Mostly the providers the vendor chose", us: "Your choice, including a local model we install or fine-tune for you" },
     { label: "If the vendor changes or closes", them: "Your workflows depend on the vendor staying put", us: "Keeps running. The core is open source" },
   ],

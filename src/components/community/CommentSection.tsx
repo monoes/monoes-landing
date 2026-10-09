@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { goToLogin } from "@/lib/community/go-to-login";
+import { formatDate } from "@/lib/format-date";
 
 export type Comment = {
   id: string;
@@ -66,7 +68,7 @@ export function CommentSection({
         {comments.map((c) => (
           <div key={c.id} className="rounded-lg border border-ivory-linen bg-ivory p-4">
             <p className="text-xs text-espresso/55">
-              {c.authorUsername ?? "unknown"} · {new Date(c.createdAt).toLocaleDateString()}
+              {c.authorUsername ?? "unknown"} · {formatDate(c.createdAt)}
             </p>
             <p className="mt-1 text-sm text-espresso/70 whitespace-pre-wrap">{c.body}</p>
             {(canModerate || c.authorId === currentUserId) && (
@@ -109,7 +111,9 @@ export function CommentSection({
           </button>
         </form>
       ) : (
-        <p className="mt-4 text-sm text-espresso/55">Log in to leave a comment.</p>
+        <button type="button" onClick={goToLogin} className="mt-4 text-sm font-medium text-gold-dark underline-offset-4 hover:underline">
+          Log in to leave a comment
+        </button>
       )}
     </div>
   );

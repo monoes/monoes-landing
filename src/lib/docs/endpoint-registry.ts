@@ -1,14 +1,20 @@
+import { LIBRARY_ENDPOINTS } from "./library-endpoints";
+
+export type Scope = "community:read" | "community:write" | "library:read" | "library:write";
+
 export type AuthRequirement =
   | { kind: "public" }
-  | { kind: "scope"; scope: "community:read" | "community:write" }
-  | { kind: "role"; scope: "community:write" | "community:read"; roles: ("admin" | "moderator")[] };
+  | { kind: "scope"; scope: Scope }
+  | { kind: "role"; scope: Scope; roles: ("admin" | "moderator")[] };
 
 export type Endpoint = {
-  method: "GET" | "POST" | "PATCH" | "DELETE";
+  method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
   path: string;
   summary: string;
   auth: AuthRequirement;
   request?: string;
+  /** Request body encoding; JSON unless set. */
+  requestType?: "multipart";
   response?: string;
   notes?: string;
 };
@@ -20,8 +26,8 @@ export type EndpointGroup = {
   endpoints: Endpoint[];
 };
 
-const scope = (s: "community:read" | "community:write"): AuthRequirement => ({ kind: "scope", scope: s });
-const role = (s: "community:read" | "community:write", roles: ("admin" | "moderator")[]): AuthRequirement => ({
+const scope = (s: Scope): AuthRequirement => ({ kind: "scope", scope: s });
+const role = (s: Scope, roles: ("admin" | "moderator")[]): AuthRequirement => ({
   kind: "role",
   scope: s,
   roles,
@@ -37,12 +43,13 @@ export const ENDPOINT_GROUPS: EndpointGroup[] = [
       {
         method: "GET",
         path: "/api/community/feed",
-        summary: "List recent activity across posts, bugs, features, and org uploads.",
+        summary: "List recent activity across posts, bugs, features, org uploads, and public workflows and web automations.",
         auth: publicAuth,
         request: "Query params: sort ('latest' | 'popular'), page (number, 0-indexed), authorId (string, optional)",
-        response: "{ items: FeedItem[], hasMore: boolean }",
+        response:
+          "{ items: FeedItem[], hasMore: boolean }. FeedItem: { id, type: 'post'|'bug'|'feature'|'org'|'workflow'|'automation', title, preview, authorId, authorUsername, createdAt, score, myVote, url? }",
         notes:
-          "Session is read if present (to compute the viewer's own vote on each item) but not required. A Bearer token without community:read is silently treated as anonymous rather than rejected.",
+          "Session is read if present (to compute the viewer's own vote on each item) but not required. A Bearer token without community:read is silently treated as anonymous rather than rejected. Workflow and web automation items are public or official library items; their url points at /library/{workflows|automations}/{slug}, and votes on them go to /api/community/library/{id}/vote.",
       },
     ],
   },
@@ -389,6 +396,7 @@ export const ENDPOINT_GROUPS: EndpointGroup[] = [
       },
     ],
   },
+  LIBRARY_ENDPOINTS,
 ];
 
 export function allEndpoints(): (Endpoint & { group: string })[] {

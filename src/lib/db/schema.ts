@@ -151,7 +151,8 @@ export const orgUpload = sqliteTable("org_upload", {
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
   createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
-});
+  slug: text("slug"),
+}, (table) => [uniqueIndex("org_upload_slug_unique").on(table.slug)]);
 
 export const post = sqliteTable("post", {
   id: text("id").primaryKey(),

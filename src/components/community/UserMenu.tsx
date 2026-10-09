@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import { useCurrentUser } from "@/lib/community/use-current-user";
 
@@ -17,7 +16,6 @@ function initials(name: string | null, username: string | null): string {
 }
 
 export function UserMenu({ theme = "dark" }: { theme?: "dark" | "light" }) {
-  const router = useRouter();
   const me = useCurrentUser();
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -44,8 +42,11 @@ export function UserMenu({ theme = "dark" }: { theme?: "dark" | "light" }) {
   async function handleSignOut() {
     setOpen(false);
     await authClient.signOut();
-    router.push("/");
-    router.refresh();
+    // A full page load, not router.push: on "/" a client-side push to the
+    // same URL is a no-op, and the navbar kept showing the signed-in avatar
+    // from its cached /api/community/me result. Reloading resets every piece
+    // of signed-in state at once.
+    window.location.assign("/");
   }
 
   if (me === undefined) {
@@ -77,6 +78,7 @@ export function UserMenu({ theme = "dark" }: { theme?: "dark" | "light" }) {
         onClick={() => setOpen((v) => !v)}
         aria-haspopup="menu"
         aria-expanded={open}
+        aria-label={`Account menu for ${me.username ?? me.name ?? "you"}`}
         className="block h-8 w-8 overflow-hidden rounded-full border border-gold/40 transition-colors hover:border-gold"
       >
         {me.avatarUrl ? (
@@ -102,6 +104,16 @@ export function UserMenu({ theme = "dark" }: { theme?: "dark" | "light" }) {
               className="block px-4 py-2 text-sm text-espresso hover:bg-ivory-warm"
             >
               My profile
+            </Link>
+          )}
+          {me.role === "admin" && (
+            <Link
+              href="/community/admin"
+              role="menuitem"
+              onClick={() => setOpen(false)}
+              className="block px-4 py-2 text-sm text-espresso hover:bg-ivory-warm"
+            >
+              Admin dashboard
             </Link>
           )}
           <Link

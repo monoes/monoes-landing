@@ -3,6 +3,7 @@ import type { AuthRequirement, Endpoint } from "@/lib/docs/endpoint-registry";
 const METHOD_STYLES: Record<Endpoint["method"], string> = {
   GET: "bg-ivory-parchment text-espresso border-ivory-linen",
   POST: "bg-gold/15 text-gold-dark border-gold/30",
+  PUT: "bg-gold-muted/15 text-gold-muted border-gold-muted/30",
   PATCH: "bg-gold-warm/15 text-gold-warm border-gold-warm/30",
   DELETE: "bg-red-50 text-red-700 border-red-200",
 };

@@ -124,7 +124,7 @@ test.describe("MCP server", () => {
     await agent.dispose();
   });
 
-  test("tools/list returns all 11 tools without authentication", async ({ baseURL }) => {
+  test("tools/list returns all 13 tools without authentication", async ({ baseURL }) => {
     const agent = await playwrightRequest.newContext({ baseURL });
     const { status, json } = await callMcp(agent, { jsonrpc: "2.0", id: 2, method: "tools/list", params: {} });
     expect(status).toBe(200);
@@ -137,6 +137,8 @@ test.describe("MCP server", () => {
         "create_org",
         "create_post",
         "get_feed",
+        "get_library_item",
+        "list_library_items",
         "run_org",
         "vote_bug",
         "vote_feature",
