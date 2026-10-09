@@ -3,6 +3,7 @@ import { eq } from "drizzle-orm";
 import { getAuthenticatedUser } from "@/lib/community/get-authenticated-user";
 import { getDb } from "@/lib/db";
 import { user } from "@/lib/db/schema";
+import { revokeOAuthAccess } from "@/lib/community/revoke-oauth-access";
 
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await getAuthenticatedUser(request, "community:write");
@@ -20,11 +21,14 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
 
   const db = getDb();
   const blockedAt = body.blocked ? new Date() : null;
-  const updated = await db
+  const setBlocked = db
     .update(user)
     .set({ blockedAt, blockedBy: body.blocked ? session.user.id : null, updatedAt: new Date() })
     .where(eq(user.id, id))
     .returning({ id: user.id });
+  // One batch (one transaction on D1): a block that did not also revoke would leave
+  // the user a refresh token and a live web session.
+  const [updated] = await db.batch([setBlocked, ...(body.blocked ? revokeOAuthAccess(db, id) : [])]);
 
   if (updated.length === 0) {
     return NextResponse.json({ error: "User not found" }, { status: 404 });
