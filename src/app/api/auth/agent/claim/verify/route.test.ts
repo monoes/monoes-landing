@@ -9,11 +9,15 @@ register(
     if (specifier === "@/lib/community/hash-token") {
       return { url: "data:text/javascript,export const sha256Base64Url = async (v) => 'hash:' + v;", shortCircuit: true };
     }
+    if (specifier === "@/lib/auth") {
+      return { url: "data:text/javascript,export const getAuth = () => ({});", shortCircuit: true };
+    }
+    if (specifier === "@/lib/monoagent-token") return next("../../../../../../lib/monoagent-token.ts", context);
     if (specifier === "@/lib/db") {
       return { url: "data:text/javascript,export const getDb = () => ({});", shortCircuit: true };
     }
     if (specifier === "@/lib/db/schema") {
-      return { url: "data:text/javascript,export const emailClaimRequest = {}; export const oauthAccessToken = {}; export const user = {};", shortCircuit: true };
+      return { url: "data:text/javascript,export const emailClaimRequest = {}; export const oauthAccessToken = {}; export const oauthRefreshToken = {}; export const user = {};", shortCircuit: true };
     }
     return next(specifier, context);
   }`,
@@ -65,5 +69,30 @@ describe("opaque token generation", () => {
     const a = /* value */ generateOpaqueToken();
     const b = /* value */ generateOpaqueToken();
     assert.notEqual(a, b);
+  });
+});
+
+// The stubbed database is an empty object: a request that reached it would throw, so these pass
+// only if the answer is given before the code is looked at (and so before it can be used up).
+describe("claim verify resource", () => {
+  const post = async (body: object) => {
+    const { POST } = await import("./route.ts");
+    return POST(
+      new Request("https://monoes.test/api/auth/agent/claim/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: "a@example.com", code: "123456", client_id: "monoagent", ...body }),
+      }),
+    );
+  };
+
+  it("answers invalid_target for another audience", async () => {
+    const res = await post({ resource: "https://example.com/other" });
+    assert.deepEqual([res.status, await res.json()], [400, { error: "invalid_target" }]);
+  });
+
+  it("answers invalid_target when another client asks for the MonoAgent audience", async () => {
+    const res = await post({ client_id: "some-agent", resource: "https://monoes.me/api/monoagent" });
+    assert.deepEqual([res.status, await res.json()], [400, { error: "invalid_target" }]);
   });
 });
