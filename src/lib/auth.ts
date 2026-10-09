@@ -5,6 +5,7 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { eq } from "drizzle-orm";
 import { getDb, type Db } from "@/lib/db";
 import * as schema from "@/lib/db/schema";
+import { accessTokenClaims } from "@/lib/access-token-claims";
 
 export const OAUTH_SCOPES = [
   "openid",
@@ -76,6 +77,13 @@ export function getAuth(db: Db = getDb()) {
         scopes: [...OAUTH_SCOPES],
         allowDynamicClientRegistration: true,
         allowUnauthenticatedClientRegistration: true,
+        accessTokenExpiresIn: 3600,
+        // A refresh whose answer was lost is retried with the same token; inside this many seconds the
+        // provider answers it again with the same response, where outside it the retry is a replay of a
+        // used token. mono-agent retries for as long as 240 seconds (pendingRetryWindow in
+        // internal/account/guard.go, spec A24): lower this only together with it.
+        refreshTokenReuseInterval: 300,
+        customAccessTokenClaims: () => accessTokenClaims(),
       }),
     ],
     user: {
