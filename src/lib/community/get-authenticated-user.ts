@@ -3,6 +3,7 @@ import { getAuth } from "@/lib/auth";
 import { getDb } from "@/lib/db";
 import { oauthAccessToken, user } from "@/lib/db/schema";
 import { sha256Base64Url } from "@/lib/community/hash-token";
+import { looksLikeJwt, verifyMonoagentAccessToken } from "@/lib/community/verify-access-jwt";
 
 export type AuthenticatedUser = {
   id: string;
@@ -61,6 +62,9 @@ export async function getRequestAuth(
   const bearerValue = authHeader.slice("bearer ".length).trim();
   if (!bearerValue) return null;
 
+  // An audience-bound MonoAgent token is a JWT with no stored row to look up.
+  if (looksLikeJwt(bearerValue)) return jwtRequestAuth(bearerValue, requiredScope);
+
   const hashedToken = await sha256Base64Url(bearerValue);
   const db = getDb();
   const [tokenRow] = await db
@@ -101,4 +105,22 @@ export async function getRequestAuth(
   if (!row) return null;
 
   return { user: row as AuthenticatedUser, scopes };
+}
+
+async function jwtRequestAuth(
+  token: string,
+  requiredScope?: string,
+): Promise<{ user: AuthenticatedUser; scopes: string[] } | null> {
+  const verified = await verifyMonoagentAccessToken(token);
+  if (!verified) return null;
+  if (requiredScope && !verified.scopes.includes(requiredScope)) return null;
+
+  const [row] = await getDb()
+    .select({ id: user.id, username: user.username, role: user.role, blockedAt: user.blockedAt })
+    .from(user)
+    .where(eq(user.id, verified.userId))
+    .limit(1);
+  if (!row) return null;
+
+  return { user: row as AuthenticatedUser, scopes: verified.scopes };
 }
