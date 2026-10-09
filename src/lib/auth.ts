@@ -6,6 +6,8 @@ import { eq } from "drizzle-orm";
 import { getDb, type Db } from "@/lib/db";
 import * as schema from "@/lib/db/schema";
 import { accessTokenClaims } from "@/lib/access-token-claims";
+import { createAuthMiddleware } from "better-auth/api";
+import { endReplayedFamily } from "@/lib/refresh-family";
 
 export const OAUTH_SCOPES = [
   "openid",
@@ -86,6 +88,12 @@ export function getAuth(db: Db = getDb()) {
         customAccessTokenClaims: () => accessTokenClaims(),
       }),
     ],
+    // A MonoAgent refresh token presented after it was rotated away or revoked ends only the sign-in it
+    // comes from, its refresh-token family, not every MonoAgent sign-in of the account (ruling R1 of
+    // 2026-10-07). It runs before the oauth-provider's endpoints; see src/lib/refresh-family.ts.
+    hooks: {
+      before: createAuthMiddleware((ctx) => endReplayedFamily(db, ctx)),
+    },
     user: {
       additionalFields: {
         username: { type: "string", required: false, input: false },
