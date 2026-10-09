@@ -219,6 +219,66 @@ export default function AuthenticationPage() {
         .
       </p>
 
+      <h2 id="monoagent-tokens" className="mb-3 mt-10 text-lg font-semibold text-espresso">
+        MonoAgent tokens: audience and claims
+      </h2>
+      <p className="text-[15px] leading-relaxed text-espresso/75">
+        Send <code className="rounded bg-ivory-parchment px-1.5 py-0.5 font-mono text-[13px]">resource=https://monoes.me/api/monoagent</code>{" "}
+        (RFC&nbsp;8707) on the authorization request, the token request and every refresh, and the access token is a signed
+        JWT bound to that audience instead of an opaque string. Send no <code>resource</code> and nothing changes: the token
+        is opaque, as it always was. Only the <code>monoagent</code> client may ask for this resource; any other client is
+        answered <code>invalid_target</code>. A refresh token that was issued without a <code>resource</code> can be
+        exchanged with one.
+      </p>
+      <CodeBlock
+        label="curl"
+        code={`curl -X POST https://monoes.me/api/auth/oauth2/token \\
+  -d "grant_type=refresh_token" \\
+  -d "client_id=monoagent" \\
+  -d "refresh_token=YOUR_REFRESH_TOKEN" \\
+  -d "resource=https://monoes.me/api/monoagent"
+# -> { "access_token": "eyJ...", "refresh_token": "...", "expires_in": 3600, ... }`}
+      />
+      <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-espresso/75">
+        <li>
+          Header: <code>alg</code> is <code>EdDSA</code> (Ed25519), <code>typ</code> is <code>at+jwt</code>, and{" "}
+          <code>kid</code> names a key published at{" "}
+          <code className="rounded bg-ivory-parchment px-1.5 py-0.5 font-mono text-[13px]">GET /api/auth/jwks</code>.
+          The signing key is a fixed key that monoes.me supplies; it is not generated or rotated automatically, so a client
+          can pin its public key. During a planned rotation the previous public key stays published for a while, so tokens
+          issued just before the change keep verifying.
+        </li>
+        <li>
+          <code>iss</code> is <code>https://monoes.me/api/auth</code>. <code>aud</code> is an array that contains{" "}
+          <code>https://monoes.me/api/monoagent</code>, next to the userinfo endpoint when <code>openid</code> is requested.
+        </li>
+        <li>
+          <code>azp</code> and <code>client_id</code> are <code>monoagent</code>. <code>sub</code> is the user id.{" "}
+          <code>scope</code> holds the granted scopes, space-separated.
+        </li>
+        <li>
+          <code>iat</code> and <code>exp</code> are one hour apart (<code>exp - iat</code> is 3600). <code>jti</code> is
+          unique per token.
+        </li>
+        <li>
+          <code>plan</code> is <code>free</code> for every account today. <code>sid</code>, when present, names the web
+          session the sign-in went through, and is <code>null</code> once that session has ended: do not rely on it.
+        </li>
+      </ul>
+      <p className="mt-3 text-[15px] leading-relaxed text-espresso/75">
+        Refresh tokens rotate: each refresh returns a new one and the old one stops working. Retrying a refresh whose
+        answer was lost, within five minutes, returns that same answer again; presenting a used refresh token after that
+        revokes the refresh tokens of that sign-in, so sign in again on that machine. The other sign-ins of the account
+        keep working. Revoking a refresh token at <code>/api/auth/oauth2/revoke</code> ends its sign-in the same way. A
+        refresh that is answered <code>invalid_grant</code> means the sign-in cannot continue: its tokens were revoked,
+        they expired after 30 days, or the account is blocked. Every other failure (<code>invalid_target</code>, a 5xx,
+        no network) says nothing about the account. Blocking an account deletes its refresh tokens, opaque access tokens
+        and web sessions in one step, and a blocked account is never issued a new token. A JWT that was already issued is
+        a signed statement and is not looked up again: ending a sign-in does not cancel it, it stays valid until its{" "}
+        <code>exp</code> (within the hour), except that the library and community API answer a blocked account{" "}
+        <code>403</code> with the code <code>blocked</code> in the meantime.
+      </p>
+
       <h2 id="headless-agents-no-browser" className="mb-3 mt-10 text-lg font-semibold text-espresso">
         Headless agents (no browser)
       </h2>
@@ -241,8 +301,11 @@ export default function AuthenticationPage() {
             POST /api/auth/agent/claim/verify
           </code>{" "}
           : body <code>{`{ email, code, client_id }`}</code>. Returns{" "}
-          <code>{`{ access_token, token_type: "Bearer", expires_in: 3600, scope }`}</code>. Codes expire after 10
-          minutes and allow at most 5 attempts.
+          <code>{`{ access_token, token_type: "Bearer", expires_in: 3600, scope }`}</code>. For the{" "}
+          <code>monoagent</code> client and a claim whose scope includes <code>offline_access</code> the answer also carries
+          a <code>refresh_token</code>, which can be exchanged at the token endpoint with the <code>resource</code> above.
+          Adding that <code>resource</code> to the body gets the token endpoint&apos;s answer at once: an audience-bound
+          JWT and a <code>refresh_token</code>. Codes expire after 10 minutes and allow at most 5 attempts.
         </li>
       </ol>
 
