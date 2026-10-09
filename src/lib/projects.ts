@@ -43,13 +43,13 @@ export const projects: Project[] = [
         icon: "🏢",
         title: "Autonomous Orgs",
         description:
-          "Define roles, reporting lines and per-role tool, file and budget policy in one JSON file, then run it as a background daemon with human approval gates, cross-run memory and a live dashboard. 14 runtimes, including the Claude Agent SDK, Codex, OpenCode, Kimi Code and Copilot.",
+          "Define roles, reporting lines and per-role tool, file and budget policy in one JSON file, then run it as a background daemon with human approval gates, cross-run memory and a live dashboard. more than a dozen runtimes, including the Claude Agent SDK, Codex, OpenCode, Kimi Code and Copilot.",
       },
       {
         icon: "🧠",
         title: "Local Memory",
         description:
-          "Local SQLite with on-device embeddings (gte-modernbert-base) and an HNSW index that switches on automatically past 5,000 entries. No cloud vector database, no API key. Context survives across sessions, agents and orgs.",
+          "Local SQLite with on-device embeddings (gte-modernbert-base) and an HNSW index that switches on automatically past 100,000 entries. No cloud vector database, no API key. Context survives across sessions, agents and orgs.",
       },
       {
         icon: "🗺️",
@@ -67,7 +67,7 @@ export const projects: Project[] = [
         icon: "⚡",
         title: "Mastermind Workflows",
         description:
-          "42 /mastermind slash commands (plan, execute, review, debug, release, research, worktree and more), plus {agents} and ready-made skills installed into your project. Add --tillend to repeat until nothing is left to do.",
+          "40 /mastermind slash commands (plan, execute, review, debug, release, research, worktree and more), plus {agents} and ready-made skills installed into your project. Add --tillend to repeat until nothing is left to do.",
       },
       {
         icon: "🛡️",
@@ -140,11 +140,11 @@ export const projects: Project[] = [
           ],
         },
         {
-          title: "Swarms, routing & security",
-          description: "Coordination, agent routing and scanning.",
+          title: "Picking, health & security",
+          description: "Pick the best-fit agent and skill, check your setup, and scan.",
           commands: [
-            "monomind monoswarm init --topology hierarchical",
-            "monomind route \"fix the login bug\"",
+            "monomind pick -t \"fix the login bug\"",
+            "monomind doctor",
             "monomind security scan",
           ],
         },
