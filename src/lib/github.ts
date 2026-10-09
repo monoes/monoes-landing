@@ -1,6 +1,7 @@
 interface RepoStats {
-  stars: number;
-  forks: number;
+  /** null means the fetch failed or the field was missing — never render this as "0". */
+  stars: number | null;
+  forks: number | null;
   language: string;
   updatedAt: string;
 }
@@ -24,18 +25,18 @@ export async function getRepoStats(repo: RepoName): Promise<RepoStats> {
     });
 
     if (!res.ok) {
-      return { stars: 0, forks: 0, language: "Unknown", updatedAt: "" };
+      return { stars: null, forks: null, language: "Unknown", updatedAt: "" };
     }
 
     const data = await res.json();
     return {
-      stars: data.stargazers_count ?? 0,
-      forks: data.forks_count ?? 0,
+      stars: data.stargazers_count ?? null,
+      forks: data.forks_count ?? null,
       language: data.language ?? "Unknown",
       updatedAt: data.updated_at ?? "",
     };
   } catch {
-    return { stars: 0, forks: 0, language: "Unknown", updatedAt: "" };
+    return { stars: null, forks: null, language: "Unknown", updatedAt: "" };
   }
 }
 

@@ -74,11 +74,11 @@ export function Footer() {
         <div className="flex flex-col items-center justify-between gap-6 border-t border-gold/15 pt-8 sm:flex-row">
           <div className="flex items-center gap-3">
             <Image
-              src="/images/logo.png"
-              alt="Monoes open-source AI agent platform logo"
-              width={36}
-              height={36}
-              className="rounded-full opacity-80 border border-gold/20"
+              src="/images/logo-wordmark-light.svg"
+              alt="Monoes"
+              width={115}
+              height={18}
+              className="h-[18px] w-auto opacity-90"
             />
             <span className="text-xs text-gold/60">
               &copy; {new Date().getFullYear()} Monoes. All rights reserved.

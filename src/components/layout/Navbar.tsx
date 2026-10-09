@@ -1,167 +1,95 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { motion } from "framer-motion";
 import { UserMenu } from "@/components/community/UserMenu";
 import { useCurrentUser } from "@/lib/community/use-current-user";
-import { SOCIAL_LINKS } from "@/lib/social-links";
-import { socialIcons } from "@/components/icons/social-icons";
 
 const navLinks = [
-  { label: "Community", href: "/community" },
-  { label: "Library", href: "/library" },
   { label: "Projects", href: "/product#projects" },
   { label: "Workforce", href: "/workforce" },
   { label: "Whitepaper", href: "/whitepaper" },
   { label: "Blog", href: "/blog" },
+  { label: "Library", href: "/library" },
+  { label: "Community", href: "/community" },
 ];
 
-const navSocialLinks = SOCIAL_LINKS.filter((link) => link.id === "github" || link.id === "x");
+const getStarted =
+  "whitespace-nowrap rounded-full bg-gold px-4 py-2.5 text-sm font-bold md:px-5 text-espresso transition-colors hover:bg-gold-warm";
 
 export function Navbar() {
   const me = useCurrentUser();
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-
-  useEffect(() => {
-    function handleScroll() {
-      setScrolled(window.scrollY > 30);
-    }
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  const [open, setOpen] = useState(false);
 
   return (
-    <>
-      <motion.nav
-        className="fixed left-0 right-0 top-0 z-40 flex items-center justify-between px-8 py-4 transition-all duration-300"
-        style={{
-          backgroundColor: scrolled ? "rgba(42,35,24,0.92)" : "rgba(42,35,24,0.75)",
-          backdropFilter: "blur(12px)",
-          borderBottom: scrolled
-            ? "1px solid rgba(200,169,126,0.18)"
-            : "1px solid rgba(200,169,126,0.08)",
-        }}
+    <header className="pointer-events-none fixed inset-x-0 top-3.5 z-40 flex justify-center px-4 md:px-8">
+      <nav
+        aria-label="Primary"
+        className="pointer-events-auto relative flex w-full max-w-[1080px] items-center gap-2 rounded-full border border-gold/20 bg-espresso/90 py-2 pl-4 pr-2.5 text-ivory shadow-[0_10px_30px_-18px_#1a1208] backdrop-blur-md"
       >
-        <Link href="/" className="flex items-center gap-3">
+        <Link href="/" className="mr-auto flex items-center" aria-label="Monoes home">
           <Image
-            src="/images/monkey/welcoming-arms.png"
-            alt="Monoes open-source AI agent platform logo"
-            width={36}
-            height={36}
-            className="h-9 w-9 rounded-full object-cover object-top shadow-soft border border-gold/20"
+            src="/images/logo-wordmark-light.svg"
+            alt="Monoes"
+            width={153}
+            height={24}
+            className="h-5 w-auto sm:h-6"
+            priority
           />
-          <span className="text-sm font-semibold uppercase tracking-widest text-ivory">
-            Monoes
-          </span>
         </Link>
 
-        {/* Desktop links */}
-        <div className="hidden items-center gap-8 md:flex">
+        <ul className="hidden items-center md:flex">
           {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="group relative text-sm text-ivory/75 transition-colors hover:text-gold"
-            >
-              {link.label}
-              <span className="absolute -bottom-1 left-0 h-px w-0 bg-gold transition-all duration-300 ease-out group-hover:w-full" />
-            </Link>
+            <li key={link.href}>
+              <Link
+                href={link.href}
+                className="inline-flex min-h-11 items-center rounded-full px-3.5 text-sm font-medium text-ivory/75 transition-colors hover:text-gold"
+              >
+                {link.label}
+              </Link>
+            </li>
           ))}
-          <div className="flex items-center gap-3">
-            {navSocialLinks.map((link) => {
-              const Icon = socialIcons[link.id];
-              return (
-                <a
-                  key={link.id}
-                  href={link.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={`Monoes on ${link.name}`}
-                  title={link.name}
-                  className="text-ivory/75 transition-colors hover:text-gold"
-                >
-                  <Icon className="h-4 w-4" />
-                </a>
-              );
-            })}
-          </div>
-          {!me && (
-            <Link
-              href="/community/login"
-              className="rounded-full border border-gold/40 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-gold transition-all hover:bg-gold hover:text-espresso"
-            >
-              Get started →
+        </ul>
+
+        <div className="flex items-center gap-1 [&_a]:whitespace-nowrap">
+          <UserMenu />
+          {me === null && (
+            <Link href="/community/login" className={`${getStarted} ml-1`}>
+              Get started
             </Link>
           )}
         </div>
 
-        <div className="flex items-center gap-4">
-          <UserMenu />
+        <button
+          type="button"
+          className="inline-flex h-11 w-11 items-center justify-center rounded-full text-ivory/80 transition-colors hover:text-gold md:hidden"
+          onClick={() => setOpen((v) => !v)}
+          aria-label="Toggle menu"
+          aria-expanded={open}
+          aria-controls="mobile-menu"
+        >
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+            {open ? <path d="M6 6l12 12M6 18L18 6" /> : <path d="M4 8h16M4 16h16" />}
+          </svg>
+        </button>
 
-          {/* Mobile hamburger */}
-          <button
-            className="text-ivory/80 hover:text-gold md:hidden"
-            onClick={() => setMobileOpen(!mobileOpen)}
-            aria-label="Toggle menu"
-            aria-expanded={mobileOpen}
-            aria-controls="mobile-menu"
-          >
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.5"
-            >
-              {mobileOpen ? (
-                <path d="M6 6l12 12M6 18L18 6" />
-              ) : (
-                <path d="M4 8h16M4 16h16" />
-              )}
-            </svg>
-          </button>
-        </div>
-      </motion.nav>
-
-      {/* Mobile menu */}
-      {mobileOpen && (
-        <div id="mobile-menu" className="fixed inset-x-0 top-16 z-30 border-b border-gold/20 bg-espresso-deep/95 backdrop-blur-lg md:hidden">
-          <div className="flex flex-col gap-4 px-8 py-6">
+        {open && (
+          <ul id="mobile-menu" className="absolute inset-x-0 top-[calc(100%+8px)] flex flex-col rounded-3xl border border-gold/20 bg-espresso-deep p-2 md:hidden">
             {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                onClick={() => setMobileOpen(false)}
-                className="text-sm text-ivory/80 hover:text-gold"
-              >
-                {link.label}
-              </Link>
+              <li key={link.href}>
+                <Link
+                  href={link.href}
+                  onClick={() => setOpen(false)}
+                  className="flex min-h-11 items-center rounded-2xl px-4 text-ivory/85 hover:text-gold"
+                >
+                  {link.label}
+                </Link>
+              </li>
             ))}
-            <div className="flex items-center gap-4 pt-2">
-              {navSocialLinks.map((link) => {
-                const Icon = socialIcons[link.id];
-                return (
-                  <a
-                    key={link.id}
-                    href={link.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={`Monoes on ${link.name}`}
-                    title={link.name}
-                    className="text-ivory/75 transition-colors hover:text-gold"
-                  >
-                    <Icon className="h-5 w-5" />
-                  </a>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      )}
-    </>
+          </ul>
+        )}
+      </nav>
+    </header>
   );
 }
