@@ -34,6 +34,7 @@ const staticRoutes: MetadataRoute.Sitemap = [
   { url: `${BASE_URL}/projects/mono-clip`, changeFrequency: "monthly", priority: 0.7, lastModified: new Date() },
   { url: `${BASE_URL}/projects/monotask`, changeFrequency: "monthly", priority: 0.7, lastModified: new Date() },
   { url: `${BASE_URL}/projects/monomind/architecture`, changeFrequency: "monthly", priority: 0.6, lastModified: new Date() },
+  { url: `${BASE_URL}/projects/monomind/usecase`, changeFrequency: "monthly", priority: 0.6, lastModified: new Date() },
   { url: `${BASE_URL}/projects/mono-agent/architecture`, changeFrequency: "monthly", priority: 0.6, lastModified: new Date() },
   { url: `${BASE_URL}/projects/mono-clip/architecture`, changeFrequency: "monthly", priority: 0.6, lastModified: new Date() },
   { url: `${BASE_URL}/projects/monotask/architecture`, changeFrequency: "monthly", priority: 0.6, lastModified: new Date() },
