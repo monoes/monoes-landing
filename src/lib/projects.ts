@@ -87,7 +87,7 @@ export const projects: Project[] = [
       intro:
         "Everything is also available from the terminal. The commands you'll use most, grouped by job.",
       aiNote:
-        "Inside Claude Code and the other supported assistants, the same features are exposed through the MCP server (69 tools by default, 217 on demand) and /mastermind:* slash commands, so you rarely need to type these yourself.",
+        "Inside Claude Code and the other supported assistants, the same features are exposed through the MCP server (20 core tools by default, 198 in full mode) and /mastermind:* slash commands, so you rarely need to type these yourself.",
       groups: [
         {
           title: "Setup & health",
