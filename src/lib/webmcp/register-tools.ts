@@ -27,7 +27,7 @@ export function registerWebMcpTools(): void {
 
   modelContext.registerTool({
     name: "list_projects",
-    description: "List monoes' open-source AI agent projects (Monomind, Mono Agent, MonoClip, MonoTask, and others) with their tagline, description, and GitHub repository.",
+    description: "List monoes' AI agent projects (Monomind, Mono Agent, MonoClip, MonoTask, and others) with their tagline, description, and GitHub repository.",
     inputSchema: { type: "object", properties: {}, required: [] },
     execute: () => ({
       content: [

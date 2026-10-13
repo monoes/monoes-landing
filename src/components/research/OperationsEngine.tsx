@@ -4,7 +4,7 @@ import { motion, useReducedMotion } from "framer-motion";
 const expo = [0.16, 1, 0.3, 1] as const;
 
 const CAPABILITIES = [
-  { req: "100+ workflow nodes, DAG-based execution", cap: "A multi-step process (a data pipeline, a campaign, an outreach sequence) becomes a reusable workflow instead of a person following a checklist by hand." },
+  { req: "167 workflow node types, DAG-based execution", cap: "A multi-step process (a data pipeline, a campaign, an outreach sequence) becomes a reusable workflow instead of a person following a checklist by hand." },
   { req: "Real browser automation (your own logged-in Chrome)", cap: "Tasks that only exist inside a web UI, a portal or a tool with no API, get automated directly instead of waiting on an integration to be built." },
   { req: "Multi-profile isolation", cap: "Multiple accounts, clients, or business units run in parallel with fully isolated data and sessions, no cross-contamination." },
   { req: "Human-in-Loop controls", cap: "Any step in a workflow can pause for a human decision before continuing. Judgment stays human; repetition doesn't." },

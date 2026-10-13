@@ -23,7 +23,7 @@ export default function AboutPage() {
 
       <div className="space-y-6 text-gold-bronze leading-relaxed text-lg font-light">
         <p>
-          Monoes is the company behind four open-source AI tools -{" "}
+          Monoes is the company behind four AI tools -{" "}
           <Link href="/projects/monomind" className="text-gold-dark underline underline-offset-2 hover:text-espresso">
             Monomind
           </Link>

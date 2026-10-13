@@ -10,7 +10,7 @@ import { Close } from "@/components/home/Close";
 
 export const metadata: Metadata = {
   description:
-    "Mono Agent automates the workflows. Monomind orchestrates the company that builds everything else. Self-host both for $0 under Apache-2.0 and MIT, or hire Monoes Workforce to run it for your business.",
+    "Mono Agent automates the workflows. Monomind orchestrates the company that builds everything else. Run both yourself for $0 (Monomind is Apache-2.0; Mono Agent is free of charge and uses your existing AI subscription, no AI credits), or hire Monoes Workforce to run it for your business.",
   alternates: { canonical: "/" },
 };
 

@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     template: "%s · Monoes",
   },
   description:
-    "One engine, two paths. Self-host Monomind, Mono Agent, MonoClip, and MonoTask for free as open source - or hire Monoes Workforce to deploy AI digital workers that run your real business processes end-to-end.",
+    "One engine, two paths. Run Monomind, Mono Agent, MonoClip, and MonoTask yourself for free - or hire Monoes Workforce to deploy AI digital workers that run your real business processes end-to-end.",
   alternates: { canonical: "/" },
   icons: {
     icon: [
@@ -38,7 +38,7 @@ export const metadata: Metadata = {
     siteName: "Monoes",
     title: "Monoes: Open-source AI agents you run yourself or hire us to run",
     description:
-      "Self-host four open-source AI tools for free, or hire Monoes Workforce to automate your business processes end-to-end.",
+      "Run four AI tools yourself for free, or hire Monoes Workforce to automate your business processes end-to-end.",
     images: [{ url: "/images/logo-512.png", width: 512, height: 512, alt: "Monoes" }],
   },
   twitter: {
@@ -56,7 +56,7 @@ const organizationSchema = {
   url: SITE_URL,
   logo: `${SITE_URL}/images/logo-512.png`,
   description:
-    "Monoes builds open-source AI agent tools (Monomind, Mono Agent, MonoClip, MonoTask) and runs Monoes Workforce, a managed service that deploys AI digital workers to automate business processes end-to-end on the ERP, CRM and email systems a company already uses.",
+    "Monoes builds AI agent tools (open-source Monomind, MonoClip and MonoTask, and Mono Agent, free of charge) and runs Monoes Workforce, a managed service that deploys AI digital workers to automate business processes end-to-end on the ERP, CRM and email systems a company already uses.",
   sameAs: SOCIAL_LINKS.map((link) => link.href),
 };
 
