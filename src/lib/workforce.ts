@@ -71,18 +71,13 @@ export interface EngagementPhase {
 export const engagementPhases: EngagementPhase[] = [
   {
     phase: "Discovery",
-    timeline: "1–5 days",
-    outcome: "Pick the highest-ROI process (or map several); define success and expected ROI.",
-  },
-  {
-    phase: "Pilot",
-    timeline: "3–6 weeks",
-    outcome: "Connect your systems, set approval rules, run the first worker in parallel.",
+    timeline: "1 day or 1 week",
+    outcome: "Receive the research: process documentation, org charts, bottlenecks, a suggested solution and an automation for each. You pay after delivery.",
   },
   {
     phase: "Expand & build trust",
     timeline: "1–3 months",
-    outcome: "Raise the automation rate; add a second and third worker.",
+    outcome: "Take the automations live on your systems, raise the automation rate, add more workers.",
   },
   {
     phase: "Scale",
@@ -98,6 +93,7 @@ export interface DiscoveryPackage {
   duration: string;
   description: string;
   deliverables: string[];
+  cta: string;
   mailSubject: string;
 }
 
@@ -108,12 +104,15 @@ export const discoveryPackages: DiscoveryPackage[] = [
     price: "$3,000",
     duration: "1 day",
     description:
-      "A focused audit of a single team or process. We spend a day with the people who do the work, then hand you a findings report.",
+      "A focused look at a single team or process. We spend a day with the people who do the work, then deliver the research and the automations.",
     deliverables: [
-      "One process mapped end-to-end",
-      "The single highest-ROI automation opportunity identified",
-      "Findings report with a recommended pilot scope",
+      "Process documentation: the process mapped end-to-end, step by step",
+      "Org chart of the people and roles involved",
+      "The bottlenecks, identified and ranked",
+      "A suggested solution for each bottleneck",
+      "An automation for each bottleneck",
     ],
+    cta: "Book the 1-day audit",
     mailSubject: "Monoes Workforce: 1-Day Discovery",
   },
   {
@@ -122,23 +121,146 @@ export const discoveryPackages: DiscoveryPackage[] = [
     price: "$12,000",
     duration: "5 days",
     description:
-      "A full audit across departments. We interview managers and staff, map processes, and rank the opportunities we find.",
+      "The same research across departments. We interview managers and staff, then deliver the findings and the automations.",
     deliverables: [
-      "Multi-department process map (Finance, Ops, HR, Sales, Support)",
-      "Ranked opportunity backlog with estimated ROI per process",
-      "Prioritized implementation roadmap",
+      "Process documentation across departments (Finance, Ops, HR, Sales, Support)",
+      "Org charts of the teams and roles involved",
+      "The bottlenecks in each process, identified and ranked",
+      "A suggested solution for each bottleneck",
+      "An automation for each bottleneck",
+      "A prioritized implementation roadmap",
     ],
+    cta: "Book the 5-day audit",
     mailSubject: "Monoes Workforce: 5-Day Discovery",
+  },
+  {
+    id: "sme",
+    name: "SME Discovery",
+    price: "From $15,000",
+    duration: "Scoped to your business",
+    description:
+      "For small and mid-sized businesses. We discover how your business really runs and chart all of it. The price scales with the number of processes in scope. Research only: no bottleneck analysis, solutions or automations.",
+    deliverables: [
+      "Discovery of your processes: every process in scope identified and described",
+      "A chart of every process, end to end",
+      "Process documentation for each one",
+      "Org chart of the teams and roles involved",
+    ],
+    cta: "Book SME Discovery",
+    mailSubject: "Monoes Workforce: SME Discovery",
+  },
+];
+
+export const discoveryPaymentNote =
+  "You pay after delivery, not before. We invoice when the research and the automations are delivered to you.";
+
+export interface DeliveryItem {
+  title: string;
+  detail: string;
+}
+
+export interface DeliveryPack {
+  id: string;
+  name: string;
+  summary: string;
+  items: DeliveryItem[];
+}
+
+export const deliveryPacks: DeliveryPack[] = [
+  {
+    id: "1-day",
+    name: "1-Day delivery pack",
+    summary: "One process, studied in a day and handed over as documents and automations.",
+    items: [
+      {
+        title: "Process documentation",
+        detail: "A written, step-by-step record of the process we studied: inputs, outputs, systems, handoffs and the rules people apply.",
+      },
+      {
+        title: "Org chart",
+        detail: "Who is involved in the process: roles, owners and approvers, and how work moves between them.",
+      },
+      {
+        title: "Bottleneck report",
+        detail: "Where the process slows down or breaks, ranked, with what we observed behind each one.",
+      },
+      {
+        title: "Solution suggestions",
+        detail: "A recommended fix for each bottleneck, with what it needs from your systems and your people.",
+      },
+      {
+        title: "Automations",
+        detail: "One automation for each bottleneck, handed over for you to review.",
+      },
+    ],
+  },
+  {
+    id: "5-day",
+    name: "5-Day delivery pack",
+    summary: "The same research across departments, plus the plan for what to build next.",
+    items: [
+      {
+        title: "Process documentation",
+        detail: "A written record of each process we studied across Finance, Ops, HR, Sales and Support.",
+      },
+      {
+        title: "Org charts",
+        detail: "The teams and roles involved in each process, with owners and approvers.",
+      },
+      {
+        title: "Bottleneck report",
+        detail: "The bottlenecks in every process we studied, ranked, with what we observed behind each one.",
+      },
+      {
+        title: "Solution suggestions",
+        detail: "A recommended fix for each bottleneck.",
+      },
+      {
+        title: "Automations",
+        detail: "One automation for each bottleneck, handed over for you to review.",
+      },
+      {
+        title: "Ranked opportunity backlog",
+        detail: "Every opportunity we found across departments, in priority order.",
+      },
+      {
+        title: "Implementation roadmap",
+        detail: "A prioritized plan for what to build next and in what order.",
+      },
+    ],
+  },
+  {
+    id: "sme",
+    name: "SME Discovery delivery pack",
+    summary: "Discovery and charting only. Bottlenecks, solutions and automations are in the 1-Day and 5-Day packs.",
+    items: [
+      {
+        title: "Process discovery",
+        detail: "Every process in scope identified and described: who does it, which systems it touches and how often it runs.",
+      },
+      {
+        title: "Process charts",
+        detail: "Each process charted end to end, so you can see every step and handoff on one page.",
+      },
+      {
+        title: "Process documentation",
+        detail: "A written record of each process: inputs, outputs, systems, handoffs and the rules people apply.",
+      },
+      {
+        title: "Org chart",
+        detail: "The teams and roles involved in the processes, with owners and approvers.",
+      },
+    ],
   },
 ];
 
 export const discoveryContactEmail = "hello@monoes.me";
 
 export const pilotBracketNote =
-  "Typical pilots start at $15,000 and scale with the number of processes and systems connected. You will get a fixed, itemized quote inside your Discovery report - no open-ended billing.";
+  "SME Discovery starts at $15,000 and scales with the number of processes in scope. It is a fixed price agreed before work starts and, like the others, paid after delivery. Implementation is scoped and quoted after the research is delivered - no open-ended billing.";
 
 export const discoveryEmailBody =
-  "Tell us a little about your business and the process you'd like to automate:\n\n- Company name:\n- Team size:\n- Systems you run (ERP / CRM / email):\n- The process that eats the most time:\n- Preferred Discovery package (1-Day $3,000 / 5-Day $12,000):\n";
+  "Tell us a little about your business and the process you'd like to automate:\n\n- Company name:\n- Team size:\n- Systems you run (ERP / CRM / email):\n- The process that eats the most time:\n- Preferred Discovery package (1-Day $3,000 / 5-Day $12,000 / SME Discovery from $15,000):\n";
 
 export interface HumanInLoopLevel {
   level: number;
@@ -329,7 +451,7 @@ export const foundingClientProgram = {
   terms: [
     {
       label: "20% off implementation",
-      detail: "Applies to the first paid pilot and rollout after your Discovery audit.",
+      detail: "Applies to the first paid implementation and rollout after your Discovery audit.",
     },
     {
       label: "Direct access to the person doing the work",

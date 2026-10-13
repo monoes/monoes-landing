@@ -116,6 +116,12 @@
         "hooks": [
           {
             "type": "command",
+            "command": "node -e \"var c=require('child_process'),p=require('path'),u=require('url'),r;try{r=c.execSync('git rev-parse --show-toplevel',{encoding:'utf8'}).trim()}catch(e){r=process.cwd()}var f=p.join(r,'.claude/helpers/auto-memory-hook.mjs');import(u.pathToFileURL(f).href)\" sync",
+            "timeout": 8000,
+            "continueOnError": true
+          },
+          {
+            "type": "command",
             "command": "sh -c 'exec node \"${CLAUDE_PROJECT_DIR:-.}/.claude/helpers/hook-handler.cjs\" session-end'",
             "timeout": 10000
           }
@@ -287,6 +293,9 @@
         "enabled": true
       },
       "agentScopes": {
+        "enabled": true
+      },
+      "memoryGraph": {
         "enabled": true
       }
     },

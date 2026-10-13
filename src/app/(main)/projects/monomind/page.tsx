@@ -2,6 +2,7 @@ import { getProject } from "@/lib/projects";
 import { ProjectPageLayout } from "@/components/projects/ProjectPageLayout";
 import { OrgSimulation } from "@/components/demos/OrgSimulation";
 import { MonographDemo } from "@/components/demos/MonographDemo";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getMonomindVersion } from "@/lib/versions";
@@ -61,6 +62,18 @@ export default async function MonomindPage() {
         project={project}
         demo={
           <div className="flex flex-col gap-6">
+            <Link
+              href="/projects/monomind/usecase"
+              className="group flex items-center justify-between rounded-2xl border border-gold/20 bg-espresso-deep/60 px-6 py-5 text-ivory transition-colors hover:border-gold/50"
+            >
+              <span>
+                <span className="block text-xs font-semibold uppercase tracking-[0.2em] text-gold">Use cases</span>
+                <span className="mt-1 block text-lg">See an org build features, ship, and write the blog</span>
+              </span>
+              <span aria-hidden="true" className="text-gold transition-transform group-hover:translate-x-1">
+                →
+              </span>
+            </Link>
             <OrgSimulation />
             <MonographDemo />
           </div>

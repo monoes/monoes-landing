@@ -127,6 +127,13 @@
       "when": 1791543108717,
       "tag": "0017_monoagent_audience",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "6",
+      "when": 1791793617536,
+      "tag": "0018_build_first_application",
+      "breakpoints": true
     }
   ]
 }

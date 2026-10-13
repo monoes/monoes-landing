@@ -199,14 +199,17 @@
 .lp .dial-name { font: 600 14px / 1 var(--font-code); color: var(--accent-2); margin-bottom: 10px; }
 .lp .dial-read p:last-child { font-size: clamp(20px, 2.2vw, 26px); max-width: 40ch; }
 
-.lp .packages { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
-.lp .packages li { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; padding: clamp(24px, 3vw, 40px); border-radius: 28px; background: var(--raised); border: 1px solid var(--line); }
-.lp .pkg-price { font: 700 clamp(3rem, 6vw, 5rem) / 1 var(--font-display); letter-spacing: -0.04em; color: var(--accent-1); }
-.lp .packages h3 { font: 700 24px / 1.1 var(--font-display); }
-.lp .packages li p:not(.pkg-price) { color: var(--ink-muted); flex: 1; }
+.lp .services { padding: clamp(72px, 10vw, 140px) 0; background: var(--surface); }
+.lp .services h2 { font-size: clamp(2.2rem, 5vw, 4.2rem); max-width: 18ch; }
+.lp .service-grid { margin-top: 48px; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 16px; }
+.lp .service-grid li { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; padding: clamp(22px, 2.6vw, 34px); border-radius: 28px; background: var(--raised); border: 1px solid var(--line); }
+.lp .service-grid h3 { font: 700 24px / 1.1 var(--font-display); }
+.lp .service-grid li > p { color: var(--ink-muted); }
+.lp .service-grid .service-pay { color: var(--ink); font-weight: 700; flex: 1; }
+.lp .service-links { display: flex; flex-wrap: wrap; gap: 4px 20px; }
+.lp .service-links a { display: inline-flex; min-height: 44px; align-items: center; font-weight: 700; color: var(--accent-2); text-underline-offset: 6px; }
 .lp .more { margin-top: 28px; }
 .lp .more a { display: inline-flex; min-height: 44px; align-items: center; font-weight: 700; color: var(--accent-2); text-underline-offset: 6px; }
-@media (max-width: 700px) { .lp .packages { grid-template-columns: 1fr; } }
 
 /* Close */
 .lp .close { position: relative; overflow: hidden; isolation: isolate; padding: clamp(110px, 18vw, 240px) 0; text-align: center; background: var(--surface); }
@@ -269,7 +272,7 @@
 .lp .path h2 span { display: block; }
 .lp .path-steps {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   align-items: end;
   gap: 16px;
   margin-top: 64px;

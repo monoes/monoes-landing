@@ -1,0 +1,81 @@
+{
+  "id": "bf-07-kpi-rollup",
+  "name": "Build First 07 - KPI rollup from event log (DRAFT)",
+  "description": "Reads a combined events CSV and writes funnel counts and rates that map to the KPIs in strategy.md. No sending.",
+  "is_active": false,
+  "nodes": [
+    {
+      "id": "run",
+      "type": "trigger.manual",
+      "name": "Run",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "config": {}
+    },
+    {
+      "id": "read",
+      "type": "data.spreadsheet",
+      "name": "Read events CSV",
+      "position": {
+        "x": 240,
+        "y": 0
+      },
+      "config": {
+        "operation": "read_csv",
+        "file_path": "{{ $json.events_path }}",
+        "has_header": true
+      }
+    },
+    {
+      "id": "roll",
+      "type": "core.code",
+      "name": "Compute funnel and rates",
+      "position": {
+        "x": 480,
+        "y": 0
+      },
+      "config": {
+        "code": "(function () {\n  var ev = $input.all();\n  var count = function (name, f) { return ev.filter(function (e) { return e.event === name && (!f || f(e)); }).length; };\n  var rate = function (a, b) { return b > 0 ? Math.round((a / b) * 1000) / 10 : \"\"; };\n  var sentFirst = count(\"sent\", function (e) { return e.step === \"first_touch\"; });\n  var replies = count(\"reply_interested\") + count(\"reply_objection\") + count(\"reply_not_now\") + count(\"reply_stop\");\n  var positive = count(\"reply_interested\") + count(\"reply_objection\");\n  var by = {};\n  ev.forEach(function (e) {\n    if (e.event !== \"sent\") return;\n    var k = (e.channel || \"?\") + \"/\" + (e.line || \"?\");\n    by[k] = by[k] || { sent: 0 };\n    by[k].sent++;\n  });\n  return [{\n    sourced: count(\"sourced\"), scored_qualify: count(\"scored\", function (e) { return e.tier === \"qualify\"; }),\n    drafted: count(\"drafted\"), approved: count(\"approved\"), rejected_by_human: count(\"rejected\"), sent: count(\"sent\"),\n    first_touch_sent: sentFirst, replies: replies, replies_interested: count(\"reply_interested\"),\n    replies_objection: count(\"reply_objection\"), replies_not_now: count(\"reply_not_now\"), stops: count(\"reply_stop\"),\n    applications: count(\"applied\"), spec_calls: count(\"spec_call\"), specs_signed: count(\"spec_signed\"),\n    builds_delivered: count(\"build_delivered\"), builds_passed: count(\"build_passed\"), converted: count(\"converted\"),\n    reply_rate_pct: rate(replies, sentFirst), positive_reply_rate_pct: rate(positive, sentFirst), stop_rate_pct: rate(count(\"reply_stop\"), sentFirst),\n    application_rate_pct: rate(count(\"applied\"), sentFirst), spec_signed_per_call_pct: rate(count(\"spec_signed\"), count(\"spec_call\")),\n    pass_rate_pct: rate(count(\"build_passed\"), count(\"build_delivered\")), pass_to_convert_pct: rate(count(\"converted\"), count(\"build_passed\")),\n    sent_by_channel_line: JSON.stringify(by)\n  }];\n})()\n"
+      }
+    },
+    {
+      "id": "write",
+      "type": "data.spreadsheet",
+      "name": "Write KPI summary CSV",
+      "position": {
+        "x": 720,
+        "y": 0
+      },
+      "config": {
+        "operation": "write_csv",
+        "file_path": "/home/monoes/outreach/kpi/kpi-{{ $execution.id }}.csv",
+        "has_header": true
+      }
+    }
+  ],
+  "connections": [
+    {
+      "id": "c1",
+      "source": "run",
+      "source_handle": "main",
+      "target": "read",
+      "target_handle": "main"
+    },
+    {
+      "id": "c2",
+      "source": "read",
+      "source_handle": "main",
+      "target": "roll",
+      "target_handle": "main"
+    },
+    {
+      "id": "c3",
+      "source": "roll",
+      "source_handle": "main",
+      "target": "write",
+      "target_handle": "main"
+    }
+  ]
+}

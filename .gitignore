@@ -17,6 +17,9 @@ node_modules/
 .mcp.json
 .codex/
 .gemini/
+.opencode/
+.kimi-code/
+opencode.json
 GEMINI.md
 .mail/
 .monograph/
@@ -35,8 +38,6 @@ landing*.html
 landing*.css
 landing*.js
 
-# Docs / research drafts
-/docs/
 GRAPH_REPORT.md
 
 # macOS

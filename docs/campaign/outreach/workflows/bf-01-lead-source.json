@@ -1,0 +1,102 @@
+{
+  "id": "bf-01-lead-source",
+  "name": "Build First 01 - Source leads from public news (DRAFT)",
+  "description": "Reads one public RSS feed per run, extracts the company and the public event, and writes lead candidates. No contact handles, no sending.",
+  "is_active": false,
+  "nodes": [
+    {
+      "id": "run",
+      "type": "trigger.manual",
+      "name": "Run",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "config": {}
+    },
+    {
+      "id": "rss",
+      "type": "system.rss_read",
+      "name": "Read public feed",
+      "position": {
+        "x": 240,
+        "y": 0
+      },
+      "config": {
+        "url": "{{ $json.feed_url }}",
+        "limit": 20
+      }
+    },
+    {
+      "id": "extract",
+      "type": "agent.ask",
+      "name": "Extract company and event",
+      "position": {
+        "x": 480,
+        "y": 0
+      },
+      "config": {
+        "runtime": "claude",
+        "timeout": 120,
+        "prompt": "From this news item extract the company that is the subject, the public event that happened to it (one factual sentence, at least 15 characters), its website, country, funding stage (pre-seed, seed, series-a, bootstrapped or empty), up to 5 tags about its technology, and whether it operates in a regulated or safety-critical domain (medical, payments, safety-critical). Use only facts in the text. Return ONLY a JSON object with keys company, event, website, country, stage, tags, regulated_domain (boolean). Item: {{ $json.title }} {{ $json.description }}",
+        "output_key": "extracted"
+      }
+    },
+    {
+      "id": "norm",
+      "type": "core.code",
+      "name": "Normalize to lead schema and dedupe",
+      "position": {
+        "x": 720,
+        "y": 0
+      },
+      "config": {
+        "code": "(function () {\n  var slug = function (s) { return String(s || \"\").toLowerCase().replace(/[^a-z0-9]+/g, \"-\").replace(/^-|-$/g, \"\").slice(0, 40); };\n  var out = [];\n  var seen = {};\n  $input.all().forEach(function (i) {\n    var e = i.extracted || {};\n    if (typeof e === \"string\") { try { e = JSON.parse(e.replace(/^```(?:json)?\\s*|\\s*```$/g, \"\").trim()); } catch (x) { e = {}; } }\n    var org = String(e.company || \"\").trim();\n    var event = String(e.event || \"\").trim();\n    var link = i.link || i.url || \"\";\n    if (!org || event.length < 15 || !/^https?:\\/\\//.test(link)) return;\n    var id = \"src-\" + slug(org);\n    if (seen[id]) return;\n    seen[id] = true;\n    var date = i.pubDate || i.published || i.date || \"\";\n    var startup = /(seed|pre-seed|series|raised|funding|accelerator)/i.test(event + \" \" + (e.stage || \"\"));\n    out.push({\n      lead_id: id, org: org, website: e.website || \"\", country: e.country || \"\", stage: e.stage || \"\",\n      hook: event, hook_source_url: link, hook_date: date, funding_date: startup ? date : \"\",\n      audience: startup ? \"startups\" : \"companies\", status: \"sourced\", channel: \"\", handle: \"\", name: \"\", title: \"\",\n      consent_basis: \"\", region: e.country || \"\", regulated: String(e.regulated_domain === true),\n      employees: \"\", funds_evidence: \"\", tags: e.tags || \"\", score: \"\", source: \"public_rss\"\n    });\n  });\n  return out;\n})()\n"
+      }
+    },
+    {
+      "id": "write",
+      "type": "data.spreadsheet",
+      "name": "Write sourced leads CSV",
+      "position": {
+        "x": 960,
+        "y": 0
+      },
+      "config": {
+        "operation": "write_csv",
+        "file_path": "/home/monoes/outreach/sourced/sourced-{{ $execution.id }}.csv",
+        "has_header": true
+      }
+    }
+  ],
+  "connections": [
+    {
+      "id": "c1",
+      "source": "run",
+      "source_handle": "main",
+      "target": "rss",
+      "target_handle": "main"
+    },
+    {
+      "id": "c2",
+      "source": "rss",
+      "source_handle": "main",
+      "target": "extract",
+      "target_handle": "main"
+    },
+    {
+      "id": "c3",
+      "source": "extract",
+      "source_handle": "main",
+      "target": "norm",
+      "target_handle": "main"
+    },
+    {
+      "id": "c4",
+      "source": "norm",
+      "source_handle": "main",
+      "target": "write",
+      "target_handle": "main"
+    }
+  ]
+}

@@ -37,6 +37,7 @@ const principles = [
 
 export default function SecurityPage() {
   return (
+    <div className="bg-ivory">
     <main className="px-6 md:px-12 lg:px-24 py-24 md:py-32 max-w-3xl mx-auto">
       <span className="text-xs uppercase tracking-[0.25em] font-semibold text-gold-dark mb-6 block">
         Security
@@ -97,5 +98,6 @@ export default function SecurityPage() {
         .
       </p>
     </main>
+    </div>
   );
 }

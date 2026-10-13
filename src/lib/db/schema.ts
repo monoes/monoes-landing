@@ -460,3 +460,33 @@ export const emailClaimRequest = sqliteTable("email_claim_request", {
   consumedAt: integer("consumed_at", { mode: "timestamp" }),
   createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
 });
+
+// Build First applications: one row per submitted application, reviewed by hand.
+// status: new | waitlist | qualified | declined | building | accepted | not_accepted
+export const buildFirstApplication = sqliteTable(
+  "build_first_application",
+  {
+    id: text("id").primaryKey(),
+    status: text("status").notNull().default("new"),
+    audience: text("audience").notNull(),
+    line: text("line").notNull(),
+    fullName: text("full_name").notNull(),
+    email: text("email").notNull(),
+    role: text("role").notNull(),
+    organization: text("organization").notNull(),
+    website: text("website"),
+    country: text("country").notNull(),
+    canSign: integer("can_sign", { mode: "boolean" }).notNull(),
+    signerContact: text("signer_contact"),
+    profile: text("profile").notNull(),
+    dealStructure: text("deal_structure").notNull(),
+    budgetRange: text("budget_range").notNull(),
+    description: text("description").notNull(),
+    regulated: integer("regulated", { mode: "boolean" }).notNull(),
+    regulatedDetail: text("regulated_detail"),
+    systems: text("systems"),
+    consentAt: integer("consent_at", { mode: "timestamp" }).notNull(),
+    createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
+  },
+  (table) => [index("build_first_application_status_idx").on(table.status)],
+);

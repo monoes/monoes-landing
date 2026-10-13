@@ -1,0 +1,101 @@
+{
+  "id": "bf-02-lead-score",
+  "name": "Build First 02 - Score leads (DRAFT)",
+  "description": "Scores a leads CSV against the rubric. Regulated domains score 0. 60+ qualifies, 40-59 nurture, below 40 dropped. No sending.",
+  "is_active": false,
+  "nodes": [
+    {
+      "id": "run",
+      "type": "trigger.manual",
+      "name": "Run",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "config": {}
+    },
+    {
+      "id": "read",
+      "type": "data.spreadsheet",
+      "name": "Read leads CSV",
+      "position": {
+        "x": 240,
+        "y": 0
+      },
+      "config": {
+        "operation": "read_csv",
+        "file_path": "{{ $json.leads_path }}",
+        "has_header": true
+      }
+    },
+    {
+      "id": "score",
+      "type": "core.code",
+      "name": "Score",
+      "position": {
+        "x": 480,
+        "y": 0
+      },
+      "config": {
+        "code": "(function () {\n  var items = $input.all();\n  var DECIDER = /\\b(cto|cio|coo|ceo|founder|co-founder|vp|head of|director|chief|owner|managing)\\b/i;\n  var LEGACY = /(legacy|migration|modernization|modernisation|mainframe|cobol|php ?5|jquery|\\.net framework|vb6|monolith|end[- ]of[- ]life)/i;\n  var STAGES = { \"pre-seed\": 15, seed: 15, \"series-a\": 8, bootstrapped: 8 };\n  var daysAgo = function (s) { var t = Date.parse(s || \"\"); return isNaN(t) ? 9999 : (Date.now() - t) / 86400000; };\n  return items.map(function (l) {\n    var reasons = [];\n    var score = 0;\n    var add = function (n, why) { score += n; reasons.push(\"+\" + n + \" \" + why); };\n    var regulated = String(l.regulated).toLowerCase() === \"true\";\n    var title = String(l.title || \"\");\n    var signal = String(l.hook || \"\") + \" \" + String(l.tags || \"\");\n    if (l.audience === \"companies\") {\n      if (Number(l.employees) >= 50) add(20, \"company size 50+\");\n      if (DECIDER.test(title)) add(20, \"decision-maker title\");\n      if (LEGACY.test(signal)) add(25, \"legacy or modernization signal\");\n      if (daysAgo(l.hook_date) <= 90) add(15, \"public trigger in last 90 days\");\n      if (String(l.funds_evidence || \"\") !== \"\") add(10, \"evidence of ability to pay\");\n    } else {\n      if (daysAgo(l.funding_date) <= 548) add(30, \"funded in last 18 months\");\n      if (STAGES[String(l.stage || \"\").toLowerCase()]) add(STAGES[String(l.stage).toLowerCase()], \"stage \" + l.stage);\n      if (DECIDER.test(title)) add(15, \"founder or decision-maker title\");\n      if (/(hiring|first engineer|mvp|launch|building|prototype)/i.test(signal)) add(20, \"building signal\");\n      if (daysAgo(l.hook_date) <= 90) add(10, \"public trigger in last 90 days\");\n    }\n    if (String(l.hook_source_url || \"\").indexOf(\"http\") === 0 && String(l.hook || \"\").length >= 15) add(10, \"specific public hook\");\n    if (regulated) { score = 0; reasons.push(\"excluded: regulated domain\"); }\n    var tier = score >= 60 ? \"qualify\" : score >= 40 ? \"nurture\" : \"drop\";\n    return Object.assign({}, l, { score: score, tier: tier, score_reasons: reasons.join(\"; \") });\n  });\n})()\n"
+      }
+    },
+    {
+      "id": "keep",
+      "type": "core.filter",
+      "name": "Drop low scores",
+      "position": {
+        "x": 720,
+        "y": 0
+      },
+      "config": {
+        "condition": "{{ ne $json.tier \"drop\" }}",
+        "mode": "keep"
+      }
+    },
+    {
+      "id": "write",
+      "type": "data.spreadsheet",
+      "name": "Write scored CSV",
+      "position": {
+        "x": 960,
+        "y": 0
+      },
+      "config": {
+        "operation": "write_csv",
+        "file_path": "/home/monoes/outreach/scored/scored-{{ $execution.id }}.csv",
+        "has_header": true
+      }
+    }
+  ],
+  "connections": [
+    {
+      "id": "c1",
+      "source": "run",
+      "source_handle": "main",
+      "target": "read",
+      "target_handle": "main"
+    },
+    {
+      "id": "c2",
+      "source": "read",
+      "source_handle": "main",
+      "target": "score",
+      "target_handle": "main"
+    },
+    {
+      "id": "c3",
+      "source": "score",
+      "source_handle": "main",
+      "target": "keep",
+      "target_handle": "main"
+    },
+    {
+      "id": "c4",
+      "source": "keep",
+      "source_handle": "main",
+      "target": "write",
+      "target_handle": "main"
+    }
+  ]
+}

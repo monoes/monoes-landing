@@ -4,6 +4,7 @@ import { ValueProps } from "@/components/workforce/ValueProps";
 import { CapabilitiesGrid } from "@/components/workforce/CapabilitiesGrid";
 import { HowItWorks } from "@/components/workforce/HowItWorks";
 import { DiscoveryPackages } from "@/components/workforce/DiscoveryPackages";
+import { DeliveryPacks } from "@/components/workforce/DeliveryPacks";
 import { FoundingClientProgram } from "@/components/workforce/FoundingClientProgram";
 import { BookACall } from "@/components/workforce/BookACall";
 import { PoweredByMonomind } from "@/components/workforce/PoweredByMonomind";
@@ -11,7 +12,7 @@ import { PoweredByMonomind } from "@/components/workforce/PoweredByMonomind";
 export const metadata: Metadata = {
   title: "Monoes Workforce: AI digital workers for your business processes",
   description:
-    "Digital workers that execute your business processes end-to-end, on the ERP, CRM, and email you already run. Start with a priced Discovery audit.",
+    "Digital workers that execute your business processes end-to-end, on the ERP, CRM, and email you already run. Start with Discovery: we deliver the research first, and you pay after delivery.",
   alternates: { canonical: "/workforce" },
 };
 
@@ -33,7 +34,7 @@ export default function WorkforcePage() {
     url: "https://monoes.me/workforce",
     offers: {
       "@type": "Offer",
-      description: "Discovery audit starting at $4,500 for process mapping and ROI analysis",
+      description: "Discovery audit from $3,000, invoiced after delivery: process documentation, org charts, bottlenecks, suggested solutions and an automation for each",
     },
   };
 
@@ -45,6 +46,7 @@ export default function WorkforcePage() {
         <CapabilitiesGrid />
         <HowItWorks />
         <DiscoveryPackages />
+        <DeliveryPacks />
         <FoundingClientProgram />
         <BookACall />
         <PoweredByMonomind />

@@ -25,7 +25,7 @@ const heroStats: Record<string, { label: string; value: string }[]> = {
   "monomind": [
     { label: "Coding Assistants", value: "5" },
     { label: "Org Runtimes",      value: "14" },
-    { label: "MCP Tools",         value: "217" },
+    { label: "MCP Tools",         value: "198" },
   ],
   "mono-clip": [
     { label: "Binary Size",    value: "~8MB" },

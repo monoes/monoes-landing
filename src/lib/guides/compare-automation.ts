@@ -180,7 +180,7 @@ export const automationComparisons: Guide[] = [
       rows: [
         ["Approach", "AI agents inside deterministic workflows with policy rules", "RPA robots replaying UI steps, plus AI add-ons"],
         ["Delivery", "Managed service (Workforce) or self-hosted open source (Mono Agent, Monomind)", "Licensed platform, usually with an implementation partner"],
-        ["Entry cost", "Discovery audit from $3,000; pilots typically from $15,000", "Enterprise licensing (contact sales)"],
+        ["Entry cost", "Discovery audit from $3,000, paid after delivery; SME Discovery from $15,000", "Enterprise licensing (contact sales)"],
         ["Desktop / Citrix apps", "Not supported", "Core strength"],
         ["Human oversight", "Five autonomy levels, approval policies, audit trail per action", "Attended robots, Action Center"],
         ["Best fit", "SMB and mid-market back-office teams", "Large enterprises with RPA centers of excellence"],
@@ -191,7 +191,7 @@ export const automationComparisons: Guide[] = [
         heading: "How Monoes Workforce works",
         paragraphs: [
           "Every digital worker is built from four layers: a deterministic Workflow that fixes the steps, an Agent that reads, extracts and decides within a step, a Policy layer holding versioned rules such as 'invoices over $20,000 require approval', and Connectors to your ERP, CRM, email, spreadsheets, accounting and ticketing systems.",
-          "Engagements run Discovery (1-5 days) → Pilot (3-6 weeks, run in parallel with your team) → Expand (1-3 months) → Scale. Workers start at human-approval level and move toward autonomous execution only as measured accuracy earns it.",
+          "Engagements run Discovery (1 day or 1 week) → Expand (1-3 months, running in parallel with your team at first) → Scale. Workers start at human-approval level and move toward autonomous execution only as measured accuracy earns it.",
         ],
       },
       {

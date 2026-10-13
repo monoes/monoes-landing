@@ -29,7 +29,7 @@
 .lp *::after {
   box-sizing: border-box;
 }
-.lp a {
+.lp main a {
   color: inherit;
 }
 .lp ::selection {
