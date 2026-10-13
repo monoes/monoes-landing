@@ -81,7 +81,7 @@ Sequence timing: first touch; follow-up 1 after 4 days; follow-up 2 after 7 more
 The workflow asks the model for a fresh message per lead using the hook; these show the shape. Word counts were checked: 30 to 62 words, one link, no banned phrases.
 
 **LinkedIn** (ends with the opt-out sentence)
-- First touch: "Hi {first_name}, I saw {hook}. Monoes modernizes legacy stacks against a written Acceptance Spec, built in staging, and you pay only if the build meets every requirement (terms apply). Would a sample Spec for a project like yours be useful? https://monoes.me/build-first/companies Reply STOP and I won't message again."
+- First touch: "Hi {first_name}, I saw {hook}. Monoes modernizes software stacks against a written Acceptance Spec, built in staging, and you pay only if the build meets every requirement (terms apply). Would a sample Spec for a project like yours be useful? https://monoes.me/build-first/companies Reply STOP and I won't message again."
 - Follow-up 1: "Hi {first_name}, one concrete example of what I meant: a Spec row reads "every endpoint returns the same response on the new build as on the legacy system, tested with a replayed request set". Pass or fail, no opinions. Happy to draft rows for {org}: https://monoes.me/build-first/companies Reply STOP and I won't message again."
 - Follow-up 2: "Hi {first_name}, quick question about {org}: which part of the current system would you least want to touch during a migration? That is usually the first row we write into a Spec. https://monoes.me/build-first/companies Reply STOP and I won't message again."
 - Breakup: "Hi {first_name}, I'll stop here so I don't clutter your inbox. If modernizing {org}'s stack comes up later, a sample Spec is at https://monoes.me/build-first/companies. Either way, good luck with {hook_short}. Reply STOP and I won't message again."
@@ -143,6 +143,8 @@ Verified by script and by running in monoagent (2026-10-13), using fake leads on
 - `bf-06` (no-send copy): a STOP reply was added to the suppression list immediately and got no reply. An objection reply was classified correctly; a 112-word draft was caught by the lint and sent to `needs-rewrite/`; after the prompt was tightened, a 74-word draft reached approval.
 - The first dry run found and fixed a real bug: `core.set` assignments must be stored as a real array, not a JSON string.
 - About 30 Node unit assertions on the guard, lint, scoring, triage and rollup code.
+
+Known gap (rule set 2026-10-13): every person or company we approach must first be recorded in monoagent's People, and every message in Communications, before it reaches human approval. The sequence workflows (`bf-03` to `bf-05`) do not do this yet: they write CSV files and rely on a manual `people import`. To be adapted once the monoagent update is in; until then, import leads into People by hand before running a sequence.
 
 Not verified:
 - Any real send (never exercised, by design). The `linkedin.send_dms` and `x.send_dms` nodes have not been run, so their behaviour with a real account, pacing and failure modes are unknown.
