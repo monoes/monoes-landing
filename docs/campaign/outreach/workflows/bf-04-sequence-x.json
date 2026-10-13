@@ -1,0 +1,439 @@
+{
+  "id": "bf-04-sequence-x",
+  "name": "Build First 04 - x sequence with human approval (DRAFT)",
+  "description": "First touch, follow-up 1, follow-up 2 and breakup for x. Every message passes core.human_in_loop before it can leave the workflow. Approved messages are also staged in a CSV.",
+  "is_active": false,
+  "nodes": [
+    {
+      "id": "run",
+      "type": "trigger.manual",
+      "name": "Run",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "config": {}
+    },
+    {
+      "id": "rl",
+      "type": "data.spreadsheet",
+      "name": "Read leads CSV",
+      "position": {
+        "x": 240,
+        "y": -80
+      },
+      "config": {
+        "operation": "read_csv",
+        "file_path": "{{ $json.leads_path }}",
+        "has_header": true
+      }
+    },
+    {
+      "id": "rs",
+      "type": "data.spreadsheet",
+      "name": "Read suppression list",
+      "position": {
+        "x": 240,
+        "y": 80
+      },
+      "config": {
+        "operation": "read_csv",
+        "file_path": "{{ $json.suppression_path }}",
+        "has_header": true
+      }
+    },
+    {
+      "id": "m1",
+      "type": "core.merge",
+      "name": "Combine leads and suppression",
+      "position": {
+        "x": 480,
+        "y": 0
+      },
+      "config": {}
+    },
+    {
+      "id": "params",
+      "type": "core.set",
+      "name": "Attach cap parameters",
+      "position": {
+        "x": 700,
+        "y": 0
+      },
+      "config": {
+        "assignments": [
+          {
+            "field": "sent_today",
+            "value": "{{ $node[\"Run\"].json.sent_today }}",
+            "type": "number"
+          },
+          {
+            "field": "warmup_week",
+            "value": "{{ $node[\"Run\"].json.warmup_week }}",
+            "type": "number"
+          }
+        ],
+        "include_input": true
+      }
+    },
+    {
+      "id": "guard",
+      "type": "core.code",
+      "name": "Guard: suppression, consent, order, cap",
+      "position": {
+        "x": 940,
+        "y": 0
+      },
+      "config": {
+        "code": "(function () {\n  var CHANNEL = \"x\";\n  var CAPS = { linkedin: [5, 10, 15, 20], x: [5, 10, 15, 20], email: [10, 20, 30, 40] };\n  var GAP_DAYS = { follow_up_1: 4, follow_up_2: 7, breakup: 10 };\n  var PREV = { follow_up_1: \"first_touch\", follow_up_2: \"follow_up_1\", breakup: \"follow_up_2\" };\n  var CTA = { companies: \"https://monoes.me/build-first/companies\", startups: \"https://monoes.me/build-first/startups\" };\n  var OPT_OUT = { linkedin: \"Reply STOP and I won't message again.\", x: \"Reply STOP to opt out.\", email: \"\" };\n  var DEAD = [\"stop\", \"suppressed\", \"replied\", \"declined\", \"converted\", \"bounced\"];\n  var EMAIL_OK = [\"requested\", \"waitlist\", \"existing_relationship\", \"non_eu_b2b_reviewed\"];\n  var STEP_RULE = {\n    first_touch: \"Reference the specific hook in one natural clause. State the offer once. End with one clear call to action to read a sample Acceptance Spec or apply, using the link.\",\n    follow_up_1: \"Do not say 'just following up' or 'bumping this'. Add one new, concrete piece of value: how an Acceptance Spec row looks for their situation. One call to action.\",\n    follow_up_2: \"Ask one specific, easy-to-answer question about their situation. One call to action.\",\n    breakup: \"Close the loop kindly. Say you will not message again unless they reply. No guilt, no pressure. One optional call to action.\"\n  };\n  var VALUE = {\n    modernize: \"Monoes modernizes a legacy stack against a written Acceptance Spec, built in staging; the client pays only if the build meets every requirement.\",\n    flow: \"Monoes builds a process automation against a written Acceptance Spec, in staging; the client pays only if the build meets every requirement.\",\n    launch: \"Monoes builds a product from research to working software against a written Acceptance Spec; the client pays only if the build meets every requirement.\"\n  };\n  var items = $input.all();\n  var clean = function (v) { return String(v == null ? \"\" : v).trim().toLowerCase(); };\n  var suppression = {};\n  items.forEach(function (i) { if (i.identifier !== undefined) suppression[clean(i.identifier)] = true; });\n  var leads = items.filter(function (i) { return i.lead_id !== undefined; });\n  var param = items.filter(function (i) { return i.warmup_week !== undefined; })[0] || {};\n  var week = Math.min(4, Math.max(1, parseInt(param.warmup_week || 1, 10) || 1));\n  var remaining = CAPS[CHANNEL][week - 1] - (parseInt(param.sent_today || 0, 10) || 0);\n  var now = Date.now();\n  var out = [];\n  var skipped = [];\n  for (var k = 0; k < leads.length && out.length < remaining; k++) {\n    var l = leads[k];\n    var why = null;\n    var handle = clean(l.handle);\n    var domain = handle.indexOf(\"@\") > -1 ? handle.split(\"@\")[1] : \"\";\n    if (clean(l.channel) !== CHANNEL) why = \"wrong_channel\";\n    else if (DEAD.indexOf(clean(l.status)) > -1) why = \"status_\" + clean(l.status);\n    else if (suppression[handle] || suppression[clean(l.lead_id)] || (domain && suppression[domain])) why = \"suppressed\";\n    else if (String(l.regulated).toLowerCase() === \"true\") why = \"regulated_domain\";\n    else if (!(Number(l.score) >= 60)) why = \"score_below_60\";\n    else if (!GAP_DAYS[l.step] && l.step !== \"first_touch\") why = \"unknown_step\";\n    else if (!l.hook || String(l.hook).trim().length < 15 || !/^https?:\\/\\//.test(String(l.hook_source_url || \"\"))) why = \"no_specific_hook\";\n    else if (!CTA[l.audience] || !VALUE[l.line]) why = \"bad_audience_or_line\";\n    else if (l.step !== \"first_touch\") {\n      var last = Date.parse(l.last_sent_at || \"\");\n      if (clean(l.last_step) !== PREV[l.step] || isNaN(last)) why = \"sequence_order\";\n      else if ((now - last) / 86400000 < GAP_DAYS[l.step]) why = \"too_soon\";\n    } else if (clean(l.last_step)) why = \"already_contacted\";\n    if (!why && CHANNEL === \"email\") {\n      if (EMAIL_OK.indexOf(clean(l.consent_basis)) < 0) why = \"no_email_consent_basis\";\n      else if (/^(eu|de|uk|eea)$/i.test(String(l.region || \"\")) && [\"requested\", \"waitlist\", \"existing_relationship\"].indexOf(clean(l.consent_basis)) < 0) why = \"eu_needs_consent\";\n    }\n    if (why) { skipped.push({ lead_id: l.lead_id, reason: why }); continue; }\n    var first = String(l.name || \"\").trim().split(/\\s+/)[0] || \"there\";\n    var cta = CTA[l.audience];\n    var prompt = [\n      \"Write ONE \" + CHANNEL + \" message from Morteza at Monoes to \" + first + \".\",\n      \"Hard rules: under 80 words in total; plain text; no emojis; no placeholders; exactly one link, which must be \" + cta + \"; exactly one call to action.\",\n      OPT_OUT[CHANNEL] ? (\"The message must end with this exact sentence: \" + OPT_OUT[CHANNEL]) : \"Do not include a footer or unsubscribe text; it is added separately.\",\n      \"Reference this specific, public fact about them naturally: \" + l.hook,\n      \"Offer, stated once and accurately: \" + VALUE[l.line] + \" Terms apply.\",\n      \"Never write the words free, guarantee, risk-free or limited time. Never claim clients, results, statistics or testimonials. Do not pretend to know them personally. Be honest that this is an outreach message.\",\n      \"Step: \" + l.step + \". \" + STEP_RULE[l.step]\n    ].join(\"\\n\");\n    out.push({\n      lead_id: l.lead_id, name: l.name, first_name: first, handle: l.handle, org: l.org, line: l.line,\n      audience: l.audience, hook: l.hook, hook_source_url: l.hook_source_url, step: l.step, channel: CHANNEL,\n      cta: cta, opt_out: OPT_OUT[CHANNEL], consent_basis: l.consent_basis || \"\", region: l.region || \"\",\n      subject: CHANNEL === \"email\" ? (\"Monoes: build-first offer for \" + (l.org || first)) : \"\",\n      footer: CHANNEL === \"email\" ? (\"You are receiving this because of: \" + (l.consent_basis || \"\") + \". Reply STOP to opt out. Nokhodian UG (haftungsbeschränkt), c/o PANTOhealth GmbH, Bismarckstraße 10-12, 10625 Berlin, Germany.\") : \"\",\n      prompt: prompt, skipped_count: skipped.length\n    });\n  }\n  return out;\n})()\n"
+      }
+    },
+    {
+      "id": "draft",
+      "type": "agent.ask",
+      "name": "Draft message",
+      "position": {
+        "x": 1180,
+        "y": 0
+      },
+      "config": {
+        "runtime": "claude",
+        "prompt": "{{ $json.prompt }}",
+        "output_key": "draft",
+        "timeout": 120
+      }
+    },
+    {
+      "id": "lint",
+      "type": "core.code",
+      "name": "Lint: under 80 words, one link, opt-out, no banned claims",
+      "position": {
+        "x": 1420,
+        "y": 0
+      },
+      "config": {
+        "code": "(function () {\n  var items = $input.all();\n  var BANNED = /(guarantee|risk[- ]free|limited time|act now|last chance|\\bfree\\b|100%|testimonial|as seen in)/i;\n  return items.map(function (i) {\n    var d = String(i.draft || i.transformed || \"\").trim();\n    var issues = [];\n    var words = d.split(/\\s+/).filter(Boolean).length;\n    if (!d) issues.push(\"empty_draft\");\n    if (words >= 80) issues.push(\"too_long_\" + words + \"_words\");\n    var links = d.match(/https?:\\/\\/\\S+/g) || [];\n    if (links.length !== 1) issues.push(\"needs_exactly_one_link\");\n    else if (links[0].replace(/[.,;)]+$/, \"\").indexOf(i.cta) !== 0) issues.push(\"wrong_link\");\n    if (i.opt_out && d.indexOf(i.opt_out) < 0) issues.push(\"missing_opt_out\");\n    if (BANNED.test(d)) issues.push(\"banned_phrase\");\n    if (/[\\[\\]{}]|<[a-z]/i.test(d)) issues.push(\"placeholder_left\");\n    var hookWords = String(i.hook || \"\").toLowerCase().split(/[^a-z0-9]+/).filter(function (w) { return w.length >= 5; });\n    var lower = d.toLowerCase();\n    if (hookWords.length && !hookWords.some(function (w) { return lower.indexOf(w) > -1; })) issues.push(\"hook_not_referenced\");\n    return Object.assign({}, i, { draft: d, word_count: words, lint_ok: issues.length === 0, lint_issues: issues.join(\",\") });\n  });\n})()\n"
+      }
+    },
+    {
+      "id": "ok",
+      "type": "core.if",
+      "name": "Lint passed?",
+      "position": {
+        "x": 1660,
+        "y": 0
+      },
+      "config": {
+        "condition": "{{ $json.lint_ok }}",
+        "mode": "per_item"
+      }
+    },
+    {
+      "id": "fail",
+      "type": "data.spreadsheet",
+      "name": "Write drafts that need rewriting",
+      "position": {
+        "x": 1900,
+        "y": 140
+      },
+      "config": {
+        "operation": "write_csv",
+        "file_path": "/home/monoes/outreach/needs-rewrite/x-{{ $execution.id }}.csv",
+        "has_header": true
+      }
+    },
+    {
+      "id": "hil",
+      "type": "core.human_in_loop",
+      "name": "HUMAN APPROVAL (required before any send)",
+      "position": {
+        "x": 1900,
+        "y": -60
+      },
+      "config": {
+        "readonly_fields": [
+          "name",
+          "handle",
+          "org",
+          "hook",
+          "hook_source_url",
+          "step",
+          "channel",
+          "line",
+          "word_count",
+          "lint_issues"
+        ],
+        "editable_fields": [
+          "draft"
+        ],
+        "timeout_minutes": 2880
+      }
+    },
+    {
+      "id": "rs2",
+      "type": "data.spreadsheet",
+      "name": "Re-read suppression list after approval",
+      "position": {
+        "x": 2140,
+        "y": 100
+      },
+      "config": {
+        "operation": "read_csv",
+        "file_path": "{{ $node[\"Run\"].json.suppression_path }}",
+        "has_header": true
+      }
+    },
+    {
+      "id": "m2",
+      "type": "core.merge",
+      "name": "Combine approved and suppression",
+      "position": {
+        "x": 2380,
+        "y": 0
+      },
+      "config": {}
+    },
+    {
+      "id": "post",
+      "type": "core.code",
+      "name": "Post-approval guard: re-check suppression and re-lint edits",
+      "position": {
+        "x": 2620,
+        "y": 0
+      },
+      "config": {
+        "code": "(function () {\n  var CHANNEL = \"x\";\n  var CAP = { linkedin: 20, x: 20, email: 40 }[CHANNEL];\n  var BANNED = /(guarantee|risk[- ]free|limited time|act now|last chance|\\bfree\\b|100%|testimonial|as seen in)/i;\n  var items = $input.all();\n  var clean = function (v) { return String(v == null ? \"\" : v).trim().toLowerCase(); };\n  var suppression = {};\n  items.forEach(function (i) { if (i.identifier !== undefined) suppression[clean(i.identifier)] = true; });\n  var approved = items.filter(function (i) { return i.lead_id !== undefined && i.draft; });\n  var out = [];\n  approved.forEach(function (i) {\n    var d = String(i.draft).trim();\n    var words = d.split(/\\s+/).filter(Boolean).length;\n    var domain = clean(i.handle).indexOf(\"@\") > -1 ? clean(i.handle).split(\"@\")[1] : \"\";\n    if (suppression[clean(i.handle)] || suppression[clean(i.lead_id)] || (domain && suppression[domain])) return;\n    if (words >= 80 || BANNED.test(d) || /[\\[\\]{}]/.test(d)) return;\n    if (i.opt_out && d.indexOf(i.opt_out) < 0) return;\n    out.push(Object.assign({}, i, { draft: d, word_count: words, approved_by_human: true }));\n  });\n  return out.slice(0, CAP);\n})()\n"
+      }
+    },
+    {
+      "id": "mark",
+      "type": "core.set",
+      "name": "Mark approved",
+      "position": {
+        "x": 2860,
+        "y": -60
+      },
+      "config": {
+        "assignments": [
+          {
+            "field": "event",
+            "value": "approved"
+          },
+          {
+            "field": "event_at",
+            "value": "{{ now }}"
+          }
+        ],
+        "include_input": true
+      }
+    },
+    {
+      "id": "stage",
+      "type": "data.spreadsheet",
+      "name": "Stage approved messages for manual send",
+      "position": {
+        "x": 3100,
+        "y": -60
+      },
+      "config": {
+        "operation": "write_csv",
+        "file_path": "/home/monoes/outreach/approved/x-{{ $execution.id }}.csv",
+        "has_header": true
+      }
+    },
+    {
+      "id": "send",
+      "type": "x.send_dms",
+      "name": "SEND via monoagent (reached only after HUMAN APPROVAL)",
+      "position": {
+        "x": 2860,
+        "y": 120
+      },
+      "config": {
+        "targets": [
+          "{{ $json.handle }}"
+        ],
+        "message": "{{ $json.draft }}",
+        "limit": 1
+      }
+    },
+    {
+      "id": "marksent",
+      "type": "core.set",
+      "name": "Mark sent",
+      "position": {
+        "x": 3100,
+        "y": 120
+      },
+      "config": {
+        "assignments": [
+          {
+            "field": "event",
+            "value": "sent"
+          },
+          {
+            "field": "event_at",
+            "value": "{{ now }}"
+          }
+        ],
+        "include_input": true
+      }
+    },
+    {
+      "id": "sentlog",
+      "type": "data.spreadsheet",
+      "name": "Log sent",
+      "position": {
+        "x": 3340,
+        "y": 120
+      },
+      "config": {
+        "operation": "write_csv",
+        "file_path": "/home/monoes/outreach/sent/x-{{ $execution.id }}.csv",
+        "has_header": true
+      }
+    }
+  ],
+  "connections": [
+    {
+      "id": "c1",
+      "source": "run",
+      "source_handle": "main",
+      "target": "rl",
+      "target_handle": "main"
+    },
+    {
+      "id": "c2",
+      "source": "run",
+      "source_handle": "main",
+      "target": "rs",
+      "target_handle": "main"
+    },
+    {
+      "id": "c3",
+      "source": "rl",
+      "source_handle": "main",
+      "target": "m1",
+      "target_handle": "main"
+    },
+    {
+      "id": "c4",
+      "source": "rs",
+      "source_handle": "main",
+      "target": "m1",
+      "target_handle": "main"
+    },
+    {
+      "id": "c5",
+      "source": "m1",
+      "source_handle": "main",
+      "target": "params",
+      "target_handle": "main"
+    },
+    {
+      "id": "c6",
+      "source": "params",
+      "source_handle": "main",
+      "target": "guard",
+      "target_handle": "main"
+    },
+    {
+      "id": "c7",
+      "source": "guard",
+      "source_handle": "main",
+      "target": "draft",
+      "target_handle": "main"
+    },
+    {
+      "id": "c8",
+      "source": "draft",
+      "source_handle": "main",
+      "target": "lint",
+      "target_handle": "main"
+    },
+    {
+      "id": "c9",
+      "source": "lint",
+      "source_handle": "main",
+      "target": "ok",
+      "target_handle": "main"
+    },
+    {
+      "id": "c10",
+      "source": "hil",
+      "source_handle": "main",
+      "target": "rs2",
+      "target_handle": "main"
+    },
+    {
+      "id": "c11",
+      "source": "hil",
+      "source_handle": "main",
+      "target": "m2",
+      "target_handle": "main"
+    },
+    {
+      "id": "c12",
+      "source": "rs2",
+      "source_handle": "main",
+      "target": "m2",
+      "target_handle": "main"
+    },
+    {
+      "id": "c13",
+      "source": "m2",
+      "source_handle": "main",
+      "target": "post",
+      "target_handle": "main"
+    },
+    {
+      "id": "c14",
+      "source": "post",
+      "source_handle": "main",
+      "target": "mark",
+      "target_handle": "main"
+    },
+    {
+      "id": "c15",
+      "source": "mark",
+      "source_handle": "main",
+      "target": "stage",
+      "target_handle": "main"
+    },
+    {
+      "id": "c16",
+      "source": "post",
+      "source_handle": "main",
+      "target": "send",
+      "target_handle": "main"
+    },
+    {
+      "id": "c17",
+      "source": "send",
+      "source_handle": "main",
+      "target": "marksent",
+      "target_handle": "main"
+    },
+    {
+      "id": "c18",
+      "source": "marksent",
+      "source_handle": "main",
+      "target": "sentlog",
+      "target_handle": "main"
+    },
+    {
+      "id": "c19",
+      "source": "ok",
+      "source_handle": "true",
+      "target": "hil",
+      "target_handle": "main"
+    },
+    {
+      "id": "c20",
+      "source": "ok",
+      "source_handle": "false",
+      "target": "fail",
+      "target_handle": "main"
+    }
+  ]
+}

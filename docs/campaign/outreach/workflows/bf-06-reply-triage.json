@@ -1,0 +1,660 @@
+{
+  "id": "bf-06-reply-triage",
+  "name": "Build First 06 - Reply triage and drafts with human approval (DRAFT)",
+  "description": "Detects STOP and adds the person to the suppression list immediately, classifies other replies, drafts responses, and requires core.human_in_loop approval before any reply can be sent. Email replies are disabled; LinkedIn and X replies send only after approval.",
+  "is_active": false,
+  "nodes": [
+    {
+      "id": "run",
+      "type": "trigger.manual",
+      "name": "Run",
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "config": {}
+    },
+    {
+      "id": "rr",
+      "type": "data.spreadsheet",
+      "name": "Read replies CSV",
+      "position": {
+        "x": 240,
+        "y": 0
+      },
+      "config": {
+        "operation": "read_csv",
+        "file_path": "{{ $json.replies_path }}",
+        "has_header": true
+      }
+    },
+    {
+      "id": "pre",
+      "type": "core.code",
+      "name": "Detect STOP words and sanitize identifier",
+      "position": {
+        "x": 480,
+        "y": 0
+      },
+      "config": {
+        "code": "(function () {\n  var STOP = /(\\bstop\\b|unsubscribe|remove me|take me off|do not contact|don'?t contact|no more (messages|emails)|leave me alone|opt[- ]?out|\\bspam\\b|abmelden|keine nachrichten mehr|lass mich in ruhe)/i;\n  return $input.all().map(function (r) {\n    var text = String(r.reply_text || \"\");\n    var id = String(r.handle || r.lead_id || \"\").trim().toLowerCase();\n    var safe = id.replace(/[^a-z0-9@._:\\/-]/g, \"\");\n    return Object.assign({}, r, {\n      stop_hit: STOP.test(text),\n      safe_identifier: safe,\n      classify_input: \"Reply to a sales outreach message: \" + text.slice(0, 1500)\n    });\n  });\n})()\n"
+      }
+    },
+    {
+      "id": "stopif",
+      "type": "core.if",
+      "name": "Explicit stop request?",
+      "position": {
+        "x": 720,
+        "y": 0
+      },
+      "config": {
+        "condition": "{{ $json.stop_hit }}",
+        "mode": "per_item"
+      }
+    },
+    {
+      "id": "supp",
+      "type": "system.execute_command",
+      "name": "Add to suppression list NOW",
+      "position": {
+        "x": 960,
+        "y": -200
+      },
+      "config": {
+        "command": "sh",
+        "args": [
+          "-c",
+          "printf '%s\\n' \"$1\" >> \"$2\"",
+          "_",
+          "{{ $json.safe_identifier }}",
+          "/home/monoes/outreach/suppression.csv"
+        ],
+        "timeout": 10
+      }
+    },
+    {
+      "id": "classify",
+      "type": "agent.ask",
+      "name": "Classify reply",
+      "position": {
+        "x": 960,
+        "y": 120
+      },
+      "config": {
+        "runtime": "claude",
+        "prompt": "Classify this reply to a cold outreach message with exactly one lowercase word from: interested, objection, not_now, stop, other. interested = wants to know more or talk. objection = raises a concern or question. not_now = maybe later. stop = wants no contact. other = anything else. Output only the word. {{ $json.classify_input }}",
+        "output_key": "class_raw",
+        "timeout": 60
+      }
+    },
+    {
+      "id": "cnorm",
+      "type": "core.code",
+      "name": "Normalize class",
+      "position": {
+        "x": 1180,
+        "y": 120
+      },
+      "config": {
+        "code": "(function () {\n  var VALID = [\"interested\", \"objection\", \"not_now\", \"stop\", \"other\"];\n  return $input.all().map(function (i) {\n    var raw = String(i.class_raw || \"\").toLowerCase().replace(/[^a-z_ ]/g, \" \").trim().split(/\\s+/)[0] || \"\";\n    var cls = VALID.indexOf(raw) > -1 ? raw : \"other\";\n    return Object.assign({}, i, { reply_class: cls });\n  });\n})()\n"
+      }
+    },
+    {
+      "id": "cswitch",
+      "type": "core.switch",
+      "name": "Route by class",
+      "position": {
+        "x": 1400,
+        "y": 120
+      },
+      "config": {
+        "field": "{{ $json.reply_class }}",
+        "cases": [
+          "interested",
+          "objection",
+          "not_now",
+          "stop",
+          "other"
+        ]
+      }
+    },
+    {
+      "id": "s_int",
+      "type": "core.set",
+      "name": "Tag interested",
+      "position": {
+        "x": 1200,
+        "y": -20
+      },
+      "config": {
+        "assignments": [
+          {
+            "field": "reply_class",
+            "value": "interested"
+          },
+          {
+            "field": "event",
+            "value": "reply_interested"
+          }
+        ],
+        "include_input": true
+      }
+    },
+    {
+      "id": "s_obj",
+      "type": "core.set",
+      "name": "Tag objection",
+      "position": {
+        "x": 1200,
+        "y": 100
+      },
+      "config": {
+        "assignments": [
+          {
+            "field": "reply_class",
+            "value": "objection"
+          },
+          {
+            "field": "event",
+            "value": "reply_objection"
+          }
+        ],
+        "include_input": true
+      }
+    },
+    {
+      "id": "s_now",
+      "type": "core.set",
+      "name": "Tag not now (check back in 60 days)",
+      "position": {
+        "x": 1200,
+        "y": 220
+      },
+      "config": {
+        "assignments": [
+          {
+            "field": "reply_class",
+            "value": "not_now"
+          },
+          {
+            "field": "event",
+            "value": "reply_not_now"
+          },
+          {
+            "field": "follow_up_after_days",
+            "value": "60",
+            "type": "number"
+          }
+        ],
+        "include_input": true
+      }
+    },
+    {
+      "id": "d_int",
+      "type": "agent.ask",
+      "name": "Draft: interested",
+      "position": {
+        "x": 1440,
+        "y": -20
+      },
+      "config": {
+        "runtime": "claude",
+        "prompt": "Write a reply from Morteza at Monoes to {{ $json.name }}. Their message: \"{{ $json.reply_text }}\". Plain text, no emojis, no placeholders, never use the words free, guarantee or risk-free, never claim clients, results or statistics, at most two links (https://monoes.me/build-first/{{ $json.audience }} and the terms link). Maximum 85 words, a hard limit. Thank them, answer what they asked, and offer a 60 to 90 minute Acceptance Spec call or a sample Spec. One clear call to action.",
+        "output_key": "draft",
+        "timeout": 120
+      }
+    },
+    {
+      "id": "d_obj",
+      "type": "agent.ask",
+      "name": "Draft: objection",
+      "position": {
+        "x": 1440,
+        "y": 100
+      },
+      "config": {
+        "runtime": "claude",
+        "prompt": "Write a reply from Morteza at Monoes to {{ $json.name }}. Their message: \"{{ $json.reply_text }}\". Plain text, no emojis, no placeholders, never use the words free, guarantee or risk-free, never claim clients, results or statistics, at most two links (https://monoes.me/build-first/{{ $json.audience }} and the terms link). Approved facts, answer only from these: the build happens in a Monoes-controlled staging environment; no production data or production access before the client signs; a mutual NDA applies from the first call; the price is agreed in writing before the build; the client decides through its own internal sign-off against a checklist of testable rows; if every row passes the client proceeds on the agreed terms or a Build Fee applies; if a row fails after one fix cycle the client owes nothing; scope is bounded and regulated or safety-critical systems are excluded; work is done by the Monoes team and vetted contributors under confidentiality agreements, reviewed by Monoes; full conditions at https://monoes.me/build-first/terms. If the objection is not covered, say you will check and offer a call. Maximum 85 words, a hard limit: answer only the one point they raised, directly and honestly, then one clear call to action. Do not list every fact.",
+        "output_key": "draft",
+        "timeout": 120
+      }
+    },
+    {
+      "id": "d_now",
+      "type": "agent.ask",
+      "name": "Draft: not now",
+      "position": {
+        "x": 1440,
+        "y": 220
+      },
+      "config": {
+        "runtime": "claude",
+        "prompt": "Write a reply from Morteza at Monoes to {{ $json.name }}. Their message: \"{{ $json.reply_text }}\". Plain text, no emojis, no placeholders, never use the words free, guarantee or risk-free, never claim clients, results or statistics, at most two links (https://monoes.me/build-first/{{ $json.audience }} and the terms link). Maximum 60 words, a hard limit. Acknowledge, no pressure, ask when it would make sense to check back. Do not push.",
+        "output_key": "draft",
+        "timeout": 120
+      }
+    },
+    {
+      "id": "other",
+      "type": "data.spreadsheet",
+      "name": "Write replies for manual review",
+      "position": {
+        "x": 1200,
+        "y": 340
+      },
+      "config": {
+        "operation": "write_csv",
+        "file_path": "/home/monoes/outreach/needs-human-review/replies-{{ $execution.id }}.csv",
+        "has_header": true
+      }
+    },
+    {
+      "id": "m3",
+      "type": "core.merge",
+      "name": "Combine drafts",
+      "position": {
+        "x": 1680,
+        "y": 100
+      },
+      "config": {}
+    },
+    {
+      "id": "lint",
+      "type": "core.code",
+      "name": "Lint reply drafts",
+      "position": {
+        "x": 1900,
+        "y": 100
+      },
+      "config": {
+        "code": "(function () {\n  var BANNED = /(guarantee|risk[- ]free|limited time|act now|last chance|\\bfree\\b|100%|testimonial|as seen in)/i;\n  return $input.all().map(function (i) {\n    var d = String(i.draft || i.transformed || \"\").trim();\n    var issues = [];\n    var words = d.split(/\\s+/).filter(Boolean).length;\n    if (!d) issues.push(\"empty_draft\");\n    if (words > 100) issues.push(\"too_long_\" + words + \"_words\");\n    if ((d.match(/https?:\\/\\/\\S+/g) || []).length > 2) issues.push(\"more_than_two_links\");\n    if (BANNED.test(d)) issues.push(\"banned_phrase\");\n    if (/[\\[\\]{}]|<[a-z]/i.test(d)) issues.push(\"placeholder_left\");\n    return Object.assign({}, i, { draft: d, word_count: words, lint_ok: issues.length === 0, lint_issues: issues.join(\",\") });\n  });\n})()\n"
+      }
+    },
+    {
+      "id": "ok",
+      "type": "core.if",
+      "name": "Lint passed?",
+      "position": {
+        "x": 2120,
+        "y": 100
+      },
+      "config": {
+        "condition": "{{ $json.lint_ok }}",
+        "mode": "per_item"
+      }
+    },
+    {
+      "id": "fail",
+      "type": "data.spreadsheet",
+      "name": "Write drafts that need rewriting",
+      "position": {
+        "x": 2360,
+        "y": 260
+      },
+      "config": {
+        "operation": "write_csv",
+        "file_path": "/home/monoes/outreach/needs-rewrite/replies-{{ $execution.id }}.csv",
+        "has_header": true
+      }
+    },
+    {
+      "id": "hil",
+      "type": "core.human_in_loop",
+      "name": "HUMAN APPROVAL (required before any reply)",
+      "position": {
+        "x": 2360,
+        "y": 40
+      },
+      "config": {
+        "readonly_fields": [
+          "name",
+          "handle",
+          "channel",
+          "reply_text",
+          "reply_class",
+          "word_count",
+          "lint_issues"
+        ],
+        "editable_fields": [
+          "draft"
+        ],
+        "timeout_minutes": 2880
+      }
+    },
+    {
+      "id": "rs2",
+      "type": "data.spreadsheet",
+      "name": "Re-read suppression list after approval",
+      "position": {
+        "x": 2600,
+        "y": 200
+      },
+      "config": {
+        "operation": "read_csv",
+        "file_path": "{{ $node[\"Run\"].json.suppression_path }}",
+        "has_header": true
+      }
+    },
+    {
+      "id": "m4",
+      "type": "core.merge",
+      "name": "Combine approved and suppression",
+      "position": {
+        "x": 2840,
+        "y": 100
+      },
+      "config": {}
+    },
+    {
+      "id": "post",
+      "type": "core.code",
+      "name": "Post-approval guard",
+      "position": {
+        "x": 3060,
+        "y": 100
+      },
+      "config": {
+        "code": "(function () {\n  var BANNED = /(guarantee|risk[- ]free|limited time|act now|last chance|\\bfree\\b|100%|testimonial|as seen in)/i;\n  var items = $input.all();\n  var clean = function (v) { return String(v == null ? \"\" : v).trim().toLowerCase(); };\n  var suppression = {};\n  items.forEach(function (i) { if (i.identifier !== undefined) suppression[clean(i.identifier)] = true; });\n  return items.filter(function (i) { return i.lead_id !== undefined && i.draft; }).filter(function (i) {\n    var d = String(i.draft).trim();\n    if (suppression[clean(i.handle)] || suppression[clean(i.lead_id)]) return false;\n    if (d.split(/\\s+/).filter(Boolean).length > 100 || BANNED.test(d) || /[\\[\\]{}]/.test(d)) return false;\n    return true;\n  }).map(function (i) { return Object.assign({}, i, { approved_by_human: true, event: \"approved\" }); });\n})()\n"
+      }
+    },
+    {
+      "id": "stage",
+      "type": "data.spreadsheet",
+      "name": "Stage approved replies for manual send",
+      "position": {
+        "x": 3300,
+        "y": 0
+      },
+      "config": {
+        "operation": "write_csv",
+        "file_path": "/home/monoes/outreach/approved/replies-{{ $execution.id }}.csv",
+        "has_header": true
+      }
+    },
+    {
+      "id": "route",
+      "type": "core.switch",
+      "name": "Route by channel",
+      "position": {
+        "x": 3300,
+        "y": 200
+      },
+      "config": {
+        "field": "{{ $json.channel }}",
+        "cases": [
+          "linkedin",
+          "x",
+          "email"
+        ]
+      }
+    },
+    {
+      "id": "s_li",
+      "type": "linkedin.send_dms",
+      "name": "SEND REPLY linkedin (after HUMAN APPROVAL)",
+      "position": {
+        "x": 3540,
+        "y": 120
+      },
+      "config": {
+        "targets": [
+          "{{ $json.handle }}"
+        ],
+        "message": "{{ $json.draft }}",
+        "limit": 1
+      }
+    },
+    {
+      "id": "s_x",
+      "type": "x.send_dms",
+      "name": "SEND REPLY x (after HUMAN APPROVAL)",
+      "position": {
+        "x": 3540,
+        "y": 220
+      },
+      "config": {
+        "targets": [
+          "{{ $json.handle }}"
+        ],
+        "message": "{{ $json.draft }}",
+        "limit": 1
+      }
+    },
+    {
+      "id": "s_em",
+      "type": "comm.email_send",
+      "name": "AUTOMATED REPLY email (disabled)",
+      "position": {
+        "x": 3540,
+        "y": 320
+      },
+      "config": {
+        "to": "{{ $json.handle }}",
+        "subject": "Re: Monoes",
+        "body": "{{ $json.draft }}",
+        "body_type": "text"
+      },
+      "disabled": true
+    }
+  ],
+  "connections": [
+    {
+      "id": "c1",
+      "source": "run",
+      "source_handle": "main",
+      "target": "rr",
+      "target_handle": "main"
+    },
+    {
+      "id": "c2",
+      "source": "rr",
+      "source_handle": "main",
+      "target": "pre",
+      "target_handle": "main"
+    },
+    {
+      "id": "c3",
+      "source": "pre",
+      "source_handle": "main",
+      "target": "stopif",
+      "target_handle": "main"
+    },
+    {
+      "id": "c4",
+      "source": "classify",
+      "source_handle": "main",
+      "target": "cnorm",
+      "target_handle": "main"
+    },
+    {
+      "id": "c5",
+      "source": "cnorm",
+      "source_handle": "main",
+      "target": "cswitch",
+      "target_handle": "main"
+    },
+    {
+      "id": "c6",
+      "source": "s_int",
+      "source_handle": "main",
+      "target": "d_int",
+      "target_handle": "main"
+    },
+    {
+      "id": "c7",
+      "source": "s_obj",
+      "source_handle": "main",
+      "target": "d_obj",
+      "target_handle": "main"
+    },
+    {
+      "id": "c8",
+      "source": "s_now",
+      "source_handle": "main",
+      "target": "d_now",
+      "target_handle": "main"
+    },
+    {
+      "id": "c9",
+      "source": "d_int",
+      "source_handle": "main",
+      "target": "m3",
+      "target_handle": "main"
+    },
+    {
+      "id": "c10",
+      "source": "d_obj",
+      "source_handle": "main",
+      "target": "m3",
+      "target_handle": "main"
+    },
+    {
+      "id": "c11",
+      "source": "d_now",
+      "source_handle": "main",
+      "target": "m3",
+      "target_handle": "main"
+    },
+    {
+      "id": "c12",
+      "source": "m3",
+      "source_handle": "main",
+      "target": "lint",
+      "target_handle": "main"
+    },
+    {
+      "id": "c13",
+      "source": "lint",
+      "source_handle": "main",
+      "target": "ok",
+      "target_handle": "main"
+    },
+    {
+      "id": "c14",
+      "source": "hil",
+      "source_handle": "main",
+      "target": "rs2",
+      "target_handle": "main"
+    },
+    {
+      "id": "c15",
+      "source": "hil",
+      "source_handle": "main",
+      "target": "m4",
+      "target_handle": "main"
+    },
+    {
+      "id": "c16",
+      "source": "rs2",
+      "source_handle": "main",
+      "target": "m4",
+      "target_handle": "main"
+    },
+    {
+      "id": "c17",
+      "source": "m4",
+      "source_handle": "main",
+      "target": "post",
+      "target_handle": "main"
+    },
+    {
+      "id": "c18",
+      "source": "post",
+      "source_handle": "main",
+      "target": "stage",
+      "target_handle": "main"
+    },
+    {
+      "id": "c19",
+      "source": "post",
+      "source_handle": "main",
+      "target": "route",
+      "target_handle": "main"
+    },
+    {
+      "id": "c20",
+      "source": "stopif",
+      "source_handle": "true",
+      "target": "supp",
+      "target_handle": "main"
+    },
+    {
+      "id": "c21",
+      "source": "stopif",
+      "source_handle": "false",
+      "target": "classify",
+      "target_handle": "main"
+    },
+    {
+      "id": "c22",
+      "source": "cswitch",
+      "source_handle": "interested",
+      "target": "s_int",
+      "target_handle": "main"
+    },
+    {
+      "id": "c23",
+      "source": "cswitch",
+      "source_handle": "objection",
+      "target": "s_obj",
+      "target_handle": "main"
+    },
+    {
+      "id": "c24",
+      "source": "cswitch",
+      "source_handle": "not_now",
+      "target": "s_now",
+      "target_handle": "main"
+    },
+    {
+      "id": "c25",
+      "source": "cswitch",
+      "source_handle": "stop",
+      "target": "supp",
+      "target_handle": "main"
+    },
+    {
+      "id": "c26",
+      "source": "cswitch",
+      "source_handle": "other",
+      "target": "other",
+      "target_handle": "main"
+    },
+    {
+      "id": "c27",
+      "source": "ok",
+      "source_handle": "true",
+      "target": "hil",
+      "target_handle": "main"
+    },
+    {
+      "id": "c28",
+      "source": "ok",
+      "source_handle": "false",
+      "target": "fail",
+      "target_handle": "main"
+    },
+    {
+      "id": "c29",
+      "source": "route",
+      "source_handle": "linkedin",
+      "target": "s_li",
+      "target_handle": "main"
+    },
+    {
+      "id": "c30",
+      "source": "route",
+      "source_handle": "x",
+      "target": "s_x",
+      "target_handle": "main"
+    },
+    {
+      "id": "c31",
+      "source": "route",
+      "source_handle": "email",
+      "target": "s_em",
+      "target_handle": "main"
+    }
+  ]
+}
