@@ -6,7 +6,16 @@ import { CLISection } from "./CLISection";
 import { CrossLinks } from "./CrossLinks";
 import { TerminalBlock } from "@/components/ui/TerminalBlock";
 
-export function ProjectPageLayout({ project, demo }: { project: Project; demo: ReactNode }) {
+export function ProjectPageLayout({
+  project,
+  demo,
+  cta,
+}: {
+  project: Project;
+  demo: ReactNode;
+  /** Optional section rendered after Get Started, before the cross links. */
+  cta?: ReactNode;
+}) {
   return (
     <main className="pt-0">
       <ProjectHero project={project} />
@@ -35,6 +44,8 @@ export function ProjectPageLayout({ project, demo }: { project: Project; demo: R
           <TerminalBlock lines={project.install} />
         </div>
       </section>
+
+      {cta}
 
       <CrossLinks current={project.id} />
     </main>

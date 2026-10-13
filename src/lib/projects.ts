@@ -155,14 +155,20 @@ export const projects: Project[] = [
     id: "mono-agent",
     name: "Mono Agent",
     slug: "mono-agent",
-    tagline: "The local-first n8n alternative in a single Go binary.",
+    tagline: "No AI credits: your AI subscription, your machine. Workflow automation in a single Go binary.",
     description:
-      "Open-source (MIT) workflow automation that runs on your own machine. One static Go binary with embedded SQLite: no Docker, no database server, no telemetry. Build DAG workflows from 100+ node types in a visual desktop editor, a 180+ command CLI, or through its MCP server, and put a human approval step in front of anything that leaves your machine.",
+      "Workflow automation that runs on your own machine and does its AI on the agent CLI you already pay for (Claude Code, Codex and others), so there are no AI credits to buy and no AI keys stored. One static Go binary with embedded SQLite: no Docker, no database server, no analytics or usage counters. Build DAG workflows from 167 node types in a visual desktop editor, a 180+ command CLI, or through its MCP server, and put a human approval step in front of anything that leaves your machine. Free of charge for now under a proprietary license; a monoes.me sign-in is required.",
     repo: "monoes/mono-agent",
     language: "Go",
     accent: "#C8A97E",
     number: "02",
     features: [
+      {
+        icon: "🤖",
+        title: "No AI Credits",
+        description:
+          "AI steps run through the agent CLI you already pay for (Claude Code, Codex, OpenCode, Qwen and more), on its own login and plan. Mono Agent stores no AI keys and sells no credits. Gemini text and image nodes use your own browser session.",
+      },
       {
         icon: "🤝",
         title: "Human-in-the-Loop",
@@ -173,25 +179,19 @@ export const projects: Project[] = [
         icon: "📦",
         title: "One Binary, Local-First",
         description:
-          "A single static Go executable with SQLite built in. Workflows, run history and credentials stay under ~/.monoagent on your machine. No Docker, no cloud, no telemetry.",
+          "A single static Go executable with SQLite built in. Workflows, run history and credentials stay under ~/.monoagent on your machine. No Docker, no analytics or usage counters; it contacts monoes.me to sign you in and to check for updates.",
       },
       {
         icon: "🔌",
         title: "MCP & CLI for AI Agents",
         description:
-          "A built-in MCP server (read-only by default), --json output everywhere, documented exit codes and an offline reference manual, so Claude Code, Codex and other agents can build, run and approve workflows.",
+          "A built-in MCP server that setup registers with --allow-mutations, so Claude Code, Codex and other agents can build and run workflows and approve human-review items. --json output everywhere, documented exit codes and an offline reference manual.",
       },
       {
         icon: "⚡",
-        title: "100+ Node Types",
+        title: "167 Node Types",
         description:
           "Google Sheets, Gmail, Outlook, Slack, GitHub, Linear, Jira, Notion, Airtable, Stripe, Shopify, Salesforce, HubSpot, Postgres, MySQL, MongoDB, Redis, HTTP, SSH, JavaScript code and more.",
-      },
-      {
-        icon: "🤖",
-        title: "AI Through Your Own Agents",
-        description:
-          "The agent.ask node hands prompts to agent CLIs on your machine (Claude Code, Codex, Qwen, Kimi and more). Gemini text and image nodes use your own browser session, so no API key is needed.",
       },
       {
         icon: "🔐",
@@ -202,9 +202,10 @@ export const projects: Project[] = [
     ],
     install: [
       {
-        command: "curl -fsSL https://raw.githubusercontent.com/monoes/mono-agent/master/install.sh | bash",
+        command: "curl -fsSL https://raw.githubusercontent.com/monoes/mono-agent/HEAD/install.sh | bash",
         output: "✓ Installed monoagentcli (SHA256 verified)",
       },
+      { command: "monoagentcli account login" },
       { command: "monoagentcli setup", output: "✓ Guided setup complete" },
       { command: "monoagentcli workflow templates list" },
     ],

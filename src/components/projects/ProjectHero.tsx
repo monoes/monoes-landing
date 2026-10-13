@@ -18,9 +18,9 @@ const heroMonkeys: Record<string, string> = {
 
 const heroStats: Record<string, { label: string; value: string }[]> = {
   "mono-agent": [
-    { label: "Workflow Nodes", value: "105" },
+    { label: "Workflow Nodes", value: "167" },
     { label: "CLI Commands",   value: "180+" },
-    { label: "License",        value: "MIT" },
+    { label: "AI Credits",     value: "0" },
   ],
   "monomind": [
     { label: "Coding Assistants", value: "5" },
