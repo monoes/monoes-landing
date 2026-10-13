@@ -15,12 +15,12 @@ export default function BuildFirstTermsPage() {
     <div className="bg-ivory">
     <main className="mx-auto max-w-3xl px-6 py-24 md:px-12 md:py-32">
       <h1 className="mb-3 text-4xl font-semibold tracking-tight text-espresso md:text-5xl">Build First terms</h1>
-      <p className="mb-4 text-sm text-espresso/75">Effective: [date to be set on publication].</p>
+      <p className="mb-4 text-sm text-espresso/75">Effective October 13, 2026.</p>
       <p className="mb-12 leading-relaxed text-espresso/85">
         This page explains the conditions behind the Build First offer so nothing is hidden behind a headline. Each
         engagement is governed by a signed Evaluation Agreement and, if you proceed, a Conversion Agreement. Where they
         differ from this page, the signed agreements apply. The offer is made by Nokhodian UG (haftungsbeschränkt),
-        c/o PANTOhealth GmbH, Bismarckstraße 10-12, 10625 Berlin, Germany [commercial register number to be added before publication].
+        c/o PANTOhealth GmbH, Bismarckstraße 10-12, 10625 Berlin, Germany.
       </p>
 
       <div className="space-y-12 leading-relaxed text-espresso/85">
