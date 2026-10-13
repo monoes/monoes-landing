@@ -38,7 +38,7 @@ export const buyerGuides: Guide[] = [
       {
         heading: "What it costs to start",
         paragraphs: [
-          "Engagements begin with a Discovery audit: $3,000 for one process in one day, or $12,000 for a five-day multi-department audit. Typical pilots start at $15,000, with a fixed, itemized quote in the Discovery report.",
+          "Engagements begin with a Discovery audit: $3,000 for one process in one day, or $12,000 for a five-day multi-department audit. You pay after delivery, not before, and each audit delivers process documentation, org charts, the bottlenecks, a suggested solution for each and an automation for each. Small and mid-sized businesses can choose SME Discovery instead: process discovery and charting only, from $15,000 depending on the number of processes, agreed before work starts and also paid after delivery. Implementation is scoped and quoted after the research.",
         ],
       },
     ],
@@ -132,7 +132,7 @@ export const buyerGuides: Guide[] = [
       {
         question: "How long until the first worker is live?",
         answer:
-          "Discovery takes 1-5 days and a pilot 3-6 weeks, during which the worker runs in parallel with your team before taking over.",
+          "Discovery takes one day or one week. Workers then run in parallel with your team before taking over.",
       },
     ],
     related: [{ label: "AI for accounts payable", href: "/guides/ai-invoice-processing-accounts-payable" }, ...WORKFORCE_RELATED],

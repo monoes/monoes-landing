@@ -1,10 +1,6 @@
 import Link from "next/link";
-import { discoveryPackages, discoveryContactEmail, discoveryEmailBody } from "@/lib/workforce";
 import { hire, beliefs } from "@/content/home";
 import { AutonomyDial } from "./AutonomyDial";
-
-const mailto = (subject: string) =>
-  `mailto:${discoveryContactEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(discoveryEmailBody)}`;
 
 export function Hire() {
   return (
@@ -30,20 +26,8 @@ export function Hire() {
           <p>{hire.dialBody}</p>
           <AutonomyDial />
         </div>
-        <ul className="packages">
-          {discoveryPackages.map((pkg) => (
-            <li key={pkg.id} data-reveal>
-              <p className="pkg-price">{pkg.price}</p>
-              <h3>{pkg.name}</h3>
-              <p>{pkg.description}</p>
-              <a className="btn btn-primary" href={mailto(pkg.mailSubject)}>
-                Book {pkg.duration} Discovery <span aria-hidden="true">→</span>
-              </a>
-            </li>
-          ))}
-        </ul>
         <p className="more" data-reveal>
-          <Link href="/workforce">How Workforce works →</Link>
+          <Link href="/workforce">See Workforce and the Discovery audit →</Link>
         </p>
       </div>
     </section>

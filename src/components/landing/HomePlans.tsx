@@ -1,9 +1,4 @@
-import { discoveryPackages, discoveryContactEmail, discoveryEmailBody } from "@/lib/workforce";
 import { RevealHeading } from "./RevealHeading";
-
-function mailtoHref(subject: string) {
-  return `mailto:${discoveryContactEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(discoveryEmailBody)}`;
-}
 
 export function HomePlans() {
   return (
@@ -42,24 +37,13 @@ export function HomePlans() {
             <h3 className="mb-3 text-xl font-light text-espresso">Hire us to run it</h3>
             <p className="mb-7 text-sm leading-relaxed text-espresso/55">
               AI digital workers that execute your real business processes end-to-end on the
-              systems you already run. Start with a priced Discovery audit.
+              systems you already run. We deliver the research first and you pay after delivery.
             </p>
-            <div className="mb-7 flex flex-col gap-3">
-              {discoveryPackages.map((pkg) => (
-                <div
-                  key={pkg.id}
-                  className="flex items-center justify-between rounded-lg border border-espresso/12 bg-white px-4 py-3"
-                >
-                  <span className="text-sm text-espresso">{pkg.name}</span>
-                  <span className="font-mono text-sm text-gold-dark">{pkg.price}</span>
-                </div>
-              ))}
-            </div>
             <a
-              href={mailtoHref(discoveryPackages[0].mailSubject)}
+              href="/workforce#discovery"
               className="inline-flex items-center gap-2 rounded-full bg-gold-dark px-5 py-2.5 text-xs font-bold uppercase tracking-widest text-ivory transition-all hover:bg-[#6d5110]"
             >
-              Book a Discovery call →
+              See how Workforce works →
             </a>
           </div>
         </div>

@@ -2,6 +2,7 @@
 import { motion, useReducedMotion } from "framer-motion";
 import {
   discoveryPackages,
+  discoveryPaymentNote,
   discoveryContactEmail,
   discoveryEmailBody,
   pilotBracketNote,
@@ -30,15 +31,14 @@ export function DiscoveryPackages() {
           className="mb-16 max-w-2xl"
         >
           <h2 className="text-3xl md:text-4xl font-semibold text-ivory tracking-tight mb-5 text-balance">
-            Start with a priced audit, not a sales cycle.
+            Start with the research. Pay after we deliver.
           </h2>
           <p className="text-ivory/55 font-light leading-relaxed">
-            Discovery is the only thing we price up front. Implementation is
-            scoped and quoted after we know what we&apos;re automating.
+            {discoveryPaymentNote} Implementation is scoped and quoted after we know what we&apos;re automating.
           </p>
         </motion.div>
 
-        <div className="grid gap-8 md:grid-cols-2 md:divide-x md:divide-ivory/10">
+        <div className="grid gap-8 md:grid-cols-3 md:divide-x md:divide-ivory/10">
           {discoveryPackages.map((pkg, i) => (
             <motion.div
               key={pkg.id}
@@ -46,7 +46,7 @@ export function DiscoveryPackages() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-60px" }}
               transition={{ duration: 0.6, delay: i * 0.1, ease: expo }}
-              className={i === 1 ? "md:pl-8" : ""}
+              className={i > 0 ? "md:pl-8" : ""}
             >
               <span className="text-[10px] uppercase tracking-label font-semibold text-gold">
                 {pkg.duration}
@@ -54,7 +54,8 @@ export function DiscoveryPackages() {
               <div className="mt-3 mb-2 flex items-baseline gap-3">
                 <h3 className="text-xl font-semibold text-ivory">{pkg.name}</h3>
               </div>
-              <p className="text-3xl font-semibold text-gold mb-5">{pkg.price}</p>
+              <p className="text-3xl font-semibold text-gold mb-1">{pkg.price}</p>
+              <p className="text-xs text-ivory/60 mb-5">Due after delivery</p>
               <p className="text-sm text-ivory/60 leading-relaxed mb-6 max-w-sm">
                 {pkg.description}
               </p>
@@ -73,7 +74,7 @@ export function DiscoveryPackages() {
                 href={mailtoHref(pkg.mailSubject)}
                 className="inline-block rounded-full border border-gold/40 px-6 py-3 text-sm font-semibold text-gold transition-colors hover:bg-gold hover:text-espresso"
               >
-                Book the {pkg.duration} audit →
+                {pkg.cta} →
               </a>
             </motion.div>
           ))}

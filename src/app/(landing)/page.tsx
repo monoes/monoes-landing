@@ -5,6 +5,7 @@ import { Roster } from "@/components/home/Roster";
 import { Where } from "@/components/home/Where";
 import { Path } from "@/components/home/Path";
 import { Hire } from "@/components/home/Hire";
+import { Services } from "@/components/home/Services";
 import { Close } from "@/components/home/Close";
 
 export const metadata: Metadata = {
@@ -22,6 +23,7 @@ export default function HomePage() {
       <Where />
       <Path />
       <Hire />
+      <Services />
       <Close />
     </>
   );

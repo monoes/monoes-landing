@@ -125,7 +125,7 @@ export const roster = {
 
 export const path = {
   kicker: "How it starts",
-  title: ["From a one-day audit", "to a full AI team."],
+  title: ["From a first audit", "to a full AI team."],
   lede: "You never sign up for a big-bang project. Each step proves itself before the next one begins.",
   phases: engagementPhases,
 };
@@ -133,7 +133,7 @@ export const path = {
 export const hire = {
   kicker: "Monoes Workforce",
   title: ["We run it.", "Inside your walls."],
-  body: "AI digital workers that execute your real business processes end to end, on the ERP, CRM and email you already run. We deploy them inside your environment, on-prem or in your own cloud. Start with a small, priced audit.",
+  body: "AI digital workers that execute your real business processes end to end, on the ERP, CRM and email you already run. We deploy them inside your environment, on-prem or in your own cloud. Start with the research: we deliver first and you pay after delivery.",
   dialTitle: "You set the autonomy dial.",
   dialBody: "Choose how much the workers do on their own. Nothing irreversible happens above your line.",
   dialDefault: 2,
@@ -166,4 +166,80 @@ export const close = {
   lead: "Put AI workers",
   accent: "to work.",
   sub: "Start with a one-day audit of your busiest process, or run the open-source tools yourself, free.",
+};
+
+export interface ServiceLink {
+  label: string;
+  href: string;
+}
+
+export interface ServiceCard {
+  id: string;
+  name: string;
+  body: string;
+  pay: string;
+  links: ServiceLink[];
+}
+
+export const services = {
+  kicker: "Ways to start",
+  title: ["No upfront cost.", "We deliver first."],
+  lede: "Every way in starts with us doing the work. Research is paid for after delivery. Builds are paid for only if they meet the Acceptance Spec you signed off before we started.",
+  cards: [
+    {
+      id: "discovery-1",
+      name: "1-Day Discovery",
+      body: "One process, studied in a day: process documentation, an org chart, the bottlenecks, a suggested solution for each and an automation for each.",
+      pay: "Pay after delivery",
+      links: [{ label: "See what you receive", href: "/workforce#delivery" }],
+    },
+    {
+      id: "discovery-5",
+      name: "5-Day Discovery",
+      body: "The same research across departments, plus a ranked backlog of opportunities and an implementation roadmap.",
+      pay: "Pay after delivery",
+      links: [{ label: "See what you receive", href: "/workforce#delivery" }],
+    },
+    {
+      id: "discovery-sme",
+      name: "SME Discovery",
+      body: "For small and mid-sized businesses: we discover how the business really runs and chart every process, with process documentation and an org chart. Research only.",
+      pay: "Pay after delivery",
+      links: [{ label: "See what you receive", href: "/workforce#delivery" }],
+    },
+    {
+      id: "modernize",
+      name: "Modernize",
+      body: "Restack a legacy system onto a modern stack for performance, efficiency and maintainability, tested against how it behaves today.",
+      pay: "Pay only if the build meets your Acceptance Spec",
+      links: [{ label: "For companies", href: "/build-first/companies" }],
+    },
+    {
+      id: "flow",
+      name: "Flow",
+      body: "Process automations built from scratch, for startups and for enterprises.",
+      pay: "Pay only if the build meets your Acceptance Spec",
+      links: [
+        { label: "For companies", href: "/build-first/companies" },
+        { label: "For startups", href: "/build-first/startups" },
+      ],
+    },
+    {
+      id: "launch",
+      name: "Launch",
+      body: "From research to a complete product, for startups, scale-ups and enterprises. Startups can pay in cash, cash plus equity, or equity only.",
+      pay: "We are paid only if the build meets your Acceptance Spec",
+      links: [
+        { label: "For startups", href: "/build-first/startups" },
+        { label: "For companies", href: "/build-first/companies" },
+      ],
+    },
+    {
+      id: "workforce",
+      name: "Workforce",
+      body: "AI digital workers that run your processes on the ERP, CRM and email you already use, scoped from the Discovery research.",
+      pay: "Scoped and quoted after the research is delivered",
+      links: [{ label: "About Workforce", href: "/workforce" }],
+    },
+  ] satisfies ServiceCard[],
 };

@@ -1,10 +1,10 @@
-import { capabilityCatalog, discoveryPackages, foundingClientProgram } from "@/lib/workforce";
+import { capabilityCatalog, foundingClientProgram } from "@/lib/workforce";
 import { RevealHeading } from "./RevealHeading";
 
 const NOT_YET = [
   "Zero workers running at a paying client. The Founding Client Program exists because of this, not despite it.",
   "No interactive demo — paste a document, watch it move through the process. Planned, not built.",
-  "No self-serve signup for Workforce. Every engagement starts with a human-run Discovery audit.",
+  "No self-serve signup for Workforce. Every engagement starts with human-run research.",
   "Gossip and CRDT consensus strategies in Monomind are designed, not implemented.",
 ];
 
@@ -21,10 +21,6 @@ export function HomeTransparency() {
     {
       label: "The capability catalog",
       detail: `${capabilityCatalog.length} departments, every worker named individually on /workforce/capabilities. Count them.`,
-    },
-    {
-      label: "Discovery pricing",
-      detail: `${discoveryPackages[0].price} for ${discoveryPackages[0].duration}, ${discoveryPackages[1].price} for ${discoveryPackages[1].duration}. The only numbers on this site that are fixed in advance.`,
     },
   ];
 

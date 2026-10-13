@@ -9,7 +9,7 @@ Monoes offers two paths on one engine: self-host the open-source tools for free,
 - [Workforce overview](https://monoes.me/workforce): AI digital workers that execute business processes end-to-end on your existing ERP, CRM, email, Excel/CSV, accounting and ticketing systems.
 - [How it works](https://monoes.me/workforce/how-it-works): each worker = deterministic Workflow + AI Agent (reads, extracts, decides within a step) + versioned Policy rules (e.g. "invoices over $20,000 require approval") + swappable Connectors. Five autonomy levels, from manual to autonomous exception handling; workers start with human approval.
 - [Capabilities](https://monoes.me/workforce/capabilities): workers for finance and accounting (AP, AR, reconciliation, period close), procurement (3-way match, PO tracking), HR (onboarding, payroll support), customer service (ticket triage, SLA monitoring), sales and CRM (lead follow-up, quote-to-order), and reporting.
-- Pricing: Discovery audit $3,000 (1 day, one process) or $12,000 (5 days, multi-department). Typical pilots start at $15,000 with a fixed, itemized quote. Engagement: Discovery 1-5 days, Pilot 3-6 weeks, Expand 1-3 months, then Scale.
+- Pricing: Discovery audit $3,000 (1 day, one process) or $12,000 (5 days, multi-department), paid after delivery; it delivers process documentation, org charts, bottlenecks, suggested solutions and an automation for each. SME Discovery (process discovery and charting only for small and mid-sized businesses) starts at $15,000, also paid after delivery. Implementation is scoped and quoted after the research. Engagement: Discovery 1 day or 1 week, Expand 1-3 months, then Scale.
 
 ## Open-source products
 

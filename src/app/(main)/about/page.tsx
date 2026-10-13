@@ -12,6 +12,7 @@ export const metadata: Metadata = {
 
 export default function AboutPage() {
   return (
+    <div className="bg-ivory">
     <main className="px-6 md:px-12 lg:px-24 py-24 md:py-32 max-w-3xl mx-auto">
       <span className="text-xs uppercase tracking-[0.25em] font-semibold text-gold-dark mb-6 block">
         About
@@ -100,7 +101,7 @@ export default function AboutPage() {
             <h3 className="text-lg font-semibold text-espresso mb-2">Hire us to run it</h3>
             <p className="text-sm text-gold-bronze leading-relaxed">
               We deploy AI digital workers that execute your real business processes end-to-end on
-              the systems you already run. Start with a priced Discovery audit.
+              the systems you already run. Start with Discovery, paid after delivery.
             </p>
             <Link
               href="/workforce"
@@ -151,5 +152,6 @@ export default function AboutPage() {
         </div>
       </div>
     </main>
+    </div>
   );
 }

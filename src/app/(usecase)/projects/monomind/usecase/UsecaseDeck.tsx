@@ -1387,7 +1387,7 @@ export default function LandingPage({
                 <span className="close-mission-tag">MISSION BRAVO</span>
                 <span className="close-option-label">Managed workforce · By the core team</span>
                 <div className="close-option-title">Hire us to run it</div>
-                <p className="close-option-body">We deploy AI digital workers that execute your real business processes end-to-end on the systems you already run. Book a priced Discovery audit and we&apos;ll map your highest-ROI opportunities.</p>
+                <p className="close-option-body">We deploy AI digital workers that execute your real business processes end-to-end on the systems you already run. Start with a Discovery audit, paid after delivery, and we&apos;ll map your highest-ROI opportunities.</p>
                 <a href="/workforce" className="close-option-cta">Explore Workforce →</a>
               </div>
             </div>

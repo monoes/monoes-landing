@@ -10,6 +10,7 @@ export const metadata: Metadata = {
 
 export default function LegalPage() {
   return (
+    <div className="bg-ivory">
     <main className="px-6 md:px-12 lg:px-24 py-24 md:py-32 max-w-3xl mx-auto">
       <span className="text-xs uppercase tracking-[0.25em] font-semibold text-gold-dark mb-6 block">
         Legal
@@ -47,17 +48,17 @@ export default function LegalPage() {
             Workforce engagement terms
           </h2>
           <p className="mb-4">
-            Monoes Workforce engagements (Discovery audits, pilots, and rollouts) are governed by a
+            Monoes Workforce engagements (Discovery audits and rollouts) are governed by a
             signed statement of work specific to each engagement. The terms below are a summary and
             the signed SOW controls in case of any conflict.
           </p>
           <ul className="space-y-3 list-disc pl-5">
             <li>
               <strong className="text-espresso">Discovery audits</strong> are fixed-price ($3,000
-              for 1-Day, $12,000 for 5-Day) with defined deliverables. Payment is due on booking.
+              for 1-Day, $12,000 for 5-Day; SME Discovery starts at $15,000) with defined deliverables. Payment is due after delivery of the research and automations, not on booking.
             </li>
             <li>
-              <strong className="text-espresso">Pilot and rollout pricing</strong> is quoted as a
+              <strong className="text-espresso">Rollout pricing</strong> is quoted as a
               fixed, itemized amount in your Discovery report. No open-ended billing.
             </li>
             <li>
@@ -105,5 +106,6 @@ export default function LegalPage() {
         </section>
       </div>
     </main>
+    </div>
   );
 }

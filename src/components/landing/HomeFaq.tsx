@@ -10,11 +10,11 @@ const FAQS = [
   },
   {
     q: "What does it cost?",
-    a: "Monomind and Mono Agent are free and open source (Apache-2.0 and MIT). Monoes Workforce starts with a priced Discovery audit — $3,000 for one day, $12,000 for five — no open-ended billing.",
+    a: "Monomind and Mono Agent are free and open source (Apache-2.0 and MIT). Monoes Workforce starts with a Discovery audit that you pay for after we deliver it — see the Workforce page for details. No open-ended billing.",
   },
   {
     q: "Do I need to replace my CRM or ERP?",
-    a: "No. Workforce connects to the systems you already run. It's not a rip-and-replace — implementation pricing is scoped after the Discovery audit, once we know exactly what you're connecting to.",
+    a: "No. Workforce connects to the systems you already run. It's not a rip-and-replace — implementation pricing is scoped after the research is delivered, once we know exactly what you're connecting to.",
   },
   {
     q: "Is this a chatbot?",
