@@ -23,7 +23,7 @@ export const automationComparisons: Guide[] = [
         ["License", "Monoes Proprietary Software License: free of charge for now, personal or internal business use; source not public", "Sustainable Use License (fair-code, source available, not OSI-approved)"],
         ["Account", "monoes.me sign-in required; keeps working up to 24 hours offline", "None for a self-hosted instance; account for n8n Cloud"],
         ["Install", "One static Go binary, embedded SQLite; no Docker needed", "Self-hosting requires Docker from n8n 3.0 (scheduled October 2026; npm installs end); hosted cloud available"],
-        ["Integrations", "167 node types in the default build", "1,500+ integrations and thousands of community templates"],
+        ["Integrations", "370+ node types, about 240 of them app integrations", "1,500+ integrations and thousands of community templates"],
         ["Triggers", "Manual, cron schedule, webhook, agent-org", "Hundreds of app-event and polling triggers"],
         ["Human approval", "Built-in node: reviewer can edit fields, then approve or reject; queue survives restarts", "Available through wait/form nodes"],
         ["AI agents", "stdio MCP server, JSON CLI; AI steps run on agent CLIs you already have (Claude Code, Codex and others) under their own login and plan, so no AI keys or credits", "AI agent nodes calling LLM APIs"],
@@ -73,6 +73,11 @@ export const automationComparisons: Guide[] = [
           "The core workflow engine does not - it is a single static Go binary. The optional AI agent features delegate to Monomind, which runs on Node.js; Mono Agent can install a private Node runtime for that.",
       },
       {
+        question: "Can I bring my n8n workflows to Mono Agent?",
+        answer:
+          "Yes. monoagentcli workflow import --from n8n my-flow.json converts an n8n workflow export and saves it, and prints a report: which nodes mapped, which apps to reconnect (n8n exports never contain credential secrets), and any node that still needs replacing, in which case it exits with code 3. workflow convert --from n8n previews the result without saving. Python Code nodes and the Git node are not carried over yet.",
+      },
+      {
         question: "Can AI agents build and run Mono Agent workflows?",
         answer:
           "Yes. monoagentcli mcp exposes workflow list, run, validate and human-approval actions over MCP, and every CLI command supports JSON output for scripting. monoagentcli setup registers the MCP server with --allow-mutations, so a connected agent can run workflows and approve human-review items; register it without that flag to keep it read-only.",
@@ -94,7 +99,7 @@ export const automationComparisons: Guide[] = [
         ["Hosting", "Your laptop, desktop or server", "Vendor cloud (SaaS)"],
         ["Pricing", "Free of charge for now (proprietary license); AI steps run on your existing agent CLI plan, no credits", "Subscription plus usage-based credits; AI modules use a variable number of credits"],
         ["Data location", "Your machine, plus the APIs a workflow calls", "Processed in Make's cloud"],
-        ["App catalog", "167 node types", "Thousands of apps"],
+        ["App catalog", "370+ node types", "Thousands of apps"],
         ["Always-on triggers", "Requires monoagentcli daemon running", "Runs 24/7 in the cloud"],
         ["Human approval", "Built-in, reviewer can edit before approving", "Via third-party or custom steps"],
         ["Scripting / AI agents", "CLI with JSON output, MCP server", "Web builder and API"],
@@ -123,7 +128,7 @@ export const automationComparisons: Guide[] = [
       {
         question: "Is there an open-source alternative to Make.com?",
         answer:
-          "n8n is the best-known self-hosted option, with source available under a fair-code license. Mono Agent is a self-hosted alternative but not open source: it is free of charge under a proprietary license and needs a monoes.me sign-in, with a visual canvas editor, a CLI and 167 node types.",
+          "n8n is the best-known self-hosted option, with source available under a fair-code license. Mono Agent is a self-hosted alternative but not open source: it is free of charge under a proprietary license and needs a monoes.me sign-in, with a visual canvas editor, a CLI and 370+ node types.",
       },
       {
         question: "Can Mono Agent receive webhooks from the internet?",
@@ -146,7 +151,7 @@ export const automationComparisons: Guide[] = [
       rows: [
         ["Pricing", "Free of charge for now; AI runs on your agent CLI plan, no credits", "Per-task subscription tiers; AI steps draw from the task pool"],
         ["Setup", "Install a binary; some JSON and cron", "Browser only, no-code"],
-        ["App catalog", "167 node types", "Thousands of apps"],
+        ["App catalog", "370+ node types", "Thousands of apps"],
         ["Logic", "DAG with if/switch/merge, JS code, shell, SSH, DB nodes", "Linear Zaps with paths and filters"],
         ["Data location", "Your machine", "Zapier cloud"],
       ],

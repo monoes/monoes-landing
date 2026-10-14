@@ -157,7 +157,7 @@ export const projects: Project[] = [
     slug: "mono-agent",
     tagline: "No AI credits: your AI subscription, your machine. Workflow automation in a single Go binary.",
     description:
-      "Workflow automation that runs on your own machine and does its AI on the agent CLI you already pay for (Claude Code, Codex and others), so there are no AI credits to buy and no AI keys stored. One static Go binary with embedded SQLite: no Docker, no database server, no analytics or usage counters. Build DAG workflows from 167 node types in a visual desktop editor, a 180+ command CLI, or through its MCP server, and put a human approval step in front of anything that leaves your machine. Free of charge for now under a proprietary license; a monoes.me sign-in is required.",
+      "Workflow automation that runs on your own machine and does its AI on the agent CLI you already pay for (Claude Code, Codex and others), so there are no AI credits to buy and no AI keys stored. One static Go binary with embedded SQLite: no Docker, no database server, no analytics or usage counters. Build DAG workflows from 370+ node types in a visual desktop editor, a 180+ command CLI, or through its MCP server, and put a human approval step in front of anything that leaves your machine. Free of charge for now under a proprietary license; a monoes.me sign-in is required.",
     repo: "monoes/mono-agent",
     language: "Go",
     accent: "#C8A97E",
@@ -189,7 +189,7 @@ export const projects: Project[] = [
       },
       {
         icon: "⚡",
-        title: "167 Node Types",
+        title: "370+ Node Types",
         description:
           "Google Sheets, Gmail, Outlook, Slack, GitHub, Linear, Jira, Notion, Airtable, Stripe, Shopify, Salesforce, HubSpot, Postgres, MySQL, MongoDB, Redis, HTTP, SSH, JavaScript code and more.",
       },

@@ -8,7 +8,7 @@ import { getMonoAgentVersion } from "@/lib/versions";
 import { discoveryContactEmail, discoveryEmailBody, discoveryPackages } from "@/lib/workforce";
 
 const DESCRIPTION =
-  "Workflow automation with no AI credits: AI steps run on the agent CLI you already pay for (Claude Code, Codex and more). One Go binary, no Docker, 167 node types, human-in-the-loop approvals, an encrypted secrets vault, a visual editor and an MCP server for AI agents. Free of charge; monoes.me sign-in required.";
+  "Workflow automation with no AI credits: AI steps run on the agent CLI you already pay for (Claude Code, Codex and more). One Go binary, no Docker, 370+ node types, human-in-the-loop approvals, an encrypted secrets vault, a visual editor and an MCP server for AI agents. Free of charge; monoes.me sign-in required.";
 
 export const metadata: Metadata = {
   title: "Mono Agent: Local-first n8n alternative in a single Go binary",
