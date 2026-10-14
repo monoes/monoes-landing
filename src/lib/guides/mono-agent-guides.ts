@@ -25,7 +25,7 @@ export const monoAgentGuides: Guide[] = [
         ["Install command", "docker volume create n8n_data, then docker run -it --rm --name n8n -p 5678:5678 -v n8n_data:/home/node/.n8n docker.n8n.io/n8nio/n8n", "curl -fsSL https://raw.githubusercontent.com/monoes/mono-agent/HEAD/install.sh | bash, then monoagentcli account login"],
         ["Licence", "Sustainable Use License (fair-code)", "Monoes Proprietary Software License; free of charge for now, source not public"],
         ["Account", "Self-hosting runs without an n8n account", "A monoes.me sign-in is required; a signed token allows up to 24 hours offline"],
-        ["Integrations", "1,500+", "167 node types in the default build"],
+        ["Integrations", "1,500+", "370+ node types, about 240 of them app integrations"],
       ],
     },
     sections: [
@@ -85,9 +85,9 @@ export const monoAgentGuides: Guide[] = [
         ],
       },
       {
-        heading: "How much lighter? A benchmark on a 1 GB limit",
+        heading: "How much lighter? A benchmark on a 1 GB limit (busy host: read the ratios)",
         paragraphs: [
-          "We ran both tools with their default settings, one at a time, each in a container limited to 1 GB of memory and 1 CPU (docker run --memory 1g --memory-swap 1g --cpus 1). Mono Agent was v0.135.0 running monoagentcli daemon. n8n was the official image docker.n8n.io/n8nio/n8n:2.43.4 with its default SQLite database. Each tool ran the same workflow: a webhook trigger, then a step that sets one field. We sent 1,000 webhook requests from 10 parallel callers and stopped the clock when the 1,000th run was saved in the tool's own database. The table below gives the median of 3 rounds, measured on 2026-10-13.",
+          "We ran both tools with their default settings, one at a time, each in a container limited to 1 GB of memory and 1 CPU (docker run --memory 1g --memory-swap 1g --cpus 1). Mono Agent was v0.135.0 running monoagentcli daemon. n8n was the official image docker.n8n.io/n8nio/n8n:2.43.4 with its default SQLite database. Each tool ran the same workflow: a webhook trigger, then a step that sets one field. We sent 1,000 webhook requests from 10 parallel callers and stopped the clock when the 1,000th run was saved in the tool's own database. The figures below are the median of 3 rounds, measured on 2026-10-13 on a busy host: other work was running on the machine, so read them as ratios between the two tools, not as absolute numbers. In every round Mono Agent finished the 1,000 runs 16 to 58 times faster and used about 9 times less memory at idle.",
         ],
         bullets: [
           "Idle memory, 60 s after start: Mono Agent 49 MiB, n8n 448 MiB.",
@@ -95,13 +95,13 @@ export const monoAgentGuides: Guide[] = [
           "Time to complete 1,000 runs: Mono Agent 5.8 s (171 runs/s), n8n 129 s (7.7 runs/s).",
           "Peak memory under that load: Mono Agent 204 MiB, n8n 787 MiB.",
           "Install size: Mono Agent is an 88.6 MB binary; the n8n image is 1.69 GB.",
-          "Caveats: the test machine was busy with other work, so absolute numbers are noisy, and neither tool was tuned. Mono Agent runs at most 3 workflows at once by default, while n8n's default mode has no cap. n8n 3.0 was not yet released, so we tested its current stable version. Re-run it yourself on an idle machine before you rely on the figures.",
+          "Caveats: measured on a busy host, so absolute numbers are noisy and probably pessimistic for both tools; neither tool was tuned. Mono Agent runs at most 3 workflows at once by default, while n8n's default mode has no cap. n8n 3.0 was not yet released, so we tested its current stable version. Re-run it yourself on an idle machine before you rely on the figures.",
         ],
       },
       {
         heading: "When to stay on n8n",
         bullets: [
-          "Integration breadth: n8n has 1,500+ integrations and many app-event triggers. Mono Agent has 167 node types; check that yours are covered before moving.",
+          "Integration breadth: n8n has 1,500+ integrations and many app-event triggers. Mono Agent has 370+ node types, about 240 of them app integrations; run the importer on your workflows to see what carries over before moving.",
           "Source and account: n8n's fair-code source is public and self-hosting works without an n8n account. Mono Agent's source is not public and it needs a monoes.me sign-in.",
           "Community and templates: n8n has a large forum and thousands of community templates.",
           "Teams: n8n offers users, roles and SSO. Mono Agent is a single-user tool today.",
@@ -111,7 +111,16 @@ export const monoAgentGuides: Guide[] = [
       {
         heading: "Moving workflows across",
         paragraphs: [
-          "An importer for n8n workflow JSON is being built and is not released yet. Until it ships, workflows are rebuilt by hand in the desktop canvas or as JSON through the CLI, which is realistic for a handful of workflows and slow for dozens.",
+          "Mono Agent imports n8n workflow exports (the JSON from n8n's Download menu or n8n export:workflow). monoagentcli workflow import --from n8n my-flow.json converts and saves the workflow in one step. monoagentcli workflow convert --from n8n my-flow.json only converts and prints the result, so you can review it first; nothing is saved.",
+          "Every import prints a report: which nodes mapped fully, partially or not at all, the connections to set up (n8n exports name credentials but never contain their secrets, so you reconnect each app once, and the report gives the command), and where behaviour differs from n8n. If a node has no equivalent it becomes a placeholder that fails until you replace it, and the command exits with code 3 so scripts notice.",
+        ],
+        bullets: [
+          "Core flow nodes (If, Switch, Merge, Set/Edit Fields, Filter, Loop Over Items, Wait, Code in JavaScript and more) and n8n expressions are converted.",
+          "App nodes map to Mono Agent's built-in services or to its API packages, which cover most n8n app operations.",
+          "All n8n trigger types import. App triggers become webhook or scheduled polling triggers; for webhook-based apps you register the webhook URL with the vendor yourself for now.",
+          "n8n AI agent and chain nodes become agent.ask steps on your own agent CLI (OpenAI models on Codex, Anthropic models on Claude Code).",
+          "Not carried over yet: Python in the Code node, the Git node, and a few app operations; the report names each one.",
+          "Some nodes run once per batch of items with expressions taken from the first item, where n8n ran them once per item; the report notes every node where that applies.",
         ],
       },
     ],
@@ -139,7 +148,7 @@ export const monoAgentGuides: Guide[] = [
       {
         question: "Can I import my n8n workflows?",
         answer:
-          "Not yet. An n8n workflow importer is being built. Today you rebuild workflows in the canvas or the CLI.",
+          "Yes. Run monoagentcli workflow import --from n8n my-flow.json on an n8n export. It converts and saves the workflow, prints a report of what mapped and which apps to reconnect, and exits with code 3 if any node still needs replacing. Use workflow convert --from n8n to preview without saving.",
       },
     ],
     related: [
