@@ -85,17 +85,17 @@ export const monoAgentGuides: Guide[] = [
         ],
       },
       {
-        heading: "How much lighter? A benchmark on a 1 GB limit (busy host: read the ratios)",
+        heading: "How much lighter? A benchmark on a 1 GB limit",
         paragraphs: [
-          "We ran both tools with their default settings, one at a time, each in a container limited to 1 GB of memory and 1 CPU (docker run --memory 1g --memory-swap 1g --cpus 1). Mono Agent was v0.135.0 running monoagentcli daemon. n8n was the official image docker.n8n.io/n8nio/n8n:2.43.4 with its default SQLite database. Each tool ran the same workflow: a webhook trigger, then a step that sets one field. We sent 1,000 webhook requests from 10 parallel callers and stopped the clock when the 1,000th run was saved in the tool's own database. The figures below are the median of 3 rounds, measured on 2026-10-13 on a busy host: other work was running on the machine, so read them as ratios between the two tools, not as absolute numbers. In every round Mono Agent finished the 1,000 runs 16 to 58 times faster and used about 9 times less memory at idle.",
+          "We ran both tools with their default settings, one at a time, each in a container limited to 1 GB of memory and 1 CPU (docker run --memory 1g --memory-swap 1g --cpus 1). Mono Agent was the build this release is cut from, running monoagentcli daemon. n8n was the official image docker.n8n.io/n8nio/n8n:2.43.4 with its default SQLite database. Each tool ran the same workflow: a webhook trigger, then a step that sets one field. We sent 1,000 webhook requests from 10 parallel callers and stopped the clock when the 1,000th run was saved in the tool's own database. The figures below are the median of 3 rounds, measured on 2026-10-14 on a 24-CPU machine that was also running other work, so treat the ratios as the solid part: Mono Agent finished the runs about 14 times faster, was ready about 11 times sooner and idled in about 4 times less memory.",
         ],
         bullets: [
-          "Idle memory, 60 s after start: Mono Agent 49 MiB, n8n 448 MiB.",
-          "Cold start, from process start to the first accepted webhook: Mono Agent 0.22 s, n8n 9.6 s.",
-          "Time to complete 1,000 runs: Mono Agent 5.8 s (171 runs/s), n8n 129 s (7.7 runs/s).",
-          "Peak memory under that load: Mono Agent 204 MiB, n8n 787 MiB.",
-          "Install size: Mono Agent is an 88.6 MB binary; the n8n image is 1.69 GB.",
-          "Caveats: measured on a busy host, so absolute numbers are noisy and probably pessimistic for both tools; neither tool was tuned. Mono Agent runs at most 3 workflows at once by default, while n8n's default mode has no cap. n8n 3.0 was not yet released, so we tested its current stable version. Re-run it yourself on an idle machine before you rely on the figures.",
+          "Idle memory, 60 s after start: Mono Agent 101 MiB, n8n 447 MiB.",
+          "Cold start, from process start to the first accepted webhook: Mono Agent 0.52 s, n8n 5.8 s.",
+          "Time to complete 1,000 runs: Mono Agent 5.2 s (191 runs/s), n8n 74 s (13.4 runs/s). Neither lost a run or timed out a request.",
+          "Peak memory under that load: Mono Agent 267 MiB, n8n 780 MiB.",
+          "Install size: Mono Agent is a 131 MB binary; the n8n image is 1.69 GB.",
+          "Caveats: the host was shared, so absolute numbers carry some noise; neither tool was tuned. Mono Agent runs at most 3 workflows at once by default, while n8n's default mode has no cap. n8n 3.0 was not yet released, so we tested its current stable version. Re-run it yourself on your own hardware before you rely on the exact figures.",
         ],
       },
       {
