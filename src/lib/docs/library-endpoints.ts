@@ -17,7 +17,7 @@ export const LIBRARY_ENDPOINTS: EndpointGroup = {
       summary: "List library items.",
       auth: publicAuth,
       request:
-        "Query params: kind ('workflow'|'automation'|'org'), scope ('public' (default: public + official) | 'official' | 'mine'), q, tag, sort ('latest' (default, last updated first) | 'popular' (net votes first)), page (1-indexed), per_page (≤ 100, default 24)",
+        "Query params: kind ('workflow'|'automation'|'org'|'api'), scope ('public' (default: public + official) | 'official' | 'mine'), q, tag, sort ('latest' (default, last updated first) | 'popular' (net votes first)), page (1-indexed), per_page (≤ 100, default 24)",
       response: "{ items: Item[], page, per_page, total }",
       notes:
         "scope=mine needs library:read (401 without credentials). Item: { id, kind, slug, name, description, version, visibility, tags, owner: { id, username, name }, sha256, size, meta, score (net community votes), created_at, updated_at, url, artifact_url }. The community workflow and web automation galleries (/community/workflows, /community/automations) are this list with scope=public and sort=latest|popular. Community gallery orgs are listed as public kind=org items with meta.gallery = true.",
@@ -57,7 +57,7 @@ export const LIBRARY_ENDPOINTS: EndpointGroup = {
         "multipart/form-data: kind, file, visibility ('private' default | 'public' | 'official' for admins), name?, description?, tags? (comma-separated), version? (semver)",
       response: "201 Item",
       notes:
-        "The server validates the file: automations are .mpkg zips with a valid automation.json (≤ 20 MB; the item version is automation.json's); workflows are MonoAgent workflow exports (≤ 20 MB); orgs must pass the org schema (≤ 500 KB). meta is derived from the file. At most 30 uploads per hour (429).",
+        "The server validates the file: automations are .mpkg zips with a valid automation.json (≤ 20 MB; the item version is automation.json's); workflows are MonoAgent workflow exports (≤ 20 MB); orgs must pass the org schema (≤ 500 KB); API packages are apipkg.v1 JSON files ($schema \"apipkg.v1\", id [a-z0-9_]+, title, at least one operation; ≤ 2 MB) and are listed under their package id. meta is derived from the file. At most 30 uploads per hour (429).",
     },
     {
       method: "PUT",

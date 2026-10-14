@@ -121,6 +121,7 @@ export function UploadForm({
             <option value="automation">Web automation</option>
             <option value="workflow">Workflow</option>
             <option value="org">Org</option>
+            <option value="api">API package</option>
           </select>
         </label>
         <label className="grid gap-1 text-sm text-espresso/75">

@@ -1,4 +1,4 @@
-export const KINDS = ["workflow", "automation", "org"] as const;
+export const KINDS = ["workflow", "automation", "org", "api"] as const;
 export type Kind = (typeof KINDS)[number];
 
 export const VISIBILITIES = ["private", "public", "official"] as const;
@@ -12,18 +12,21 @@ export const KIND_PATH: Record<Kind, string> = {
   workflow: "workflows",
   automation: "automations",
   org: "orgs",
+  api: "apis",
 };
 
 export const KIND_LABEL: Record<Kind, string> = {
   workflow: "Workflow",
   automation: "Web automation",
   org: "Org",
+  api: "API package",
 };
 
 export const CONTENT_TYPE: Record<Kind, string> = {
   workflow: "application/json",
   automation: "application/zip",
   org: "application/json",
+  api: "application/json",
 };
 
 export const MAX_ARTIFACT_BYTES: Record<Kind, number> = {
@@ -31,6 +34,8 @@ export const MAX_ARTIFACT_BYTES: Record<Kind, number> = {
   automation: 20 * 1024 * 1024,
   // Same limit as the /community/orgs gallery upload.
   org: 500_000,
+  // One apipkg.v1 JSON file; the largest built-in catalog package is ~430 KB.
+  api: 2 * 1024 * 1024,
 };
 
 /** Accepts the singular kind ("automation") or its URL segment ("automations"). */

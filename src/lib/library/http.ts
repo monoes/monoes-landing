@@ -38,7 +38,7 @@ function positiveInt(value: string | null, name: string, fallback: number): numb
 export function parseListQuery(params: URLSearchParams): ListQuery {
   const rawKind = params.get("kind");
   const kind = parseKind(rawKind);
-  if (rawKind && !kind) throw new LibraryError(400, "invalid_request", "kind must be workflow, automation or org.");
+  if (rawKind && !kind) throw new LibraryError(400, "invalid_request", "kind must be workflow, automation, org or api.");
   const scope = (params.get("scope") || "public") as ListScope;
   if (!SCOPES.includes(scope)) throw new LibraryError(400, "invalid_request", "scope must be public, official or mine.");
   const perPage = positiveInt(params.get("per_page"), "per_page", DEFAULT_PER_PAGE);

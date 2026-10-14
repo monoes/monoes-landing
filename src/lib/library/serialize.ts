@@ -114,6 +114,7 @@ export function galleryOrgToApiItem(
 export function installRef(item: Pick<LibraryItem, "id" | "kind" | "slug" | "visibility" | "meta">): string {
   if (item.visibility === "private") return item.id;
   if (item.kind === "automation") return item.slug === item.meta.automation_id ? item.slug : item.id;
+  if (item.kind === "api") return item.slug === item.meta.apipkg_id ? item.slug : item.id;
   return /-\d+$/.test(item.slug) ? item.id : item.slug;
 }
 
