@@ -120,7 +120,7 @@ export async function handleCreate(request: Request): Promise<Response> {
   const { form, bytes } = await readUpload(request);
 
   const kind = parseKind(field(form, "kind"));
-  if (!kind) throw new LibraryError(400, "invalid_request", "kind must be workflow, automation or org.");
+  if (!kind) throw new LibraryError(400, "invalid_request", "kind must be workflow, automation, org or api.");
   const visibility = field(form, "visibility") || "private";
   if (!isVisibility(visibility)) throw new LibraryError(400, "invalid_request", "visibility must be private, public or official.");
   if (!canSetVisibility(visibility, viewer)) throw new LibraryError(403, "forbidden", "Only admins publish official items.");
@@ -132,7 +132,7 @@ export async function handleCreate(request: Request): Promise<Response> {
     kind,
     visibility,
     name,
-    slugBase: kind === "automation" ? artifact.slug : slugify(name, kind),
+    slugBase: kind === "automation" || kind === "api" ? artifact.slug : slugify(name, kind),
     description: checkDescription(field(form, "description") ?? artifact.description.slice(0, DESCRIPTION_MAX)),
     tags: parseTags(field(form, "tags") ?? ""),
     version: pickVersion(kind, field(form, "version"), artifact.version, "1.0.0"),

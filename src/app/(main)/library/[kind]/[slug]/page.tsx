@@ -79,6 +79,13 @@ function MetaRows({ item }: { item: LibraryItem }) {
     rows.push(["Triggers", <Chips key="t" values={(m.trigger_types as string[]) ?? []} />]);
     rows.push(["Node types", <Chips key="n" values={(m.node_types as string[]) ?? []} />]);
     rows.push(["Needs automations", <Chips key="r" values={(m.required_automations as string[]) ?? []} />]);
+  } else if (item.kind === "api") {
+    if (m.node_type) rows.push(["Node type", String(m.node_type)]);
+    if (m.extends) rows.push(["Extends", String(m.extends)]);
+    rows.push(["Operations", String(m.operations ?? 0)]);
+    rows.push(["Imports n8n nodes", <Chips key="n8n" values={(m.n8n_types as string[]) ?? []} />]);
+    rows.push(["Imports n8n triggers", <Chips key="n8nt" values={(m.n8n_trigger_types as string[]) ?? []} />]);
+    if (m.docs_url) rows.push(["API docs", String(m.docs_url)]);
   } else {
     rows.push(["Roles", String(m.role_count ?? 0)]);
     if (m.topology) rows.push(["Topology", String(m.topology)]);

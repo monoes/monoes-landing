@@ -27,6 +27,10 @@ function summary(item: LibraryItem): string {
     const nodes = (m.node_types as string[] | undefined) ?? [];
     return `${nodes.length} node type${nodes.length === 1 ? "" : "s"}`;
   }
+  if (item.kind === "api") {
+    const ops = Number(m.operations ?? 0);
+    return [(m.node_type ?? m.extends) as string | null, `${ops} operation${ops === 1 ? "" : "s"}`].filter(Boolean).join(" · ");
+  }
   const roles = Number(m.role_count ?? 0);
   return [`${roles} role${roles === 1 ? "" : "s"}`, m.topology as string | null].filter(Boolean).join(" · ");
 }

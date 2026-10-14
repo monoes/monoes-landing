@@ -21,6 +21,7 @@ const TABS: { key: string; label: string }[] = [
   { key: "workflows", label: "Workflows" },
   { key: "automations", label: "Web automations" },
   { key: "orgs", label: "Orgs" },
+  { key: "apis", label: "API packages" },
   { key: "mine", label: "My library" },
 ];
 const PER_PAGE = 24;

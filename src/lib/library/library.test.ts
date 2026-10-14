@@ -103,6 +103,8 @@ describe("http", () => {
 
   it("parseKind accepts singular and plural", () => {
     assert.equal(parseKind("orgs"), "org");
+    assert.equal(parseKind("api"), "api");
+    assert.equal(parseKind("apis"), "api");
     assert.equal(parseKind("Workflow"), "workflow");
     assert.equal(parseKind("x"), null);
   });
@@ -172,6 +174,8 @@ describe("serialize", () => {
     assert.equal(installRef({ ...base, slug: "instagram-2" }), "i1");
     assert.equal(installRef({ ...base, kind: "workflow", slug: "daily-digest", meta: {} }), "daily-digest");
     assert.equal(installRef({ ...base, kind: "org", slug: "growth-team-2", visibility: "public", meta: {} }), "i1");
+    assert.equal(installRef({ ...base, kind: "api", slug: "the_hive", meta: { apipkg_id: "the_hive" } }), "the_hive");
+    assert.equal(installRef({ ...base, kind: "api", slug: "the_hive-2", meta: { apipkg_id: "the_hive" } }), "i1");
   });
 
   it("ranks by score, then newest", () => {

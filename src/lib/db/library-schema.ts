@@ -10,7 +10,7 @@ export const libraryItem = sqliteTable(
   "library_item",
   {
     id: text("id").primaryKey(),
-    kind: text("kind").notNull(), // "workflow" | "automation" | "org"
+    kind: text("kind").notNull(), // "workflow" | "automation" | "org" | "api"
     slug: text("slug").notNull(),
     name: text("name").notNull(),
     description: text("description").notNull().default(""),

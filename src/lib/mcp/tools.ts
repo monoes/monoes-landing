@@ -49,9 +49,9 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
     name: "list_library_items",
     title: "List library items",
     description:
-      "List MonoAgent library items (workflows, web automations, orgs), newest first or by community votes (sort 'popular'). scope 'public' (default) lists public and official items without authentication; 'mine' lists your own and needs library:read.",
+      "List MonoAgent library items (workflows, web automations, orgs, API packages), newest first or by community votes (sort 'popular'). scope 'public' (default) lists public and official items without authentication; 'mine' lists your own and needs library:read.",
     inputSchema: {
-      kind: z.enum(["workflow", "automation", "org"]).optional(),
+      kind: z.enum(["workflow", "automation", "org", "api"]).optional(),
       scope: z.enum(["public", "official", "mine"]).optional(),
       sort: z.enum(["latest", "popular"]).optional(),
       q: z.string().max(100).optional(),
@@ -75,7 +75,7 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
       "Get one MonoAgent library item by id, or by kind and slug. Includes its sha256, meta and artifact_url; install it locally with `monoagentcli library install <kind> <id|slug>`.",
     inputSchema: {
       id: z.string().optional(),
-      kind: z.enum(["workflow", "automation", "org"]).optional(),
+      kind: z.enum(["workflow", "automation", "org", "api"]).optional(),
       slug: z.string().optional(),
     },
     call: async (args, authHeader) => {

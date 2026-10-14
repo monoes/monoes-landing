@@ -6,6 +6,9 @@ import { readZipEntry, ZipError } from "./zip.ts";
 export const AUTOMATION_SCHEMA = "monoagent.automation/v1";
 const AUTOMATION_ID = /^[a-z0-9][a-z0-9._-]{0,63}$/;
 const MAX_MANIFEST_BYTES = 1024 * 1024;
+export const API_PACKAGE_SCHEMA = "apipkg.v1";
+// Same id rule as MonoAgent's installer (~/.monoagent/apipkgs/<id>/package.json).
+const API_PACKAGE_ID = /^[a-z0-9_]{1,64}$/;
 
 /** What the server derives from an uploaded artifact. */
 export interface ValidatedArtifact {
@@ -162,6 +165,59 @@ function validateOrg(bytes: Uint8Array): ValidatedArtifact {
   };
 }
 
+/**
+ * An API package (apipkg.v1): one JSON file describing a REST API that
+ * MonoAgent runs as node `app.<id>` or as extra operations of a native node.
+ * MonoAgent validates the full package before upload and again on install;
+ * the server checks the envelope and derives the listing meta.
+ */
+function validateApiPackage(bytes: Uint8Array): ValidatedArtifact {
+  const pkg = parseJson(bytes);
+  if (!isObject(pkg)) throw invalid("An API package must be a JSON object.");
+  if (pkg.$schema !== API_PACKAGE_SCHEMA) throw invalid(`API package: $schema must be "${API_PACKAGE_SCHEMA}".`);
+  if (typeof pkg.id !== "string" || !API_PACKAGE_ID.test(pkg.id)) {
+    throw invalid("API package: id must be 1-64 lowercase letters, digits or '_'.");
+  }
+  if (typeof pkg.title !== "string" || !pkg.title.trim()) throw invalid("API package: title is required.");
+  const extendsType = typeof pkg.extends === "string" && pkg.extends ? pkg.extends : null;
+  if (pkg.extends !== undefined && typeof pkg.extends !== "string") throw invalid("API package: extends must be a node type.");
+  if (pkg.node_type !== undefined && pkg.node_type !== "") {
+    if (typeof pkg.node_type !== "string" || !pkg.node_type.startsWith("app.")) {
+      throw invalid('API package: node_type must start with "app.".');
+    }
+    if (extendsType) throw invalid("API package: set node_type or extends, not both.");
+  }
+  if (!Array.isArray(pkg.operations)) throw invalid("API package: operations must be a list.");
+  const n8nTypes = pkg.n8n_types === undefined ? [] : stringArray(pkg.n8n_types);
+  if (!n8nTypes) throw invalid("API package: n8n_types must be a list of node types.");
+  const n8nTriggerTypes = pkg.n8n_trigger_types === undefined ? [] : stringArray(pkg.n8n_trigger_types);
+  if (!n8nTriggerTypes) throw invalid("API package: n8n_trigger_types must be a list of node types.");
+  // A trigger-only app (n8n has only its ...Trigger node) has no operations.
+  if (pkg.operations.length === 0 && n8nTriggerTypes.length === 0) {
+    throw invalid("API package: operations must list at least one operation (or n8n_trigger_types for a trigger-only app).");
+  }
+  const nodeType = extendsType ? null : typeof pkg.node_type === "string" && pkg.node_type ? pkg.node_type : `app.${pkg.id}`;
+
+  return {
+    contentType: CONTENT_TYPE.api,
+    filename: `${pkg.id}.json`,
+    meta: {
+      apipkg_id: pkg.id,
+      node_type: nodeType,
+      extends: extendsType,
+      operations: pkg.operations.length,
+      n8n_types: n8nTypes,
+      n8n_trigger_types: n8nTriggerTypes,
+      base_url: typeof pkg.base_url === "string" ? pkg.base_url : null,
+      docs_url: typeof pkg.docs_url === "string" ? pkg.docs_url : null,
+    },
+    name: pkg.title.trim(),
+    slug: pkg.id,
+    description: typeof pkg.description === "string" ? pkg.description : "",
+    version: null,
+  };
+}
+
 /** Validates an artifact for `kind` and derives its meta (400/413 on failure). */
 export async function validateArtifact(kind: Kind, bytes: Uint8Array): Promise<ValidatedArtifact> {
   const max = MAX_ARTIFACT_BYTES[kind];
@@ -171,6 +227,7 @@ export async function validateArtifact(kind: Kind, bytes: Uint8Array): Promise<V
   if (bytes.byteLength === 0) throw invalid("The file is empty.");
   if (kind === "automation") return validateAutomation(bytes);
   if (kind === "workflow") return validateWorkflow(bytes);
+  if (kind === "api") return validateApiPackage(bytes);
   return validateOrg(bytes);
 }
 
@@ -184,6 +241,7 @@ export function guessKind(filename: string, bytes: Uint8Array): Kind | null {
     return null;
   }
   if (!isObject(json)) return null;
+  if (json.$schema === API_PACKAGE_SCHEMA) return "api";
   if (Array.isArray(json.nodes)) return "workflow";
   if (Array.isArray(json.roles)) return "org";
   return null;

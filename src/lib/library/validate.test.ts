@@ -117,6 +117,67 @@ describe("validateArtifact: org", () => {
   });
 });
 
+describe("validateArtifact: api", () => {
+  const pkg = (over: Record<string, unknown> = {}) =>
+    json({
+      $schema: "apipkg.v1",
+      id: "todoist",
+      title: "Todoist",
+      description: "Tasks in Todoist",
+      n8n_types: ["n8n-nodes-base.todoist"],
+      base_url: "https://api.todoist.com/api/v1",
+      operations: [{ operation: "get" }, { operation: "create" }],
+      ...over,
+    });
+
+  it("accepts an apipkg.v1 package and derives meta", async () => {
+    const a = await validateArtifact("api", pkg());
+    assert.equal(a.contentType, "application/json");
+    assert.equal(a.filename, "todoist.json");
+    assert.equal(a.slug, "todoist");
+    assert.equal(a.name, "Todoist");
+    assert.equal(a.description, "Tasks in Todoist");
+    assert.equal(a.version, null);
+    assert.deepEqual(a.meta, {
+      apipkg_id: "todoist",
+      node_type: "app.todoist",
+      extends: null,
+      operations: 2,
+      n8n_types: ["n8n-nodes-base.todoist"],
+      n8n_trigger_types: [],
+      base_url: "https://api.todoist.com/api/v1",
+      docs_url: null,
+    });
+  });
+
+  it("keeps an explicit node_type and an extends package", async () => {
+    assert.equal((await validateArtifact("api", pkg({ node_type: "app.todo" }))).meta.node_type, "app.todo");
+    const ext = await validateArtifact("api", pkg({ id: "github_more", extends: "service.github" }));
+    assert.equal(ext.meta.node_type, null);
+    assert.equal(ext.meta.extends, "service.github");
+  });
+
+  it("accepts a trigger-only app with no operations", async () => {
+    const a = await validateArtifact("api", pkg({ operations: [], n8n_trigger_types: ["n8n-nodes-base.wufooTrigger"] }));
+    assert.equal(a.meta.operations, 0);
+    assert.deepEqual(a.meta.n8n_trigger_types, ["n8n-nodes-base.wufooTrigger"]);
+  });
+
+  it("rejects packages that are not apipkg.v1 or are malformed", async () => {
+    await rejects(validateArtifact("api", json({ nodes: [] })), 400, /\$schema/);
+    await rejects(validateArtifact("api", pkg({ id: "Bad-Id" })), 400, /id/);
+    await rejects(validateArtifact("api", pkg({ id: "../etc" })), 400, /id/);
+    await rejects(validateArtifact("api", pkg({ title: " " })), 400, /title/);
+    await rejects(validateArtifact("api", pkg({ operations: [] })), 400, /operations/);
+    await rejects(validateArtifact("api", pkg({ operations: {} })), 400, /operations/);
+    await rejects(validateArtifact("api", pkg({ node_type: "service.x" })), 400, /node_type/);
+    await rejects(validateArtifact("api", pkg({ node_type: "app.x", extends: "service.github" })), 400, /not both/);
+    await rejects(validateArtifact("api", pkg({ n8n_types: "x" })), 400, /n8n_types/);
+    await rejects(validateArtifact("api", new TextEncoder().encode("{oops")), 400, /JSON/);
+    await rejects(validateArtifact("api", new Uint8Array(2 * 1024 * 1024 + 1)), 413);
+  });
+});
+
 describe("helpers", () => {
   it("sha256Hex matches the known digest of 'abc'", async () => {
     assert.equal(
@@ -134,6 +195,7 @@ describe("helpers", () => {
     assert.equal(guessKind("x.mpkg", new Uint8Array()), "automation");
     assert.equal(guessKind("x.json", json({ nodes: [] })), "workflow");
     assert.equal(guessKind("x.json", json({ roles: [] })), "org");
+    assert.equal(guessKind("todoist.json", json({ $schema: "apipkg.v1", id: "todoist" })), "api");
     assert.equal(guessKind("x.json", json({})), null);
   });
 });
