@@ -21,7 +21,7 @@ export default function LegalPage() {
 
       <div className="space-y-12 text-gold-bronze leading-relaxed font-light">
         <section>
-          <h2 className="text-2xl font-semibold text-espresso mb-4">Open-source license</h2>
+          <h2 className="text-2xl font-semibold text-espresso mb-4">Software licenses</h2>
           <p className="mb-4">
             The Monomind orchestration engine and its packages are licensed under{" "}
             <strong className="text-espresso">Apache-2.0</strong>. The full license text is in the{" "}
@@ -40,6 +40,19 @@ export default function LegalPage() {
             MonoClip and MonoTask carry their own licenses in their respective repositories. Check
             each project&apos;s <code className="font-mono text-sm text-gold-dark">LICENSE</code>{" "}
             file for the authoritative text.
+          </p>
+          <p className="mt-4">
+            Mono Agent is not open source. It is free of charge for now under the{" "}
+            <a
+              href="https://github.com/monoes/mono-agent/blob/main/LICENSE"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-gold-dark underline underline-offset-2 hover:text-espresso"
+            >
+              Monoes Proprietary Software License
+            </a>{" "}
+            (personal or internal business use; no redistribution, and no hosting it as a service for
+            others), and it requires a monoes.me sign-in.
           </p>
         </section>
 

@@ -165,7 +165,7 @@ export const where = {
 export const close = {
   lead: "Put AI workers",
   accent: "to work.",
-  sub: "Start with a one-day audit of your busiest process, or run the open-source tools yourself, free.",
+  sub: "Start with a one-day audit of your busiest process, or run our tools yourself, free.",
 };
 
 export interface ServiceLink {

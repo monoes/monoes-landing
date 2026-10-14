@@ -65,9 +65,9 @@ export const buyerGuides: Guide[] = [
     slug: "ai-crm-lead-follow-up",
     title: "Automating CRM lead follow-up with AI - without losing oversight",
     description:
-      "How to automate lead follow-up with AI drafts and human approval, using a managed digital worker or the open-source Mono Agent.",
+      "How to automate lead follow-up with AI drafts and human approval, using a managed digital worker or the free, self-hosted Mono Agent.",
     summary:
-      "The safe way to automate CRM lead follow-up is to let AI draft each message from the lead's record and history, put a human approval step in front of anything that gets sent, and write the outcome back to the CRM. Monoes offers two paths: Monoes Workforce runs this as a managed digital worker on your CRM, or you self-host the open-source Mono Agent, whose built-in approval node lets a reviewer edit the subject and body before sending.",
+      "The safe way to automate CRM lead follow-up is to let AI draft each message from the lead's record and history, put a human approval step in front of anything that gets sent, and write the outcome back to the CRM. Monoes offers two paths: Monoes Workforce runs this as a managed digital worker on your CRM, or you self-host Mono Agent (free of charge), whose built-in approval node lets a reviewer edit the subject and body before sending.",
     updated: UPDATED,
     sections: [
       {
@@ -83,7 +83,7 @@ export const buyerGuides: Guide[] = [
         heading: "Managed or self-hosted",
         paragraphs: [
           "Monoes Workforce's Sales & CRM workers cover lead follow-up, pipeline hygiene and quote generation, deployed and monitored for you.",
-          "Mono Agent (free, MIT) ships HubSpot, Salesforce, Google Sheets, Gmail and Outlook nodes plus a human-in-the-loop node. It suits small volumes where every message is reviewed; it has no CRM-event triggers, so it runs on a schedule.",
+          "Mono Agent (free of charge, proprietary license, monoes.me sign-in required) ships HubSpot, Salesforce, Google Sheets, Gmail and Outlook nodes plus a human-in-the-loop node. It suits small volumes where every message is reviewed; it has no CRM-event triggers, so it runs on a schedule.",
         ],
       },
     ],

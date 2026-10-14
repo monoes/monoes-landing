@@ -284,8 +284,8 @@ export const securityFacts: Fact[] = [
   {
     badge: "03",
     color: "#B8956A",
-    title: "No telemetry, local crash reports",
-    body: "SECURITY.md states there is no telemetry and nothing phones home. Crash reports are written to ~/.monoagent/crashes/, and filing one to GitHub needs MONOAGENT_CRASH_REPORT=1 plus a second condition.",
+    title: "No analytics, local crash reports",
+    body: "SECURITY.md: no analytics, no usage counters, no device identifier. It does contact monoes.me to sign you in (a sign-in is required) and to check for updates. Crash reports are written to ~/.monoagent/crashes/, and filing one to GitHub needs MONOAGENT_CRASH_REPORT=1 plus a second condition.",
   },
   {
     badge: "04",

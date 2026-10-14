@@ -1,8 +1,8 @@
 # Monoes
 
-> Monoes builds open-source AI agent tools (Monomind, Mono Agent, MonoClip, MonoTask) and runs Monoes Workforce, a managed service that deploys AI digital workers to automate business processes end-to-end on the ERP, CRM and email systems a company already uses.
+> Monoes builds AI agent tools (open-source Monomind, MonoClip and MonoTask, and Mono Agent, free of charge) and runs Monoes Workforce, a managed service that deploys AI digital workers to automate business processes end-to-end on the ERP, CRM and email systems a company already uses.
 
-Monoes offers two paths on one engine: self-host the open-source tools for free, or hire Monoes Workforce to design, deploy and monitor digital workers for you. Founded by Morteza Nokhodian, author of Monomind. Contact: hello@monoes.me. Security: security@monoes.me.
+Monoes offers two paths on one engine: run the tools yourself for free, or hire Monoes Workforce to design, deploy and monitor digital workers for you. Founded by Morteza Nokhodian, author of Monomind. Contact: hello@monoes.me. Security: security@monoes.me.
 
 ## Monoes Workforce (managed agentic process automation)
 
@@ -11,10 +11,10 @@ Monoes offers two paths on one engine: self-host the open-source tools for free,
 - [Capabilities](https://monoes.me/workforce/capabilities): workers for finance and accounting (AP, AR, reconciliation, period close), procurement (3-way match, PO tracking), HR (onboarding, payroll support), customer service (ticket triage, SLA monitoring), sales and CRM (lead follow-up, quote-to-order), and reporting.
 - Pricing: Discovery audit $3,000 (1 day, one process) or $12,000 (5 days, multi-department), paid after delivery; it delivers process documentation, org charts, bottlenecks, suggested solutions and an automation for each. SME Discovery (process discovery and charting only for small and mid-sized businesses) starts at $15,000, also paid after delivery. Implementation is scoped and quoted after the research. Engagement: Discovery 1 day or 1 week, Expand 1-3 months, then Scale.
 
-## Open-source products
+## Products
 
 - [Monomind](https://monoes.me/projects/monomind): open-source (Apache 2.0) TypeScript CLI and MCP server that adds a local codebase knowledge graph, persistent local SQLite memory with local embeddings, document search, multi-agent coordination and policy-gated background agent orgs to AI coding assistants (Claude Code, OpenCode, Antigravity, Kimi Code, Codex). Monomind itself runs locally and stores its state locally; the AI runtimes it drives send prompts and code to their model providers. Install: `npm install -g monomind`. Source: https://github.com/monoes/monomind
-- [Mono Agent](https://monoes.me/projects/mono-agent): open-source (MIT), local-first n8n alternative in a single Go binary - 100+ workflow node types, visual DAG editor and desktop app, built-in human-in-the-loop approval, encrypted secrets vault in the OS keychain, and an MCP server so AI agents can build and run workflows. Source: https://github.com/monoes/mono-agent
+- [Mono Agent](https://monoes.me/projects/mono-agent): local-first n8n alternative in a single Go binary (no Docker) with no AI credits - AI steps run on the agent CLI you already pay for (Claude Code, Codex and others), and it stores no AI keys. 370+ workflow node types, visual DAG editor and desktop app, built-in human-in-the-loop approval, encrypted secrets vault in the OS keychain, and an MCP server (registered by setup with --allow-mutations, so agents can run workflows and approve review items). Free of charge for now under the Monoes Proprietary Software License (not open source); a monoes.me sign-in is required. No analytics or usage counters; it contacts monoes.me to sign in and check for updates. Install: `curl -fsSL https://raw.githubusercontent.com/monoes/mono-agent/HEAD/install.sh | bash`, then `monoagentcli account login`. Releases (the source is not public): https://github.com/monoes/mono-agent
 - [MonoClip](https://monoes.me/projects/mono-clip): a clipboard manager with memory.
 - [MonoTask](https://monoes.me/projects/monotask): peer-to-peer kanban board with no server and no account.
 

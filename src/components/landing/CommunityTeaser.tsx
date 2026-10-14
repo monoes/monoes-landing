@@ -45,7 +45,7 @@ export function CommunityTeaser() {
 
         {/* Sub-copy */}
         <p className="text-lg md:text-xl font-light text-ivory/70 max-w-xl mx-auto leading-relaxed">
-          Every tool is open-source, every decision is in public. Join us and
+          Monomind, MonoClip and MonoTask are open-source, every decision is in public. Join us and
           help shape what&apos;s next.
         </p>
 

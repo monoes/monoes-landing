@@ -201,7 +201,7 @@ export function HeroSection() {
             ref={subtitleRef}
             className="mt-8 text-lg md:text-xl text-ivory/70 tracking-wide max-w-md font-light leading-relaxed"
           >
-            Four open-source instruments. One philosophy.
+            Four instruments. One philosophy.
           </p>
         </div>
 
