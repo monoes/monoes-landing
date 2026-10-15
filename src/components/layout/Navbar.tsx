@@ -6,9 +6,26 @@ import Image from "next/image";
 import { UserMenu } from "@/components/community/UserMenu";
 import { useCurrentUser } from "@/lib/community/use-current-user";
 
-const navLinks = [
+interface NavLink {
+  label: string;
+  href: string;
+  children?: { label: string; href: string }[];
+}
+
+const navLinks: NavLink[] = [
   { label: "Projects", href: "/product#projects" },
-  { label: "Workforce", href: "/workforce" },
+  {
+    label: "Workforce",
+    href: "/workforce",
+    children: [
+      { label: "Overview", href: "/workforce" },
+      { label: "How it works", href: "/workforce/how-it-works" },
+      { label: "Capabilities", href: "/workforce/capabilities" },
+      { label: "Build First for companies", href: "/build-first/companies" },
+      { label: "Build First for startups", href: "/build-first/startups" },
+      { label: "Build First terms", href: "/build-first/terms" },
+    ],
+  },
   { label: "Whitepaper", href: "/whitepaper" },
   { label: "Blog", href: "/blog" },
   { label: "Library", href: "/library" },
@@ -41,13 +58,32 @@ export function Navbar() {
 
         <ul className="hidden items-center md:flex">
           {navLinks.map((link) => (
-            <li key={link.href}>
+            <li key={link.href} className="group relative">
               <Link
                 href={link.href}
                 className="inline-flex min-h-11 items-center rounded-full px-3.5 text-sm font-medium text-ivory/75 transition-colors hover:text-gold"
               >
                 {link.label}
+                {link.children && (
+                  <svg aria-hidden="true" width="10" height="10" viewBox="0 0 10 10" className="ml-1.5" fill="none" stroke="currentColor" strokeWidth="1.5">
+                    <path d="M2 4l3 3 3-3" />
+                  </svg>
+                )}
               </Link>
+              {link.children && (
+                <ul className="invisible absolute left-0 top-full z-50 min-w-60 rounded-2xl border border-gold/20 bg-espresso-deep p-2 opacity-0 shadow-[0_10px_30px_-18px_#1a1208] transition-opacity group-focus-within:visible group-focus-within:opacity-100 group-hover:visible group-hover:opacity-100">
+                  {link.children.map((child) => (
+                    <li key={child.href}>
+                      <Link
+                        href={child.href}
+                        className="flex min-h-11 items-center rounded-xl px-3.5 text-sm text-ivory/85 transition-colors hover:text-gold focus-visible:text-gold"
+                      >
+                        {child.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </li>
           ))}
         </ul>
@@ -85,6 +121,21 @@ export function Navbar() {
                 >
                   {link.label}
                 </Link>
+                {link.children && (
+                  <ul className="mb-1 ml-4 border-l border-gold/20 pl-2">
+                    {link.children.slice(1).map((child) => (
+                      <li key={child.href}>
+                        <Link
+                          href={child.href}
+                          onClick={() => setOpen(false)}
+                          className="flex min-h-11 items-center rounded-2xl px-4 text-sm text-ivory/70 hover:text-gold"
+                        >
+                          {child.label}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </li>
             ))}
           </ul>

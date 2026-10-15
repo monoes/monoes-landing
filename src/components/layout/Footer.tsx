@@ -18,6 +18,8 @@ const footerSections = [
       { label: "Overview", href: "/workforce" },
       { label: "How it works", href: "/workforce/how-it-works" },
       { label: "Capabilities", href: "/workforce/capabilities" },
+      { label: "Build First: companies", href: "/build-first/companies" },
+      { label: "Build First: startups", href: "/build-first/startups" },
     ],
   },
   {
