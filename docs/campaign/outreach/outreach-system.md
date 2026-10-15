@@ -16,7 +16,7 @@ Seven workflows in `workflows/` (JSON). All are `is_active: false`, start from `
 
 | Id | Does | Sends? |
 |---|---|---|
-| `bf-01-lead-source` | Reads one public RSS feed per run, extracts company and public event, normalizes to the lead schema | No |
+| `bf-01-lead-source` | Reads one public RSS feed per run, picks out funding announcements from each item title with a fixed rule (no AI step), flags regulated sectors, and writes lead candidates marked for review. Suggested feed: EU-Startups (`https://www.eu-startups.com/feed/`) | No |
 | `bf-02-lead-score` | Scores a leads CSV with the rubric below; drops tier "drop" | No |
 | `bf-03-sequence-linkedin` | Guard, draft, lint, human approval, post-approval guard, stage for manual send | Only via disabled node |
 | `bf-04-sequence-x` | Same for X DMs | Only via disabled node |
@@ -148,7 +148,7 @@ Known gap (rule set 2026-10-13): every person or company we approach must first 
 
 Not verified:
 - Any real send (never exercised, by design). The `linkedin.send_dms` and `x.send_dms` nodes have not been run, so their behaviour with a real account, pacing and failure modes are unknown.
-- `bf-01` (needs a feed URL you choose), `bf-04` (X) and `bf-05` (email) were validated and plan-checked but not executed.
+- `bf-04` (X) and `bf-05` (email) were validated and plan-checked but not executed. `bf-01` ran live on the EU-Startups feed (4 distinct candidates). An earlier version used an AI extraction step that gave every item the same answer; it was replaced with a fixed title rule.
 - The post-approval suppression re-check by running workflow (covered only by unit tests).
 - Whether the drafting runtime (`claude` via `agent.ask`) is available on every machine that runs these.
 
