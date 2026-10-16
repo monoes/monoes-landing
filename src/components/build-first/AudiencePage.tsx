@@ -178,7 +178,7 @@ function Trust() {
             <p className="leading-relaxed">
               Our orchestration engine is public:{" "}
               <a className="underline underline-offset-2" href="https://github.com/monoes/monomind">Monomind</a> (Apache 2.0).{" "}
-              <a className="underline underline-offset-2" href="https://github.com/monoes/mono-agent">Mono Agent</a> is free to download and run; its source is not public.
+              <a className="underline underline-offset-2" href="https://github.com/monoes/mono-agent">Mono Agent</a> is free to download and run; its source is readable on GitHub under a proprietary licence.
             </p>
           </li>
           <li>

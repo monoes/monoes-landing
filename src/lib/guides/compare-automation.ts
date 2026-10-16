@@ -20,7 +20,7 @@ export const automationComparisons: Guide[] = [
     table: {
       columns: ["", "Mono Agent", "n8n"],
       rows: [
-        ["License", "Monoes Proprietary Software License: free of charge for now, personal or internal business use; source not public", "Sustainable Use License (fair-code, source available, not OSI-approved)"],
+        ["License", "Monoes Proprietary Software License: free of charge for now, personal or internal business use; source readable on GitHub, no modification or redistribution", "Sustainable Use License (fair-code, source available, not OSI-approved)"],
         ["Account", "monoes.me sign-in required; keeps working up to 24 hours offline", "None for a self-hosted instance; account for n8n Cloud"],
         ["Install", "One static Go binary, embedded SQLite; no Docker needed", "Self-hosting requires Docker from n8n 3.0 (scheduled October 2026; npm installs end); hosted cloud available"],
         ["Integrations", "370+ node types, about 240 of them app integrations", "1,500+ integrations and thousands of community templates"],
@@ -50,7 +50,7 @@ export const automationComparisons: Guide[] = [
           "Sub-workflows, workflow versioning and a step debugger - all on Mono Agent's roadmap, not shipped.",
           "Team and enterprise features, and a hosted cloud so no machine needs to stay on.",
           "A large community, forum and template library.",
-          "Source you can read and modify under its fair-code license, and no sign-in for a self-hosted instance. Mono Agent's source is not public and it needs a monoes.me sign-in.",
+          "Source you can read and modify under its fair-code license, and no sign-in for a self-hosted instance. Mono Agent's source can be read on GitHub, but its proprietary licence allows no modification or redistribution, and it needs a monoes.me sign-in.",
         ],
       },
       {

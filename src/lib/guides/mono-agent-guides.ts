@@ -23,7 +23,7 @@ export const monoAgentGuides: Guide[] = [
         ["Runtime", "Node.js inside the official Docker image", "One static Go binary; AI steps also use the monomind runner (Node.js)"],
         ["Required services", "A Docker engine (Docker Desktop or WSL2 on Windows); optionally Postgres", "None; SQLite is built in"],
         ["Install command", "docker volume create n8n_data, then docker run -it --rm --name n8n -p 5678:5678 -v n8n_data:/home/node/.n8n docker.n8n.io/n8nio/n8n", "curl -fsSL https://raw.githubusercontent.com/monoes/mono-agent/HEAD/install.sh | bash, then monoagentcli account login"],
-        ["Licence", "Sustainable Use License (fair-code)", "Monoes Proprietary Software License; free of charge for now, source not public"],
+        ["Licence", "Sustainable Use License (fair-code)", "Monoes Proprietary Software License; free of charge for now, source readable but no modification or redistribution"],
         ["Account", "Self-hosting runs without an n8n account", "A monoes.me sign-in is required; a signed token allows up to 24 hours offline"],
         ["Integrations", "1,500+", "370+ node types, about 240 of them app integrations"],
       ],
@@ -102,7 +102,7 @@ export const monoAgentGuides: Guide[] = [
         heading: "When to stay on n8n",
         bullets: [
           "Integration breadth: n8n has 1,500+ integrations and many app-event triggers. Mono Agent has 370+ node types, about 240 of them app integrations; run the importer on your workflows to see what carries over before moving.",
-          "Source and account: n8n's fair-code source is public and self-hosting works without an n8n account. Mono Agent's source is not public and it needs a monoes.me sign-in.",
+          "Source and account: n8n's fair-code source is public and self-hosting works without an n8n account. Mono Agent's source can be read on GitHub, but its licence allows no modification or redistribution, and it needs a monoes.me sign-in.",
           "Community and templates: n8n has a large forum and thousands of community templates.",
           "Teams: n8n offers users, roles and SSO. Mono Agent is a single-user tool today.",
           "If Docker already runs where you host n8n, 3.0 changes little for you. Upgrade and stay.",
@@ -143,7 +143,7 @@ export const monoAgentGuides: Guide[] = [
       {
         question: "Is Mono Agent open source?",
         answer:
-          "No. Current versions are under the Monoes Proprietary Software License: free of charge for now, for personal or internal business use, and the source is not public. Versions up to v0.133.0 were MIT licensed.",
+          "No. Current versions are under the Monoes Proprietary Software License: free of charge for now, for personal or internal business use; the source can be read on GitHub but not modified or redistributed. Versions up to v0.133.0 were MIT licensed.",
       },
       {
         question: "Can I import my n8n workflows?",
