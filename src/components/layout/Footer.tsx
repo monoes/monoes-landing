@@ -41,6 +41,7 @@ const footerSections = [
       { label: "Community", href: "/community" },
       { label: "Legal", href: "/legal" },
       { label: "Privacy", href: "/privacy" },
+      { label: "MonoAgent privacy", href: "/monoagent/privacy" },
       { label: "Terms", href: "/terms" },
     ],
   },
