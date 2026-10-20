@@ -34,6 +34,7 @@ const groups = [
     links: [
       { label: "Security", href: "/security" },
       { label: "Privacy", href: "/privacy" },
+      { label: "MonoAgent privacy", href: "/monoagent/privacy" },
       { label: "Terms", href: "/terms" },
     ],
   },

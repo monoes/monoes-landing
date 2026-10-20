@@ -1,19 +1,11 @@
 import type { Metadata } from "next";
 import { satoshi, jetbrainsMono } from "@/lib/fonts";
+import { Analytics } from "@/components/Analytics";
 import { WebMcpRegistration } from "@/components/WebMcpRegistration";
 import { SOCIAL_LINKS } from "@/lib/social-links";
 import "@/styles/globals.css";
 
 const SITE_URL = "https://monoes.me";
-// GA4 measurement IDs aren't secret — they're visible in every page's client
-// bundle and network requests regardless — so this is hardcoded rather than
-// routed through a NEXT_PUBLIC_* env var. (NEXT_PUBLIC_PLAUSIBLE_DOMAIN below
-// went through exactly that env-var path and, as a result, was never actually
-// set anywhere real — not in .dev.vars, not in CI — so Plausible has silently
-// never loaded in production.)
-const GA_MEASUREMENT_ID = "G-6XTPLKPLFD";
-// Microsoft Clarity project ID — public for the same reason as the GA4 ID.
-const CLARITY_PROJECT_ID = "yj6qarbwal";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -74,26 +66,7 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
         />
-        {process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN && (
-          <script
-            defer
-            data-domain={process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN}
-            src="https://plausible.io/js/script.js"
-          />
-        )}
-        <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`} />
-        <script
-          id="ga4-init"
-          dangerouslySetInnerHTML={{
-            __html: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${GA_MEASUREMENT_ID}');`,
-          }}
-        />
-        <script
-          id="clarity-init"
-          dangerouslySetInnerHTML={{
-            __html: `(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","${CLARITY_PROJECT_ID}");`,
-          }}
-        />
+        <Analytics />
       </body>
     </html>
   );
