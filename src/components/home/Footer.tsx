@@ -32,6 +32,7 @@ const groups = [
   {
     title: "Legal",
     links: [
+      { label: "Imprint", href: "/imprint" },
       { label: "Security", href: "/security" },
       { label: "Privacy", href: "/privacy" },
       { label: "MonoAgent privacy", href: "/monoagent/privacy" },

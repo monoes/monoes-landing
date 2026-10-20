@@ -40,6 +40,7 @@ const footerSections = [
       { label: "GitHub", href: "https://github.com/monoes", external: true },
       { label: "Community", href: "/community" },
       { label: "Legal", href: "/legal" },
+      { label: "Imprint", href: "/imprint" },
       { label: "Privacy", href: "/privacy" },
       { label: "MonoAgent privacy", href: "/monoagent/privacy" },
       { label: "Terms", href: "/terms" },
