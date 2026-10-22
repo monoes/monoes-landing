@@ -51,6 +51,146 @@ export interface BlogPost {
 }
 
 export const BLOG_POSTS: BlogPost[] = [
+  // --- REPUTATION PANEL (2026-10-22): a three-vendor org that profiles a public figure ---
+  {
+    slug: "reputation-panel-org",
+    title: "Reputation Panel: Three Model Vendors Score a Public Figure Blind, Then Argue",
+    subtitle: "A twelve-role monomind org that gathers positive, negative and neutral evidence about a public figure, audits it, has Claude, Codex and Gemini score it independently, and refuses to collapse the result into one number. We ran it on Donald Trump four times. Here is the design, the result, and everything that went wrong.",
+    excerpt: "One model asked 'is this person good?' gives you a confident paragraph. We wanted a profile: evidence tiers, hard gates, three vendors scoring blind, a red team, a debate, and an explicit list of what could not be scored. This is how the Reputation Panel org works, what it said about its first subject, and why you should read that output with care.",
+    date: "October 22, 2026",
+    readTime: "14 min read",
+    tags: ["Orgs", "Multi-Agent", "Research", "Monomind"],
+    author: {
+      name: "Monoes Team",
+      role: "Monomind Core",
+      avatar: "/images/monkey/welcoming-arms.png",
+    },
+    coverImage: {
+      src: "/images/blog/reputation-panel-cover.svg",
+      alt: "Three glowing circles labelled Claude, Codex and Gemini connected by gold lines inside concentric rings on a dark espresso background",
+      caption: "Three vendors, one dossier, scored blind and then compared.",
+    },
+    content: {
+      introduction: [
+        "Ask a single model whether a public figure is a good person and you get a fluent, balanced-sounding paragraph that hides every decision that mattered: which sources it trusted, what it weighted, what it quietly skipped. We wanted the opposite. A repeatable process where the evidence is collected on purpose from both sides, audited, scored against a written rubric by models from different vendors that cannot see each other's answers, and published with the disagreements left in.",
+        "That is the Reputation Panel, a twelve-role org for monomind's org runtime. It is published in the monoes.me org gallery, and its first full result, a report on Donald Trump, is attached to the listing as a run. This post explains the rubric, the pipeline, what four runs taught us about running cross-vendor orgs, what the first result says and does not say, and a second, unrun redesign built on sections.",
+        "A caution up front, repeated at the end: the output is an AI synthesis of public sources. It is not a finding of fact, it is not a verdict on a person, and its evidence base for the first subject is thin in places. We name the subject because the point of the exercise was a real, heavily documented figure, and we show the weak spots because they matter as much as the scores.",
+      ],
+      sections: [
+        {
+          id: "rubric",
+          heading: "1. A Profile, Not a Number",
+          subheading: "Four axes, a 0-5 scale, evidence tiers, and four hard gates",
+          paragraphs: [
+            "The rubric groups dimensions into four axes: character (relational integrity, treatment of power asymmetry, accountability, consistency of values), impact (value creation versus extraction, prosocial contribution), business success (wealth provenance, realized outcomes, skill versus luck, counterparty record, claim credibility, durability) and personal life, limited to the figure's own documented conduct and disclosed health.",
+            "Each dimension is scored 0 to 5, where 0 is severe repeated documented misconduct with no mitigation, 3 is a mixed or ordinary record, and 5 is consistently exemplary. Every score carries a confidence. Insufficient evidence is a legitimate answer and is never converted to a zero.",
+            "Evidence is tiered: 1 for court, regulator or filing; 2 for audited or registry data; 3 for a named first-hand account; 4 for reputable press; 5 for anonymous, self-published or social material. Four hard gates cap affected dimensions at 2 out of 5: adjudicated fraud or financial crime, abuse or harassment found by a court or regulator, proven fabrication of wealth or track-record claims, and a serious regulatory sanction for uncompensated harm.",
+            "The final score per dimension is the median of the round-two scores across the seats. Spread is the min-max range, and a dimension is flagged contested at a spread of 2 or more. There is deliberately no composite score. Collapsing a dozen separate judgments into one number is exactly the step that makes this kind of exercise misleading.",
+          ],
+          keyTakeaways: [
+            "Scores come with confidence, spread and the claim ids behind them.",
+            "'Insufficient evidence' is an answer; it is never scored as 0.",
+            "Gates cap, they do not add: every gated dimension here already scored 2 or lower, so no cap changed a number.",
+          ],
+        },
+        {
+          id: "personal-rules",
+          heading: "2. Rules for the Personal Life Axis",
+          subheading: "What is in scope, and what is not",
+          paragraphs: [
+            "The personal axis is where a system like this can do real harm, so the rules are written into the rubric and enforced by the auditor. Only the figure's own documented conduct is scored. Children are never scored or profiled. Health counts only if the figure disclosed it or it is credibly reported, and no role makes a diagnosis. Anonymous gossip is tier 5 and cannot carry a score on its own.",
+            "Subjects must be public figures with information already online. The org gathers and weighs what is published; it does not investigate private individuals, and the identity-resolver role exists partly to stop it conflating two people with the same name.",
+          ],
+        },
+        {
+          id: "pipeline",
+          heading: "3. Twelve Roles Across Three Vendors",
+          subheading: "Collection, audit, blind scoring, red team, debate, aggregation, report",
+          paragraphs: [
+            "An identity-resolver pins down who the subject is and writes the scope. Three collectors then gather positive, negative and neutral evidence in parallel, and a financial-forensics role chases wealth, businesses and counterparty records. A source-auditor tiers every claim, rejects what fails, and re-derives a sample of quotes from the cited pages to check the collectors were not inventing support.",
+            "Three scorers read only the audited dossier: one on Claude, one on OpenAI's GPT through Codex, one on Gemini through Antigravity. Round one is blind. A red-team role (Codex) attacks the emerging picture, the lead relays everyone's round-one scores, and each scorer re-scores in round two. The lead applies gates and aggregation, and a report-designer builds a self-contained HTML report.",
+            "Model choices follow monomind's latest-model rule: each role resolves the newest model in its family at start-up rather than pinning an old one, with medium reasoning effort by default. The lead and one scorer run on Claude Opus, the others on the newest Sonnet, Codex and Gemini builds available.",
+          ],
+          image: {
+            src: "/images/blog/reputation-panel-pipeline.svg",
+            alt: "Flow diagram: identity resolver, four collectors, source auditor, three vendor scorers, red team and debate, then the lead aggregating and reporting",
+            caption: "The v1 pipeline. Scorers see the same audited dossier, which limits what vendor diversity can buy (see limitations).",
+          },
+          keyTakeaways: [
+            "Collection is deliberately split by stance so no single role decides what the story is.",
+            "The auditor re-checks quotes against sources instead of trusting collectors.",
+            "Three vendors score blind before any of them sees another's number.",
+          ],
+        },
+        {
+          id: "four-runs",
+          heading: "4. What Four Runs Taught Us",
+          subheading: "Most of the work was making a cross-vendor org actually cross-vendor",
+          paragraphs: [
+            "The first run looked fine and was not. Codex and Antigravity are installed here as launcher scripts that touch the home directory, and org roles run with a read-only home, so those seats crashed at start. The lead quietly substituted Claude subagents, and the report presented a three-vendor panel that was really one vendor. Run 1 cost $11.75 and was a Claude-only result we threw away as degraded.",
+            "Fixing that produced a list: the runtime now launches the real binary behind a launcher, refuses to refill a seat pinned to a runtime with a different one, and the validator warns about settings that doomed this org (a completion-evidence rule that demands a commit hash on a research task, a token budget too small per browsing role, file scopes that antigravity cannot enforce). Roles also could not read their own spilled tool results, which made the evidence thin; after that fix the quote re-check pass rate went from about 56% to 18 of 19 (94.7%).",
+            "Run four was the first clean cross-vendor run: all three seats scored in both rounds, the red team ran, and the org finished in 25.6 minutes at about $11.25. Open issues remain. The debate relay is order-sensitive (the lead once created round-two tasks before relaying round one), Codex's file read scope is not enforced, and Codex often has its first task close refused over a schema field.",
+          ],
+          keyTakeaways: [
+            "A silent vendor substitution is the worst failure: the output looks right.",
+            "Evidence quality tracked whether roles could read their own tool output.",
+            "Still open: debate ordering, unenforced Codex read scope, first-close refusals.",
+          ],
+        },
+        {
+          id: "result",
+          heading: "5. The First Result: Donald Trump",
+          subheading: "Run four, as of 2026-10-17. Read the confidence column.",
+          paragraphs: [
+            "The audited dossier kept 66 of 90 raw claims and rejected 24. Of those kept, only 2 are tier 1 (court or regulator), 63 are tier 4 reputable press, and 1 is tier 5. That is a press-heavy base, and the report says so.",
+            "Final scores, median of three seats: relational integrity 1 (medium confidence), power-asymmetry treatment 2 (low), accountability 1, consistency of values 2, value creation versus extraction 3, prosocial contribution 3, wealth provenance 2, realized outcomes 3, skill versus luck 2, counterparty record 2, claim credibility 1, durability 3, and public stability and disclosed health 3 (low). No dimension was contested, meaning the three vendors never spread by 2 or more. Three dimensions came back as insufficient evidence: negative externalities, partner relationships and parenting conduct.",
+            "Three gates fired. G1 (adjudicated financial crime) applies to accountability, resting on the 2024 New York felony conviction; it is marked provisional because only press reporting was retrieved and an appeal was pending. G2 (court-found abuse) applies to relational integrity and power-asymmetry treatment, resting on the federal civil verdict in the E. Jean Carroll case, which the report notes is final after the Supreme Court denied review in August 2026; Trump denies the allegations. G3 (proven fabrication of wealth claims) applies to claim credibility, based on the New York civil fraud liability finding, also provisional because the state appeal's current status could not be confirmed. G4 did not fire: the Trump University and Foundation matters ended in compensation. Composite: none, by design.",
+          ],
+          keyTakeaways: [
+            "Unanimity among vendors that read the same dossier is weaker evidence than it sounds.",
+            "Two of three fired gates are marked provisional because the cited sources were press, not filings.",
+            "The full HTML report, with 129 links back to sources, is attached to the monoes.me listing.",
+          ],
+        },
+        {
+          id: "v2",
+          heading: "6. Version 2: The Same Panel With Sections",
+          subheading: "Built and validated, not yet run",
+          paragraphs: [
+            "Sections are now generally available in the org runtime: documents become the only channel between sections, hand-offs are schema-validated, and a consuming lead accepts or rejects a document with capped rework. Reputation Panel V2 reorganizes the same twelve roles into collection, audit, three scoring sections (one per vendor), challenge and report, joined by six document contracts. That makes the blind round structural: a scorer cannot read another scorer's document at all, instead of relying on an instruction.",
+            "We have not run it. It validates and passes the host preflight for all three vendors, but the document tools under Codex and Antigravity are untested and the contract checks in the runtime today cannot verify scores or claims, only shape. It is published as a clearly labelled variant so you can read the design, and the first live run is the pilot. If it ran, we would expect fewer ordering bugs and some added cost from document hand-offs; we have no numbers for either.",
+          ],
+        },
+        {
+          id: "limits",
+          heading: "7. Limitations and Care",
+          subheading: "Why this is not a verdict",
+          paragraphs: [
+            "All three scorers read one dossier, so their agreement says more about the dossier than about the person. Vendor diversity reduces model-specific quirks; it does not create independent evidence. Collectors are models searching the web, and the source auditor is a model checking models, even though quote re-derivation catches a lot.",
+            "A numeric scale over contested political and legal matters invites false precision. Several inputs were still moving when the run happened (appeals, pending petitions), which is why the report distinguishes provisional from final gates and carries an as-of date. Anyone applying this to a real person should also expect the subject's own account to be under-represented in press-heavy evidence.",
+            "We chose a well-documented public figure and present the output with its disclaimer. If you run the org on someone else, keep to the same scope rules, and treat the report as a starting list of sources to read, not a conclusion.",
+          ],
+        },
+        {
+          id: "run-it",
+          heading: "8. Run It Yourself",
+          paragraphs: [
+            "Download Reputation Panel from the monoes.me org gallery, put it in .monomind/orgs, review it, sign it (signing is deliberately a human act), and start it with a subject name. Expect on the order of 25 to 30 minutes and about ten dollars of model usage on Claude, Codex and Gemini subscriptions or APIs, and check that your Codex and Antigravity CLIs are installed. The launcher and own-tool-output fixes described above landed after the latest published release, so until the next release you need a build from the monomind main branch for a genuine three-vendor run.",
+          ],
+          codeBlock: {
+            language: "bash",
+            code: `monomind org validate reputation-panel
+monomind org sign reputation-panel
+monomind org run reputation-panel --task "Profile <public figure>, as of today"`,
+          },
+        },
+      ],
+      conclusion: [
+        "The most useful thing the Reputation Panel produced was not a score. It was a process whose weak points are visible: tiered evidence, gates that say when they are provisional, a list of dimensions that could not be scored, and a changelog of how an org that claimed three vendors briefly ran one.",
+        "Read the Trump report for what it is, an organized, sourced starting point from a panel of models working from public press and filings. Check the sources, weigh the provisional gates, and do not treat the profile as a judgment of the person.",
+      ],
+    },
+  },
   // --- HELIX ORG (2026-09-25): Shopify's Helix migration loop rebuilt as a monomind org ---
   {
     slug: "helix-org-checkpoints-and-gates",

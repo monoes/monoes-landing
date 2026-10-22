@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img">
+<rect width="1600" height="900" fill="#1c1410"/>
+<g fill="none" stroke="#d9a441" stroke-width="2" opacity=".35">
+<circle cx="800" cy="450" r="150"/><circle cx="800" cy="450" r="260"/><circle cx="800" cy="450" r="370"/></g>
+<g font-family="Georgia,serif" fill="#f3e6cf" text-anchor="middle">
+<text x="800" y="130" font-size="54" font-weight="bold">Reputation Panel</text>
+<text x="800" y="180" font-size="26" fill="#d9a441">three vendors score blind, then argue</text></g>
+<g font-family="Helvetica,Arial,sans-serif" font-size="22" text-anchor="middle" fill="#1c1410" font-weight="bold">
+<circle cx="800" cy="300" r="62" fill="#d9a441"/><text x="800" y="308">Claude</text>
+<circle cx="640" cy="560" r="62" fill="#e8c27a"/><text x="640" y="568">Codex</text>
+<circle cx="960" cy="560" r="62" fill="#c98f2e"/><text x="960" y="568">Gemini</text></g>
+<g stroke="#d9a441" stroke-width="3" opacity=".8"><line x1="770" y1="355" x2="670" y2="508"/><line x1="830" y1="355" x2="930" y2="508"/><line x1="702" y1="560" x2="898" y2="560"/></g>
+<g font-family="Helvetica,Arial,sans-serif" font-size="24" fill="#f3e6cf" text-anchor="middle">
+<text x="800" y="710">4 axes · 16 dimensions · hard-gate caps · no composite number</text>
+<text x="800" y="750" fill="#b8a78a" font-size="20">An AI synthesis of public sources, not a finding of fact</text></g></svg>
