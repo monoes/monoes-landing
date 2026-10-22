@@ -66,8 +66,8 @@ export const BLOG_POSTS: BlogPost[] = [
       avatar: "/images/monkey/welcoming-arms.png",
     },
     coverImage: {
-      src: "/images/blog/reputation-panel-cover.svg",
-      alt: "Three glowing circles labelled Claude, Codex and Gemini connected by gold lines inside concentric rings on a dark espresso background",
+      src: "/images/blog/reputation-panel-cover.jpg",
+      alt: "Three glowing orbs in amber, pale gold and bronze connected by fine gold lines around a floating stack of translucent evidence documents, with a faint balance-scale outline on a dark espresso background",
       caption: "Three vendors, one dossier, scored blind and then compared.",
     },
     content: {
@@ -146,6 +146,11 @@ export const BLOG_POSTS: BlogPost[] = [
             "Final scores, median of three seats: relational integrity 1 (medium confidence), power-asymmetry treatment 2 (low), accountability 1, consistency of values 2, value creation versus extraction 3, prosocial contribution 3, wealth provenance 2, realized outcomes 3, skill versus luck 2, counterparty record 2, claim credibility 1, durability 3, and public stability and disclosed health 3 (low). No dimension was contested, meaning the three vendors never spread by 2 or more. Three dimensions came back as insufficient evidence: negative externalities, partner relationships and parenting conduct.",
             "Three gates fired. G1 (adjudicated financial crime) applies to accountability, resting on the 2024 New York felony conviction; it is marked provisional because only press reporting was retrieved and an appeal was pending. G2 (court-found abuse) applies to relational integrity and power-asymmetry treatment, resting on the federal civil verdict in the E. Jean Carroll case, which the report notes is final after the Supreme Court denied review in August 2026; Trump denies the allegations. G3 (proven fabrication of wealth claims) applies to claim credibility, based on the New York civil fraud liability finding, also provisional because the state appeal's current status could not be confirmed. G4 did not fire: the Trump University and Foundation matters ended in compensation. Composite: none, by design.",
           ],
+          image: {
+            src: "/images/blog/reputation-panel-report.png",
+            alt: "Top of the generated HTML report: title, as-of date, the AI-synthesis disclaimer, the list of fired hard gates and the first rows of the profile chart",
+            caption: "The top of the report the org produced: disclaimer first, then fired gates, then the per-dimension profile with each seat's marker.",
+          },
           keyTakeaways: [
             "Unanimity among vendors that read the same dossier is weaker evidence than it sounds.",
             "Two of three fired gates are marked provisional because the cited sources were press, not filings.",
