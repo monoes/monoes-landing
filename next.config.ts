@@ -1,5 +1,6 @@
 import type { NextConfig } from "next";
 import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
+import { releaseRedirects } from "./src/lib/release-redirects";
 
 const CSP = [
   "default-src 'self'",
@@ -60,6 +61,7 @@ const nextConfig: NextConfig = {
   },
   async redirects() {
     return [
+      ...releaseRedirects,
       {
         source: "/community/api-docs",
         destination: "/docs",
